@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://asset-receptor-advantage-attending.trycloudflare.com/$1"
+      "destination": "https://exception-papua-door-kijiji.trycloudflare.com/$1"
     }
   ]
 }

@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://exception-papua-door-kijiji.trycloudflare.com/$1"
+      "destination": "https://dana-troubleshooting-province-having.trycloudflare.com/$1"
     }
   ]
 }

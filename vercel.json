@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://epic-decision-shade-sin.trycloudflare.com/$1"
+      "destination": "https://mpeg-key-terminology-aside.trycloudflare.com/$1"
     }
   ]
 }

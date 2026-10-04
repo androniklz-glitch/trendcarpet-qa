@@ -2,6 +2,9 @@ import http.server
 import socketserver
 import os
 import json
+import hmac
+import secrets
+import http.cookies
 import urllib.parse
 import sys
 import subprocess
@@ -21,6 +24,37 @@ os.makedirs(THUMB_CACHE_DIR, exist_ok=True)
 EXCEL_MASTER_FILE = r"C:\Users\AndronikLindgren\OneDrive - CaMa Gruppen AB\Fotostudion 230530-ongoing.xlsx"
 EXCEL_2026_FILE = r"C:\Users\AndronikLindgren\OneDrive - CaMa Gruppen AB\Pictures\Projektlista_2026.xlsx"
 BASE_SP_URL = "https://trendcarpet-my.sharepoint.com"
+
+def get_users_file():
+    return os.environ.get("QA_HUB_USERS_FILE", r"C:\Users\AndronikLindgren\.secrets\qa-hub-users.json")
+
+_users_cache = None
+_users_mtime = 0
+
+def load_users():
+    global _users_cache, _users_mtime
+    ufile = get_users_file()
+    if not os.path.exists(ufile):
+        return {"enforce": False, "users": []}
+    
+    try:
+        mtime = os.path.getmtime(ufile)
+        if _users_cache is None or mtime > _users_mtime:
+            with open(ufile, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            if not isinstance(data, dict) or not isinstance(data.get("users"), list):
+                raise ValueError("Bad shape")
+            for u in data.get("users", []):
+                if not isinstance(u, dict):
+                    raise ValueError("Bad shape")
+            _users_cache = data
+            _users_mtime = mtime
+    except Exception:
+        if _users_cache is not None:
+            return _users_cache
+        return {"enforce": True, "users": []}
+    return _users_cache
+
 
 def clean_sp_url(target):
     if not target:
@@ -767,9 +801,11 @@ def scan_batch_products(batch):
                         "latest_mtime": max(mtimes) if mtimes else 0,
                         "variants": { "Standard": shot_list }
                     }
-        else:
+        elif root_entries and any(os.path.isdir(os.path.join(base_dir, d)) and any(f.lower().endswith((".jpg", ".jpeg", ".png", ".webp")) for f in os.listdir(os.path.join(base_dir, d))) for d in root_entries):
             for folder_name in sorted(root_entries):
                 folder_path = os.path.join(base_dir, folder_name)
+                if not os.path.isdir(folder_path):
+                    continue
                 parts = folder_name.split("-")
                 brand = "Brand"
                 model_name = folder_name
@@ -800,6 +836,165 @@ def scan_batch_products(batch):
                     "latest_mtime": max(mtimes) if mtimes else 0,
                     "variants": { "Standard": shot_list }
                 }
+        else:
+            # Flat directory layout (direct image files in base_dir without subfolders)
+            direct_images = [f for f in sorted(os.listdir(base_dir)) if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp"))]
+
+            def parse_flat_item(fn):
+                name_no_ext, ext = os.path.splitext(fn)
+                full_path = os.path.join(base_dir, fn)
+                mtime = os.path.getmtime(full_path) if os.path.exists(full_path) else 0
+                size_bytes = os.path.getsize(full_path) if os.path.exists(full_path) else 0
+
+                # Check specific descriptors like close-up, street, interior, etc. followed by optional num/letter
+                m1 = re.match(r'^(.*?)[-_](close[-_]?u[p]?|clo|street(?:[-_]s|[-_]st)?|str|interior|miljo|plan|studio|detail|angle|lifestyle)[-_]?(?:([0-9]+)([a-z0-9]*))?$', name_no_ext, re.IGNORECASE)
+                if m1:
+                    prod_key = m1.group(1).strip('-_')
+                    shot_desc = m1.group(2).lower()
+                    shot_num = m1.group(3) or ''
+                    shot_suffix = m1.group(4) or ''
+
+                    is_close = any(x in shot_desc for x in ['close', 'clo', 'plan', 'studio', 'detail'])
+                    is_street = any(x in shot_desc for x in ['street', 'str', 'interior', 'miljo', 'lifestyle'])
+
+                    if is_close:
+                        kind = 'Närbild'
+                        base_order = 10
+                    elif is_street:
+                        kind = 'Miljö'
+                        base_order = 20
+                    else:
+                        kind = shot_desc.capitalize()
+                        base_order = 30
+
+                    label_parts = [kind]
+                    if shot_num:
+                        label_parts.append(shot_num)
+                    if shot_suffix:
+                        label_parts.append(f'({shot_suffix})')
+                    label = ' '.join(label_parts)
+                    shot_code = f'{shot_num}{shot_suffix}' if shot_num else f'{kind[:1]}{shot_suffix}'
+
+                    return {
+                        'prod_key': prod_key,
+                        'filename': fn,
+                        'kind': kind,
+                        'shot_code': shot_code,
+                        'base_shot': shot_num or '01',
+                        'suffix': shot_suffix,
+                        'label': label,
+                        'is_close': is_close,
+                        'is_street': is_street,
+                        'order_key': (base_order, int(shot_num) if shot_num.isdigit() else 99, shot_suffix),
+                        'mtime': mtime,
+                        'size_bytes': size_bytes
+                    }
+
+                # Generic format: prod_key - [0-9]+ [suffix]
+                m2 = re.match(r'^(.*?)[-_](0[1-9]|[1-9][0-9]?)(.*)$', name_no_ext, re.IGNORECASE)
+                if m2:
+                    prod_key = m2.group(1).strip('-_')
+                    shot_num = m2.group(2).zfill(2)
+                    raw_suffix = m2.group(3).strip('-_ ')
+                    is_version = bool(re.match(r'^(n|ny|new|v[0-9]+|[0-9]+|b|fix|crop)$', raw_suffix, re.IGNORECASE))
+                    label = f'{shot_num} ({raw_suffix})' if raw_suffix else shot_num
+
+                    return {
+                        'prod_key': prod_key,
+                        'filename': fn,
+                        'kind': 'Standard',
+                        'shot_code': f'{shot_num}{raw_suffix}',
+                        'base_shot': shot_num,
+                        'suffix': raw_suffix,
+                        'label': label,
+                        'is_close': (shot_num == '01'),
+                        'is_street': False,
+                        'order_key': (int(shot_num), 0 if not is_version else 1, raw_suffix),
+                        'mtime': mtime,
+                        'size_bytes': size_bytes
+                    }
+
+                return {
+                    'prod_key': name_no_ext,
+                    'filename': fn,
+                    'kind': 'Övrigt',
+                    'shot_code': '99',
+                    'base_shot': '99',
+                    'suffix': '',
+                    'label': name_no_ext,
+                    'is_close': False,
+                    'is_street': False,
+                    'order_key': (99, 99, ''),
+                    'mtime': mtime,
+                    'size_bytes': size_bytes
+                }
+
+            flat_parsed = [parse_flat_item(f) for f in direct_images]
+            flat_groups = {}
+            for item in flat_parsed:
+                flat_groups.setdefault(item['prod_key'], []).append(item)
+
+            for prod_key, items in flat_groups.items():
+                items.sort(key=lambda x: x['order_key'])
+
+                # Parse Brand, Model, Color from prod_key
+                clean_key = re.sub(r'[-_]cap$', '', prod_key, flags=re.IGNORECASE)
+                parts = clean_key.split('-')
+                brand = 'Brand'
+                model_name = clean_key
+                color_name = ''
+
+                if len(parts) >= 3 and parts[0].lower() == 'g' and parts[1].lower() == 'rda':
+                    brand = 'G-RDA'
+                    model_name = parts[2].capitalize()
+                    color_name = ' '.join(parts[3:]).capitalize()
+                elif len(parts) >= 4 and parts[0].strip().lower() in ["keps", "matta", "ullmatta", "viskosmatta", "wiltonmatta", "inredning"]:
+                    brand = parts[0].capitalize()
+                    model_name = parts[1].capitalize()
+                    color_name = ' '.join(parts[2:]).capitalize()
+                elif len(parts) >= 3:
+                    brand = parts[0].capitalize()
+                    model_name = parts[1].capitalize()
+                    color_name = ' '.join(parts[2:]).capitalize()
+                elif len(parts) == 2:
+                    model_name = parts[0].capitalize()
+                    color_name = parts[1].capitalize()
+
+                shot_list = []
+                for idx, it in enumerate(items):
+                    fn = it['filename']
+                    raw_url = f"/image/{urllib.parse.quote(batch_id)}/{urllib.parse.quote(fn)}?v={int(it['mtime'])}"
+                    is_hero = (idx == 0)
+                    shot_list.append({
+                        "filename": fn,
+                        "shot": it['shot_code'],
+                        "base_shot": it['base_shot'],
+                        "label": it['label'],
+                        "is_primary": is_hero,
+                        "is_new_version": bool(it['suffix']),
+                        "version_tag": f"-{it['suffix']}" if it['suffix'] else "",
+                        "mtime": it['mtime'],
+                        "url": raw_url,
+                        "thumb_url": f"{raw_url}&thumb=160",
+                        "rel_path": fn,
+                        "size_bytes": it['size_bytes']
+                    })
+
+                mtimes = [s["mtime"] for s in shot_list if s.get("mtime")]
+                has_new = any(s.get("is_new_version") for s in shot_list)
+                v_tag = next((s["version_tag"] for s in shot_list if s.get("is_new_version")), "")
+
+                products_map[prod_key] = {
+                    "id": prod_key,
+                    "brand": brand,
+                    "model": model_name,
+                    "color": color_name,
+                    "folder_name": prod_key,
+                    "has_new_version": has_new,
+                    "version_tag": v_tag,
+                    "latest_mtime": max(mtimes) if mtimes else 0,
+                    "variants": { "Standard": shot_list }
+                }
 
     products = list(products_map.values())
     products.sort(key=lambda x: x["model"])
@@ -809,26 +1004,101 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=WORKSPACE_DIR, **kwargs)
 
+    def current_user(self):
+        try:
+            cookie_header = self.headers.get("Cookie")
+            if not cookie_header:
+                return None
+            cookie = http.cookies.SimpleCookie(cookie_header)
+            if "qa_session" not in cookie:
+                return None
+            token = cookie["qa_session"].value
+            if not token:
+                return None
+            token_hash = hashlib.sha256(token.encode('utf-8')).hexdigest()
+            users_data = load_users()
+            for u in users_data.get("users", []):
+                stored_hash = u.get("token_sha256", "")
+                if hmac.compare_digest(token_hash, stored_hash):
+                    return u
+            return None
+        except Exception:
+            return None
+
+    def reviewer_name(self, fallback="Anonym"):
+        u = self.current_user()
+        if u and "name" in u:
+            return u["name"]
+        return fallback
+
     def is_admin_request(self, query=None, body_user=None):
-        if query is None:
-            query = {}
-        show_all = query.get("all", ["false"])[0].lower() == "true"
-        if show_all:
+        u = self.current_user()
+        if u and u.get("role") == "admin":
             return True
-        user = (query.get("user", [""])[0] or query.get("reviewer", [""])[0] or (body_user or "")).strip().lower()
-        if user:
-            return user in ["andro", "andronik", "admin"]
-        
-        # When no explicit user is provided, check if client is purely local (not via Cloudflare tunnel)
         is_tunnel = bool(self.headers.get("CF-Ray") or self.headers.get("CF-Connecting-IP") or self.headers.get("X-Forwarded-For"))
         client_ip = self.client_address[0] if hasattr(self, 'client_address') else ''
         is_local = (not is_tunnel) and (client_ip in ['127.0.0.1', '::1', 'localhost', '192.168.2.33'])
         return is_local
 
+    def log_message(self, format, *args):
+        msg = format % args
+        msg = re.sub(r'(t=)[^&\s]+', r'\g<1>***', msg)
+        sys.stderr.write("%s - - [%s] %s\n" %
+                         (self.address_string(),
+                          self.log_date_time_string(),
+                          msg))
+
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
         query = urllib.parse.parse_qs(parsed.query)
+
+        if path == "/login":
+            token = query.get("t", [""])[0]
+            if not token:
+                self.send_error(400, "Missing token")
+                return
+            token_hash = hashlib.sha256(token.encode('utf-8')).hexdigest()
+            users_data = load_users()
+            matched_user = None
+            for u in users_data.get("users", []):
+                if hmac.compare_digest(token_hash, u.get("token_sha256", "")):
+                    matched_user = u
+                    break
+            if matched_user:
+                redirect_url = "/"
+                if matched_user.get("role") == "assistant":
+                    redirect_url = "/assistant"
+                self.send_response(302)
+                self.send_header("Location", redirect_url)
+                self.send_header("Set-Cookie", f"qa_session={token}; Path=/; Max-Age=15552000; HttpOnly; Secure; SameSite=Lax")
+                self.end_headers()
+                return
+            else:
+                self.send_response(403)
+                self.send_header("Content-Type", "text/plain; charset=utf-8")
+                self.end_headers()
+                self.wfile.write(b"Invalid link. Ask Andronik for your personal link.")
+                return
+
+        users_data = load_users()
+        is_tunnel = bool(self.headers.get("CF-Ray") or self.headers.get("CF-Connecting-IP") or self.headers.get("X-Forwarded-For"))
+        if users_data.get("enforce", False) and is_tunnel:
+            if path not in ["/login", "/manifest.json", "/trendcarpet_qa.ico"]:
+                if not self.current_user():
+                    if path.startswith("/api/") or path.startswith("/image/"):
+                        self.send_response(401)
+                        self.send_header("Content-Type", "application/json; charset=utf-8")
+                        self.end_headers()
+                        self.wfile.write(json.dumps({"error": "login required"}).encode('utf-8'))
+                        return
+                    else:
+                        self.send_response(401)
+                        self.send_header("Content-Type", "text/html; charset=utf-8")
+                        self.end_headers()
+                        self.wfile.write(b"Login required &mdash; ask Andronik for your personal link.")
+                        return
+
 
         if path in ["/", "/index.html", "/ui", "/hatshop_ui.html"]:
             user_agent = self.headers.get("User-Agent", "").lower()
@@ -960,6 +1230,9 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             return
 
         elif path == "/api/open-folder":
+            if not self.is_admin_request({}):  # SECURITY 2026-10-04: local, non-tunnel requests only
+                self.send_error(403, "Local only")
+                return
             batch_id = query.get("batch", [""])[0]
             subpath = query.get("path", [""])[0]
             batch = get_batch(batch_id) if batch_id else load_batches()[0]
@@ -1019,20 +1292,24 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                         target_w = 160
 
                     try:
-                        cache_key = hashlib.md5(f"{file_path}_{os.path.getmtime(file_path)}_{target_w}".encode("utf-8")).hexdigest() + ".jpg"
+                        is_transparent = False
+                        with Image.open(file_path) as test_img:
+                            is_transparent = test_img.mode in ("RGBA", "LA") or (test_img.mode == "P" and "transparency" in test_img.info)
+
+                        ext = ".png" if is_transparent else ".jpg"
+                        cache_key = hashlib.md5(f"{file_path}_{os.path.getmtime(file_path)}_{target_w}".encode("utf-8")).hexdigest() + ext
                         cache_file = os.path.join(THUMB_CACHE_DIR, cache_key)
                         if not os.path.exists(cache_file):
                             with Image.open(file_path) as img:
-                                if img.mode in ("RGBA", "LA") or (img.mode == "P" and "transparency" in img.info):
-                                    bg = Image.new("RGB", img.size, (255, 255, 255))
+                                if is_transparent:
                                     if img.mode != "RGBA":
                                         img = img.convert("RGBA")
-                                    bg.paste(img, mask=img.split()[3])
-                                    img = bg
+                                    img.thumbnail((target_w, target_w), Image.Resampling.LANCZOS)
+                                    img.save(cache_file, "PNG", optimize=True)
                                 else:
                                     img = img.convert("RGB")
-                                img.thumbnail((target_w, target_w), Image.Resampling.LANCZOS)
-                                img.save(cache_file, "JPEG", quality=85, optimize=True)
+                                    img.thumbnail((target_w, target_w), Image.Resampling.LANCZOS)
+                                    img.save(cache_file, "JPEG", quality=85, optimize=True)
                         file_to_serve = cache_file
                     except Exception as e:
                         file_to_serve = file_path
@@ -1068,20 +1345,38 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_error(404, f"Image not found: {rel_path}")
                 return
 
-        else:
+        elif path in ["/trendcarpet_qa.ico", "/manifest.json"]:
             return super().do_GET()
+        else:
+            # SECURITY 2026-10-04: never serve the project folder (keys, .git, data). Whitelist only.
+            self.send_error(404, "Not found")
+            return
+
+    def do_HEAD(self):
+        # SECURITY 2026-10-04: no static HEAD probing of the project folder.
+        self.send_error(404, "Not found")
 
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
         query = urllib.parse.parse_qs(parsed.query)
 
+        users_data = load_users()
+        is_tunnel = bool(self.headers.get("CF-Ray") or self.headers.get("CF-Connecting-IP") or self.headers.get("X-Forwarded-For"))
+        if users_data.get("enforce", False) and is_tunnel:
+            if not self.current_user():
+                self.send_response(401)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": "login required"}).encode('utf-8'))
+                return
+
         if path == "/api/batches/add":
             content_length = int(self.headers.get("Content-Length", 0))
             post_data = self.rfile.read(content_length)
             try:
                 body = json.loads(post_data.decode("utf-8"))
-                if not self.is_admin_request(query, body.get("reviewer") or body.get("user")):
+                if not self.is_admin_request(query, self.reviewer_name(body.get("reviewer") or body.get("user"))):
                     self.send_response(403)
                     self.send_header("Content-Type", "application/json; charset=utf-8")
                     self.send_header("Access-Control-Allow-Origin", "*")
@@ -1149,7 +1444,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             post_data = self.rfile.read(content_length)
             try:
                 body = json.loads(post_data.decode("utf-8")) if content_length > 0 else {}
-                if not self.is_admin_request(query, body.get("reviewer") or body.get("user")):
+                if not self.is_admin_request(query, self.reviewer_name(body.get("reviewer") or body.get("user"))):
                     self.send_response(403)
                     self.send_header("Content-Type", "application/json; charset=utf-8")
                     self.send_header("Access-Control-Allow-Origin", "*")
@@ -1196,6 +1491,13 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             post_data = self.rfile.read(content_length)
             try:
                 body = json.loads(post_data.decode("utf-8")) if content_length > 0 else {}
+                if not self.is_admin_request(query, self.reviewer_name(body.get("reviewer") or body.get("user"))):
+                    self.send_response(403)
+                    self.send_header("Content-Type", "application/json; charset=utf-8")
+                    self.end_headers()
+                    self.wfile.write(json.dumps({"status": "error", "message": "Endast admin kan ändra onedrive_url."}).encode("utf-8"))
+                    return
+
                 batch_id = body.get("batch_id") or query.get("batch", [""])[0]
                 url = body.get("onedrive_url", "").strip()
                 batches = load_batches()
@@ -1227,7 +1529,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             try:
                 body = json.loads(post_data.decode("utf-8"))
                 pid = body.get("product_id")
-                author = body.get("author", "Anonym")
+                author = self.reviewer_name(body.get("author", "Anonym"))
                 text = body.get("text", "")
                 shots = body.get("shots", [])
 
@@ -1288,10 +1590,21 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
                 current_reviews = load_reviews(batch_id)
                 if pid in current_reviews and "comments" in current_reviews[pid]:
-                    current_reviews[pid]["comments"] = [
-                        c for c in current_reviews[pid]["comments"] if c.get("id") != comment_id
-                    ]
-                    save_reviews(batch_id, current_reviews)
+                    c_to_del = next((c for c in current_reviews[pid]["comments"] if c.get("id") == comment_id), None)
+                    if c_to_del:
+                        u = self.current_user()
+                        is_owner = u and "name" in u and u["name"] == c_to_del.get("author")
+                        if not (self.is_admin_request({}) or is_owner):
+                            self.send_response(403)
+                            self.send_header("Content-Type", "application/json; charset=utf-8")
+                            self.end_headers()
+                            self.wfile.write(json.dumps({"error": "Not authorized"}).encode("utf-8"))
+                            return
+
+                        current_reviews[pid]["comments"] = [
+                            c for c in current_reviews[pid]["comments"] if c.get("id") != comment_id
+                        ]
+                        save_reviews(batch_id, current_reviews)
 
                 resp = json.dumps({"status": "ok", "reviews": current_reviews}).encode("utf-8")
                 self.send_response(200)
@@ -1317,7 +1630,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 pid = body.get("product_id")
                 comment_id = body.get("comment_id")
                 emoji = body.get("emoji", "👍")
-                author = body.get("author", "Anonym")
+                author = self.reviewer_name(body.get("author", "Anonym"))
 
                 current_reviews = load_reviews(batch_id)
                 if pid in current_reviews and "comments" in current_reviews[pid]:
@@ -1357,13 +1670,27 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 review_data = json.loads(post_data.decode("utf-8"))
                 current_reviews = load_reviews(batch_id)
                 
+                curr_user = self.current_user()
+                reviewer_override = curr_user["name"] if curr_user and "name" in curr_user else None
+
                 if "product_id" in review_data:
                     pid = review_data["product_id"]
                     new_data = review_data.get("data", {})
                     if pid in current_reviews and "comments" in current_reviews[pid] and "comments" not in new_data:
                         new_data["comments"] = current_reviews[pid]["comments"]
+                    if reviewer_override:
+                        new_data["reviewer"] = reviewer_override
                     current_reviews[pid] = new_data
                 elif "reviews" in review_data:
+                    if not self.is_admin_request(query):
+                        self.send_response(403)
+                        self.send_header("Content-Type", "application/json; charset=utf-8")
+                        self.end_headers()
+                        self.wfile.write(json.dumps({"status": "error", "message": "Admin only"}).encode("utf-8"))
+                        return
+                    if reviewer_override:
+                        for p_id, p_data in review_data["reviews"].items():
+                            p_data["reviewer"] = reviewer_override
                     current_reviews = review_data["reviews"]
 
                 save_reviews(batch_id, current_reviews)
@@ -1390,7 +1717,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 body = json.loads(post_data.decode("utf-8"))
                 pid = body.get("product_id")
                 status = body.get("status", "pending")
-                reviewer = body.get("reviewer", "Anonym")
+                reviewer = self.reviewer_name(body.get("reviewer", "Anonym"))
 
                 if not pid:
                     self.send_error(400, "Missing product_id")
@@ -1430,7 +1757,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 pid = body.get("product_id")
                 flag = body.get("flag")
                 value = body.get("value")
-                reviewer = body.get("reviewer", "Anonym")
+                reviewer = self.reviewer_name(body.get("reviewer", "Anonym"))
 
                 if not pid or not flag:
                     self.send_error(400, "Missing product_id or flag")

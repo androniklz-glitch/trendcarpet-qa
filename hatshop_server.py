@@ -17,6 +17,7 @@ from PIL import Image
 
 PORT = 8092
 WORKSPACE_DIR = os.path.dirname(os.path.abspath(__file__))
+REVIEWS_DIR = os.environ.get("QA_HUB_REVIEWS_DIR") or WORKSPACE_DIR
 BATCHES_FILE = os.path.join(WORKSPACE_DIR, "batches_config.json")
 CALENDAR_CACHE_FILE = os.path.join(WORKSPACE_DIR, "calendar_projects.json")
 THUMB_CACHE_DIR = os.path.join(WORKSPACE_DIR, ".cache", "thumbnails")
@@ -271,7 +272,7 @@ def find_batch_exact(batch_id):
 
 def get_review_file(batch_id):
     safe_id = re.sub(r'[^a-zA-Z0-9_\-]', '_', batch_id)
-    return os.path.join(WORKSPACE_DIR, f"reviews_{safe_id}.json")
+    return os.path.join(REVIEWS_DIR, f"reviews_{safe_id}.json")
 
 def load_reviews(batch_id):
     rf = get_review_file(batch_id)
@@ -281,7 +282,7 @@ def load_reviews(batch_id):
                 return json.load(f)
         except Exception:
             return {}
-    legacy = os.path.join(WORKSPACE_DIR, "hatshop_review_status.json")
+    legacy = os.path.join(REVIEWS_DIR, "hatshop_review_status.json")
     if batch_id == "26-08-28-hatshop-black-river" and os.path.exists(legacy):
         try:
             with open(legacy, "r", encoding="utf-8") as f:

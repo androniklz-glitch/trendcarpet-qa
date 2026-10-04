@@ -260,6 +260,15 @@ def get_batch(batch_id):
             return b
     return batches[0] if batches else None
 
+def find_batch_exact(batch_id):
+    # Exact id match only (no fallback): review endpoints fail closed on unknown/empty ids.
+    if not batch_id:
+        return None
+    for b in load_batches():
+        if b["id"].lower() == batch_id.lower():
+            return b
+    return None
+
 def get_review_file(batch_id):
     safe_id = re.sub(r'[^a-zA-Z0-9_\-]', '_', batch_id)
     return os.path.join(WORKSPACE_DIR, f"reviews_{safe_id}.json")
@@ -1040,6 +1049,19 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         is_local = (not is_tunnel) and (client_ip in ['127.0.0.1', '::1', 'localhost', '192.168.2.33'])
         return is_local
 
+
+    def can_see_batch(self, batch):
+        if not batch:
+            return False
+        if self.is_admin_request({}):
+            return True
+        if batch.get("published", True):
+            return True
+        u = self.current_user()
+        if batch.get("audience") == "assistant" and u and u.get("role") == "assistant":
+            return True
+        return False
+
     def log_message(self, format, *args):
         msg = format % args
         msg = re.sub(r'(t=)[^&\s]+', r'\g<1>***', msg)
@@ -1084,7 +1106,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         users_data = load_users()
         is_tunnel = bool(self.headers.get("CF-Ray") or self.headers.get("CF-Connecting-IP") or self.headers.get("X-Forwarded-For"))
         if users_data.get("enforce", False) and is_tunnel:
-            if path not in ["/login", "/manifest.json", "/trendcarpet_qa.ico"]:
+            if path not in ["/login", "/manifest.json", "/trendcarpet_qa.ico", "/assistant"]:
                 if not self.current_user():
                     if path.startswith("/api/") or path.startswith("/image/"):
                         self.send_response(401)
@@ -1146,6 +1168,97 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_error(404, "hatshop_mobile.html not found")
                 return
 
+        elif path in ["/assistant"]:
+            html_path = os.path.join(WORKSPACE_DIR, "hatshop_assistant.html")
+            if os.path.exists(html_path):
+                with open(html_path, "rb") as f:
+                    content_html = f.read()
+                self.send_response(200)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.send_header("Content-Length", str(len(content_html)))
+                self.send_header("Cache-Control", "no-cache")
+                self.end_headers()
+                self.wfile.write(content_html)
+                return
+            else:
+                self.send_error(404, "hatshop_assistant.html not found")
+                return
+
+        elif path == "/api/assistant/batches":
+            batches = load_batches()
+            for b in batches:
+                if "published" not in b:
+                    b["published"] = True
+            
+            allowed = [b for b in batches if b.get("audience") == "assistant" and self.can_see_batch(b)]
+            allowed.sort(key=lambda b: b.get("createdAt", ""), reverse=True)
+            resp_content = json.dumps({"batches": allowed}, ensure_ascii=False).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(resp_content)
+            return
+
+        elif path == "/api/assistant/items":
+            batch_id = query.get("batch", [""])[0]
+            batches = load_batches()
+            batch = next((b for b in batches if b["id"] == batch_id), None)
+            if not batch or not self.can_see_batch(batch):
+                self.send_error(404, "Batch not found")
+                return
+            
+            base_dir = batch.get("path", "")
+            items = []
+            if os.path.exists(base_dir):
+                refs_file = os.path.join(base_dir, "assistant_refs.json")
+                refs_data = {}
+                if os.path.exists(refs_file):
+                    try:
+                        with open(refs_file, "r", encoding="utf-8") as rf:
+                            refs_data = json.load(rf)
+                    except Exception:
+                        pass
+                
+                images = [f for f in os.listdir(base_dir) if os.path.isfile(os.path.join(base_dir, f)) and f.lower().endswith((".png", ".jpg", ".jpeg", ".webp"))]
+                images.sort()
+                reviews = load_reviews(batch_id)
+
+                for img in images:
+                    name_stem = os.path.splitext(img)[0]
+                    img_url = f"/image/{urllib.parse.quote(batch_id)}/{urllib.parse.quote(img)}"
+                    sheet_url = f"/image/{urllib.parse.quote(batch_id)}/sheets/{urllib.parse.quote(name_stem + '.jpg')}"
+                    sheet_path = os.path.join(base_dir, "sheets", f"{name_stem}.jpg")
+                    if not os.path.exists(sheet_path):
+                        sheet_url = None
+                    
+                    item_refs = refs_data.get(img, [])
+                    valid_refs = []
+                    for r in item_refs:
+                        if isinstance(r, dict) and "ref" in r:
+                            ref_val = r["ref"]
+                            if not os.path.isabs(ref_val) and not ref_val.startswith("/") and not ref_val.startswith("\\") and ".." not in ref_val:
+                                r["url"] = f"/image/{urllib.parse.quote(batch_id)}/{urllib.parse.quote(ref_val)}"
+                                valid_refs.append(r)
+                    
+                    review_state = reviews.get(img)
+                    
+                    items.append({
+                        "file": img,
+                        "url": img_url,
+                        "sheet_url": sheet_url,
+                        "refs": valid_refs,
+                        "review": review_state
+                    })
+            
+            resp_content = json.dumps({"items": items}, ensure_ascii=False).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(resp_content)
+            return
+
         elif path == "/api/batches":
             is_admin = self.is_admin_request(query)
             batches = load_batches()
@@ -1153,8 +1266,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 if "published" not in b:
                     b["published"] = True
 
-            if not is_admin:
-                batches = [b for b in batches if b.get("published", True)]
+            batches = [b for b in batches if self.can_see_batch(b)]
 
             content = json.dumps({"batches": batches, "is_admin": is_admin}, ensure_ascii=False).encode("utf-8")
             self.send_response(200)
@@ -1186,7 +1298,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 return
 
             # Check if batch is a private draft and client is not admin
-            if not is_admin and not batch.get("published", True):
+            if not self.can_see_batch(batch):
                 self.send_response(403)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
                 self.send_header("Access-Control-Allow-Origin", "*")
@@ -1220,6 +1332,12 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             if not batch_id:
                 batches = load_batches()
                 batch_id = batches[0]["id"] if batches else "default"
+            
+            batch_obj = find_batch_exact(batch_id)
+            if not self.can_see_batch(batch_obj):
+                self.send_error(404, "Batch not found")
+                return
+
             reviews = load_reviews(batch_id)
             resp = json.dumps({"status": "ok", "reviews": reviews}, ensure_ascii=False).encode("utf-8")
             self.send_response(200)
@@ -1267,14 +1385,16 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             batch_id = urllib.parse.unquote(parts[0])
             rel_path = urllib.parse.unquote(parts[1])
             batch = get_batch(batch_id)
-            if not batch:
+            if not batch or not self.can_see_batch(batch):
                 self.send_error(404, "Batch not found")
                 return
 
             base_dir = batch["path"]
             file_path = os.path.normpath(os.path.join(base_dir, rel_path))
 
-            if not os.path.abspath(file_path).startswith(os.path.abspath(base_dir)):
+            abs_base = os.path.abspath(base_dir)
+            abs_file = os.path.abspath(file_path)
+            if os.path.commonpath([abs_base, abs_file]) != abs_base:
                 self.send_error(403, "Access denied")
                 return
 
@@ -1523,6 +1643,14 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             if not batch_id:
                 batches = load_batches()
                 batch_id = batches[0]["id"] if batches else "default"
+            batch_obj = find_batch_exact(batch_id)
+            if not self.can_see_batch(batch_obj):
+                self.send_response(403)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": "Not authorized"}).encode("utf-8"))
+                return
+
 
             content_length = int(self.headers.get("Content-Length", 0))
             post_data = self.rfile.read(content_length)
@@ -1580,6 +1708,11 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             if not batch_id:
                 batches = load_batches()
                 batch_id = batches[0]["id"] if batches else "default"
+            
+            batch_obj = find_batch_exact(batch_id)
+            if not self.can_see_batch(batch_obj):
+                self.send_error(404, "Batch not found")
+                return
 
             content_length = int(self.headers.get("Content-Length", 0))
             post_data = self.rfile.read(content_length)
@@ -1622,6 +1755,11 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             if not batch_id:
                 batches = load_batches()
                 batch_id = batches[0]["id"] if batches else "default"
+            
+            batch_obj = find_batch_exact(batch_id)
+            if not self.can_see_batch(batch_obj):
+                self.send_error(404, "Batch not found")
+                return
 
             content_length = int(self.headers.get("Content-Length", 0))
             post_data = self.rfile.read(content_length)
@@ -1663,6 +1801,14 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             if not batch_id:
                 batches = load_batches()
                 batch_id = batches[0]["id"] if batches else "default"
+            batch_obj = find_batch_exact(batch_id)
+            if not self.can_see_batch(batch_obj):
+                self.send_response(403)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": "Not authorized"}).encode("utf-8"))
+                return
+
 
             content_length = int(self.headers.get("Content-Length", 0))
             post_data = self.rfile.read(content_length)
@@ -1710,6 +1856,11 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             if not batch_id:
                 batches = load_batches()
                 batch_id = batches[0]["id"] if batches else "default"
+            
+            batch_obj = find_batch_exact(batch_id)
+            if not self.can_see_batch(batch_obj):
+                self.send_error(404, "Batch not found")
+                return
 
             content_length = int(self.headers.get("Content-Length", 0))
             post_data = self.rfile.read(content_length)

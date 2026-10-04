@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QA Hub Assistant</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background: #f0f0f0; }
+        header { background: #333; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .batch-picker { margin: 10px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 10px; }
+        .card { background: white; margin-bottom: 20px; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .main-img-container { width: 100%; margin-bottom: 10px; text-align: center; }
+        .main-img { max-width: 100%; height: auto; cursor: pointer; border-radius: 4px; }
+        .refs-strip { display: flex; overflow-x: auto; gap: 10px; margin-bottom: 10px; }
+        .ref-item { flex: 0 0 100px; font-size: 12px; }
+        .ref-img { width: 100px; height: 100px; object-fit: cover; border-radius: 4px; }
+        .sheet-link { display: inline-block; margin-bottom: 10px; color: #0066cc; text-decoration: none; font-weight: bold; }
+        .controls { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 14px; }
+        .btn-approve { background: #4CAF50; color: white; }
+        .btn-reject { background: #f44336; color: white; }
+        .comment-box { width: 100%; box-sizing: border-box; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; resize: vertical; font-family: inherit; }
+        .status-badge { display: inline-block; padding: 5px 10px; border-radius: 4px; font-weight: bold; font-size: 12px; margin-bottom: 5px; }
+        .status-approved { background: #d4edda; color: #155724; }
+        .status-rejected { background: #f8d7da; color: #721c24; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .info-row { margin-bottom: 10px; }
+        
+        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; }
+        #modal img { max-width: 95%; max-height: 95%; object-fit: contain; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>QA Hub Assistant</h1>
+        <div id="counter">0 of 0 reviewed</div>
+    </header>
+    
+    <div class="batch-picker container">
+        <label for="batch-select"><strong>Batch:</strong> </label>
+        <select id="batch-select"></select>
+    </div>
+
+    <div id="content" class="container"></div>
+
+    <div id="modal">
+        <img id="modal-img" src="" alt="Full size">
+    </div>
+
+    <script>
+        let currentBatchId = null;
+        let items = [];
+
+        async function loadBatches() {
+            try {
+                const res = await fetch('/api/assistant/batches');
+                if (res.status === 401) {
+                    window.location.href = "/";
+                    return;
+                }
+                const data = await res.json();
+                const select = document.getElementById('batch-select');
+                select.innerHTML = '';
+                if (!data.batches || data.batches.length === 0) {
+                    select.innerHTML = '<option>No batches found</option>';
+                    return;
+                }
+                data.batches.forEach(b => {
+                    const opt = document.createElement('option');
+                    opt.value = b.id;
+                    opt.textContent = b.name;
+                    select.appendChild(opt);
+                });
+                select.addEventListener('change', (e) => loadBatch(e.target.value));
+                loadBatch(data.batches[0].id);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function loadBatch(batchId) {
+            currentBatchId = batchId;
+            document.getElementById('content').innerHTML = '<p>Loading...</p>';
+            try {
+                const res = await fetch(`/api/assistant/items?batch=${batchId}`);
+                if (!res.ok) {
+                    document.getElementById('content').innerHTML = '<p>Error loading items</p>';
+                    return;
+                }
+                const data = await res.json();
+                items = data.items || [];
+                renderItems();
+            } catch (err) {
+                console.error(err);
+                document.getElementById('content').innerHTML = '<p>Error connecting to server</p>';
+            }
+        }
+
+        function escapeHtml(unsafe) {
+            if (unsafe == null) return '';
+            return String(unsafe)
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;");
+        }
+
+        function renderItems() {
+            const container = document.getElementById('content');
+            
+            // Save drafts
+            const drafts = {};
+            document.querySelectorAll('.comment-box').forEach(box => {
+                drafts[box.id] = box.value;
+            });
+
+            container.innerHTML = '';
+            
+            if (items.length === 0) {
+                container.innerHTML = '<p>No items found in this batch.</p>';
+                document.getElementById('counter').innerText = '0 of 0 reviewed';
+                return;
+            }
+
+            let reviewedCount = 0;
+
+            items.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                let reviewStatus = 'pending';
+                if (item.review && item.review.status) {
+                    reviewStatus = item.review.status;
+                }
+                if (reviewStatus !== 'pending') {
+                    reviewedCount++;
+                }
+
+                let statusBadge = `<span class="status-badge status-pending">Pending</span>`;
+                if (reviewStatus === 'approved') statusBadge = `<span class="status-badge status-approved">Approved</span>`;
+                if (reviewStatus === 'redo') statusBadge = `<span class="status-badge status-rejected">Needs fix</span>`;
+
+                let sheetHtml = item.sheet_url ? `<div style="margin-bottom:10px;"><a href="${escapeHtml(item.sheet_url)}" target="_blank" class="sheet-link">📄 View Contact Sheet</a></div>` : '';
+                
+                let refsHtml = '';
+                if (item.refs && item.refs.length > 0) {
+                    refsHtml = `<div class="refs-strip">` + item.refs.map(r => `
+                        <div class="ref-item">
+                            <img src="${escapeHtml(r.url)}" class="ref-img" alt="${escapeHtml(r.tag)}">
+                            <div><strong>${escapeHtml(r.tag)}</strong></div>
+                            <div>${escapeHtml(r.handle)}</div>
+                        </div>
+                    `).join('') + `</div>`;
+                }
+
+                let commentsHtml = '';
+                if (item.review && item.review.comments && item.review.comments.length > 0) {
+                    commentsHtml = '<div style="background:#f9f9f9; padding:10px; margin-bottom:10px; border-radius:4px;"><strong>Comments:</strong><ul style="margin:5px 0; padding-left:20px;">' + 
+                        item.review.comments.map(c => `<li>${escapeHtml(c.text)} <small>(${escapeHtml(c.author)})</small></li>`).join('') + 
+                        '</ul></div>';
+                }
+
+                card.innerHTML = `
+                    <div class="main-img-container">
+                        <img src="${escapeHtml(item.url)}?w=800" class="main-img" alt="${escapeHtml(item.file)}" data-action="modal" data-url="${escapeHtml(item.url)}">
+                    </div>
+                    ${refsHtml}
+                    ${sheetHtml}
+                    <div class="info-row">
+                        ${statusBadge}
+                        <br>
+                        <strong>${escapeHtml(item.file)}</strong>
+                    </div>
+                    ${commentsHtml}
+                    <textarea id="comment-${index}" class="comment-box" rows="2" placeholder="Add a comment..."></textarea>
+                    <div class="controls">
+                        <button class="btn btn-approve" data-action="approve" data-file="${escapeHtml(item.file)}" data-index="${index}">Approve</button>
+                        <button class="btn btn-reject" data-action="reject" data-file="${escapeHtml(item.file)}" data-index="${index}">Needs fix</button>
+                    </div>
+                `;
+                container.appendChild(card);
+                
+                // Restore draft if any
+                const box = document.getElementById(`comment-${index}`);
+                if (drafts[`comment-${index}`]) {
+                    box.value = drafts[`comment-${index}`];
+                }
+
+                // Attach event listeners
+                card.querySelector('.main-img').addEventListener('click', function() {
+                    showModal(this.getAttribute('data-url'));
+                });
+                card.querySelector('.btn-approve').addEventListener('click', function() {
+                    saveReview(this.getAttribute('data-file'), 'approved', this.getAttribute('data-index'));
+                });
+                card.querySelector('.btn-reject').addEventListener('click', function() {
+                    saveReview(this.getAttribute('data-file'), 'redo', this.getAttribute('data-index'));
+                });
+            });
+
+            document.getElementById('counter').innerText = `${reviewedCount} of ${items.length} reviewed`;
+        }
+
+        window.showModal = function(url) {
+            document.getElementById('modal-img').src = url;
+            document.getElementById('modal').style.display = 'flex';
+        };
+
+        window.saveReview = async function(file, status, index) {
+            const commentInput = document.getElementById(`comment-${index}`);
+            const comment = commentInput.value.trim();
+            const item = items.find(i => i.file === file);
+            
+            try {
+                let currentData = item.review || {};
+                currentData.status = status;
+
+                let res = await fetch(`/api/review?batch=${currentBatchId}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        product_id: file,
+                        data: currentData
+                    })
+                });
+                
+                if (!res.ok) throw new Error("Failed to save status");
+                const data = await res.json();
+                if (data.reviews && data.reviews[file]) {
+                    item.review = data.reviews[file];
+                }
+
+                if (comment) {
+                    let res2 = await fetch(`/api/comment/add?batch=${currentBatchId}`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            product_id: file,
+                            text: comment
+                        })
+                    });
+                    if (!res2.ok) throw new Error("Failed to save comment");
+                    const data2 = await res2.json();
+                    if (data2.reviews && data2.reviews[file]) {
+                        item.review = data2.reviews[file];
+                    }
+                }
+
+                renderItems();
+
+            } catch (err) {
+                alert("Error saving review: " + err.message);
+            }
+        };
+
+        document.getElementById('modal').addEventListener('click', function() {
+            this.style.display = 'none';
+        });
+
+        loadBatches();
+    </script>
+</body>
+</html>

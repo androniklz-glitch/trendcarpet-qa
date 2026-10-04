@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://spies-recruitment-opportunity-feed.trycloudflare.com/$1"
+      "destination": "https://martial-resolution-rica-consider.trycloudflare.com/$1"
     }
   ]
 }

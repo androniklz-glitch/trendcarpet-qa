@@ -1,0 +1,3 @@
+# SECURITY 2026-10-04: deploy ONLY vercel.json; every request goes through the whitelisted hub.
+/*
+!vercel.json

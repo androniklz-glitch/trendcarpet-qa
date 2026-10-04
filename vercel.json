@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://relevant-donated-satisfactory-anyway.trycloudflare.com/$1"
+      "destination": "https://spies-recruitment-opportunity-feed.trycloudflare.com/$1"
     }
   ]
 }

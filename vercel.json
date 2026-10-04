@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://mpeg-key-terminology-aside.trycloudflare.com/$1"
+      "destination": "https://genres-pleasant-sally-meals.trycloudflare.com/$1"
     }
   ]
 }

@@ -23,7 +23,7 @@ def save_users(data):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: qa_hub_users.py <add|list|remove|enforce> ...")
+        print("Usage: qa_hub_users.py <add|list|remove|enforce|set-org> ...")
         sys.exit(1)
         
     cmd = sys.argv[1].lower()
@@ -31,11 +31,34 @@ def main():
     
     if cmd == "add":
         if len(sys.argv) < 4:
-            print("Usage: qa_hub_users.py add <name> <role>")
+            print("Usage: qa_hub_users.py add <name> <role> [--org reforma|cama]")
             sys.exit(1)
         name = sys.argv[2]
         role = sys.argv[3]
         
+        org = None
+        args = sys.argv[4:]
+        i = 0
+        while i < len(args):
+            arg = args[i]
+            if arg == "--org" and i + 1 < len(args):
+                org = args[i+1].lower()
+                i += 2
+            elif arg.startswith("--org="):
+                org = arg.split("=", 1)[1].lower()
+                i += 1
+            else:
+                i += 1
+
+        if role != "admin":
+            if not org or org not in ("reforma", "cama"):
+                print("Error: --org (reforma or cama) is required for non-admin roles", file=sys.stderr)
+                sys.exit(1)
+        else:
+            if org and org not in ("reforma", "cama"):
+                print("Error: org must be reforma or cama", file=sys.stderr)
+                sys.exit(1)
+
         token = secrets.token_urlsafe(24)
         token_hash = hashlib.sha256(token.encode('utf-8')).hexdigest()
         
@@ -48,6 +71,8 @@ def main():
             "token_sha256": token_hash,
             "created": datetime.datetime.now().isoformat()
         }
+        if org:
+            new_user["org"] = org
         data.setdefault("users", []).append(new_user)
         save_users(data)
         
@@ -62,9 +87,27 @@ def main():
             
         print(link_path)
         
+    elif cmd == "set-org":
+        if len(sys.argv) < 4:
+            print("Usage: qa_hub_users.py set-org <name> <reforma|cama>", file=sys.stderr)
+            sys.exit(1)
+        name = sys.argv[2]
+        org = sys.argv[3].lower()
+        if org not in ("reforma", "cama"):
+            print("Error: org must be reforma or cama", file=sys.stderr)
+            sys.exit(1)
+        user = next((u for u in data.get("users", []) if u.get("name") == name), None)
+        if not user:
+            print(f"Error: user {name} not found", file=sys.stderr)
+            sys.exit(1)
+        user["org"] = org
+        save_users(data)
+        print(f"Set org for {name} to {org}")
+
     elif cmd == "list":
         for u in data.get("users", []):
-            print(f"{u.get('name')} ({u.get('role')}) - {u.get('created')}")
+            org_str = f", org={u.get('org')}" if u.get('org') else ""
+            print(f"{u.get('name')} ({u.get('role')}{org_str}) - {u.get('created')}")
             
     elif cmd == "remove":
         if len(sys.argv) < 3:

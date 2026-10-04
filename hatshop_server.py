@@ -1056,9 +1056,18 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             return False
         if self.is_admin_request({}):
             return True
+        u = self.current_user()
+        if u is not None:
+            viewer_org = u.get("org")
+            if not viewer_org:
+                return False
+        else:
+            viewer_org = "cama"
+        batch_org = batch.get("org")
+        if not batch_org or batch_org != viewer_org:
+            return False
         if batch.get("published", True):
             return True
-        u = self.current_user()
         if batch.get("audience") == "assistant" and u and u.get("role") == "assistant":
             return True
         return False
@@ -1537,11 +1546,14 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 if existing:
                     batch_id = f"{batch_id}-{len(batches)+1}"
 
+                req_org = body.get("org")
+                batch_org = req_org if req_org in ("reforma", "cama") else "cama"
                 new_batch = {
                     "id": batch_id,
                     "name": name,
                     "path": folder_path,
                     "category": category,
+                    "org": batch_org,
                     "onedrive_url": body.get("onedrive_url", "").strip(),
                     "published": body.get("published", False),
                     "createdAt": datetime.datetime.now().isoformat()
@@ -1901,6 +1913,14 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             if not batch_id:
                 batches = load_batches()
                 batch_id = batches[0]["id"] if batches else "default"
+
+            batch_obj = find_batch_exact(batch_id)
+            if not self.can_see_batch(batch_obj):
+                self.send_response(403)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": "Not authorized"}).encode("utf-8"))
+                return
 
             content_length = int(self.headers.get("Content-Length", 0))
             post_data = self.rfile.read(content_length)

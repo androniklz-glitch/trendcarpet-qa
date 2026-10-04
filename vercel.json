@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://genres-pleasant-sally-meals.trycloudflare.com/$1"
+      "destination": "https://relevant-donated-satisfactory-anyway.trycloudflare.com/$1"
     }
   ]
 }

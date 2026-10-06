@@ -3052,6 +3052,20 @@
         history.pushState({ qaApp: true, view: state.mobileView }, '');
       } catch (e) {}
 
+      // Chrome/Android skips history entries pushed without a user gesture, so the
+      // load-time trap above can be skipped by Back. Re-arm it on every tap while
+      // we sit on the bottom ('base') entry, and ask before leaving as a last net.
+      document.addEventListener('pointerdown', () => {
+        const s = history.state;
+        if (!s || s.view === 'base') {
+          try { history.pushState({ qaApp: true, view: state.mobileView }, ''); } catch (err) {}
+        }
+      }, true);
+      window.addEventListener('beforeunload', (e) => {
+        e.preventDefault();
+        e.returnValue = '';
+      });
+
       window.addEventListener('popstate', (e) => {
         // ALWAYS keep history trap active so pressing back never closes the browser or leaves the app
         try {

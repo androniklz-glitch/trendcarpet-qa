@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://martial-resolution-rica-consider.trycloudflare.com/$1"
+      "destination": "https://ireland-fabric-empire-relations.trycloudflare.com/$1"
     }
   ]
 }

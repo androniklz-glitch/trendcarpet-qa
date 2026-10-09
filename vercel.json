@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://ireland-fabric-empire-relations.trycloudflare.com/$1"
+      "destination": "https://political-wave-springer-laura.trycloudflare.com/$1"
     }
   ]
 }

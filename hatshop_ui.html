@@ -2909,6 +2909,11 @@
             }
           }
         }
+
+        if (paramBatch && !state.batches.some(b => b.id === paramBatch)) {
+          const loadedBatchName = state.batches.find(b => b.id === targetBatch)?.name || state.batches[0]?.name || '';
+          showToast(`Mappen "${paramBatch}" finns inte eller är ett privat utkast. Visar "${loadedBatchName}" i stället.`, 'error');
+        }
         startHubHeartbeat();
       } catch (err) {
         console.error('Error loading batches:', err);

@@ -607,6 +607,38 @@ def process_and_sort_variant_shots(raw_files, batch_id, subdir, folder_name, fol
         final_shots[0]["is_primary"] = True
     return final_shots
 
+def parse_color_folder(color_folder):
+    parts = color_folder.split("-")
+    color_name = parts[1].strip() if len(parts) > 1 else ""
+    brand_name = parts[2].strip().capitalize() if len(parts) > 2 else "Gardin"
+
+    color_display = color_name.capitalize()
+    c_low = color_name.lower()
+    if c_low == "glu":
+        color_display = "Gul"
+    elif c_low == "vit":
+        color_display = "Vit"
+    elif c_low == "cream":
+        color_display = "Cream"
+    elif c_low == "dark brown":
+        color_display = "Mörkbrun"
+    elif c_low == "green":
+        color_display = "Grön"
+    elif c_low == "lila":
+        color_display = "Lila"
+    elif "ljusbl" in c_low:
+        color_display = "Ljusblå"
+    elif c_low == "beige":
+        color_display = "Beige"
+    elif "bl" in c_low and len(c_low) <= 4:
+        color_display = "Blå"
+    elif "terrakotta" in c_low:
+        color_display = "Terrakotta-rosa"
+    elif "turkos" in c_low:
+        color_display = "Turkos"
+
+    return color_display, brand_name
+
 def scan_batch_products(batch):
     base_dir = batch.get("path", "")
     batch_id = batch.get("id", "")
@@ -706,60 +738,104 @@ def scan_batch_products(batch):
             if not os.path.isdir(subdir_path):
                 continue
             
+            variant_segment = f"{prefix}/{subdir}" if prefix else subdir
+
             for folder_name in sorted(os.listdir(subdir_path)):
                 folder_path = os.path.join(subdir_path, folder_name)
                 if not os.path.isdir(folder_path):
                     continue
 
-                # Clean variant suffixes from folder name if present
-                clean_name = re.sub(r'-(?:1500px(?:\s*iphone)?|original|web|print)$', '', folder_name, flags=re.IGNORECASE).strip()
-                if clean_name.lower() == 'frome':
-                    clean_name = 'Frome-red'
-
-                parts = clean_name.split("-")
-                brand = "Brand"
-                model_name = clean_name
-                color_name = ""
-
-                if len(parts) >= 4 and parts[0].strip().lower() in ["keps", "matta", "ullmatta", "viskosmatta", "wiltonmatta", "inredning"]:
-                    brand = parts[0].strip()
-                    model_name = parts[1].strip()
-                    color_name = "-".join(parts[2:]).strip()
-                elif len(parts) >= 3:
-                    brand = parts[0].strip()
-                    model_name = parts[1].strip()
-                    color_name = "-".join(parts[2:]).strip()
-                elif len(parts) == 2:
-                    model_name = parts[0].strip()
-                    color_name = parts[1].strip()
-
-                prod_key = clean_name
-                if prod_key not in products_map:
-                    products_map[prod_key] = {
-                        "id": prod_key,
-                        "brand": brand,
-                        "model": model_name,
-                        "color": color_name,
-                        "folder_name": folder_name,
-                        "has_new_version": False,
-                        "version_tag": "",
-                        "latest_mtime": 0,
-                        "variants": {}
-                    }
-
                 raw_files = [f for f in os.listdir(folder_path) if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp"))]
-                shot_list = process_and_sort_variant_shots(raw_files, batch_id, f"{prefix}/{subdir}" if prefix else subdir, folder_name, folder_path)
 
-                products_map[prod_key]["variants"][subdir] = shot_list
-                if any(s.get("is_new_version") for s in shot_list):
-                    products_map[prod_key]["has_new_version"] = True
-                    tag = next((s["version_tag"] for s in shot_list if s.get("is_new_version")), "")
-                    if tag:
-                        products_map[prod_key]["version_tag"] = tag
-                
-                mtimes = [s["mtime"] for s in shot_list if s.get("mtime")]
-                if mtimes:
-                    products_map[prod_key]["latest_mtime"] = max(products_map[prod_key]["latest_mtime"], max(mtimes))
+                if raw_files:
+                    # Clean variant suffixes from folder name if present
+                    clean_name = re.sub(r'-(?:1500px(?:\s*iphone)?|original|web|print)$', '', folder_name, flags=re.IGNORECASE).strip()
+                    if clean_name.lower() == 'frome':
+                        clean_name = 'Frome-red'
+
+                    parts = clean_name.split("-")
+                    brand = "Brand"
+                    model_name = clean_name
+                    color_name = ""
+
+                    if len(parts) >= 4 and parts[0].strip().lower() in ["keps", "matta", "ullmatta", "viskosmatta", "wiltonmatta", "inredning"]:
+                        brand = parts[0].strip()
+                        model_name = parts[1].strip()
+                        color_name = "-".join(parts[2:]).strip()
+                    elif len(parts) >= 3:
+                        brand = parts[0].strip()
+                        model_name = parts[1].strip()
+                        color_name = "-".join(parts[2:]).strip()
+                    elif len(parts) == 2:
+                        model_name = parts[0].strip()
+                        color_name = parts[1].strip()
+
+                    prod_key = clean_name
+                    if prod_key not in products_map:
+                        products_map[prod_key] = {
+                            "id": prod_key,
+                            "brand": brand,
+                            "model": model_name,
+                            "color": color_name,
+                            "folder_name": folder_name,
+                            "has_new_version": False,
+                            "version_tag": "",
+                            "latest_mtime": 0,
+                            "variants": {}
+                        }
+
+                    shot_list = process_and_sort_variant_shots(raw_files, batch_id, variant_segment, folder_name, folder_path)
+
+                    products_map[prod_key]["variants"][subdir] = shot_list
+                    if any(s.get("is_new_version") for s in shot_list):
+                        products_map[prod_key]["has_new_version"] = True
+                        tag = next((s["version_tag"] for s in shot_list if s.get("is_new_version")), "")
+                        if tag:
+                            products_map[prod_key]["version_tag"] = tag
+                    
+                    mtimes = [s["mtime"] for s in shot_list if s.get("mtime")]
+                    if mtimes:
+                        products_map[prod_key]["latest_mtime"] = max(products_map[prod_key]["latest_mtime"], max(mtimes))
+                else:
+                    # Model folder containing color subfolders
+                    sub_dirs = [d for d in sorted(os.listdir(folder_path)) if os.path.isdir(os.path.join(folder_path, d))]
+                    color_subfolders = []
+                    for sd in sub_dirs:
+                        sd_path = os.path.join(folder_path, sd)
+                        sd_raw = [f for f in os.listdir(sd_path) if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp"))]
+                        if sd_raw:
+                            color_subfolders.append((sd, sd_path, sd_raw))
+
+                    if color_subfolders:
+                        for color_folder, color_path, raw in color_subfolders:
+                            prod_id = f"{folder_name}-{color_folder}"
+                            color, brand = parse_color_folder(color_folder)
+                            if prod_id not in products_map:
+                                products_map[prod_id] = {
+                                    "id": prod_id,
+                                    "brand": brand,
+                                    "model": folder_name,
+                                    "color": color,
+                                    "folder_name": f"{folder_name}/{color_folder}",
+                                    "has_new_version": False,
+                                    "version_tag": "",
+                                    "latest_mtime": 0,
+                                    "variants": {}
+                                }
+
+                            shot_segment = f"{variant_segment}/{folder_name}"
+                            shot_list = process_and_sort_variant_shots(raw, batch_id, shot_segment, color_folder, color_path)
+
+                            products_map[prod_id]["variants"][subdir] = shot_list
+                            if any(s.get("is_new_version") for s in shot_list):
+                                products_map[prod_id]["has_new_version"] = True
+                                tag = next((s["version_tag"] for s in shot_list if s.get("is_new_version")), "")
+                                if tag:
+                                    products_map[prod_id]["version_tag"] = tag
+
+                            mtimes = [s["mtime"] for s in shot_list if s.get("mtime")]
+                            if mtimes:
+                                products_map[prod_id]["latest_mtime"] = max(products_map[prod_id]["latest_mtime"], max(mtimes))
     else:
         # Check if root entries have nested model/color directories (e.g. Lumira/Lumia-Cream-...)
         # instead of containing image files directly
@@ -785,35 +861,7 @@ def scan_batch_products(batch):
                         continue
 
                     # Parse color and brand nicely
-                    parts = color_folder.split("-")
-                    color_name = parts[1].strip() if len(parts) > 1 else ""
-                    brand_name = parts[2].strip().capitalize() if len(parts) > 2 else "Gardin"
-
-                    # Normalize color display
-                    color_display = color_name.capitalize()
-                    c_low = color_name.lower()
-                    if c_low == "glu":
-                        color_display = "Gul"
-                    elif c_low == "vit":
-                        color_display = "Vit"
-                    elif c_low == "cream":
-                        color_display = "Cream"
-                    elif c_low == "dark brown":
-                        color_display = "Mörkbrun"
-                    elif c_low == "green":
-                        color_display = "Grön"
-                    elif c_low == "lila":
-                        color_display = "Lila"
-                    elif "ljusbl" in c_low:
-                        color_display = "Ljusblå"
-                    elif c_low == "beige":
-                        color_display = "Beige"
-                    elif "bl" in c_low and len(c_low) <= 4:
-                        color_display = "Blå"
-                    elif "terrakotta" in c_low:
-                        color_display = "Terrakotta-rosa"
-                    elif "turkos" in c_low:
-                        color_display = "Turkos"
+                    color_display, brand_name = parse_color_folder(color_folder)
 
                     # Use subdir=model_name so rel_path becomes model_name/color_folder/file.jpg
                     shot_list = process_and_sort_variant_shots(raw_files, batch_id, model_name, color_folder, folder_path)

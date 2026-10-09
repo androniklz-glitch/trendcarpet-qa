@@ -101,3 +101,52 @@ def test_find_batch_by_path():
     assert find_batch_by_path([], r"C:\Pictures\26-10-08-HS-Hatshop-rest") is None
     assert find_batch_by_path(batches, "") is None
     assert find_batch_by_path(batches, None) is None
+
+
+def test_variant_model_color_subfolders(tmp_path):
+    base_dir = tmp_path / "batch_nested_variant"
+    base_dir.mkdir()
+
+    for v in ["1500px", "Original"]:
+        img_dir = base_dir / v / "Lumira" / "Lumia-röd-x"
+        img_dir.mkdir(parents=True)
+        (img_dir / "a.jpg").write_bytes(b"dummy_image_data")
+
+    batch = {
+        "id": "test-nested-variant-batch",
+        "path": str(base_dir)
+    }
+
+    products = scan_batch_products(batch)
+    assert len(products) == 1
+    prod = products[0]
+    assert prod["id"] == "Lumira-Lumia-röd-x"
+    assert sorted(prod["variants"].keys()) == ["1500px", "Original"]
+    assert prod["variants"]["1500px"][0]["rel_path"] == "1500px/Lumira/Lumia-röd-x/a.jpg"
+    assert prod["variants"]["Original"][0]["rel_path"] == "Original/Lumira/Lumia-röd-x/a.jpg"
+
+
+def test_variant_model_color_wrapped_tree(tmp_path):
+    base_dir = tmp_path / "batch_wrapped_nested_variant"
+    base_dir.mkdir()
+
+    for v in ["1500px", "Original"]:
+        img_dir = base_dir / "levererat" / v / "Lumira" / "Lumia-röd-x"
+        img_dir.mkdir(parents=True)
+        (img_dir / "a.jpg").write_bytes(b"dummy_image_data")
+
+    batch = {
+        "id": "test-wrapped-nested-variant-batch",
+        "path": str(base_dir)
+    }
+
+    products = scan_batch_products(batch)
+    assert len(products) == 1
+    prod = products[0]
+    assert prod["id"] == "Lumira-Lumia-röd-x"
+    assert sorted(prod["variants"].keys()) == ["1500px", "Original"]
+    for s in prod["variants"]["1500px"]:
+        assert s["rel_path"].startswith("levererat/1500px/Lumira/")
+    assert prod["variants"]["1500px"][0]["rel_path"] == "levererat/1500px/Lumira/Lumia-röd-x/a.jpg"
+    assert prod["variants"]["Original"][0]["rel_path"] == "levererat/Original/Lumira/Lumia-röd-x/a.jpg"
+

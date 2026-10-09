@@ -2009,7 +2009,19 @@
     }
 
     function renderMobileProduct() {
-      if (state.products.length === 0) return;
+      if (state.products.length === 0) {
+        const titleEl = document.getElementById('mModelTitle');
+        if (titleEl) titleEl.innerHTML = '';
+        const subtitleEl = document.getElementById('mModelSubtitle');
+        if (subtitleEl) subtitleEl.innerText = '';
+        const counterEl = document.getElementById('mCounterPill');
+        if (counterEl) counterEl.innerText = '0 / 0';
+        const carousel = document.getElementById('mobileCarousel');
+        if (carousel) carousel.innerHTML = '<div style="padding: 40px 16px; text-align: center; color: var(--text-dim); font-size: 15px; width: 100%;">Inga produkter hittades i denna mapp.</div>';
+        const dots = document.getElementById('carouselDots');
+        if (dots) dots.innerHTML = '';
+        return;
+      }
       const prod = state.products[state.currentProductIndex];
       const review = state.reviews[prod.id] || {};
 
@@ -2392,6 +2404,11 @@
       if (!container) return;
       container.innerHTML = '';
       updateGridLabels();
+
+      if (state.products.length === 0) {
+        container.innerHTML = '<div style="grid-column: 1 / -1; padding: 40px 16px; text-align: center; color: var(--text-dim); font-size: 15px;">Inga produkter hittades i denna mapp.</div>';
+        return;
+      }
 
       state.products.forEach((prod, idx) => {
         const shots = prod.variants['1500px iphone'] || Object.values(prod.variants)[0] || [];

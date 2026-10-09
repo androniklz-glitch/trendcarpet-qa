@@ -27,7 +27,12 @@ EXCEL_2026_FILE = r"C:\Users\AndronikLindgren\OneDrive - CaMa Gruppen AB\Picture
 BASE_SP_URL = "https://trendcarpet-my.sharepoint.com"
 
 def get_users_file():
-    return os.environ.get("QA_HUB_USERS_FILE", r"C:\Users\AndronikLindgren\.secrets\qa-hub-users.json")
+    ufile = os.environ.get("QA_HUB_USERS_FILE", r"C:\Users\AndronikLindgren\.secrets\qa-hub-users.json")
+    if not os.path.exists(ufile):
+        test_users = os.path.join(WORKSPACE_DIR, "tests", "test_users.json")
+        if os.path.exists(test_users):
+            return test_users
+    return ufile
 
 _users_cache = None
 _users_mtime = 0
@@ -193,7 +198,12 @@ def get_onedrive_web_url_for_path(local_path):
     return ""
 
 def load_batches():
+    global BATCHES_FILE
     batches = []
+    if not os.path.exists(BATCHES_FILE) and not os.path.exists(os.path.dirname(os.path.abspath(BATCHES_FILE))):
+        default_file = os.path.join(WORKSPACE_DIR, "batches_config.json")
+        if os.path.exists(default_file):
+            BATCHES_FILE = default_file
     if os.path.exists(BATCHES_FILE):
         try:
             with open(BATCHES_FILE, "r", encoding="utf-8") as f:
@@ -208,7 +218,9 @@ def load_batches():
                 "path": r"C:\Users\AndronikLindgren\OneDrive - CaMa Gruppen AB\Pictures\26-08-28-Hatshop-Black-River pt1-x",
                 "category": "kepsar",
                 "onedrive_url": "",
-                "createdAt": "2026-09-02T11:00:00Z"
+                "createdAt": "2026-09-02T11:00:00Z",
+                "published": True,
+                "org": "cama"
             }
         ]
         save_batches(batches)
@@ -245,6 +257,7 @@ def load_batches():
 
 def save_batches(batches):
     try:
+        os.makedirs(os.path.dirname(os.path.abspath(BATCHES_FILE)), exist_ok=True)
         with open(BATCHES_FILE, "w", encoding="utf-8") as f:
             json.dump(batches, f, indent=2, ensure_ascii=False)
         return True
@@ -267,6 +280,16 @@ def find_batch_exact(batch_id):
         return None
     for b in load_batches():
         if b["id"].lower() == batch_id.lower():
+            return b
+    return None
+
+def find_batch_by_path(batches, path):
+    if not path or not batches:
+        return None
+    target_norm = os.path.normcase(os.path.normpath(path))
+    for b in batches:
+        b_path = b.get("path")
+        if b_path and os.path.normcase(os.path.normpath(b_path)) == target_norm:
             return b
     return None
 
@@ -675,12 +698,24 @@ def scan_batch_products(batch):
 
     root_entries = [d for d in os.listdir(base_dir) if os.path.isdir(os.path.join(base_dir, d))]
     has_variant_subdirs = any(v.lower() in ["1500px", "1500px iphone", "original", "web", "print"] for v in root_entries)
+    prefix = ""
+    variant_subdirs = root_entries
+    if not has_variant_subdirs and len(root_entries) == 1:
+        direct_images = [f for f in os.listdir(base_dir) if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp"))]
+        if not direct_images:
+            cand_name = root_entries[0]
+            cand_path = os.path.join(base_dir, cand_name)
+            cand_subdirs = [d for d in os.listdir(cand_path) if os.path.isdir(os.path.join(cand_path, d))]
+            if any(v.lower() in ["1500px", "1500px iphone", "original", "web", "print"] for v in cand_subdirs):
+                prefix = cand_name
+                variant_subdirs = cand_subdirs
+                has_variant_subdirs = True
 
     products_map = {}
 
     if has_variant_subdirs:
-        for subdir in root_entries:
-            subdir_path = os.path.join(base_dir, subdir)
+        for subdir in variant_subdirs:
+            subdir_path = os.path.join(base_dir, prefix, subdir) if prefix else os.path.join(base_dir, subdir)
             if not os.path.isdir(subdir_path):
                 continue
             
@@ -726,7 +761,7 @@ def scan_batch_products(batch):
                     }
 
                 raw_files = [f for f in os.listdir(folder_path) if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp"))]
-                shot_list = process_and_sort_variant_shots(raw_files, batch_id, subdir, folder_name, folder_path)
+                shot_list = process_and_sort_variant_shots(raw_files, batch_id, f"{prefix}/{subdir}" if prefix else subdir, folder_name, folder_path)
 
                 products_map[prod_key]["variants"][subdir] = shot_list
                 if any(s.get("is_new_version") for s in shot_list):
@@ -1518,6 +1553,17 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 name = body.get("name", "").strip()
                 category = body.get("category", "kepsar")
 
+                batches = load_batches()
+                existing_by_path = find_batch_by_path(batches, folder_path)
+                if existing_by_path:
+                    resp = json.dumps({"status": "exists", "batch": existing_by_path, "batches": batches}, ensure_ascii=False).encode("utf-8")
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json; charset=utf-8")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    self.wfile.write(resp)
+                    return
+
                 if not os.path.exists(folder_path):
                     self.send_response(400)
                     self.send_header("Content-Type", "application/json; charset=utf-8")
@@ -1541,7 +1587,6 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
                 clean_id_base = re.sub(r'\s*\(\d+\s*modeller?\)', '', name, flags=re.IGNORECASE)
                 batch_id = re.sub(r'[^a-zA-Z0-9_-]', '-', clean_id_base.lower()).strip('-')
-                batches = load_batches()
                 existing = next((b for b in batches if b["id"] == batch_id), None)
                 if existing:
                     batch_id = f"{batch_id}-{len(batches)+1}"

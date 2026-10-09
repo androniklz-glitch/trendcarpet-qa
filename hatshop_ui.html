@@ -3337,6 +3337,14 @@
           await initBatches();
           await loadBatch(data.batch.id);
           showToast(`Mapp "${data.batch.name}" tillagd ${isDraft ? '(som privat utkast)' : '(publicerad)'}!`);
+        } else if (data.status === 'exists') {
+          closeAddBatchModal();
+          document.getElementById('newBatchPath').value = '';
+          document.getElementById('newBatchName').value = '';
+          if (document.getElementById('newBatchOneDrive')) document.getElementById('newBatchOneDrive').value = '';
+          await initBatches();
+          await loadBatch(data.batch.id);
+          showToast(`Mappen finns redan: ${data.batch.name}`);
         } else {
           alert('Fel: ' + (data.message || 'Kunde inte lägga till mappen.'));
         }
@@ -4243,7 +4251,17 @@
 
     function renderProductView() {
       const prod = state.products[state.currentProductIndex];
-      if (!prod) return;
+      if (!prod) {
+        const titleEl = document.getElementById('currentProductTitle');
+        if (titleEl) titleEl.innerHTML = '';
+        const subtitleEl = document.getElementById('currentProductSubtitle');
+        if (subtitleEl) subtitleEl.innerText = '';
+        const grid = document.getElementById('shotsGrid');
+        if (grid) {
+          grid.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--text-dim); font-size: 16px;">Inga produkter hittades i denna mapp.</div>';
+        }
+        return;
+      }
 
       const vHeadTag = prod.has_new_version ? `<span class="version-pill" style="margin-left: 8px;">🔄 Ny version (${prod.version_tag || '-n'})</span>` : '';
       const shareBtn = `<button class="btn btn-sm btn-outline" onclick="copyProductShareLink()" title="Kopiera permanent direktlänk till ${prod.model} för Teams" style="margin-left: 10px; font-size: 11px; padding: 2px 8px; vertical-align: middle; display: inline-flex; align-items: center; gap: 4px;"><span>🔗</span> Dela produkt</button>`;

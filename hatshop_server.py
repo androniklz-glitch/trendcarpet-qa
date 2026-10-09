@@ -27,12 +27,7 @@ EXCEL_2026_FILE = r"C:\Users\AndronikLindgren\OneDrive - CaMa Gruppen AB\Picture
 BASE_SP_URL = "https://trendcarpet-my.sharepoint.com"
 
 def get_users_file():
-    ufile = os.environ.get("QA_HUB_USERS_FILE", r"C:\Users\AndronikLindgren\.secrets\qa-hub-users.json")
-    if not os.path.exists(ufile):
-        test_users = os.path.join(WORKSPACE_DIR, "tests", "test_users.json")
-        if os.path.exists(test_users):
-            return test_users
-    return ufile
+    return os.environ.get("QA_HUB_USERS_FILE", r"C:\Users\AndronikLindgren\.secrets\qa-hub-users.json")
 
 _users_cache = None
 _users_mtime = 0
@@ -198,12 +193,7 @@ def get_onedrive_web_url_for_path(local_path):
     return ""
 
 def load_batches():
-    global BATCHES_FILE
     batches = []
-    if not os.path.exists(BATCHES_FILE) and not os.path.exists(os.path.dirname(os.path.abspath(BATCHES_FILE))):
-        default_file = os.path.join(WORKSPACE_DIR, "batches_config.json")
-        if os.path.exists(default_file):
-            BATCHES_FILE = default_file
     if os.path.exists(BATCHES_FILE):
         try:
             with open(BATCHES_FILE, "r", encoding="utf-8") as f:
@@ -218,9 +208,7 @@ def load_batches():
                 "path": r"C:\Users\AndronikLindgren\OneDrive - CaMa Gruppen AB\Pictures\26-08-28-Hatshop-Black-River pt1-x",
                 "category": "kepsar",
                 "onedrive_url": "",
-                "createdAt": "2026-09-02T11:00:00Z",
-                "published": True,
-                "org": "cama"
+                "createdAt": "2026-09-02T11:00:00Z"
             }
         ]
         save_batches(batches)
@@ -257,7 +245,6 @@ def load_batches():
 
 def save_batches(batches):
     try:
-        os.makedirs(os.path.dirname(os.path.abspath(BATCHES_FILE)), exist_ok=True)
         with open(BATCHES_FILE, "w", encoding="utf-8") as f:
             json.dump(batches, f, indent=2, ensure_ascii=False)
         return True

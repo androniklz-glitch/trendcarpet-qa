@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://political-wave-springer-laura.trycloudflare.com/$1"
+      "destination": "https://threshold-journalist-interaction-atmospheric.trycloudflare.com/$1"
     }
   ]
 }

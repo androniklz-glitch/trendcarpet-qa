@@ -142,10 +142,12 @@ def update_vercel_config(new_tunnel_url):
         def push_git():
             try:
                 flags = get_win32_subprocess_flags()
-                subprocess.run(["git", "add", "vercel.json"], cwd=WORKSPACE_DIR, capture_output=True, **flags)
-                subprocess.run(["git", "commit", "-m", f"Update tunnel destination: {new_tunnel_url}"], cwd=WORKSPACE_DIR, capture_output=True, **flags)
-                subprocess.run(["git", "pull", "--rebase", "origin", "main"], cwd=WORKSPACE_DIR, capture_output=True, **flags)
-                res = subprocess.run(["git", "push", "origin", "main"], cwd=WORKSPACE_DIR, capture_output=True, text=True, **flags)
+                git_env = os.environ.copy()
+                git_env.pop("GITHUB_TOKEN", None)
+                subprocess.run(["git", "add", "vercel.json"], cwd=WORKSPACE_DIR, capture_output=True, env=git_env, **flags)
+                subprocess.run(["git", "commit", "-m", f"Update tunnel destination: {new_tunnel_url}"], cwd=WORKSPACE_DIR, capture_output=True, env=git_env, **flags)
+                subprocess.run(["git", "pull", "--rebase", "origin", "main"], cwd=WORKSPACE_DIR, capture_output=True, env=git_env, **flags)
+                res = subprocess.run(["git", "push", "origin", "main"], cwd=WORKSPACE_DIR, capture_output=True, text=True, env=git_env, **flags)
                 if res.returncode == 0:
                     print("[✓] Vercel-bryggan synkad via GitHub (aktiv om ~10 sekunder).")
                 else:

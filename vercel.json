@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://crm-llc-porcelain-hour.trycloudflare.com/$1"
+      "destination": "https://reward-tuition-coaching-clark.trycloudflare.com/$1"
     }
   ]
 }

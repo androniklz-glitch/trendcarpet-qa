@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://themes-gibson-county-halifax.trycloudflare.com/$1"
+      "destination": "https://fame-state-electron-ton.trycloudflare.com/$1"
     }
   ]
 }

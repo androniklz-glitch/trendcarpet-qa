@@ -477,11 +477,26 @@ def process_upload_order_shots(upload_order, raw_files, batch_id, subdir, folder
 
     return final_shots
 
+import ctypes
+from ctypes import wintypes
+from functools import cmp_to_key
+
+try:
+    _strcmpi = ctypes.windll.shlwapi.StrCmpLogicalW
+    _strcmpi.argtypes = [wintypes.LPCWSTR, wintypes.LPCWSTR]
+    _strcmpi.restype = ctypes.c_int
+    natural_folder_sort_key = cmp_to_key(_strcmpi)
+except Exception:
+    def natural_folder_sort_key(s):
+        base, ext = os.path.splitext(s)
+        tokens = re.split(r'(\d+)', base)
+        return [(int(t), 0) if t.isdigit() else (0, t.lower()) for t in tokens] + [(0, ext.lower())]
+
 def process_and_sort_variant_shots(raw_files, batch_id, subdir, folder_name, folder_path):
     """
     Processes all raw image files for a product variant.
+    Preserves the exact folder sequence as organized on disk (natural Windows Explorer order).
     If upload_order.txt exists, respects the explicit studio sequence and types.
-    Otherwise groups versioned replacement shots (e.g. 01.jpg and 01-n.jpg) by regex.
     """
     upload_order_path = os.path.join(folder_path, "upload_order.txt")
     if os.path.exists(upload_order_path):
@@ -489,111 +504,62 @@ def process_and_sort_variant_shots(raw_files, batch_id, subdir, folder_name, fol
         if parsed_order:
             return process_upload_order_shots(parsed_order, raw_files, batch_id, subdir, folder_name, folder_path)
 
-    parsed_files = [parse_file_details(f, folder_path) for f in raw_files]
-    
-    version_groups = {}
-    independent_shots = []
-
-    for p in parsed_files:
-        if p["is_version_suffix"] or not p["raw_suffix"]:
-            version_groups.setdefault(p["base_shot"], []).append(p)
-        else:
-            independent_shots.append(p)
+    # Sort raw_files in exact natural folder order (Windows Explorer order)
+    sorted_files = sorted(raw_files, key=natural_folder_sort_key)
 
     final_shots = []
-
-    for base_shot in sorted(version_groups.keys()):
-        group = version_groups[base_shot]
-        if len(group) == 1:
-            item = group[0]
-            rel_path = f"{subdir}/{folder_name}/{item['filename']}" if subdir else f"{folder_name}/{item['filename']}"
-            has_suffix = bool(item["raw_suffix"])
-            label = f"{base_shot} ({item['clean_suffix']})" if has_suffix else f"{base_shot}"
-            raw_url = f"/image/{urllib.parse.quote(batch_id)}/{urllib.parse.quote(rel_path)}?v={int(item['mtime'])}"
-            
-            final_shots.append({
-                "filename": item["filename"],
-                "shot": base_shot,
-                "base_shot": base_shot,
-                "label": label,
-                "is_primary": True,
-                "is_new_version": item["is_version_suffix"],
-                "version_tag": f"-{item['raw_suffix']}" if item["raw_suffix"] else "",
-                "mtime": item["mtime"],
-                "url": raw_url,
-                "thumb_url": f"{raw_url}&thumb=160",
-                "rel_path": rel_path,
-                "size_bytes": item["size_bytes"]
-            })
-        else:
-            group.sort(key=lambda x: (1 if x["is_version_suffix"] else 0, x["mtime"]), reverse=True)
-            primary = group[0]
-            rel_path_prim = f"{subdir}/{folder_name}/{primary['filename']}" if subdir else f"{folder_name}/{primary['filename']}"
-            version_str = f"-{primary['raw_suffix']}" if primary['raw_suffix'] else "ny"
-            label_prim = f"{base_shot} (Ny {version_str})" if primary['raw_suffix'] else f"{base_shot} (Ny)"
-            raw_url_prim = f"/image/{urllib.parse.quote(batch_id)}/{urllib.parse.quote(rel_path_prim)}?v={int(primary['mtime'])}"
-
-            final_shots.append({
-                "filename": primary["filename"],
-                "shot": base_shot,
-                "base_shot": base_shot,
-                "label": label_prim,
-                "is_primary": True,
-                "is_new_version": True,
-                "version_tag": version_str,
-                "has_previous_version": True,
-                "mtime": primary["mtime"],
-                "url": raw_url_prim,
-                "thumb_url": f"{raw_url_prim}&thumb=160",
-                "rel_path": rel_path_prim,
-                "size_bytes": primary["size_bytes"]
-            })
-
-            for idx, older in enumerate(group[1:], start=1):
-                rel_path_old = f"{subdir}/{folder_name}/{older['filename']}" if subdir else f"{folder_name}/{older['filename']}"
-                old_suffix = f"-{older['raw_suffix']}" if older['raw_suffix'] else "orig"
-                raw_url_old = f"/image/{urllib.parse.quote(batch_id)}/{urllib.parse.quote(rel_path_old)}?v={int(older['mtime'])}"
-                final_shots.append({
-                    "filename": older["filename"],
-                    "shot": f"{base_shot}_old{idx}",
-                    "base_shot": base_shot,
-                    "label": f"{base_shot} (Tidigare {old_suffix})",
-                    "is_primary": False,
-                    "is_new_version": False,
-                    "version_tag": "tidigare",
-                    "mtime": older["mtime"],
-                    "url": raw_url_old,
-                    "thumb_url": f"{raw_url_old}&thumb=160",
-                    "rel_path": rel_path_old,
-                    "size_bytes": older["size_bytes"]
-                })
-
-    interior_idx = 1
-    for item in independent_shots:
-        rel_path = f"{subdir}/{folder_name}/{item['filename']}" if subdir else f"{folder_name}/{item['filename']}"
-        clean_name = item["clean_suffix"]
-        clean_name = re.sub(r'interioi?r', 'Miljö', clean_name, flags=re.IGNORECASE)
-        
-        is_int = item.get("is_interior", False)
-        if is_int:
-            label = f"Miljö {interior_idx}"
-            shot_code = f"M{interior_idx:02d}"
-            interior_idx += 1
-            is_prim = False
-        else:
-            label = f"{item['base_shot']} ({clean_name})"
-            shot_code = f"{item['base_shot']}_{item['raw_suffix']}"
-            is_prim = True
-
+    for idx, filename in enumerate(sorted_files):
+        item = parse_file_details(filename, folder_path)
+        rel_path = f"{subdir}/{folder_name}/{filename}" if subdir else f"{folder_name}/{filename}"
         raw_url = f"/image/{urllib.parse.quote(batch_id)}/{urllib.parse.quote(rel_path)}?v={int(item['mtime'])}"
+        
+        base_shot = item["base_shot"]
+        raw_suffix = item["raw_suffix"]
+        is_int = item.get("is_interior", False)
+        is_version = item.get("is_version_suffix", False)
+
+        if is_int:
+            sub = re.sub(r'interioi?r.*$', '', raw_suffix, flags=re.IGNORECASE).strip('-_ ')
+            if sub and base_shot != "99":
+                label = f"{base_shot}-{sub} (Miljö)"
+                shot_code = f"{base_shot}_{sub}_miljo"
+            elif base_shot != "99":
+                label = f"{base_shot} (Miljö)"
+                shot_code = f"{base_shot}_miljo"
+            else:
+                label = f"Miljö"
+                shot_code = f"miljo_{idx+1}"
+            is_prim = True
+            is_new = False
+            v_tag = ""
+        elif is_version:
+            label = f"{base_shot} (Ny -{raw_suffix})"
+            shot_code = f"{base_shot}_{raw_suffix}"
+            is_prim = True
+            is_new = True
+            v_tag = f"-{raw_suffix}"
+        elif raw_suffix:
+            label = f"{base_shot} ({item['clean_suffix']})"
+            shot_code = f"{base_shot}_{raw_suffix}"
+            is_prim = True
+            is_new = False
+            v_tag = ""
+        else:
+            label = f"{base_shot}"
+            shot_code = base_shot
+            is_prim = True
+            is_new = False
+            v_tag = ""
+
         final_shots.append({
-            "filename": item["filename"],
+            "filename": filename,
             "shot": shot_code,
-            "base_shot": shot_code if is_int else item["base_shot"],
+            "base_shot": base_shot,
             "label": label,
             "is_primary": is_prim,
-            "is_new_version": False,
-            "version_tag": "",
+            "is_new_version": is_new,
+            "version_tag": v_tag,
+            "has_previous_version": False,
             "mtime": item["mtime"],
             "url": raw_url,
             "thumb_url": f"{raw_url}&thumb=160",
@@ -601,8 +567,6 @@ def process_and_sort_variant_shots(raw_files, batch_id, subdir, folder_name, fol
             "size_bytes": item["size_bytes"]
         })
 
-    # Sort: base shot asc, studio planvy before miljö/sub-shots, is_primary desc
-    final_shots.sort(key=lambda s: (s["base_shot"], 0 if not s["label"].endswith(")") else 1, 0 if s["is_primary"] else 1, s["filename"]))
     if final_shots and not any(s.get("is_primary") for s in final_shots):
         final_shots[0]["is_primary"] = True
     return final_shots

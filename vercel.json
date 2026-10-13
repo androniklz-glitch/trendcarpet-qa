@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://fame-state-electron-ton.trycloudflare.com/$1"
+      "destination": "https://parking-potter-compromise-controls.trycloudflare.com/$1"
     }
   ]
 }

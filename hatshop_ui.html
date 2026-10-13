@@ -913,6 +913,7 @@
       font-weight: 600;
       color: rgba(255, 255, 255, 0.9);
       white-space: nowrap;
+      flex-shrink: 0;
     }
     .shot-filename {
       color: var(--text-dim);
@@ -921,6 +922,8 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      min-width: 0;
+      flex: 1 1 auto;
     }
     .btn-remove-image {
       font-size: 11px;
@@ -940,6 +943,17 @@
       background: rgba(239, 68, 68, 0.25);
       border-color: rgba(248, 113, 113, 0.6);
       color: #fca5a5;
+    }
+    .btn-remove-overlay {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 25;
+      background: rgba(239, 68, 68, 0.35);
+      backdrop-filter: blur(4px);
+    }
+    .btn-remove-overlay:hover {
+      background: rgba(239, 68, 68, 0.55);
     }
     .shot-box-image-wrap {
       aspect-ratio: 1 / 1;
@@ -1624,6 +1638,7 @@
       display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700;
       background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4);
       color: #38bdf8; border-radius: 12px; padding: 2px 7px;
+      flex-shrink: 0; white-space: nowrap;
     }
 
     /* Comment Shot Tagging Pills & Badges */
@@ -2396,9 +2411,13 @@
 
       <!-- Right Column: Inspector, Decision & Team Feedback Panel -->
       <div class="lightbox-side-panel">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px;">
-          <span style="font-weight: 700; font-size: 15px; color: #fff;">🔍 Snabbgranskning</span>
-          <button class="btn btn-sm" onclick="closeLightbox()" title="Stäng (ESC)" style="padding: 4px 10px;">✕ Stäng</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px; gap: 8px;">
+          <span style="font-weight: 700; font-size: 15px; color: #fff; white-space: nowrap;">🔍 Snabbgranskning</span>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <button class="btn-remove-image" id="lbBtnRemoveImage" onclick="removeLightboxCurrentImage(event)" title="Flytta ut bild (alla storlekar) ur mappen" style="display: none; padding: 4px 10px;">🗑 Flytta ut</button>
+            <button class="btn btn-sm btn-outline" id="lbBtnUndo" onclick="undoRemoveImage()" style="font-size: 11px; padding: 4px 10px; color: #fca5a5; border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.15); display: none; align-items: center; gap: 4px;" title="Återställ senast borttagna bild">↩ Ångra (0)</button>
+            <button class="btn btn-sm" onclick="closeLightbox()" title="Stäng (ESC)" style="padding: 4px 10px;">✕ Stäng</button>
+          </div>
         </div>
 
         <!-- Status Guidance Card -->
@@ -2688,6 +2707,7 @@
       products: [],
       reviews: {},
       undoCount: 0,
+      isAdmin: false,
       reviewer: localStorage.getItem('hatshop_reviewer') || '',
       currentSource: '1500px iphone',
       currentMode: 'product',
@@ -3064,12 +3084,23 @@
     function updateUndoButton() {
       const grp = document.getElementById('subToolbarUndoGroup');
       const btn = document.getElementById('btnSubToolbarUndo');
-      if (!grp || !btn) return;
-      if (state.isAdmin && state.undoCount > 0) {
-        btn.innerHTML = `↩ Ångra (${state.undoCount})`;
-        grp.style.display = 'inline-flex';
-      } else {
-        grp.style.display = 'none';
+      if (grp && btn) {
+        if (state.isAdmin && state.undoCount > 0) {
+          btn.innerHTML = `↩ Ångra (${state.undoCount})`;
+          grp.style.display = 'inline-flex';
+        } else {
+          grp.style.display = 'none';
+        }
+      }
+
+      const lbUndoBtn = document.getElementById('lbBtnUndo');
+      if (lbUndoBtn) {
+        if (state.isAdmin && state.undoCount > 0) {
+          lbUndoBtn.innerHTML = `↩ Ångra (${state.undoCount})`;
+          lbUndoBtn.style.display = 'inline-flex';
+        } else {
+          lbUndoBtn.style.display = 'none';
+        }
       }
     }
 
@@ -3122,6 +3153,31 @@
         if (state.currentMode === 'angle') renderAngleGrid();
         renderReportTable();
         await refreshUndoCount();
+
+        // Re-render lightbox if it is currently open
+        const lbModal = document.getElementById('lightboxModal');
+        if (lbModal && lbModal.classList.contains('active')) {
+          let targetLbProdIdx = -1;
+          if (preserveProductId) {
+            targetLbProdIdx = state.products.findIndex(p => p.id === preserveProductId);
+          }
+          if (targetLbProdIdx === -1 && state.products.length > 0) {
+            targetLbProdIdx = Math.min(lbCurrentProductIndex, state.products.length - 1);
+          }
+
+          if (targetLbProdIdx >= 0 && targetLbProdIdx < state.products.length) {
+            const lbProd = state.products[targetLbProdIdx];
+            const lbShots = lbProd.variants[state.currentSource] || Object.values(lbProd.variants)[0] || [];
+            if (lbShots.length === 0) {
+              closeLightbox();
+            } else {
+              const clampedShotIdx = Math.min(lbCurrentShotIndex, lbShots.length - 1);
+              showLightboxProduct(targetLbProdIdx, clampedShotIdx);
+            }
+          } else {
+            closeLightbox();
+          }
+        }
       } catch (e) {
         console.error('Error reloading products:', e);
       }
@@ -3174,7 +3230,10 @@
           return;
         }
 
-        const currentProd = state.products[state.currentProductIndex];
+        const isLbOpen = document.getElementById('lightboxModal')?.classList.contains('active');
+        const currentProd = (isLbOpen && state.products[lbCurrentProductIndex])
+          ? state.products[lbCurrentProductIndex]
+          : state.products[state.currentProductIndex];
         const currentProdId = currentProd ? currentProd.id : null;
         await reloadBatchProducts(currentProdId);
 
@@ -4462,18 +4521,18 @@
         box.className = 'shot-box';
         box.innerHTML = `
           <div class="shot-box-header">
-            <div style="display: flex; align-items: center; gap: 6px;">
+            <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
               <span class="shot-tag-title">${titleTag}</span>
               ${versionBadge}
             </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1 1 auto; justify-content: flex-end;">
               <span class="shot-filename" title="${shot.filename}">${shot.filename || ''}</span>
-              ${state.isAdmin ? `<button class="btn-remove-image" onclick="event.stopPropagation(); removeDesktopImage('${escapeJsString(prod.id)}', '${escapeJsString(shot.filename || '')}', event)" title="Flytta ut bild (alla storlekar) ur mappen">🗑 Flytta ut</button>` : ''}
             </div>
           </div>
           <div class="shot-box-image-wrap" onclick="openLightbox('${shot.url || ''}', '${prod.model} - ${titleTag}', '${prod.id}', ${idx})">
             <img src="${shot.url || ''}" alt="${titleTag}" loading="lazy" onerror="handleImageError(this)">
             ${getGuidesOverlayHtml()}
+            ${state.isAdmin ? `<button class="btn-remove-image btn-remove-overlay" onclick="event.stopPropagation(); removeDesktopImage('${escapeJsString(prod.id)}', '${escapeJsString(shot.filename || '')}', event)" title="Flytta ut bild (alla storlekar) ur mappen">🗑 Flytta ut</button>` : ''}
             <div class="shot-hover-hint">🔍 Klicka för storbild & ritverktyg</div>
           </div>
         `;
@@ -5925,6 +5984,30 @@
           redrawCurrentAnnotations();
         }, 50);
       }
+
+      // 8. Update Lightbox Remove & Undo Buttons
+      const lbRemoveBtn = document.getElementById('lbBtnRemoveImage');
+      if (lbRemoveBtn) {
+        if (state.isAdmin && activeShot && activeShot.filename) {
+          lbRemoveBtn.style.display = 'inline-flex';
+          lbRemoveBtn.onclick = (e) => removeDesktopImage(prod.id, activeShot.filename, e);
+        } else {
+          lbRemoveBtn.style.display = 'none';
+          lbRemoveBtn.onclick = null;
+        }
+      }
+      updateUndoButton();
+    }
+
+    function removeLightboxCurrentImage(event) {
+      if (event && event.stopPropagation) event.stopPropagation();
+      if (!state.isAdmin || state.products.length === 0) return;
+      const prod = state.products[lbCurrentProductIndex];
+      if (!prod) return;
+      const shots = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
+      const activeShot = shots[lbCurrentShotIndex] || shots[0];
+      if (!activeShot || !activeShot.filename) return;
+      removeDesktopImage(prod.id, activeShot.filename, event);
     }
 
     function updateLightboxStatusDisplay() {
@@ -6213,6 +6296,13 @@
           }
           if (e.key === 'g' || e.key === 'G') {
             toggleLightboxGuides();
+            return;
+          }
+          if (e.key === 'Delete') {
+            if (state.isAdmin) {
+              e.preventDefault();
+              removeLightboxCurrentImage(e);
+            }
             return;
           }
         }

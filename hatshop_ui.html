@@ -922,6 +922,25 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+    .btn-remove-image {
+      font-size: 11px;
+      padding: 2px 7px;
+      color: #f87171;
+      border-color: rgba(248, 113, 113, 0.35);
+      background: rgba(239, 68, 68, 0.1);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border-radius: 4px;
+      border: 1px solid rgba(248, 113, 113, 0.35);
+      transition: all 0.15s ease;
+    }
+    .btn-remove-image:hover {
+      background: rgba(239, 68, 68, 0.25);
+      border-color: rgba(248, 113, 113, 0.6);
+      color: #fca5a5;
+    }
     .shot-box-image-wrap {
       aspect-ratio: 1 / 1;
       width: 100%;
@@ -1559,6 +1578,16 @@
       display: flex; align-items: center; gap: 10px; transform: translateY(100px); opacity: 0; transition: all 0.25s ease;
     }
     .toast.show { transform: translateY(0); opacity: 1; }
+    .toast a {
+      color: #60a5fa;
+      text-decoration: underline;
+      cursor: pointer;
+      font-weight: 700;
+      margin-left: 6px;
+    }
+    .toast a:hover {
+      color: #93c5fd;
+    }
 
     /* Modal Dialogs */
     .modal-backdrop {
@@ -1901,6 +1930,9 @@
   <!-- Contextual Sub-Toolbar -->
   <div class="sub-toolbar" id="subToolbar">
     <div class="tool-group" id="modeSpecificTools"></div>
+    <div class="tool-group" id="subToolbarUndoGroup" style="display: none;">
+      <button class="btn btn-sm btn-outline" id="btnSubToolbarUndo" onclick="undoRemoveImage()" style="font-size: 11.5px; padding: 3px 10px; color: #fca5a5; border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.15); display: inline-flex; align-items: center; gap: 4px;" title="Återställ senast borttagna bild">↩ Ångra (0)</button>
+    </div>
     <div class="tool-group">
       <span style="font-size: 11px; color: var(--text-dim); display: inline-flex; align-items: center; gap: 6px;">Kortkommandon: <span class="keycap" title="Snabbtangenter 1-5 för att byta mellan huvudvyerna">1-5</span> Byt vy <span style="opacity: 0.3;">|</span> <span class="keycap" title="Tangent A: Sätt status Godkänd för publicering">A</span> Godkänn <span style="opacity: 0.3;">|</span> <span class="keycap" title="Tangent W: Sätt status Justera vinkel / lutning">W</span> Vinkelfel <span style="opacity: 0.3;">|</span> <span class="keycap" title="Tangent R: Sätt status Kräver ny retusch / fel">R</span> Gör om <span style="opacity: 0.3;">|</span> <span class="keycap" title="Tangent G: Slå på/av laserguider och stödlinjer">G</span> Stödlinjer</span>
     </div>
@@ -2655,6 +2687,7 @@
       currentBatch: null,
       products: [],
       reviews: {},
+      undoCount: 0,
       reviewer: localStorage.getItem('hatshop_reviewer') || '',
       currentSource: '1500px iphone',
       currentMode: 'product',
@@ -3010,9 +3043,146 @@
         updateOneDriveButtons();
         updateBatchPublishButton();
         showToast(`Laddade ${state.currentBatch.name}`);
+        await refreshUndoCount();
       } catch (err) {
         console.error('Error loading batch products:', err);
         showToast('⚠️ Kunde inte ladda mappen: ' + (err.message || 'Serverfel'), 'error');
+      }
+    }
+
+    function getBasename(pathStr) {
+      if (!pathStr) return '';
+      const parts = String(pathStr).replace(/[\\\/]+$/, '').split(/[\\\/]/);
+      return parts.pop() || '';
+    }
+
+    function escapeJsString(str) {
+      if (!str) return '';
+      return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    }
+
+    function updateUndoButton() {
+      const grp = document.getElementById('subToolbarUndoGroup');
+      const btn = document.getElementById('btnSubToolbarUndo');
+      if (!grp || !btn) return;
+      if (state.isAdmin && state.undoCount > 0) {
+        btn.innerHTML = `↩ Ångra (${state.undoCount})`;
+        grp.style.display = 'inline-flex';
+      } else {
+        grp.style.display = 'none';
+      }
+    }
+
+    async function refreshUndoCount() {
+      if (!state.currentBatchId) {
+        state.undoCount = 0;
+        updateUndoButton();
+        return;
+      }
+      try {
+        const res = await fetch(`/api/image/removed?batch=${encodeURIComponent(state.currentBatchId)}`);
+        if (res.ok) {
+          const data = await res.json();
+          state.undoCount = typeof data.undo_count === 'number' ? data.undo_count : 0;
+        } else {
+          state.undoCount = 0;
+        }
+      } catch (e) {
+        state.undoCount = 0;
+      }
+      updateUndoButton();
+    }
+
+    async function reloadBatchProducts(preserveProductId = null) {
+      const batchId = state.currentBatchId;
+      if (!batchId) return;
+      try {
+        const res = await fetch(`/api/products?batch=${encodeURIComponent(batchId)}&reviewer=${encodeURIComponent(state.reviewer || '')}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        state.currentBatch = data.batch;
+        state.products = data.products || [];
+        state.reviews = data.reviews || {};
+
+        let targetIdx = 0;
+        if (preserveProductId) {
+          const foundIdx = state.products.findIndex(p => p.id === preserveProductId);
+          if (foundIdx >= 0) {
+            targetIdx = foundIdx;
+          } else {
+            targetIdx = Math.min(state.currentProductIndex, Math.max(0, state.products.length - 1));
+          }
+        } else {
+          targetIdx = Math.min(state.currentProductIndex, Math.max(0, state.products.length - 1));
+        }
+
+        renderProductSidebar();
+        selectProductByIndex(targetIdx);
+        updateQAStats();
+        if (state.currentMode === 'angle') renderAngleGrid();
+        renderReportTable();
+        await refreshUndoCount();
+      } catch (e) {
+        console.error('Error reloading products:', e);
+      }
+    }
+
+    async function removeDesktopImage(productId, filename, event) {
+      if (event && event.stopPropagation) event.stopPropagation();
+      if (!state.currentBatchId) return;
+
+      try {
+        const res = await fetch(`/api/image/remove?batch=${encodeURIComponent(state.currentBatchId)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            product_id: productId,
+            filename: filename,
+            reviewer: state.reviewer || ''
+          })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || data.status === 'error') {
+          showToast('⚠️ ' + (data.message || 'Kunde inte flytta ut bild'));
+          return;
+        }
+
+        await reloadBatchProducts(productId);
+
+        const base = getBasename(data.removed_root) || '_removed';
+        showNotice(`Bild flyttad till "${escapeHtml(base)}". <a href="javascript:void(0)" onclick="undoRemoveImage()">[Ångra]</a>`, 8000);
+      } catch (err) {
+        console.error('Error removing image:', err);
+        showToast('⚠️ ' + (err.message || 'Serverfel'));
+      }
+    }
+
+    async function undoRemoveImage() {
+      if (!state.currentBatchId) return;
+
+      try {
+        const res = await fetch(`/api/image/undo_remove?batch=${encodeURIComponent(state.currentBatchId)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            reviewer: state.reviewer || ''
+          })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || data.status === 'error') {
+          showToast('⚠️ ' + (data.message || 'Kunde inte ångra'));
+          return;
+        }
+
+        const currentProd = state.products[state.currentProductIndex];
+        const currentProdId = currentProd ? currentProd.id : null;
+        await reloadBatchProducts(currentProdId);
+
+        const count = (data.restored && Array.isArray(data.restored)) ? data.restored.length : 1;
+        showToast(`↩ Återställd: ${count} fil(er)`);
+      } catch (err) {
+        console.error('Error undoing remove:', err);
+        showToast('⚠️ ' + (err.message || 'Serverfel'));
       }
     }
 
@@ -3555,6 +3725,7 @@
       } else {
         container.innerHTML = ``;
       }
+      updateUndoButton();
     }
 
     function setGridCols(cols) {
@@ -4295,7 +4466,10 @@
               <span class="shot-tag-title">${titleTag}</span>
               ${versionBadge}
             </div>
-            <span class="shot-filename" title="${shot.filename}">${shot.filename || ''}</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="shot-filename" title="${shot.filename}">${shot.filename || ''}</span>
+              ${state.isAdmin ? `<button class="btn-remove-image" onclick="event.stopPropagation(); removeDesktopImage('${escapeJsString(prod.id)}', '${escapeJsString(shot.filename || '')}', event)" title="Flytta ut bild (alla storlekar) ur mappen">🗑 Flytta ut</button>` : ''}
+            </div>
           </div>
           <div class="shot-box-image-wrap" onclick="openLightbox('${shot.url || ''}', '${prod.model} - ${titleTag}', '${prod.id}', ${idx})">
             <img src="${shot.url || ''}" alt="${titleTag}" loading="lazy" onerror="handleImageError(this)">
@@ -6151,11 +6325,23 @@
       });
     }
 
-    function showToast(msg) {
+    let toastTimer = null;
+    function showToast(msg, duration = 2200) {
       const t = document.getElementById('toast');
+      if (!t) return;
+      if (toastTimer) clearTimeout(toastTimer);
       t.innerText = msg;
       t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 2200);
+      toastTimer = setTimeout(() => t.classList.remove('show'), duration);
+    }
+
+    function showNotice(html, ms = 8000) {
+      const t = document.getElementById('toast');
+      if (!t) return;
+      if (toastTimer) clearTimeout(toastTimer);
+      t.innerHTML = html;
+      t.classList.add('show');
+      toastTimer = setTimeout(() => t.classList.remove('show'), ms);
     }
 
     // --- REAL-TIME BACKGROUND SYNC WITH MOBILE ---

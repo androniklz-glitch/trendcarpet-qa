@@ -13,6 +13,8 @@ import re
 import datetime
 import openpyxl
 import hashlib
+import uuid
+import shutil
 from PIL import Image
 
 PORT = 8092
@@ -1044,6 +1046,220 @@ def scan_batch_products(batch):
     products.sort(key=lambda x: x["model"])
     return products
 
+
+def removed_root_for(batch_path):
+    p = os.path.normpath(str(batch_path))
+    return os.path.join(os.path.dirname(p), os.path.basename(p) + " Removed")
+
+
+def remove_shot(batch, product_id, filename, user):
+    base_dir = batch.get("path", "")
+    manifest_candidates = [
+        os.path.join(base_dir, "products_manifest.json"),
+        os.path.join(os.path.dirname(base_dir), "products_manifest.json"),
+        os.path.join(base_dir, "manifest.json"),
+        os.path.join(os.path.dirname(base_dir), "manifest.json"),
+    ]
+    if any(os.path.isfile(f) for f in manifest_candidates):
+        raise ValueError("Mappen använder manifest – flytt stöds inte")
+
+    products = scan_batch_products(batch)
+    product = next((p for p in products if str(p.get("id")) == str(product_id) or str(p.get("id")).lower() == str(product_id).lower()), None)
+    if not product:
+        raise ValueError("Produkten hittades inte")
+
+    target_stem = os.path.splitext(os.path.basename(filename))[0].lower() if filename else ""
+    if not target_stem:
+        raise ValueError("Bilden hittades inte")
+
+    matching_shots = []
+    seen_rel = set()
+    for variant_name, shots in product.get("variants", {}).items():
+        if not isinstance(shots, list):
+            continue
+        for shot in shots:
+            fn = shot.get("filename") or os.path.basename(shot.get("rel_path", ""))
+            s_stem = os.path.splitext(os.path.basename(fn))[0].lower()
+            if s_stem == target_stem:
+                rel_p = shot.get("rel_path")
+                if rel_p and rel_p not in seen_rel:
+                    seen_rel.add(rel_p)
+                    matching_shots.append(shot)
+
+    if not matching_shots:
+        raise ValueError("Bilden hittades inte")
+
+    batch_path = os.path.normpath(os.path.abspath(base_dir))
+    removed_root = removed_root_for(batch_path)
+
+    # Validate all src paths lie within batch_path before moving anything
+    moves_plan = []
+    for shot in matching_shots:
+        rel_path = shot.get("rel_path", "")
+        src = os.path.normpath(os.path.abspath(os.path.join(batch_path, rel_path)))
+        try:
+            p1_norm = os.path.normcase(os.path.abspath(batch_path))
+            src_norm = os.path.normcase(os.path.abspath(src))
+            common = os.path.normcase(os.path.commonpath([p1_norm, src_norm]))
+            if common != p1_norm or src_norm == p1_norm:
+                raise ValueError(f"Sökvägen ligger utanför mappen: {rel_path}")
+        except ValueError as e:
+            raise ValueError(f"Sökvägen ligger utanför mappen: {rel_path}") from e
+
+        dst = os.path.normpath(os.path.abspath(os.path.join(removed_root, rel_path)))
+        if os.path.exists(dst):
+            dst_dir = os.path.dirname(dst)
+            base_name, ext = os.path.splitext(os.path.basename(dst))
+            counter = 1
+            while True:
+                candidate = os.path.join(dst_dir, f"{base_name}-{counter}{ext}")
+                if not os.path.exists(candidate):
+                    dst = candidate
+                    break
+                counter += 1
+
+        moves_plan.append((src, dst, rel_path.replace("\\", "/")))
+
+    moves = []
+    moved_rel_paths = []
+    for src, dst, rel_norm in moves_plan:
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+        shutil.move(src, dst)
+        moves.append({"from": os.path.abspath(src), "to": os.path.abspath(dst)})
+        moved_rel_paths.append(rel_norm)
+
+    log_path = os.path.join(removed_root, "_qa_removed_log.json")
+    log_data = []
+    if os.path.exists(log_path):
+        try:
+            with open(log_path, "r", encoding="utf-8") as f:
+                log_data = json.load(f)
+            if not isinstance(log_data, list):
+                log_data = []
+        except Exception:
+            log_data = []
+
+    op_id = uuid.uuid4().hex
+    op = {
+        "op_id": op_id,
+        "ts": datetime.datetime.now().isoformat(),
+        "user": user,
+        "batch_id": batch.get("id", ""),
+        "product_id": product_id,
+        "filename": filename,
+        "moves": moves,
+        "undone": False
+    }
+    log_data.append(op)
+    os.makedirs(removed_root, exist_ok=True)
+    with open(log_path, "w", encoding="utf-8") as f:
+        json.dump(log_data, f, indent=2, ensure_ascii=False)
+
+    undo_count = sum(1 for o in log_data if not o.get("undone", False))
+    return {
+        "status": "ok",
+        "op_id": op_id,
+        "moved": moved_rel_paths,
+        "removed_root": removed_root,
+        "undo_count": undo_count
+    }
+
+
+def undo_remove(batch, op_id=None):
+    batch_path = os.path.normpath(os.path.abspath(batch.get("path", "")))
+    removed_root = removed_root_for(batch_path)
+    log_path = os.path.join(removed_root, "_qa_removed_log.json")
+    if not os.path.exists(log_path):
+        raise ValueError("Inget att ångra")
+
+    try:
+        with open(log_path, "r", encoding="utf-8") as f:
+            log_data = json.load(f)
+        if not isinstance(log_data, list):
+            raise ValueError("Inget att ångra")
+    except Exception:
+        raise ValueError("Inget att ångra")
+
+    target_op = None
+    if op_id:
+        for op in reversed(log_data):
+            if op.get("op_id") == op_id and not op.get("undone", False):
+                target_op = op
+                break
+    else:
+        for op in reversed(log_data):
+            if not op.get("undone", False):
+                target_op = op
+                break
+
+    if not target_op:
+        raise ValueError("Inget att ångra")
+
+    moves = target_op.get("moves", [])
+    reversed_moves = list(reversed(moves))
+
+    # Check every move first
+    for m in reversed_moves:
+        from_path = m["from"]
+        if os.path.exists(from_path):
+            raise FileExistsError(f"Originalfilen finns redan: {from_path}")
+
+    # Move files back
+    restored = []
+    for m in reversed_moves:
+        from_path = m["from"]
+        to_path = m["to"]
+        os.makedirs(os.path.dirname(from_path), exist_ok=True)
+        shutil.move(to_path, from_path)
+        restored.append(from_path)
+
+    target_op["undone"] = True
+    target_op["undone_ts"] = datetime.datetime.now().isoformat()
+
+    with open(log_path, "w", encoding="utf-8") as f:
+        json.dump(log_data, f, indent=2, ensure_ascii=False)
+
+    undo_count = sum(1 for o in log_data if not o.get("undone", False))
+    return {
+        "status": "ok",
+        "op_id": target_op["op_id"],
+        "restored": restored,
+        "undo_count": undo_count
+    }
+
+
+def list_removed(batch):
+    batch_path = os.path.normpath(os.path.abspath(batch.get("path", "")))
+    removed_root = removed_root_for(batch_path)
+    log_path = os.path.join(removed_root, "_qa_removed_log.json")
+    if not os.path.exists(log_path):
+        return {"undo_count": 0, "ops": []}
+
+    try:
+        with open(log_path, "r", encoding="utf-8") as f:
+            log_data = json.load(f)
+        if not isinstance(log_data, list):
+            return {"undo_count": 0, "ops": []}
+    except Exception:
+        return {"undo_count": 0, "ops": []}
+
+    active_ops = []
+    for op in reversed(log_data):
+        if not op.get("undone", False):
+            active_ops.append({
+                "op_id": op.get("op_id"),
+                "ts": op.get("ts"),
+                "product_id": op.get("product_id"),
+                "filename": op.get("filename"),
+                "n_files": len(op.get("moves", []))
+            })
+
+    return {
+        "undo_count": len(active_ops),
+        "ops": active_ops
+    }
+
+
 class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=WORKSPACE_DIR, **kwargs)
@@ -1369,6 +1585,36 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Access-Control-Allow-Origin", "*")
             self.end_headers()
             self.wfile.write(content)
+            return
+
+        elif path == "/api/image/removed":
+            if not self.is_admin_request(query):
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({"undo_count": 0, "ops": []}, ensure_ascii=False).encode("utf-8"))
+                return
+
+            batch_id = query.get("batch", [""])[0]
+            batch_obj = find_batch_exact(batch_id)
+            if not batch_obj or not self.can_see_batch(batch_obj):
+                self.send_response(404)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "message": "Mappen hittades inte"
+                }, ensure_ascii=False).encode("utf-8"))
+                return
+
+            res = list_removed(batch_obj)
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
             return
 
         elif path == "/api/reviews":
@@ -2000,6 +2246,139 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 return
             except Exception as e:
                 self.send_error(400, f"Checklist error: {e}")
+                return
+
+        elif path == "/api/image/remove":
+            batch_id = query.get("batch", [""])[0]
+            content_length = int(self.headers.get("Content-Length", 0))
+            post_data = self.rfile.read(content_length)
+            try:
+                body = json.loads(post_data.decode("utf-8")) if post_data else {}
+            except Exception as e:
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "message": f"Ogiltig JSON: {e}"
+                }, ensure_ascii=False).encode("utf-8"))
+                return
+
+            reviewer = self.reviewer_name(body.get("reviewer") or body.get("user"))
+            if not self.is_admin_request(query, reviewer):
+                self.send_response(403)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "message": "Endast admin kan flytta ut bilder."
+                }, ensure_ascii=False).encode("utf-8"))
+                return
+
+            batch_obj = find_batch_exact(batch_id)
+            if not batch_obj or not self.can_see_batch(batch_obj):
+                self.send_response(404)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "message": "Mappen hittades inte"
+                }, ensure_ascii=False).encode("utf-8"))
+                return
+
+            product_id = body.get("product_id")
+            filename = body.get("filename")
+            try:
+                res = remove_shot(batch_obj, product_id, filename, reviewer)
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
+                return
+            except ValueError as e:
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "message": str(e)
+                }, ensure_ascii=False).encode("utf-8"))
+                return
+
+        elif path == "/api/image/undo_remove":
+            batch_id = query.get("batch", [""])[0]
+            content_length = int(self.headers.get("Content-Length", 0))
+            post_data = self.rfile.read(content_length)
+            try:
+                body = json.loads(post_data.decode("utf-8")) if post_data else {}
+            except Exception as e:
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "message": f"Ogiltig JSON: {e}"
+                }, ensure_ascii=False).encode("utf-8"))
+                return
+
+            reviewer = self.reviewer_name(body.get("reviewer") or body.get("user"))
+            if not self.is_admin_request(query, reviewer):
+                self.send_response(403)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "message": "Endast admin kan flytta ut bilder."
+                }, ensure_ascii=False).encode("utf-8"))
+                return
+
+            batch_obj = find_batch_exact(batch_id)
+            if not batch_obj or not self.can_see_batch(batch_obj):
+                self.send_response(404)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "message": "Mappen hittades inte"
+                }, ensure_ascii=False).encode("utf-8"))
+                return
+
+            op_id = body.get("op_id")
+            try:
+                res = undo_remove(batch_obj, op_id)
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
+                return
+            except ValueError as e:
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "message": str(e)
+                }, ensure_ascii=False).encode("utf-8"))
+                return
+            except FileExistsError as e:
+                self.send_response(409)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "message": str(e)
+                }, ensure_ascii=False).encode("utf-8"))
                 return
 
         else:

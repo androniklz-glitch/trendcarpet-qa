@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://parking-potter-compromise-controls.trycloudflare.com/$1"
+      "destination": "https://hub-fork-temp-knock.trycloudflare.com/$1"
     }
   ]
 }

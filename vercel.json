@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://hub-fork-temp-knock.trycloudflare.com/$1"
+      "destination": "https://signals-reputation-hosting-symbols.trycloudflare.com/$1"
     }
   ]
 }

@@ -2756,7 +2756,10 @@
       setupProductViewScrollListeners();
 
       // Realtime polling
-      setInterval(pollReviewsFromServer, 3000);
+      setInterval(() => {
+        if (document.hidden) return;
+        pollReviewsFromServer();
+      }, 3000);
     });
 
     let wheelTransitionPending = false;
@@ -2977,6 +2980,7 @@
     function startHubHeartbeat() {
       if (hubHeartbeatTimer) clearInterval(hubHeartbeatTimer);
       hubHeartbeatTimer = setInterval(async () => {
+        if (document.hidden) return;
         const dot = document.getElementById('hubStatusDot');
         const txt = document.getElementById('hubStatusText');
         const badge = document.getElementById('hubStatusBadge');
@@ -4325,7 +4329,7 @@
           </div>
 
           <div class="cap-card-body" onclick="openLightbox('${shot01.url || ''}', '${prod.model} (${prod.color}) - Bild 01', '${prod.id}', 0)">
-            <img class="cap-card-img" src="${shot01.url || ''}" alt="${prod.model}" loading="lazy" onerror="handleImageError(this)">
+            <img class="cap-card-img" src="${sizedUrl(shot01.url, 600)}" alt="${prod.model}" loading="lazy" onerror="handleImageError(this)">
 
             ${getGuidesOverlayHtml()}
 
@@ -4530,7 +4534,7 @@
             </div>
           </div>
           <div class="shot-box-image-wrap" onclick="openLightbox('${shot.url || ''}', '${prod.model} - ${titleTag}', '${prod.id}', ${idx})">
-            <img src="${shot.url || ''}" alt="${titleTag}" loading="lazy" onerror="handleImageError(this)">
+            <img src="${sizedUrl(shot.url, 1200)}" alt="${titleTag}" loading="lazy" onerror="handleImageError(this)">
             ${getGuidesOverlayHtml()}
             ${state.isAdmin ? `<button class="btn-remove-image btn-remove-overlay" onclick="event.stopPropagation(); removeDesktopImage('${escapeJsString(prod.id)}', '${escapeJsString(shot.filename || '')}', event)" title="Flytta ut bild (alla storlekar) ur mappen">🗑 Flytta ut</button>` : ''}
             <div class="shot-hover-hint">🔍 Klicka för storbild & ritverktyg</div>
@@ -4845,6 +4849,8 @@
       }
     }
 
+    function sizedUrl(url, w) { if (!url) return ''; return url + (url.includes('?') ? '&' : '?') + 'w=' + w; }
+
     function escapeHtml(text) {
       const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
       return text.replace(/[&<>"']/g, m => map[m]);
@@ -4969,7 +4975,7 @@
         const sBtn = document.createElement('div');
         const isSelected = idx === targetShotIdx;
         sBtn.style.cssText = `width: 50px; height: 50px; border-radius: 6px; border: 2px solid ${isSelected ? 'var(--accent-blue)' : 'var(--border-color)'}; background: #fff; cursor: pointer; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: border-color 0.15s;`;
-        sBtn.innerHTML = `<img src="${s.url}" style="width: 100%; height: 100%; object-fit: contain;">`;
+        sBtn.innerHTML = `<img src="${sizedUrl(s.url, 160)}" style="width: 100%; height: 100%; object-fit: contain;">`;
         sBtn.onclick = () => {
           state.currentProtoShotIdx = idx;
           document.getElementById('protoModalImg').src = s.url;
@@ -5145,7 +5151,7 @@
                 const sUrl = sObj ? sObj.url : '';
                 return `
                   <span class="protocol-comment-thumb-wrap" onclick="event.stopPropagation(); jumpToShot('${prod.id}', '${sNum}')" title="Klicka för att se Bild ${sNum} i fullskärm">
-                    ${sUrl ? `<img src="${sUrl}" class="protocol-comment-thumb" alt="${sNum}">` : ''}
+                    ${sUrl ? `<img src="${sizedUrl(sUrl, 160)}" class="protocol-comment-thumb" alt="${sNum}" loading="lazy">` : ''}
                     <span class="comment-shot-badge" style="font-size:10px; padding:1px 5px;">📸 ${sNum} ↗</span>
                   </span>
                 `;
@@ -6437,7 +6443,7 @@
     // --- REAL-TIME BACKGROUND SYNC WITH MOBILE ---
     let lastSyncDesktopReviewsStr = '';
     setInterval(async () => {
-      if (!state.currentBatchId) return;
+      if (document.hidden || !state.currentBatchId) return;
       try {
         const res = await fetch(`/api/reviews?batch=${encodeURIComponent(state.currentBatchId)}`);
         const data = await res.json();

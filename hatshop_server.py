@@ -1698,7 +1698,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                         target_w = int(raw_w) if str(raw_w).isdigit() else 160
                     except Exception:
                         target_w = 160
-                    if target_w <= 0 or target_w > 800:
+                    if target_w <= 0 or target_w > 1600:
                         target_w = 160
 
                     try:

@@ -144,6 +144,18 @@ def viewer_may_remove(is_admin, reviewer):
     r = reviewer.strip()
     return bool(r and r != "Anonym")
 
+
+def can_delete_comment(is_admin, current_user_obj, reviewer, comment_author):
+    if is_admin:
+        return True
+    if current_user_obj and "name" in current_user_obj and current_user_obj["name"] == comment_author:
+        return True
+    rev = reviewer.strip() if isinstance(reviewer, str) else ""
+    auth = comment_author.strip() if isinstance(comment_author, str) else ""
+    if rev and rev.lower() != "anonym" and auth and rev.lower() == auth.lower():
+        return True
+    return False
+
 def get_users_file():
     return os.environ.get("QA_HUB_USERS_FILE", r"C:\Users\AndronikLindgren\.secrets\qa-hub-users.json")
 
@@ -725,7 +737,7 @@ def process_and_sort_variant_shots(raw_files, batch_id, subdir, folder_name, fol
                 shot_code = f"{base_shot}_miljo"
             else:
                 label = f"Miljö"
-                shot_code = f"miljo_{idx+1}"
+                shot_code = f"miljo_{os.path.splitext(filename)[0]}"
             is_prim = True
             is_new = False
             v_tag = ""
@@ -2440,18 +2452,19 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 body = json.loads(post_data.decode("utf-8"))
                 pid = body.get("product_id")
                 comment_id = body.get("comment_id")
+                reviewer = body.get("reviewer")
 
                 current_reviews = load_reviews(batch_id)
                 if pid in current_reviews and "comments" in current_reviews[pid]:
                     c_to_del = next((c for c in current_reviews[pid]["comments"] if c.get("id") == comment_id), None)
                     if c_to_del:
                         u = self.current_user()
-                        is_owner = u and "name" in u and u["name"] == c_to_del.get("author")
-                        if not (self.is_admin_request({}) or is_owner):
+                        if not can_delete_comment(self.is_admin_request(query, reviewer), u, reviewer, c_to_del.get("author")):
                             self.send_response(403)
                             self.send_header("Content-Type", "application/json; charset=utf-8")
+                            self.send_header("Access-Control-Allow-Origin", "*")
                             self.end_headers()
-                            self.wfile.write(json.dumps({"error": "Not authorized"}).encode("utf-8"))
+                            self.wfile.write(json.dumps({"error": "Du kan bara ta bort dina egna kommentarer."}, ensure_ascii=False).encode("utf-8"))
                             return
 
                         current_reviews[pid]["comments"] = [

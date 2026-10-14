@@ -429,6 +429,85 @@ def save_reviews(batch_id, data):
         print(f"Error saving reviews: {e}")
         return False
 
+def _extract_batch_id(batch_or_id):
+    if isinstance(batch_or_id, dict):
+        return batch_or_id.get("id", "")
+    return str(batch_or_id or "")
+
+def get_ratings_file(batch_id):
+    safe_id = re.sub(r'[^a-zA-Z0-9_\-]', '_', _extract_batch_id(batch_id))
+    return os.path.join(REVIEWS_DIR, f"ratings_{safe_id}.json")
+
+def load_ratings(batch_id):
+    rf = get_ratings_file(batch_id)
+    if os.path.exists(rf):
+        try:
+            with open(rf, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            if isinstance(data, dict):
+                return data
+        except Exception:
+            return {}
+    return {}
+
+def get_ratings(batch_id, reviewer):
+    if not reviewer or not isinstance(reviewer, str) or reviewer.strip() in ("", "Anonym"):
+        return {}
+    data = load_ratings(batch_id)
+    rev_dict = data.get(reviewer.strip(), {})
+    if isinstance(rev_dict, dict):
+        return dict(rev_dict)
+    return {}
+
+def set_rating(batch_id, reviewer, product_id, filename, stars):
+    if not reviewer or not isinstance(reviewer, str) or reviewer.strip() in ("", "Anonym"):
+        raise ValueError("Skriv ditt namn i hubben först för att kunna sätta betyg.")
+    if not product_id or not filename:
+        raise ValueError("Saknar product_id eller filename")
+
+    if isinstance(stars, bool):
+        raise ValueError("Ogiltigt betyg")
+    if isinstance(stars, float) and not stars.is_integer():
+        raise ValueError("Ogiltigt betyg")
+    try:
+        stars_int = int(stars)
+    except (ValueError, TypeError):
+        raise ValueError("Ogiltigt betyg")
+
+    if stars_int not in (0, 1, 2, 3, 4, 5):
+        raise ValueError("Ogiltigt betyg")
+
+    batch_id_str = _extract_batch_id(batch_id)
+    rev_name = reviewer.strip()
+    key = f"{product_id}|{filename}"
+
+    data = load_ratings(batch_id_str)
+    if rev_name not in data or not isinstance(data[rev_name], dict):
+        data[rev_name] = {}
+
+    if stars_int == 0:
+        data[rev_name].pop(key, None)
+    else:
+        data[rev_name][key] = {
+            "stars": stars_int,
+            "ts": datetime.datetime.now().isoformat()
+        }
+
+    rf = get_ratings_file(batch_id_str)
+    os.makedirs(os.path.dirname(rf), exist_ok=True)
+    tmp_file = rf + f".tmp.{uuid.uuid4().hex}"
+    try:
+        with open(tmp_file, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        os.replace(tmp_file, rf)
+    except Exception:
+        if os.path.exists(tmp_file):
+            try:
+                os.remove(tmp_file)
+            except OSError:
+                pass
+        raise
+
 def parse_file_details(filename, folder_path):
     """
     Parses a filename to extract base shot number, version suffix, modification time, etc.
@@ -1937,6 +2016,40 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(resp)
             return
 
+        elif path == "/api/ratings":
+            batch_id = query.get("batch", query.get("batch_id", [""]))[0]
+            batch_obj = find_batch_exact(batch_id)
+            if not batch_obj or not self.can_see_batch(batch_obj):
+                self.send_response(404)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "message": "Mappen hittades inte"
+                }, ensure_ascii=False).encode("utf-8"))
+                return
+
+            reviewer = self.reviewer_name(query.get("reviewer", [""])[0])
+            if not reviewer or not isinstance(reviewer, str) or reviewer.strip() in ("", "Anonym"):
+                ratings_map = {}
+            else:
+                raw_ratings = get_ratings(batch_id, reviewer.strip())
+                ratings_map = {}
+                for k, v in raw_ratings.items():
+                    if isinstance(v, dict) and "stars" in v:
+                        ratings_map[k] = v["stars"]
+                    elif isinstance(v, int):
+                        ratings_map[k] = v
+
+            resp = json.dumps({"ratings": ratings_map}, ensure_ascii=False).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(resp)
+            return
+
         elif path == "/api/open-folder":
             if not self.is_admin_request({}):  # SECURITY 2026-10-04: local, non-tunnel requests only
                 self.send_error(403, "Local only")
@@ -1990,7 +2103,8 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
             if os.path.exists(file_path) and os.path.isfile(file_path):
                 file_to_serve = file_path
-                is_thumb = "thumb" in query or "w" in query
+                is_download = query.get("download", ["0"])[0] == "1"
+                is_thumb = ("thumb" in query or "w" in query) and not is_download
 
                 if is_thumb:
                     try:
@@ -2034,6 +2148,9 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                         self.send_response(200)
                         self.send_header("Content-Type", mime_type)
                         self.send_header("Content-Length", str(file_size))
+                        if is_download:
+                            quoted_name = urllib.parse.quote(os.path.basename(file_path))
+                            self.send_header("Content-Disposition", f"attachment; filename*=UTF-8''{quoted_name}")
                         self.send_header("Cache-Control", "public, max-age=86400")
                         self.send_header("Access-Control-Allow-Origin", "*")
                         self.end_headers()
@@ -2546,6 +2663,83 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 return
             except Exception as e:
                 self.send_error(400, f"Checklist error: {e}")
+                return
+
+        elif path == "/api/ratings":
+            batch_id = query.get("batch", query.get("batch_id", [""]))[0]
+            content_length = int(self.headers.get("Content-Length", 0))
+            post_data = self.rfile.read(content_length)
+            try:
+                body = json.loads(post_data.decode("utf-8")) if post_data else {}
+            except Exception as e:
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "message": f"Ogiltig JSON: {e}"
+                }, ensure_ascii=False).encode("utf-8"))
+                return
+
+            reviewer = self.reviewer_name(body.get("reviewer") or body.get("user") or "")
+            if not reviewer or not isinstance(reviewer, str) or reviewer.strip() in ("", "Anonym"):
+                self.send_response(403)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "message": "Skriv ditt namn i hubben först för att kunna sätta betyg."
+                }, ensure_ascii=False).encode("utf-8"))
+                return
+
+            if not batch_id:
+                batch_id = body.get("batch_id") or body.get("batch") or ""
+
+            batch_obj = find_batch_exact(batch_id)
+            if not batch_obj or not self.can_see_batch(batch_obj):
+                self.send_response(404)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "message": "Mappen hittades inte"
+                }, ensure_ascii=False).encode("utf-8"))
+                return
+
+            product_id = body.get("product_id")
+            filename = body.get("filename")
+            stars = body.get("stars")
+
+            try:
+                set_rating(batch_obj, reviewer.strip(), product_id, filename, stars)
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "ok"}, ensure_ascii=False).encode("utf-8"))
+                return
+            except ValueError as e:
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "message": str(e)
+                }, ensure_ascii=False).encode("utf-8"))
+                return
+            except Exception as e:
+                self.send_response(500)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "message": f"Serverfel: {e}"
+                }, ensure_ascii=False).encode("utf-8"))
                 return
 
         elif path == "/api/image/remove":

@@ -955,6 +955,63 @@
     .btn-remove-overlay:hover {
       background: rgba(239, 68, 68, 0.55);
     }
+    .btn-download-image {
+      font-size: 11px;
+      padding: 2px 7px;
+      color: #94a3b8;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(15, 23, 42, 0.4);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      line-height: 1.2;
+    }
+    .btn-download-image:hover {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: rgba(56, 189, 248, 0.6);
+      color: #38bdf8;
+      text-decoration: none;
+    }
+    .btn-download-overlay {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      z-index: 25;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+    }
+    .btn-download-overlay:hover {
+      background: rgba(15, 23, 42, 0.85);
+      color: #38bdf8;
+    }
+    .rating-stars {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      vertical-align: middle;
+    }
+    .rating-star {
+      cursor: pointer;
+      font-size: 13px;
+      line-height: 1;
+      user-select: none;
+      transition: transform 0.1s ease, color 0.1s ease;
+      display: inline-block;
+    }
+    .rating-star:hover {
+      transform: scale(1.2);
+    }
+    .rating-star.filled {
+      color: #fbbf24;
+    }
+    .rating-star.empty {
+      color: #64748b;
+    }
     .shot-box-image-wrap {
       aspect-ratio: 1 / 1;
       width: 100%;
@@ -2414,6 +2471,8 @@
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px; gap: 8px;">
           <span style="font-weight: 700; font-size: 15px; color: #fff; white-space: nowrap;">🔍 Snabbgranskning</span>
           <div style="display: flex; align-items: center; gap: 6px;">
+            <span id="lbRatingStarsContainer" class="rating-stars" title="Ditt privata betyg (syns bara för dig)" style="display: none; align-items: center; gap: 2px; margin-right: 4px;"></span>
+            <a href="#" download id="lbBtnDownloadImage" class="btn-download-image" onclick="event.stopPropagation()" title="Ladda ner originalbild" style="display: none; padding: 4px 10px;">⬇</a>
             <button class="btn-remove-image" id="lbBtnRemoveImage" onclick="removeLightboxCurrentImage(event)" title="Flytta ut bild (alla storlekar) ur mappen" style="display: none; padding: 4px 10px;">🗑 Flytta ut</button>
             <button class="btn btn-sm btn-outline" id="lbBtnUndo" onclick="undoRemoveImage()" style="font-size: 11px; padding: 4px 10px; color: #fca5a5; border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.15); display: none; align-items: center; gap: 4px;" title="Återställ senast borttagna bild">↩ Ångra (0)</button>
             <button class="btn btn-sm" onclick="closeLightbox()" title="Stäng (ESC)" style="padding: 4px 10px;">✕ Stäng</button>
@@ -2706,6 +2765,7 @@
       currentBatch: null,
       products: [],
       reviews: {},
+      ratings: {},
       undoCount: 0,
       isAdmin: false,
       canRemove: false,
@@ -2899,6 +2959,7 @@
       document.getElementById('nameModal').classList.remove('active');
       showToast(`Inloggad som: ${state.reviewer}`);
       initBatches();
+      if (typeof onReviewerChanged === 'function') onReviewerChanged();
     }
 
     function selectQuickReviewer(name) {
@@ -2908,6 +2969,7 @@
       document.getElementById('nameModal').classList.remove('active');
       showToast(`Inloggad som: ${state.reviewer}`);
       initBatches();
+      if (typeof onReviewerChanged === 'function') onReviewerChanged();
     }
 
     function promptChangeName() { openNameModal(); }
@@ -3052,6 +3114,8 @@
         state.reviews = data.reviews || {};
         state.currentProductIndex = 0;
 
+        await fetchRatings();
+
         state.showGuides = false;
 
         populateSourceSelector();
@@ -3081,6 +3145,126 @@
     function escapeJsString(str) {
       if (!str) return '';
       return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    }
+
+    function downloadUrl(url) {
+      if (!url) return '';
+      return url + (url.includes('?') ? '&' : '?') + 'download=1';
+    }
+
+    async function fetchRatings() {
+      if (!state.currentBatchId) {
+        state.ratings = {};
+        return;
+      }
+      try {
+        const res = await fetch(`/api/ratings?batch=${encodeURIComponent(state.currentBatchId)}&reviewer=${encodeURIComponent(state.reviewer || '')}`);
+        if (res.ok) {
+          const data = await res.json();
+          state.ratings = data.ratings || {};
+        } else {
+          state.ratings = {};
+        }
+      } catch (err) {
+        console.error('Error fetching ratings:', err);
+        state.ratings = {};
+      }
+    }
+
+    function getStarsSpansHtml(productId, filename) {
+      const key = `${productId}|${filename}`;
+      const current = (state.ratings && state.ratings[key]) || 0;
+      const safePid = escapeJsString(productId);
+      const safeFn = escapeJsString(filename);
+      let spans = '';
+      for (let i = 1; i <= 5; i++) {
+        const filled = i <= current;
+        const target = (i === current) ? 0 : i;
+        const starChar = filled ? '★' : '☆';
+        const color = filled ? '#fbbf24' : '#64748b';
+        spans += `<span class="rating-star ${filled ? 'filled' : 'empty'}" style="color: ${color};" onclick="event.stopPropagation(); setRating('${safePid}', '${safeFn}', ${target})">${starChar}</span>`;
+      }
+      return spans;
+    }
+
+    function renderStars(productId, filename) {
+      if (!productId || !filename) return '';
+      const key = `${productId}|${filename}`;
+      return `<span class="rating-stars" data-rating-key="${escapeHtml(key)}" title="Ditt privata betyg (syns bara för dig)">${getStarsSpansHtml(productId, filename)}</span>`;
+    }
+
+    async function setRating(productId, filename, stars) {
+      if (!state.reviewer || !state.reviewer.trim()) {
+        showToast('Skriv ditt namn i hubben först för att kunna sätta betyg.');
+        if (typeof openNameModal === 'function') openNameModal();
+        return;
+      }
+      const key = `${productId}|${filename}`;
+      if (stars > 0) {
+        state.ratings[key] = stars;
+      } else {
+        delete state.ratings[key];
+      }
+
+      // Re-render only the star spans for that key (match by a data-rating-key attribute), no full re-render
+      const spansHtml = getStarsSpansHtml(productId, filename);
+      document.querySelectorAll('[data-rating-key]').forEach(el => {
+        if (el.getAttribute('data-rating-key') === key) {
+          el.innerHTML = spansHtml;
+        }
+      });
+
+      try {
+        const res = await fetch(`/api/ratings?batch=${encodeURIComponent(state.currentBatchId || '')}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            product_id: productId,
+            filename: filename,
+            stars: stars,
+            reviewer: state.reviewer
+          })
+        });
+        if (res.status === 403) {
+          showToast('Skriv ditt namn i hubben först för att kunna sätta betyg.');
+          return;
+        }
+        if (!res.ok) {
+          showToast('Kunde inte spara betyg', 'error');
+        }
+      } catch (err) {
+        console.error('Error saving rating:', err);
+        showToast('Kunde inte ansluta till servern för betyg', 'error');
+      }
+    }
+
+    async function onReviewerChanged() {
+      await fetchRatings();
+      updateAllRatingStars();
+      if (document.getElementById('lightboxModal')?.classList.contains('active')) {
+        const prod = state.products[lbCurrentProductIndex];
+        if (prod) {
+          const shots = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
+          const activeShot = shots[lbCurrentShotIndex] || shots[0];
+          const lbStars = document.getElementById('lbRatingStarsContainer');
+          if (lbStars && activeShot && activeShot.filename) {
+            lbStars.innerHTML = getStarsSpansHtml(prod.id, activeShot.filename);
+          }
+        }
+      }
+    }
+
+    function updateAllRatingStars() {
+      document.querySelectorAll('[data-rating-key]').forEach(el => {
+        const key = el.getAttribute('data-rating-key');
+        if (!key) return;
+        const parts = key.split('|');
+        if (parts.length >= 2) {
+          const pid = parts[0];
+          const fn = parts.slice(1).join('|');
+          el.innerHTML = getStarsSpansHtml(pid, fn);
+        }
+      });
     }
 
     function updateUndoButton() {
@@ -4421,6 +4605,7 @@
             </div>
             <div style="display: flex; align-items: center; gap: 6px;">
               ${commentBadge}
+              ${shot01.url ? `<a href="${downloadUrl(shot01.url)}" download class="btn-download-image" onclick="event.stopPropagation()" title="Ladda ner originalbild">⬇</a>` : ''}
               <button class="btn btn-sm" onclick="selectProductByIndex(${idx}); switchMode('product');" title="Inspektera alla vinklar">
                 🔍 Detalj
               </button>
@@ -4626,6 +4811,7 @@
           <div class="shot-box-header">
             <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
               <span class="shot-tag-title">${titleTag}</span>
+              ${renderStars(prod.id, shot.filename)}
               ${versionBadge}
             </div>
             <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1 1 auto; justify-content: flex-end;">
@@ -4635,6 +4821,7 @@
           <div class="shot-box-image-wrap" onclick="openLightbox('${shot.url || ''}', '${prod.model} - ${titleTag}', '${prod.id}', ${idx})">
             <img src="${sizedUrl(shot.url, 1200)}" alt="${titleTag}" loading="lazy" onerror="handleImageError(this)">
             ${getGuidesOverlayHtml()}
+            ${shot.url ? `<a href="${downloadUrl(shot.url)}" download class="btn-download-image btn-download-overlay" onclick="event.stopPropagation()" title="Ladda ner originalbild">⬇</a>` : ''}
             ${state.canRemove ? `<button class="btn-remove-image btn-remove-overlay" onclick="event.stopPropagation(); removeDesktopImage('${escapeJsString(prod.id)}', '${escapeJsString(shot.filename || '')}', event)" title="Flytta ut bild (alla storlekar) ur mappen">🗑 Flytta ut</button>` : ''}
             <div class="shot-hover-hint">🔍 Klicka för storbild & ritverktyg</div>
           </div>
@@ -6090,7 +6277,31 @@
         }, 50);
       }
 
-      // 8. Update Lightbox Remove & Undo Buttons
+      // 8. Update Lightbox Remove, Download, Stars & Undo Buttons
+      const lbDlBtn = document.getElementById('lbBtnDownloadImage');
+      if (lbDlBtn) {
+        if (activeShot && activeShot.url) {
+          lbDlBtn.style.display = 'inline-flex';
+          lbDlBtn.href = downloadUrl(activeShot.url);
+        } else {
+          lbDlBtn.style.display = 'none';
+          lbDlBtn.removeAttribute('href');
+        }
+      }
+
+      const lbStars = document.getElementById('lbRatingStarsContainer');
+      if (lbStars) {
+        if (activeShot && activeShot.filename) {
+          lbStars.style.display = 'inline-flex';
+          lbStars.setAttribute('data-rating-key', `${prod.id}|${activeShot.filename}`);
+          lbStars.innerHTML = getStarsSpansHtml(prod.id, activeShot.filename);
+        } else {
+          lbStars.style.display = 'none';
+          lbStars.removeAttribute('data-rating-key');
+          lbStars.innerHTML = '';
+        }
+      }
+
       const lbRemoveBtn = document.getElementById('lbBtnRemoveImage');
       if (lbRemoveBtn) {
         if (state.canRemove && activeShot && activeShot.filename) {

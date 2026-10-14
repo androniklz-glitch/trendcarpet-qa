@@ -42,6 +42,98 @@ REMOVE_FOR_VIEWERS = True
 LOW_SHOT_THRESHOLD = 2
 NOTIFY_SCRIPT = os.environ.get("QA_HUB_NOTIFY_SCRIPT", r"C:\Users\AndronikLindgren\agent-home\scripts\notify.mjs")
 
+CROP_FORMAT_DIRS = ("3x4", "4x5")
+MASTER_FORMAT_DIR = "9x16"
+
+def hidden_crop_dirs(dir_names):
+    """
+    Returns the set of names in dir_names that are in CROP_FORMAT_DIRS (case-insensitive) —
+    but ONLY if MASTER_FORMAT_DIR is also in dir_names (case-insensitive).
+    A folder with 3x4 but no 9x16 sibling (e.g. Reforma 3:4 deliveries) stays visible.
+    """
+    if not dir_names:
+        return set()
+    crop_lower = {c.lower() for c in CROP_FORMAT_DIRS}
+    master_lower = MASTER_FORMAT_DIR.lower()
+    has_master = any(isinstance(d, str) and d.lower() == master_lower for d in dir_names)
+    if not has_master:
+        return set()
+    return {d for d in dir_names if isinstance(d, str) and d.lower() in crop_lower}
+
+def crop_siblings(master_abs_path, batch_path=None):
+    """
+    If the file's parent folder name is 9x16 (case-insensitive), for each crop dir in
+    CROP_FORMAT_DIRS that exists next to it, return existing files
+    <parent>/../<crop>/<stem>-<crop><ext> for ext in .png/.jpg/.jpeg/.webp,
+    plus <stem><ext> (same stem without suffix). Only paths inside the batch folder.
+    """
+    if not master_abs_path:
+        return []
+    master_abs = os.path.normpath(os.path.abspath(master_abs_path))
+    parent_dir = os.path.dirname(master_abs)
+    if os.path.basename(parent_dir).lower() != MASTER_FORMAT_DIR.lower():
+        return []
+
+    model_dir = os.path.dirname(parent_dir)
+    if not os.path.isdir(model_dir):
+        return []
+
+    filename = os.path.basename(master_abs)
+    stem, _ = os.path.splitext(filename)
+    if not stem:
+        return []
+
+    try:
+        model_entries = os.listdir(model_dir)
+    except OSError:
+        return []
+
+    sibling_dirs_map = {}
+    for entry in model_entries:
+        if os.path.isdir(os.path.join(model_dir, entry)):
+            sibling_dirs_map[entry.lower()] = entry
+
+    crop_exts = {".png", ".jpg", ".jpeg", ".webp"}
+    results = []
+    seen = set()
+
+    for crop in CROP_FORMAT_DIRS:
+        actual_crop_name = sibling_dirs_map.get(crop.lower())
+        if not actual_crop_name:
+            continue
+        crop_dir = os.path.join(model_dir, actual_crop_name)
+        try:
+            crop_files = os.listdir(crop_dir)
+        except OSError:
+            continue
+
+        target_stems = {f"{stem.lower()}-{crop.lower()}", stem.lower()}
+        for cf in sorted(crop_files):
+            cf_path = os.path.join(crop_dir, cf)
+            if not os.path.isfile(cf_path):
+                continue
+            cf_stem, cf_ext = os.path.splitext(cf)
+            if cf_ext.lower() not in crop_exts:
+                continue
+            if cf_stem.lower() in target_stems:
+                cf_abs = os.path.normpath(os.path.abspath(cf_path))
+                if batch_path:
+                    bp = batch_path.get("path", "") if isinstance(batch_path, dict) else batch_path
+                    if bp:
+                        bp_norm = os.path.normcase(os.path.abspath(bp))
+                        c_norm = os.path.normcase(cf_abs)
+                        try:
+                            if os.path.normcase(os.path.commonpath([bp_norm, c_norm])) != bp_norm or c_norm == bp_norm:
+                                continue
+                        except ValueError:
+                            continue
+                if cf_abs not in seen:
+                    seen.add(cf_abs)
+                    results.append(cf_abs)
+
+    return results
+
+
 def viewer_may_remove(is_admin, reviewer):
     if is_admin:
         return True
@@ -789,8 +881,11 @@ def scan_batch_products(batch):
                 else:
                     # Model folder containing color subfolders
                     sub_dirs = [d for d in sorted(os.listdir(folder_path)) if os.path.isdir(os.path.join(folder_path, d))]
+                    hidden_subdirs = hidden_crop_dirs(sub_dirs)
                     color_subfolders = []
                     for sd in sub_dirs:
+                        if sd in hidden_subdirs:
+                            continue
                         sd_path = os.path.join(folder_path, sd)
                         sd_raw = [f for f in os.listdir(sd_path) if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp"))]
                         if sd_raw:
@@ -798,6 +893,8 @@ def scan_batch_products(batch):
 
                     if color_subfolders:
                         for color_folder, color_path, raw in color_subfolders:
+                            if color_folder in hidden_subdirs:
+                                continue
                             prod_id = f"{folder_name}-{color_folder}"
                             color, brand = parse_color_folder(color_folder)
                             if prod_id not in products_map:
@@ -845,7 +942,10 @@ def scan_batch_products(batch):
                 if not os.path.isdir(model_path):
                     continue
                 color_dirs = [d for d in sorted(os.listdir(model_path)) if os.path.isdir(os.path.join(model_path, d))]
+                hidden_dirs = hidden_crop_dirs(color_dirs)
                 for color_folder in color_dirs:
+                    if color_folder in hidden_dirs:
+                        continue
                     folder_path = os.path.join(model_path, color_folder)
                     raw_files = [f for f in os.listdir(folder_path) if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp"))]
                     if not raw_files:
@@ -1149,6 +1249,28 @@ def remove_shot(batch, product_id, filename, user, count_user=None, undo_user=No
                 counter += 1
 
         moves_plan.append((src, dst, rel_path.replace("\\", "/")))
+
+    # Append crop siblings for any 9x16 sources
+    seen_plan_srcs = {p[0] for p in moves_plan}
+    for src, _, _ in list(moves_plan):
+        siblings = crop_siblings(src, batch_path=batch_path)
+        for sib_src in siblings:
+            if sib_src in seen_plan_srcs:
+                continue
+            seen_plan_srcs.add(sib_src)
+            sib_rel = os.path.relpath(sib_src, batch_path)
+            dst = os.path.normpath(os.path.abspath(os.path.join(removed_root, sib_rel)))
+            if os.path.exists(dst):
+                dst_dir = os.path.dirname(dst)
+                base_name, ext = os.path.splitext(os.path.basename(dst))
+                counter = 1
+                while True:
+                    candidate = os.path.join(dst_dir, f"{base_name}-{counter}{ext}")
+                    if not os.path.exists(candidate):
+                        dst = candidate
+                        break
+                    counter += 1
+            moves_plan.append((sib_src, dst, sib_rel.replace("\\", "/")))
 
     moves = []
     moved_rel_paths = []

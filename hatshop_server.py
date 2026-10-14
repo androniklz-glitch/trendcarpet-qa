@@ -28,6 +28,16 @@ EXCEL_MASTER_FILE = r"C:\Users\AndronikLindgren\OneDrive - CaMa Gruppen AB\Fotos
 EXCEL_2026_FILE = r"C:\Users\AndronikLindgren\OneDrive - CaMa Gruppen AB\Pictures\Projektlista_2026.xlsx"
 BASE_SP_URL = "https://trendcarpet-my.sharepoint.com"
 
+REMOVE_REASONS = {
+    "anatomi": "Händer/anatomi",
+    "fel_farg": "Fel färg",
+    "fransar": "Fransar",
+    "rummet": "Rummet/miljön",
+    "produktdetalj": "Produktdetalj",
+    "styling": "Styling/person",
+    "annat": "Annat",
+}
+
 def get_users_file():
     return os.environ.get("QA_HUB_USERS_FILE", r"C:\Users\AndronikLindgren\.secrets\qa-hub-users.json")
 
@@ -1234,6 +1244,46 @@ def undo_remove(batch, op_id=None):
     }
 
 
+def set_remove_reason(batch, op_id, reason, note, user):
+    if reason not in REMOVE_REASONS and reason != "":
+        raise ValueError("Okänd orsak")
+
+    batch_path = os.path.normpath(os.path.abspath(batch.get("path", "")))
+    removed_root = removed_root_for(batch_path)
+    log_path = os.path.join(removed_root, "_qa_removed_log.json")
+    if not os.path.exists(log_path):
+        raise ValueError("Åtgärden hittades inte")
+
+    try:
+        with open(log_path, "r", encoding="utf-8") as f:
+            log_data = json.load(f)
+        if not isinstance(log_data, list):
+            raise ValueError("Åtgärden hittades inte")
+    except Exception as e:
+        if isinstance(e, ValueError):
+            raise
+        raise ValueError("Åtgärden hittades inte")
+
+    target_op = None
+    for op in log_data:
+        if op.get("op_id") == op_id:
+            target_op = op
+            break
+
+    if not target_op:
+        raise ValueError("Åtgärden hittades inte")
+
+    target_op["reason"] = reason
+    target_op["note"] = (note or "")[:300]
+    target_op["reason_by"] = user
+    target_op["reason_ts"] = datetime.datetime.now().isoformat()
+
+    with open(log_path, "w", encoding="utf-8") as f:
+        json.dump(log_data, f, indent=2, ensure_ascii=False)
+
+    return {"status": "ok"}
+
+
 def list_removed(batch):
     batch_path = os.path.normpath(os.path.abspath(batch.get("path", "")))
     removed_root = removed_root_for(batch_path)
@@ -1621,6 +1671,14 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Access-Control-Allow-Origin", "*")
             self.end_headers()
             self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
+            return
+
+        elif path == "/api/image/remove_reasons":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(json.dumps(REMOVE_REASONS, ensure_ascii=False).encode("utf-8"))
             return
 
         elif path == "/api/reviews":
@@ -2378,6 +2436,69 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 return
             except FileExistsError as e:
                 self.send_response(409)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "message": str(e)
+                }, ensure_ascii=False).encode("utf-8"))
+                return
+
+        elif path == "/api/image/remove_reason":
+            batch_id = query.get("batch", [""])[0]
+            content_length = int(self.headers.get("Content-Length", 0))
+            post_data = self.rfile.read(content_length)
+            try:
+                body = json.loads(post_data.decode("utf-8")) if post_data else {}
+            except Exception as e:
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "message": f"Ogiltig JSON: {e}"
+                }, ensure_ascii=False).encode("utf-8"))
+                return
+
+            reviewer = self.reviewer_name(body.get("reviewer") or body.get("user"))
+            if not self.is_admin_request(query, reviewer):
+                self.send_response(403)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "message": "Endast admin kan flytta ut bilder."
+                }, ensure_ascii=False).encode("utf-8"))
+                return
+
+            batch_obj = find_batch_exact(batch_id)
+            if not batch_obj or not self.can_see_batch(batch_obj):
+                self.send_response(404)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "message": "Mappen hittades inte"
+                }, ensure_ascii=False).encode("utf-8"))
+                return
+
+            op_id = body.get("op_id")
+            reason = body.get("reason", "")
+            note = body.get("note", "")
+            try:
+                res = set_remove_reason(batch_obj, op_id, reason, note, reviewer)
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
+                return
+            except ValueError as e:
+                self.send_response(400)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
                 self.send_header("Access-Control-Allow-Origin", "*")
                 self.end_headers()

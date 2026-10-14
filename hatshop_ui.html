@@ -3183,6 +3183,81 @@
       }
     }
 
+    const REMOVE_REASONS = {
+      "anatomi": "Händer/anatomi",
+      "fel_farg": "Fel färg",
+      "fransar": "Fransar",
+      "rummet": "Rummet/miljön",
+      "produktdetalj": "Produktdetalj",
+      "styling": "Styling/person",
+      "annat": "Annat"
+    };
+
+    let activeRemoveReasonSelection = '';
+
+    async function submitRemoveReason(opId, reasonKey) {
+      if (!state.currentBatchId || !opId) return;
+      activeRemoveReasonSelection = reasonKey || '';
+
+      const inputEl = document.getElementById('removeReasonNoteInput');
+      const note = inputEl ? inputEl.value : '';
+      const statusEl = document.getElementById('removeReasonStatus');
+
+      document.querySelectorAll('.btn-reason-chip').forEach(btn => {
+        if (btn.getAttribute('data-key') === reasonKey) {
+          btn.classList.add('btn-primary');
+        } else {
+          btn.classList.remove('btn-primary');
+        }
+      });
+
+      try {
+        const res = await fetch(`/api/image/remove_reason?batch=${encodeURIComponent(state.currentBatchId)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            op_id: opId,
+            reason: reasonKey || '',
+            note: note,
+            reviewer: state.reviewer || ''
+          })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || data.status === 'error') {
+          const msg = data.message || 'Kunde inte spara orsak';
+          if (statusEl) {
+            statusEl.style.color = '#fca5a5';
+            statusEl.textContent = '⚠️ ' + msg;
+          }
+          return;
+        }
+        if (statusEl) {
+          statusEl.style.color = '#86efac';
+          statusEl.textContent = '✓ Sparad';
+        }
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => document.getElementById('toast').classList.remove('show'), 10000);
+      } catch (err) {
+        console.error('Error saving remove reason:', err);
+        const msg = err.message || 'Serverfel';
+        if (statusEl) {
+          statusEl.style.color = '#fca5a5';
+          statusEl.textContent = '⚠️ ' + msg;
+        }
+      }
+    }
+
+    function handleRemoveReasonInputKey(e, opId) {
+      e.stopPropagation();
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => document.getElementById('toast').classList.remove('show'), 10000);
+
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        submitRemoveReason(opId, activeRemoveReasonSelection || '');
+      }
+    }
+
     async function removeDesktopImage(productId, filename, event) {
       if (event && event.stopPropagation) event.stopPropagation();
       if (!state.currentBatchId) return;
@@ -3206,7 +3281,24 @@
         await reloadBatchProducts(productId);
 
         const base = getBasename(data.removed_root) || '_removed';
-        showNotice(`Bild flyttad till "${escapeHtml(base)}". <a href="javascript:void(0)" onclick="undoRemoveImage()">[Ångra]</a>`, 8000);
+        const opId = data.op_id || '';
+        activeRemoveReasonSelection = '';
+
+        const chipsHtml = Object.entries(REMOVE_REASONS).map(([key, label]) => {
+          return `<button type="button" class="btn btn-sm btn-reason-chip" data-key="${escapeHtml(key)}" onclick="submitRemoveReason('${escapeHtml(opId)}', '${escapeHtml(key)}')" style="padding: 2px 8px; font-size: 11px; white-space: nowrap;">${escapeHtml(label)}</button>`;
+        }).join(' ');
+
+        const noticeHtml = `
+          <div style="display: flex; flex-direction: column; gap: 8px; text-align: left;">
+            <div>Bild flyttad till "${escapeHtml(base)}". <a href="javascript:void(0)" onclick="undoRemoveImage()">[Ångra]</a></div>
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              ${chipsHtml}
+              <input type="text" id="removeReasonNoteInput" placeholder="Egen orsak (valfritt) – Enter sparar" onkeydown="handleRemoveReasonInputKey(event, '${escapeHtml(opId)}')" onkeyup="event.stopPropagation()" onkeypress="event.stopPropagation()" oninput="event.stopPropagation()" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 4px; padding: 2px 8px; color: #fff; font-size: 11px; outline: none; min-width: 220px; font-family: inherit;">
+              <span id="removeReasonStatus" style="font-size: 11px; color: #86efac;"></span>
+            </div>
+          </div>
+        `;
+        showNotice(noticeHtml, 15000);
       } catch (err) {
         console.error('Error removing image:', err);
         showToast('⚠️ ' + (err.message || 'Serverfel'));

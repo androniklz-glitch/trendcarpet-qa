@@ -384,14 +384,29 @@ def test_http_image_routes(tmp_path, monkeypatch):
     try:
         tunnel_header = {"CF-Connecting-IP": "203.0.113.195"}  # Non-admin tunnel header
 
-        # 1. Non-admin POST /api/image/remove -> 403
+        # 1. Non-admin without name POST /api/image/remove -> 403
         r_forbidden = requests.post(
             f"{base_url}/api/image/remove?batch=http-test-batch",
-            json={"product_id": "Keps-Garda-Ranger-Army-Cap-dark-grey", "filename": "01.jpg", "reviewer": "ReviewerUser"},
+            json={"product_id": "Keps-Garda-Ranger-Army-Cap-dark-grey", "filename": "01.jpg", "reviewer": ""},
             headers=tunnel_header
         )
         assert r_forbidden.status_code == 403
-        assert r_forbidden.json()["message"] == "Endast admin kan flytta ut bilder."
+        assert r_forbidden.json()["message"] == "Skriv ditt namn i hubben först för att kunna flytta ut bilder."
+
+        # 1b. Non-admin with named reviewer "Amalia" POST /api/image/remove -> 200
+        r_amalia = requests.post(
+            f"{base_url}/api/image/remove?batch=http-test-batch",
+            json={"product_id": "Keps-Garda-Ranger-Army-Cap-dark-grey", "filename": "02.jpg", "reviewer": "Amalia"},
+            headers=tunnel_header
+        )
+        assert r_amalia.status_code == 200
+        # Restore 02.jpg so subsequent tests remain unaffected
+        r_amalia_undo = requests.post(
+            f"{base_url}/api/image/undo_remove?batch=http-test-batch",
+            json={"reviewer": "Amalia"},
+            headers=tunnel_header
+        )
+        assert r_amalia_undo.status_code == 200
 
         # 2. Unknown batch POST /api/image/remove -> 404
         r_notfound = requests.post(
@@ -435,14 +450,14 @@ def test_http_image_routes(tmp_path, monkeypatch):
         assert len(data_removed["ops"]) == 1
         assert data_removed["ops"][0]["op_id"] == op_id
 
-        # 7. Non-admin POST /api/image/undo_remove -> 403
+        # 7. Non-admin POST /api/image/undo_remove without name -> 403
         r_undo_forbidden = requests.post(
             f"{base_url}/api/image/undo_remove?batch=http-test-batch",
-            json={"op_id": op_id},
+            json={"op_id": op_id, "reviewer": ""},
             headers=tunnel_header
         )
         assert r_undo_forbidden.status_code == 403
-        assert r_undo_forbidden.json()["message"] == "Endast admin kan flytta ut bilder."
+        assert r_undo_forbidden.json()["message"] == "Skriv ditt namn i hubben först för att kunna flytta ut bilder."
 
         # 8. Obstacle in original place -> 409 Conflict
         (p_dir / "01.jpg").write_bytes(b"obstacle")

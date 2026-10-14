@@ -38,6 +38,20 @@ REMOVE_REASONS = {
     "annat": "Annat",
 }
 
+REMOVE_FOR_VIEWERS = True
+LOW_SHOT_THRESHOLD = 2
+NOTIFY_SCRIPT = os.environ.get("QA_HUB_NOTIFY_SCRIPT", r"C:\Users\AndronikLindgren\agent-home\scripts\notify.mjs")
+
+def viewer_may_remove(is_admin, reviewer):
+    if is_admin:
+        return True
+    if not REMOVE_FOR_VIEWERS:
+        return False
+    if not reviewer or not isinstance(reviewer, str):
+        return False
+    r = reviewer.strip()
+    return bool(r and r != "Anonym")
+
 def get_users_file():
     return os.environ.get("QA_HUB_USERS_FILE", r"C:\Users\AndronikLindgren\.secrets\qa-hub-users.json")
 
@@ -1068,7 +1082,7 @@ def removed_root_for(batch_path):
     return os.path.join(os.path.dirname(p), os.path.basename(p) + " Removed")
 
 
-def remove_shot(batch, product_id, filename, user):
+def remove_shot(batch, product_id, filename, user, count_user=None, undo_user=None):
     base_dir = batch.get("path", "")
     manifest_candidates = [
         os.path.join(base_dir, "products_manifest.json"),
@@ -1171,8 +1185,13 @@ def remove_shot(batch, product_id, filename, user):
     with open(log_path, "w", encoding="utf-8") as f:
         json.dump(log_data, f, indent=2, ensure_ascii=False)
 
-    undo_count = sum(1 for o in log_data if not o.get("undone", False))
-    return {
+    cu = count_user if count_user is not None else undo_user
+    if cu is not None:
+        undo_count = sum(1 for o in log_data if not o.get("undone", False) and o.get("user") == cu)
+    else:
+        undo_count = sum(1 for o in log_data if not o.get("undone", False))
+
+    ret = {
         "status": "ok",
         "op_id": op_id,
         "moved": moved_rel_paths,
@@ -1180,8 +1199,52 @@ def remove_shot(batch, product_id, filename, user):
         "undo_count": undo_count
     }
 
+    # Low-count warning: re-scan with scan_batch_products(batch)
+    updated_products = scan_batch_products(batch)
+    updated_prod = next(
+        (p for p in updated_products if str(p.get("id")) == str(product_id) or str(p.get("id")).lower() == str(product_id).lower()),
+        None
+    )
+    if updated_prod and updated_prod.get("variants"):
+        variant_values = list(updated_prod.get("variants", {}).values())
+        remaining = max((len(shots) for shots in variant_values if isinstance(shots, list)), default=0)
+    else:
+        remaining = 0
 
-def undo_remove(batch, op_id=None):
+    if remaining < LOW_SHOT_THRESHOLD:
+        ret["low_warning"] = {"product_id": product_id, "remaining": remaining}
+        alerts_path = os.path.join(removed_root, "_qa_low_alerts.json")
+        alerts = {}
+        if os.path.exists(alerts_path):
+            try:
+                with open(alerts_path, "r", encoding="utf-8") as f:
+                    alerts = json.load(f)
+                if not isinstance(alerts, dict):
+                    alerts = {}
+            except Exception:
+                alerts = {}
+
+        pid_key = str(product_id)
+        if pid_key not in alerts:
+            alerts[pid_key] = datetime.datetime.now().isoformat()
+            try:
+                with open(alerts_path, "w", encoding="utf-8") as f:
+                    json.dump(alerts, f, indent=2, ensure_ascii=False)
+            except Exception:
+                pass
+
+            if NOTIFY_SCRIPT and os.path.isfile(NOTIFY_SCRIPT):
+                try:
+                    batch_id = batch.get("id", "")
+                    msg = f"[QA-hubb 1.0] Få bilder kvar: {batch_id} / {product_id} har {remaining} bild(er) kvar efter utrensning ({user})"
+                    subprocess.Popen(["node", NOTIFY_SCRIPT, msg])
+                except Exception:
+                    pass
+
+    return ret
+
+
+def undo_remove(batch, op_id=None, user=None):
     batch_path = os.path.normpath(os.path.abspath(batch.get("path", "")))
     removed_root = removed_root_for(batch_path)
     log_path = os.path.join(removed_root, "_qa_removed_log.json")
@@ -1200,11 +1263,15 @@ def undo_remove(batch, op_id=None):
     if op_id:
         for op in reversed(log_data):
             if op.get("op_id") == op_id and not op.get("undone", False):
+                if user is not None and op.get("user") != user:
+                    continue
                 target_op = op
                 break
     else:
         for op in reversed(log_data):
             if not op.get("undone", False):
+                if user is not None and op.get("user") != user:
+                    continue
                 target_op = op
                 break
 
@@ -1235,7 +1302,44 @@ def undo_remove(batch, op_id=None):
     with open(log_path, "w", encoding="utf-8") as f:
         json.dump(log_data, f, indent=2, ensure_ascii=False)
 
-    undo_count = sum(1 for o in log_data if not o.get("undone", False))
+    # In undo_remove, after restoring, if the product now has >= LOW_SHOT_THRESHOLD shots,
+    # delete its key from _qa_low_alerts.json so a later drop alerts again.
+    product_id = target_op.get("product_id")
+    if product_id:
+        try:
+            updated_products = scan_batch_products(batch)
+            updated_prod = next(
+                (p for p in updated_products if str(p.get("id")) == str(product_id) or str(p.get("id")).lower() == str(product_id).lower()),
+                None
+            )
+            if updated_prod and updated_prod.get("variants"):
+                variant_values = list(updated_prod.get("variants", {}).values())
+                remaining = max((len(shots) for shots in variant_values if isinstance(shots, list)), default=0)
+            else:
+                remaining = 0
+
+            if remaining >= LOW_SHOT_THRESHOLD:
+                alerts_path = os.path.join(removed_root, "_qa_low_alerts.json")
+                if os.path.exists(alerts_path):
+                    with open(alerts_path, "r", encoding="utf-8") as f:
+                        alerts = json.load(f)
+                    if isinstance(alerts, dict):
+                        changed = False
+                        for k in [str(product_id), product_id]:
+                            if k in alerts:
+                                del alerts[k]
+                                changed = True
+                        if changed:
+                            with open(alerts_path, "w", encoding="utf-8") as f:
+                                json.dump(alerts, f, indent=2, ensure_ascii=False)
+        except Exception:
+            pass
+
+    if user is not None:
+        undo_count = sum(1 for o in log_data if not o.get("undone", False) and o.get("user") == user)
+    else:
+        undo_count = sum(1 for o in log_data if not o.get("undone", False))
+
     return {
         "status": "ok",
         "op_id": target_op["op_id"],
@@ -1284,7 +1388,7 @@ def set_remove_reason(batch, op_id, reason, note, user):
     return {"status": "ok"}
 
 
-def list_removed(batch):
+def list_removed(batch, user=None):
     batch_path = os.path.normpath(os.path.abspath(batch.get("path", "")))
     removed_root = removed_root_for(batch_path)
     log_path = os.path.join(removed_root, "_qa_removed_log.json")
@@ -1302,6 +1406,8 @@ def list_removed(batch):
     active_ops = []
     for op in reversed(log_data):
         if not op.get("undone", False):
+            if user is not None and op.get("user") != user:
+                continue
             active_ops.append({
                 "op_id": op.get("op_id"),
                 "ts": op.get("ts"),
@@ -1355,6 +1461,11 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         client_ip = self.client_address[0] if hasattr(self, 'client_address') else ''
         is_local = (not is_tunnel) and (client_ip in ['127.0.0.1', '::1', 'localhost', '192.168.2.33'])
         return is_local
+
+    def can_remove_request(self, query=None, reviewer=None):
+        if self.is_admin_request(query, reviewer):
+            return True
+        return viewer_may_remove(False, reviewer)
 
 
     def can_see_batch(self, batch):
@@ -1584,7 +1695,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
             batches = [b for b in batches if self.can_see_batch(b)]
 
-            content = json.dumps({"batches": batches, "is_admin": is_admin}, ensure_ascii=False).encode("utf-8")
+            content = json.dumps({"batches": batches, "is_admin": is_admin, "can_remove": bool(is_admin or REMOVE_FOR_VIEWERS)}, ensure_ascii=False).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Access-Control-Allow-Origin", "*")
@@ -1631,6 +1742,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             payload = {
                 "batch": batch,
                 "is_admin": is_admin,
+                "can_remove": bool(is_admin or REMOVE_FOR_VIEWERS),
                 "count": len(products),
                 "products": products,
                 "reviews": reviews
@@ -1644,7 +1756,8 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             return
 
         elif path == "/api/image/removed":
-            if not self.is_admin_request(query):
+            reviewer = self.reviewer_name(query.get("reviewer", [""])[0])
+            if not self.can_remove_request(query, reviewer):
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
                 self.send_header("Access-Control-Allow-Origin", "*")
@@ -1665,7 +1778,8 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 }, ensure_ascii=False).encode("utf-8"))
                 return
 
-            res = list_removed(batch_obj)
+            is_admin = self.is_admin_request(query, reviewer)
+            res = list_removed(batch_obj, user=None if is_admin else reviewer)
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Access-Control-Allow-Origin", "*")
@@ -2330,14 +2444,14 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 return
 
             reviewer = self.reviewer_name(body.get("reviewer") or body.get("user"))
-            if not self.is_admin_request(query, reviewer):
+            if not self.can_remove_request(query, reviewer):
                 self.send_response(403)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
                 self.send_header("Access-Control-Allow-Origin", "*")
                 self.end_headers()
                 self.wfile.write(json.dumps({
                     "status": "error",
-                    "message": "Endast admin kan flytta ut bilder."
+                    "message": "Skriv ditt namn i hubben först för att kunna flytta ut bilder."
                 }, ensure_ascii=False).encode("utf-8"))
                 return
 
@@ -2356,7 +2470,8 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             product_id = body.get("product_id")
             filename = body.get("filename")
             try:
-                res = remove_shot(batch_obj, product_id, filename, reviewer)
+                is_admin = self.is_admin_request(query, reviewer)
+                res = remove_shot(batch_obj, product_id, filename, reviewer, count_user=None if is_admin else reviewer)
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
                 self.send_header("Access-Control-Allow-Origin", "*")
@@ -2392,14 +2507,14 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 return
 
             reviewer = self.reviewer_name(body.get("reviewer") or body.get("user"))
-            if not self.is_admin_request(query, reviewer):
+            if not self.can_remove_request(query, reviewer):
                 self.send_response(403)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
                 self.send_header("Access-Control-Allow-Origin", "*")
                 self.end_headers()
                 self.wfile.write(json.dumps({
                     "status": "error",
-                    "message": "Endast admin kan flytta ut bilder."
+                    "message": "Skriv ditt namn i hubben först för att kunna flytta ut bilder."
                 }, ensure_ascii=False).encode("utf-8"))
                 return
 
@@ -2417,7 +2532,8 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
             op_id = body.get("op_id")
             try:
-                res = undo_remove(batch_obj, op_id)
+                is_admin = self.is_admin_request(query, reviewer)
+                res = undo_remove(batch_obj, op_id, user=None if is_admin else reviewer)
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
                 self.send_header("Access-Control-Allow-Origin", "*")
@@ -2463,14 +2579,14 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 return
 
             reviewer = self.reviewer_name(body.get("reviewer") or body.get("user"))
-            if not self.is_admin_request(query, reviewer):
+            if not self.can_remove_request(query, reviewer):
                 self.send_response(403)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
                 self.send_header("Access-Control-Allow-Origin", "*")
                 self.end_headers()
                 self.wfile.write(json.dumps({
                     "status": "error",
-                    "message": "Endast admin kan flytta ut bilder."
+                    "message": "Skriv ditt namn i hubben först för att kunna flytta ut bilder."
                 }, ensure_ascii=False).encode("utf-8"))
                 return
 

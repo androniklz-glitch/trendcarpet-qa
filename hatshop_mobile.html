@@ -1729,6 +1729,7 @@
       products: [],
       reviews: {},
       undoCount: 0,
+      canRemove: false,
       reviewer: localStorage.getItem('hatshop_reviewer') || 'Andro',
       currentProductIndex: 0,
       currentShotIndex: 0,
@@ -1801,6 +1802,7 @@
         const data = await res.json();
         state.batches = data.batches || [];
         state.isAdmin = data.is_admin || false;
+        state.canRemove = data.can_remove || state.isAdmin;
         const select = document.getElementById('mobileBatchSelect');
         select.innerHTML = '';
         state.batches.forEach(b => {
@@ -2038,7 +2040,7 @@
     function updateUndoButton() {
       const btn = document.getElementById('mBtnUndo');
       const gridBtn = document.getElementById('mGridUndoBtn');
-      const show = state.isAdmin && state.undoCount > 0;
+      const show = state.canRemove && state.undoCount > 0;
       const text = `↩ Ångra (${state.undoCount})`;
       if (btn) {
         btn.innerHTML = text;
@@ -2057,7 +2059,7 @@
         return;
       }
       try {
-        const res = await fetch(`/api/image/removed?batch=${encodeURIComponent(state.currentBatchId)}`);
+        const res = await fetch(`/api/image/removed?batch=${encodeURIComponent(state.currentBatchId)}&reviewer=${encodeURIComponent(state.reviewer || '')}`);
         if (res.ok) {
           const data = await res.json();
           state.undoCount = typeof data.undo_count === 'number' ? data.undo_count : 0;
@@ -2072,6 +2074,10 @@
 
     async function removeMobileImage(productId, filename, label, event) {
       if (event && event.stopPropagation) event.stopPropagation();
+      if (!state.isAdmin && !(state.reviewer || '').trim()) {
+        showToast('Skriv ditt namn i hubben först för att kunna flytta ut bilder.');
+        return;
+      }
       const ok = confirm(`Flytta ut bild ${label} (alla storlekar) ur mappen?`);
       if (!ok) return;
 
@@ -2096,7 +2102,11 @@
         await loadBatch(state.currentBatchId, productId);
 
         const base = getBasename(data.removed_root) || '_removed';
-        showNotice(`Bild flyttad till "${escapeHtml(base)}". <a href="javascript:void(0)" onclick="undoRemoveImage()">[Ångra]</a>`, 8000);
+        let noticeHtml = `Bild flyttad till "${escapeHtml(base)}". <a href="javascript:void(0)" onclick="undoRemoveImage()">[Ångra]</a>`;
+        if (data.low_warning) {
+          noticeHtml += `<div style="color: #fbbf24; margin-top: 4px;">⚠️ Bara ${data.low_warning.remaining} bild(er) kvar för den här produkten – Andronik har fått en varning.</div>`;
+        }
+        showNotice(noticeHtml, 8000);
       } catch (err) {
         console.error('Error removing mobile image:', err);
         showToast('⚠️ ' + (err.message || 'Serverfel'));
@@ -2201,7 +2211,7 @@
         slide.className = 'carousel-slide';
         const shotKey = String(idx + 1).padStart(2, '0');
         const imgLabel = s.label || shotKey;
-        const removeBtnHtml = state.isAdmin ? `
+        const removeBtnHtml = state.canRemove ? `
           <button class="m-remove-image-btn" onclick="event.stopPropagation(); removeMobileImage('${escapeJsString(prod.id)}', '${escapeJsString(s.filename || '')}', '${escapeJsString(imgLabel)}', event)" title="Flytta ut bild">🗑 Flytta ut</button>
         ` : '';
         slide.innerHTML = `

@@ -219,13 +219,22 @@ def test_http_remove_reason_routes(tmp_path, monkeypatch):
         assert r_remove.status_code == 200
         op_id = r_remove.json()["op_id"]
 
-        # 2. Non-admin POST /api/image/remove_reason -> 403
+        # 2. Non-admin without name POST /api/image/remove_reason -> 403
         r_forbidden = requests.post(
             f"{base_url}/api/image/remove_reason?batch=http-reason-batch",
-            json={"op_id": op_id, "reason": "fransar", "note": "trasig", "reviewer": "ReviewerUser"},
+            json={"op_id": op_id, "reason": "fransar", "note": "trasig", "reviewer": ""},
             headers=tunnel_header
         )
         assert r_forbidden.status_code == 403
+        assert r_forbidden.json()["message"] == "Skriv ditt namn i hubben först för att kunna flytta ut bilder."
+
+        # 2b. Non-admin with named reviewer "Amalia" POST /api/image/remove_reason -> 200
+        r_amalia_reason = requests.post(
+            f"{base_url}/api/image/remove_reason?batch=http-reason-batch",
+            json={"op_id": op_id, "reason": "fransar", "note": "trasig", "reviewer": "Amalia"},
+            headers=tunnel_header
+        )
+        assert r_amalia_reason.status_code == 200
 
         # 3. Unknown batch -> 404
         r_notfound = requests.post(

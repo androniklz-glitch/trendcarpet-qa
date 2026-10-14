@@ -2713,7 +2713,7 @@
       currentMode: 'product',
       currentProductIndex: 0,
       gridCols: 4,
-      showGuides: true,
+      showGuides: false,
       guideCrownY: 22,
       guideBaseY: 78,
       guideCenterY: 52,
@@ -3050,11 +3050,7 @@
         state.reviews = data.reviews || {};
         state.currentProductIndex = 0;
 
-        if (state.currentBatch.category === 'kepsar') {
-          state.showGuides = true;
-        } else {
-          state.showGuides = false;
-        }
+        state.showGuides = false;
 
         populateSourceSelector();
         renderAngleGrid();

@@ -814,6 +814,7 @@ def scan_batch_products(batch):
                 is_nested_model_batch = True
                 break
 
+        ran_subfolder_branch = False
         if is_nested_model_batch:
             for model_name in sorted(root_entries):
                 model_path = os.path.join(base_dir, model_name)
@@ -848,6 +849,7 @@ def scan_batch_products(batch):
                         "variants": { "Standard": shot_list }
                     }
         elif root_entries and any(os.path.isdir(os.path.join(base_dir, d)) and any(f.lower().endswith((".jpg", ".jpeg", ".png", ".webp")) for f in os.listdir(os.path.join(base_dir, d))) for d in root_entries):
+            ran_subfolder_branch = True
             for folder_name in sorted(root_entries):
                 folder_path = os.path.join(base_dir, folder_name)
                 if not os.path.isdir(folder_path):
@@ -882,9 +884,10 @@ def scan_batch_products(batch):
                     "latest_mtime": max(mtimes) if mtimes else 0,
                     "variants": { "Standard": shot_list }
                 }
-        else:
-            # Flat directory layout (direct image files in base_dir without subfolders)
-            direct_images = [f for f in sorted(os.listdir(base_dir)) if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp"))]
+        direct_root_images = [f for f in sorted(os.listdir(base_dir)) if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp")) and os.path.isfile(os.path.join(base_dir, f))]
+        if (not is_nested_model_batch and not ran_subfolder_branch) or (ran_subfolder_branch and direct_root_images):
+            # Flat directory layout (direct image files in base_dir without subfolders, or loose root images alongside subfolders)
+            direct_images = direct_root_images
 
             def parse_flat_item(fn):
                 name_no_ext, ext = os.path.splitext(fn)
@@ -1029,6 +1032,9 @@ def scan_batch_products(batch):
                 mtimes = [s["mtime"] for s in shot_list if s.get("mtime")]
                 has_new = any(s.get("is_new_version") for s in shot_list)
                 v_tag = next((s["version_tag"] for s in shot_list if s.get("is_new_version")), "")
+
+                if prod_key in products_map:
+                    prod_key = f"rot-{prod_key}"
 
                 products_map[prod_key] = {
                     "id": prod_key,

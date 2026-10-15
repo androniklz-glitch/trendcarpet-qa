@@ -715,7 +715,7 @@
       gap: 12px;
     }
 
-    /* Toast */
+    /* Toast & Bottom Notice */
     .m-toast {
       position: fixed;
       top: 60px;
@@ -729,7 +729,7 @@
       padding: 8px 16px;
       border-radius: 20px;
       box-shadow: 0 6px 20px rgba(0,0,0,0.5);
-      z-index: 300;
+      z-index: 2000;
       opacity: 0;
       pointer-events: none;
       transition: all 0.25s ease;
@@ -745,6 +745,136 @@
       cursor: pointer;
       font-weight: 700;
       margin-left: 6px;
+    }
+    .m-bottom-notice {
+      position: fixed;
+      bottom: calc(var(--safe-bottom) + 12px);
+      left: 12px;
+      right: 12px;
+      max-width: 580px;
+      margin: 0 auto;
+      background: #1E293B;
+      border: 1px solid var(--accent-blue);
+      color: #fff;
+      font-size: 13px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      box-shadow: 0 10px 32px rgba(0,0,0,0.7);
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+      transition: all 0.25s ease;
+    }
+    .m-bottom-notice.show {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .btn-reason-chip {
+      min-height: 36px;
+      min-width: 36px;
+      padding: 6px 12px;
+      font-size: 12.5px;
+      font-weight: 500;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-reason-chip.active, .btn-reason-chip.btn-primary {
+      background: #2563EB;
+      border-color: #60A5FA;
+      color: #fff;
+      font-weight: 700;
+    }
+    .version-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #38bdf8;
+      border-radius: 12px;
+      padding: 2px 7px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .version-pill-earlier {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--text-dim, #94a3b8);
+      background: #1e293b;
+      padding: 2px 7px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .btn-download-image {
+      font-size: 13px;
+      min-width: 36px;
+      min-height: 36px;
+      padding: 0 8px;
+      color: #94a3b8;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(15, 23, 42, 0.65);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      line-height: 1;
+      backdrop-filter: blur(4px);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-download-image:hover, .btn-download-image:active {
+      background: rgba(56, 189, 248, 0.25);
+      border-color: rgba(56, 189, 248, 0.6);
+      color: #38bdf8;
+      text-decoration: none;
+    }
+    .rating-stars {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      vertical-align: middle;
+    }
+    .rating-star {
+      cursor: pointer;
+      min-width: 36px;
+      min-height: 36px;
+      font-size: 20px;
+      line-height: 1;
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s ease, color 0.1s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .rating-star:active {
+      transform: scale(1.2);
+    }
+    .rating-star.filled {
+      color: #fbbf24;
+    }
+    .rating-star.empty {
+      color: #64748b;
     }
 
     /* View Switcher Tabs */
@@ -956,16 +1086,19 @@
     }
     .mobile-zoom-modal.active { display: flex; }
     .zoom-header {
-      height: 52px;
-      background: rgba(15, 23, 42, 0.85);
+      min-height: 52px;
+      height: auto;
+      background: rgba(15, 23, 42, 0.9);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 14px;
+      padding: 6px 12px;
       z-index: 10;
       flex-shrink: 0;
+      gap: 6px;
+      flex-wrap: wrap;
     }
     .zoom-title {
       font-size: 13px;
@@ -979,17 +1112,26 @@
     .zoom-actions {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      flex-wrap: wrap;
     }
     .zoom-btn {
+      min-height: 36px;
+      min-width: 36px;
       background: rgba(255, 255, 255, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.2);
       color: #fff;
       font-size: 11.5px;
       font-weight: 600;
-      padding: 5px 9px;
+      padding: 0 9px;
       border-radius: 6px;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
     }
     .zoom-btn.active {
       background: #EAB308;
@@ -1000,14 +1142,18 @@
       background: rgba(255, 255, 255, 0.15);
       border: none;
       color: #fff;
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      min-height: 36px;
       border-radius: 50%;
       font-size: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
     }
     .zoom-viewport {
       flex: 1;
@@ -1406,6 +1552,7 @@
         <div class="reviewer-btn" id="mBtnPublishBatch" onclick="toggleMobileBatchPublish()" style="display: none; font-size: 15px;" title="Publicera eller gör mappen privat">🔒</div>
         <div class="reviewer-btn" onclick="copyMobileOneDriveLink()" id="mBtnOneDrive" title="Kopiera OneDrive-länk">☁️</div>
         <div class="reviewer-btn" onclick="copyMobileShareLink()" title="Dela länk till denna mapp">🔗</div>
+        <button class="reviewer-btn" id="mBtnRefresh" onclick="hardReloadApp()" title="Uppdatera" aria-label="Uppdatera" style="min-width: 36px; min-height: 36px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-family: inherit;">🔄</button>
         <div class="reviewer-btn" onclick="openNameModal()" title="Klicka för att byta namn">
           <span>👤</span>
           <span id="mReviewerDisplay">Namn</span>
@@ -1690,8 +1837,15 @@
   <!-- Mobile High-Res Zoom Modal -->
   <div class="mobile-zoom-modal" id="mobileZoomModal">
     <div class="zoom-header">
-      <div class="zoom-title" id="zoomTitle">Modell - Bild 01</div>
+      <div style="display: flex; align-items: center; gap: 6px; min-width: 0; flex: 1 1 auto; overflow: hidden;">
+        <div class="zoom-title" id="zoomTitle">Modell - Bild 01</div>
+        <div id="zoomVersionBadge"></div>
+      </div>
+      <div class="zoom-stars-container" id="zoomRatingStarsContainer" style="display: inline-flex; align-items: center; flex-shrink: 0;"></div>
       <div class="zoom-actions">
+        <a id="zoomDlBtn" href="" download class="zoom-btn" title="Ladda ner originalbild" aria-label="Ladda ner originalbild">⬇</a>
+        <button class="zoom-btn" id="zoomBtnRemove" onclick="removeMobileZoomCurrentImage(event)" style="display: none; background: rgba(239, 68, 68, 0.25); border-color: rgba(239, 68, 68, 0.45); color: #fca5a5; font-weight: 600;" title="Flytta ut bild ur mappen">🗑 Flytta ut</button>
+        <button class="zoom-btn" id="zoomBtnUndo" onclick="undoRemoveImage()" style="display: none; background: rgba(239, 68, 68, 0.25); border-color: rgba(239, 68, 68, 0.45); color: #fca5a5; font-weight: 600;" title="Återställ senast borttagna bild">↩ Ångra</button>
         <button class="zoom-btn" id="btnZoomGuides" onclick="toggleZoomGuides()">📐 Guider</button>
         <button class="zoom-btn" onclick="resetZoom()">1x</button>
         <button class="zoom-close-btn" onclick="closeMobileZoom()">✕</button>
@@ -1731,6 +1885,7 @@
   </div>
 
   <div class="m-toast" id="mToast">Ändringar sparade!</div>
+  <div class="m-bottom-notice" id="mBottomNotice"></div>
 
   <script>
     let isHubOnline = true;
@@ -1800,6 +1955,7 @@
       currentBatchId: '',
       products: [],
       reviews: {},
+      ratings: {},
       undoCount: 0,
       canRemove: false,
       reviewer: localStorage.getItem('hatshop_reviewer') || '',
@@ -1840,7 +1996,7 @@
       history.pushState({ modal: 'name' }, '');
     }
 
-    function saveReviewerName() {
+    async function saveReviewerName() {
       const name = document.getElementById('mNameInput').value.trim();
       if (!name) return;
       state.reviewer = name;
@@ -1851,10 +2007,12 @@
         history.back();
       }
       showToast(`Välkommen ${name}!`);
+      await fetchRatings();
+      updateAllRatingStars();
       initBatches();
     }
 
-    function selectQuickMobileReviewer(name) {
+    async function selectQuickMobileReviewer(name) {
       state.reviewer = name;
       localStorage.setItem('hatshop_reviewer', name);
       updateReviewerDisplay();
@@ -1863,6 +2021,8 @@
         history.back();
       }
       showToast(`Välkommen ${name}!`);
+      await fetchRatings();
+      updateAllRatingStars();
       initBatches();
     }
 
@@ -2108,6 +2268,7 @@
         state.reviews = data.reviews || {};
         lastProductsFingerprint = getProductsFingerprint(state.products);
         lastSyncReviewsStr = JSON.stringify(state.reviews);
+        await fetchRatings();
 
         let preservedSameProduct = false;
         if (preserveProductId) {
@@ -2167,6 +2328,7 @@
     function updateUndoButton() {
       const btn = document.getElementById('mBtnUndo');
       const gridBtn = document.getElementById('mGridUndoBtn');
+      const zoomBtn = document.getElementById('zoomBtnUndo');
       const show = state.canRemove && state.undoCount > 0;
       const text = `↩ Ångra (${state.undoCount})`;
       if (btn) {
@@ -2176,6 +2338,15 @@
       if (gridBtn) {
         gridBtn.innerHTML = text;
         gridBtn.style.display = show ? 'inline-flex' : 'none';
+      }
+      if (zoomBtn) {
+        if (state.canRemove) {
+          zoomBtn.style.display = 'inline-flex';
+          zoomBtn.innerHTML = state.undoCount > 0 ? text : '↩ Ångra';
+          zoomBtn.style.opacity = state.undoCount > 0 ? '1' : '0.6';
+        } else {
+          zoomBtn.style.display = 'none';
+        }
       }
     }
 
@@ -2197,6 +2368,81 @@
         state.undoCount = 0;
       }
       updateUndoButton();
+    }
+
+    const REMOVE_REASONS = {
+      "anatomi": "Händer/anatomi",
+      "fel_farg": "Fel färg",
+      "fransar": "Fransar",
+      "rummet": "Rummet/miljön",
+      "produktdetalj": "Produktdetalj",
+      "styling": "Styling/person",
+      "annat": "Annat"
+    };
+
+    let activeRemoveReasonSelection = '';
+
+    async function submitRemoveReason(opId, reasonKey) {
+      if (!state.currentBatchId || !opId) return;
+      activeRemoveReasonSelection = reasonKey || '';
+
+      const inputEl = document.getElementById('removeReasonNoteInput');
+      const note = inputEl ? inputEl.value : '';
+      const statusEl = document.getElementById('removeReasonStatus');
+
+      document.querySelectorAll('.btn-reason-chip').forEach(btn => {
+        if (btn.getAttribute('data-key') === reasonKey) {
+          btn.classList.add('active');
+          btn.classList.add('btn-primary');
+        } else {
+          btn.classList.remove('active');
+          btn.classList.remove('btn-primary');
+        }
+      });
+
+      try {
+        const res = await fetch(`/api/image/remove_reason?batch=${encodeURIComponent(state.currentBatchId)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            op_id: opId,
+            reason: reasonKey || '',
+            note: note,
+            reviewer: state.reviewer || ''
+          })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || data.status === 'error') {
+          const msg = data.message || 'Kunde inte spara orsak';
+          if (statusEl) {
+            statusEl.style.color = '#fca5a5';
+            statusEl.textContent = '⚠️ ' + msg;
+          }
+          return;
+        }
+        if (statusEl) {
+          statusEl.style.color = '#86efac';
+          statusEl.textContent = '✓ Sparad';
+        }
+        restartNoticeTimer(15000);
+      } catch (err) {
+        console.error('Error saving remove reason:', err);
+        const msg = err.message || 'Serverfel';
+        if (statusEl) {
+          statusEl.style.color = '#fca5a5';
+          statusEl.textContent = '⚠️ ' + msg;
+        }
+      }
+    }
+
+    function handleRemoveReasonInputKey(e, opId) {
+      e.stopPropagation();
+      restartNoticeTimer(15000);
+
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        submitRemoveReason(opId, activeRemoveReasonSelection || '');
+      }
     }
 
     async function removeMobileImage(productId, filename, label, event) {
@@ -2230,11 +2476,34 @@
         await loadBatch(state.currentBatchId, productId);
 
         const base = getBasename(data.removed_root) || '_removed';
-        let noticeHtml = `Bild flyttad till "${escapeHtml(base)}". <a href="javascript:void(0)" onclick="undoRemoveImage()">[Ångra]</a>`;
-        if (data.low_warning) {
-          noticeHtml += `<div style="color: #fbbf24; margin-top: 4px;">⚠️ Bara ${data.low_warning.remaining} bild(er) kvar för den här produkten – Andronik har fått en varning.</div>`;
-        }
-        showNotice(noticeHtml, 8000);
+        const opId = data.op_id || '';
+        activeRemoveReasonSelection = '';
+
+        const chipsHtml = Object.entries(REMOVE_REASONS).map(([key, labelText]) => {
+          return `<button type="button" class="btn-reason-chip" data-key="${escapeHtml(key)}" onclick="submitRemoveReason('${escapeHtml(opId)}', '${escapeHtml(key)}')">${escapeHtml(labelText)}</button>`;
+        }).join(' ');
+
+        const lowWarningHtml = data.low_warning
+          ? `<div style="color: #fbbf24; font-size: 12.5px; font-weight: 500;">⚠️ Bara ${data.low_warning.remaining} bild(er) kvar för den här produkten – Andronik har fått en varning.</div>`
+          : '';
+
+        const noticeHtml = `
+          <div style="display: flex; flex-direction: column; gap: 8px; text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>Bild flyttad till "${escapeHtml(base)}". <a href="javascript:void(0)" onclick="undoRemoveImage()" style="color: #60a5fa; text-decoration: underline; font-weight: 700; margin-left: 6px;">[Ångra]</a></div>
+              <button type="button" onclick="hideNotice()" style="background: none; border: none; color: #94a3b8; font-size: 16px; cursor: pointer; min-width: 36px; min-height: 36px; display: inline-flex; align-items: center; justify-content: center;" title="Stäng">✕</button>
+            </div>
+            ${lowWarningHtml}
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              ${chipsHtml}
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <input type="text" id="removeReasonNoteInput" placeholder="Egen orsak (valfritt) – Enter sparar" onkeydown="handleRemoveReasonInputKey(event, '${escapeHtml(opId)}')" oninput="handleRemoveReasonInputKey(event, '${escapeHtml(opId)}')" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 6px; padding: 6px 10px; color: #fff; font-size: 12.5px; outline: none; min-height: 36px; flex: 1; min-width: 180px; font-family: inherit;">
+              <span id="removeReasonStatus" style="font-size: 12px; color: #86efac; min-height: 18px; display: inline-flex; align-items: center;"></span>
+            </div>
+          </div>
+        `;
+        showNotice(noticeHtml, 15000);
       } catch (err) {
         console.error('Error removing mobile image:', err);
         showToast('⚠️ ' + (err.message || 'Serverfel'));
@@ -2263,6 +2532,7 @@
           return;
         }
 
+        hideNotice();
         const currentProd = state.products[state.currentProductIndex];
         const currentProdId = currentProd ? currentProd.id : null;
         await loadBatch(state.currentBatchId, currentProdId);
@@ -2272,6 +2542,136 @@
       } catch (err) {
         console.error('Error undoing mobile remove:', err);
         showToast('⚠️ ' + (err.message || 'Serverfel'));
+      }
+    }
+
+    async function removeMobileZoomCurrentImage(event) {
+      if (event && event.stopPropagation) event.stopPropagation();
+      if (!state.isAdmin && !(state.reviewer || '').trim()) {
+        openNameModal();
+        showToast('Skriv ditt namn först.');
+        return;
+      }
+      const prod = state.products[state.currentProductIndex];
+      if (!prod) return;
+      const shots = getProductShots(prod);
+      const s = shots[state.currentShotIndex] || shots[0];
+      if (!s || !s.filename) return;
+      const shotKey = s.base_shot || s.shot || String(state.currentShotIndex + 1).padStart(2, '0');
+      const dispLabel = s.label || shotKey;
+      await removeMobileImage(prod.id, s.filename, dispLabel, event);
+    }
+
+    function downloadUrl(url) {
+      if (!url) return '';
+      return url + (url.includes('?') ? '&' : '?') + 'download=1';
+    }
+
+    async function fetchRatings() {
+      if (!state.currentBatchId) {
+        state.ratings = {};
+        return;
+      }
+      try {
+        const res = await fetch(`/api/ratings?batch=${encodeURIComponent(state.currentBatchId)}&reviewer=${encodeURIComponent(state.reviewer || '')}`);
+        if (res.ok) {
+          const data = await res.json();
+          state.ratings = data.ratings || {};
+        } else {
+          state.ratings = {};
+        }
+      } catch (err) {
+        console.error('Error fetching ratings:', err);
+        state.ratings = {};
+      }
+    }
+
+    function getStarsSpansHtml(productId, filename) {
+      const key = `${productId}|${filename}`;
+      const current = (state.ratings && state.ratings[key]) || 0;
+      const safePid = escapeJsString(productId);
+      const safeFn = escapeJsString(filename);
+      let spans = '';
+      for (let i = 1; i <= 5; i++) {
+        const filled = i <= current;
+        const target = (i === current) ? 0 : i;
+        const starChar = filled ? '★' : '☆';
+        const color = filled ? '#fbbf24' : '#64748b';
+        spans += `<span class="rating-star ${filled ? 'filled' : 'empty'}" style="color: ${color};" role="button" aria-label="Betyg ${i} av 5" onclick="event.stopPropagation(); setRating('${safePid}', '${safeFn}', ${target})">${starChar}</span>`;
+      }
+      return spans;
+    }
+
+    function renderStars(productId, filename) {
+      if (!productId || !filename) return '';
+      const key = `${productId}|${filename}`;
+      return `<span class="rating-stars" data-rating-key="${escapeHtml(key)}" title="Ditt privata betyg (syns bara för dig)" aria-label="Ditt privata betyg (syns bara för dig)">${getStarsSpansHtml(productId, filename)}</span>`;
+    }
+
+    async function setRating(productId, filename, stars) {
+      if (!state.reviewer || !state.reviewer.trim()) {
+        showToast('Skriv ditt namn i hubben först för att kunna sätta betyg.');
+        openNameModal();
+        return;
+      }
+      const key = `${productId}|${filename}`;
+      if (stars > 0) {
+        state.ratings[key] = stars;
+      } else {
+        delete state.ratings[key];
+      }
+
+      const spansHtml = getStarsSpansHtml(productId, filename);
+      document.querySelectorAll('[data-rating-key]').forEach(el => {
+        if (el.getAttribute('data-rating-key') === key) {
+          el.innerHTML = spansHtml;
+        }
+      });
+
+      try {
+        const res = await fetch(`/api/ratings?batch=${encodeURIComponent(state.currentBatchId || '')}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            product_id: productId,
+            filename: filename,
+            stars: stars,
+            reviewer: state.reviewer
+          })
+        });
+        if (res.status === 403) {
+          showToast('Skriv ditt namn i hubben först för att kunna sätta betyg.');
+          return;
+        }
+        if (!res.ok) {
+          showToast('Kunde inte spara betyg');
+        }
+      } catch (err) {
+        console.error('Error saving rating:', err);
+        showToast('Kunde inte ansluta till servern för betyg');
+      }
+    }
+
+    function updateAllRatingStars() {
+      document.querySelectorAll('[data-rating-key]').forEach(el => {
+        const key = el.getAttribute('data-rating-key');
+        if (key) {
+          const [productId, filename] = key.split('|');
+          el.innerHTML = getStarsSpansHtml(productId, filename);
+        }
+      });
+    }
+
+    function hardReloadApp() {
+      showToast('🔄 Laddar om sidan helt färskt från servern (Ctrl+F5)...');
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.set('_nocache', Date.now());
+        setTimeout(() => {
+          window.location.href = url.toString();
+        }, 150);
+      } catch (e) {
+        window.location.reload();
       }
     }
 
@@ -2324,7 +2724,8 @@
       const review = state.reviews[prod.id] || {};
 
       // 1. Titles & Counter
-      document.getElementById('mModelTitle').innerHTML = `${escapeHtml(prod.model)} <span onclick="copyMobileProductShareLink()" title="Dela permanent länk till ${escapeHtml(prod.model)}" style="cursor: pointer; font-size: 13px; margin-left: 6px; padding: 2px 6px; border-radius: 6px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; vertical-align: middle;">🔗</span>`;
+      const vHeadTag = prod.has_new_version ? ` <span class="version-pill" style="margin-left: 6px; font-size: 11px;">🔄 Ny version</span>` : '';
+      document.getElementById('mModelTitle').innerHTML = `${escapeHtml(prod.model)}${vHeadTag} <span onclick="copyMobileProductShareLink()" title="Dela permanent länk till ${escapeHtml(prod.model)}" style="cursor: pointer; font-size: 13px; margin-left: 6px; padding: 2px 6px; border-radius: 6px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; vertical-align: middle;">🔗</span>`;
       document.getElementById('mModelSubtitle').innerText = `${prod.brand} • ${prod.color}`;
       document.getElementById('mCounterPill').innerText = `${state.currentProductIndex + 1} / ${state.products.length}`;
       updateGridLabels();
@@ -2348,11 +2749,24 @@
         const removeBtnHtml = state.canRemove ? `
           <button class="m-remove-image-btn" onclick="event.stopPropagation(); removeMobileImage('${escapeJsString(prod.id)}', '${escapeJsString(s.filename || '')}', '${escapeJsString(imgLabel)}', event)" title="Flytta ut bild">🗑 Flytta ut</button>
         ` : '';
+        let vBadge = '';
+        if (prod.has_new_version || s.is_new_version) {
+          vBadge = `<span class="version-pill">🔄 Ny version</span>`;
+        } else if (s.is_primary === false) {
+          vBadge = `<span class="version-pill-earlier">⏳ Tidigare</span>`;
+        }
         slide.innerHTML = `
-          <div class="slide-badge">Bild ${escapeHtml(imgLabel)}</div>
+          <div style="position: absolute; top: 8px; left: 8px; display: flex; align-items: center; gap: 6px; z-index: 10;">
+            <div class="slide-badge" style="position: static;">Bild ${escapeHtml(imgLabel)}</div>
+            <a href="${downloadUrl(s.url)}" download class="btn-download-image" onclick="event.stopPropagation()" title="Ladda ner originalbild" aria-label="Ladda ner originalbild">⬇</a>
+            ${vBadge}
+          </div>
           ${removeBtnHtml}
           <div class="zoom-tap-hint" onclick="openMobileZoom('${s.url}', '${escapeJsString(prod.model)} - Bild ${escapeJsString(imgLabel)}', ${idx})">🔍 Zooma</div>
           <img src="${sizedUrl(s.url, 1080)}" alt="Bild ${escapeHtml(shotKey)}" loading="${idx === 0 ? 'eager' : 'lazy'}" onerror="handleImageError(this)" onclick="openMobileZoom('${s.url}', '${escapeJsString(prod.model)} - Bild ${escapeJsString(imgLabel)}', ${idx})" />
+          <div class="carousel-slide-stars" style="position: absolute; bottom: 44px; left: 50%; transform: translateX(-50%); z-index: 10; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 2px 8px; display: inline-flex; align-items: center; justify-content: center; pointer-events: auto;">
+            ${renderStars(prod.id, s.filename)}
+          </div>
         `;
         carousel.appendChild(slide);
 
@@ -2703,13 +3117,28 @@
       mToastTimer = setTimeout(() => t.classList.remove('show'), duration);
     }
 
-    function showNotice(html, ms = 8000) {
-      const t = document.getElementById('mToast');
-      if (!t) return;
-      if (mToastTimer) clearTimeout(mToastTimer);
-      t.innerHTML = html;
-      t.classList.add('show');
-      mToastTimer = setTimeout(() => t.classList.remove('show'), ms);
+    let mNoticeTimer = null;
+    function showNotice(html, ms = 15000) {
+      const el = document.getElementById('mBottomNotice') || document.getElementById('mToast');
+      if (!el) return;
+      if (mNoticeTimer) clearTimeout(mNoticeTimer);
+      el.innerHTML = html;
+      el.classList.add('show');
+      mNoticeTimer = setTimeout(() => el.classList.remove('show'), ms);
+    }
+
+    function restartNoticeTimer(ms = 15000) {
+      const el = document.getElementById('mBottomNotice') || document.getElementById('mToast');
+      if (!el) return;
+      if (mNoticeTimer) clearTimeout(mNoticeTimer);
+      mNoticeTimer = setTimeout(() => el.classList.remove('show'), ms);
+    }
+
+    function hideNotice() {
+      const el = document.getElementById('mBottomNotice') || document.getElementById('mToast');
+      if (!el) return;
+      if (mNoticeTimer) clearTimeout(mNoticeTimer);
+      el.classList.remove('show');
     }
 
     function escapeHtml(str) {
@@ -2816,12 +3245,20 @@
         else if (effStatus === 'redo') { statusBadge = '🔴'; statusClass = 'status-redo'; }
         else if (effStatus === 'pending') { statusBadge = '⚪'; statusClass = 'status-pending'; }
 
+        let gridVBadge = '';
+        if (prod.has_new_version || shot01.is_new_version) {
+          gridVBadge = ` <span class="version-pill" style="font-size: 10px; padding: 1px 6px; margin-left: 4px;">🔄 Ny version</span>`;
+        } else if (shot01.is_primary === false) {
+          gridVBadge = ` <span class="version-pill-earlier" style="font-size: 10px; padding: 1px 6px; margin-left: 4px;">⏳ Tidigare</span>`;
+        }
+
         const card = document.createElement('div');
         card.className = `m-grid-card ${statusClass}`;
         card.onclick = () => openProductFromGrid(idx);
         card.innerHTML = `
           <div class="m-card-thumb-wrap">
             <img src="${sizedUrl(shot01.url, 480)}" alt="${escapeHtml(prod.model)}" loading="lazy" onerror="handleImageError(this)" />
+            <a href="${downloadUrl(shot01.url)}" download class="btn-download-image" onclick="event.stopPropagation()" title="Ladda ner originalbild" aria-label="Ladda ner originalbild" style="position: absolute; top: 6px; left: 6px; z-index: 5;">⬇</a>
             <div class="m-card-status-badge">${statusBadge}</div>
             <div class="mobile-guide-overlay m-grid-guide-overlay" style="display: ${state.mobileGridGuides ? 'block' : 'none'};">
               <div class="guide-line-crown"></div>
@@ -2833,7 +3270,7 @@
             </div>
           </div>
           <div class="m-card-info">
-            <div class="m-card-title">${escapeHtml(prod.model)}</div>
+            <div class="m-card-title">${escapeHtml(prod.model)}${gridVBadge}</div>
             <div class="m-card-sub">${escapeHtml(prod.color || prod.brand)}</div>
           </div>
           <div class="m-card-actions" onclick="event.stopPropagation()">
@@ -3270,6 +3707,63 @@
       const titleEl = document.getElementById('zoomTitle');
       if (titleEl) {
         titleEl.innerText = `${prod.model} - Bild ${dispLabel} (${state.currentProductIndex + 1}/${state.products.length})`;
+      }
+
+      // Version badge in zoom header
+      const zoomVBadge = document.getElementById('zoomVersionBadge');
+      if (zoomVBadge) {
+        if (prod.has_new_version || s.is_new_version) {
+          zoomVBadge.innerHTML = `<span class="version-pill" style="font-size: 10px; padding: 2px 6px;">🔄 Ny version</span>`;
+          zoomVBadge.style.display = 'inline-flex';
+        } else if (s.is_primary === false) {
+          zoomVBadge.innerHTML = `<span class="version-pill-earlier" style="font-size: 10px; padding: 2px 6px;">⏳ Tidigare</span>`;
+          zoomVBadge.style.display = 'inline-flex';
+        } else {
+          zoomVBadge.innerHTML = '';
+          zoomVBadge.style.display = 'none';
+        }
+      }
+
+      // Stars in zoom header
+      const zoomStars = document.getElementById('zoomRatingStarsContainer');
+      if (zoomStars) {
+        if (s && s.filename) {
+          zoomStars.style.display = 'inline-flex';
+          zoomStars.setAttribute('data-rating-key', `${prod.id}|${s.filename}`);
+          zoomStars.innerHTML = getStarsSpansHtml(prod.id, s.filename);
+        } else {
+          zoomStars.style.display = 'none';
+          zoomStars.removeAttribute('data-rating-key');
+          zoomStars.innerHTML = '';
+        }
+      }
+
+      // Download link in zoom header
+      const zoomDlBtn = document.getElementById('zoomDlBtn');
+      if (zoomDlBtn) {
+        if (s && s.url) {
+          zoomDlBtn.style.display = 'inline-flex';
+          zoomDlBtn.href = downloadUrl(s.url);
+        } else {
+          zoomDlBtn.style.display = 'none';
+          zoomDlBtn.removeAttribute('href');
+        }
+      }
+
+      // Remove and undo buttons in zoom header
+      const zoomRemoveBtn = document.getElementById('zoomBtnRemove');
+      if (zoomRemoveBtn) {
+        zoomRemoveBtn.style.display = (state.canRemove && s && s.filename) ? 'inline-flex' : 'none';
+      }
+      const zoomUndoBtn = document.getElementById('zoomBtnUndo');
+      if (zoomUndoBtn) {
+        if (state.canRemove) {
+          zoomUndoBtn.style.display = 'inline-flex';
+          zoomUndoBtn.innerHTML = state.undoCount > 0 ? `↩ Ångra (${state.undoCount})` : '↩ Ångra';
+          zoomUndoBtn.style.opacity = state.undoCount > 0 ? '1' : '0.6';
+        } else {
+          zoomUndoBtn.style.display = 'none';
+        }
       }
 
       // Render angle pills in zoom sub bar

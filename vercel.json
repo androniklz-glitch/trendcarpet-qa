@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://competitive-possibility-bytes-terry.trycloudflare.com/$1"
+      "destination": "https://respiratory-happen-biol-donate.trycloudflare.com/$1"
     }
   ]
 }

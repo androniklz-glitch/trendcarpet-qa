@@ -2130,9 +2130,12 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                     try:
                         is_transparent = False
                         with Image.open(file_path) as test_img:
-                            is_transparent = test_img.mode in ("RGBA", "LA") or (test_img.mode == "P" and "transparency" in test_img.info)
+                            has_alpha = test_img.mode in ("RGBA", "LA") or (test_img.mode == "P" and "transparency" in test_img.info)
+                            if has_alpha:
+                                # Flow/AI PNGs are RGBA but fully opaque: only real transparency needs an alpha format
+                                is_transparent = test_img.convert("RGBA").getchannel("A").getextrema()[0] < 255
 
-                        ext = ".png" if is_transparent else ".jpg"
+                        ext = ".webp" if is_transparent else ".jpg"
                         cache_key = hashlib.md5(f"{file_path}_{os.path.getmtime(file_path)}_{target_w}".encode("utf-8")).hexdigest() + ext
                         cache_file = os.path.join(THUMB_CACHE_DIR, cache_key)
                         if not os.path.exists(cache_file):
@@ -2141,7 +2144,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                                     if img.mode != "RGBA":
                                         img = img.convert("RGBA")
                                     img.thumbnail((target_w, target_w), Image.Resampling.LANCZOS)
-                                    img.save(cache_file, "PNG", optimize=True)
+                                    img.save(cache_file, "WEBP", quality=85, method=4)
                                 else:
                                     img = img.convert("RGB")
                                     img.thumbnail((target_w, target_w), Image.Resampling.LANCZOS)
@@ -2151,6 +2154,8 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                         file_to_serve = file_path
 
                 mime_type, _ = mimetypes.guess_type(file_to_serve)
+                if file_to_serve.lower().endswith(".webp"):
+                    mime_type = "image/webp"
                 if not mime_type:
                     mime_type = "image/jpeg"
                 

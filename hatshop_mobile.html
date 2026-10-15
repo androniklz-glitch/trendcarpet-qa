@@ -1362,9 +1362,31 @@
       border-color: #EF4444;
       box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
     }
+    .offline-banner {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 9999;
+      background: #D97706;
+      color: #FFFFFF;
+      font-weight: 600;
+      font-size: 12.5px;
+      line-height: 1.4;
+      padding: 10px 14px;
+      padding-top: max(10px, env(safe-area-inset-top, 10px));
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    }
   </style>
 </head>
 <body>
+
+  <div id="offlineBanner" class="offline-banner">
+    Hubben är offline just nu (datorn som kör den är avstängd). Sidan uppdateras automatiskt när den är tillbaka.
+  </div>
 
   <div class="app-shell">
     
@@ -1587,7 +1609,6 @@
       <h3 style="font-size: 15px; font-weight: 700; color: #fff;">Vem granskar?</h3>
       <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Välj ditt namn med ett klick eller skriv in det nedan:</p>
       <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;">
-        <button type="button" class="m-chip-btn" style="flex: 1; min-width: 70px; padding: 8px 4px; background: rgba(56, 189, 248, 0.15); border: 1px solid var(--accent-blue); border-radius: 8px; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;" onclick="selectQuickMobileReviewer('Andro')">👤 Andro</button>
         <button type="button" class="m-chip-btn" style="flex: 1; min-width: 70px; padding: 8px 4px; background: rgba(56, 189, 248, 0.15); border: 1px solid var(--accent-blue); border-radius: 8px; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;" onclick="selectQuickMobileReviewer('Jesper')">👤 Jesper</button>
         <button type="button" class="m-chip-btn" style="flex: 1; min-width: 70px; padding: 8px 4px; background: rgba(56, 189, 248, 0.15); border: 1px solid var(--accent-blue); border-radius: 8px; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;" onclick="selectQuickMobileReviewer('Amalia')">👤 Amalia</button>
         <button type="button" class="m-chip-btn" style="flex: 1; min-width: 70px; padding: 8px 4px; background: rgba(56, 189, 248, 0.15); border: 1px solid var(--accent-blue); border-radius: 8px; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;" onclick="selectQuickMobileReviewer('Anton')">👤 Anton</button>
@@ -1712,16 +1733,67 @@
   <div class="m-toast" id="mToast">Ändringar sparade!</div>
 
   <script>
-    // Bypass ngrok warning automatically
+    let isHubOnline = true;
+    function setHubOnline(online) {
+      if (isHubOnline === online) return;
+      isHubOnline = online;
+      const banner = document.getElementById('offlineBanner');
+      if (banner) {
+        banner.style.display = online ? 'none' : 'block';
+      }
+      const dot = document.getElementById('mHubStatusDot');
+      if (dot) {
+        if (online) {
+          dot.style.background = '#10b981';
+          dot.style.boxShadow = '0 0 5px #10b981';
+          dot.title = 'Online';
+        } else {
+          dot.style.background = '#ef4444';
+          dot.style.boxShadow = '0 0 5px #ef4444';
+          dot.title = 'Offline';
+        }
+      }
+      if (online) {
+        if (state.currentBatchId) {
+          loadBatch(state.currentBatchId);
+        } else {
+          initBatches();
+        }
+      }
+    }
+
+    // Bypass ngrok warning automatically & track hub reachability
     const _origFetch = window.fetch;
-    window.fetch = function(url, options = {}) {
+    window.fetch = async function(url, options = {}) {
       options = options || {};
       options.headers = options.headers || {};
       if (typeof options.headers === 'object' && !(options.headers instanceof Headers)) {
         options.headers['ngrok-skip-browser-warning'] = 'true';
       }
-      return _origFetch.call(this, url, options);
+      const urlStr = typeof url === 'string' ? url : (url && url.url ? url.url : '');
+      const isApi = urlStr.includes('/api/');
+      try {
+        const res = await _origFetch.call(this, url, options);
+        if (isApi) {
+          if (res.ok) {
+            setHubOnline(true);
+          } else if ([502, 503, 504, 530].includes(res.status)) {
+            setHubOnline(false);
+          }
+        }
+        return res;
+      } catch (err) {
+        if (isApi) {
+          setHubOnline(false);
+        }
+        throw err;
+      }
     };
+
+    function sizedUrl(url, w) {
+      if (!url) return '';
+      return url + (url.includes('?') ? '&' : '?') + 'w=' + w;
+    }
 
     const state = {
       batches: [],
@@ -1730,7 +1802,7 @@
       reviews: {},
       undoCount: 0,
       canRemove: false,
-      reviewer: localStorage.getItem('hatshop_reviewer') || 'Andro',
+      reviewer: localStorage.getItem('hatshop_reviewer') || '',
       currentProductIndex: 0,
       currentShotIndex: 0,
       commentShotTarget: 'all',
@@ -1741,7 +1813,16 @@
 
     window.addEventListener('DOMContentLoaded', async () => {
       loadMobileGuides();
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramUser = urlParams.get('user') || urlParams.get('reviewer');
+      if (paramUser) {
+        state.reviewer = paramUser.trim();
+        localStorage.setItem('hatshop_reviewer', state.reviewer);
+      }
       updateReviewerDisplay();
+      if (!state.reviewer) {
+        openNameModal();
+      }
       await initBatches();
       setupCarouselTouch();
       setupZoomTouchEvents();
@@ -1829,7 +1910,7 @@
             const pIdx = state.products.findIndex(p => p.id === paramProd || p.model === paramProd);
             if (pIdx >= 0) {
               state.currentProductIndex = pIdx;
-              renderMobileProduct(true);
+              renderMobileProduct();
             }
           }
         }
@@ -1838,9 +1919,10 @@
           const loadedBatchName = state.batches.find(b => b.id === targetBatch)?.name || state.batches[0]?.name || '';
           showToast(`Mappen "${paramBatch}" finns inte eller är ett privat utkast. Visar "${loadedBatchName}" i stället.`);
         }
-        startMobileHeartbeat();
       } catch (err) {
         console.error('Kunde inte ladda mappar:', err);
+      } finally {
+        startMobileHeartbeat();
       }
     }
 
@@ -2120,7 +2202,8 @@
     async function removeMobileImage(productId, filename, label, event) {
       if (event && event.stopPropagation) event.stopPropagation();
       if (!state.isAdmin && !(state.reviewer || '').trim()) {
-        showToast('Skriv ditt namn i hubben först för att kunna flytta ut bilder.');
+        openNameModal();
+        showToast('Skriv ditt namn först.');
         return;
       }
       const ok = confirm(`Flytta ut bild ${label} (alla storlekar) ur mappen?`);
@@ -2159,6 +2242,11 @@
     }
 
     async function undoRemoveImage() {
+      if (!state.isAdmin && !(state.reviewer || '').trim()) {
+        openNameModal();
+        showToast('Skriv ditt namn först.');
+        return;
+      }
       if (!state.currentBatchId) return;
 
       try {
@@ -2188,23 +2276,15 @@
     }
 
     function getEffectiveMobileStatus(productId) {
-      const review = state.reviews[productId] || {};
-      const comments = review.comments || [];
-      const flags = review.flags || {};
-      const hasFlags = Object.values(flags).some(Boolean);
-
-      // Explicitly marked statuses
-      if (review.status === 'redo') return 'redo';
-      if (review.status === 'approved') return 'approved';
-      if (review.status === 'pending') return 'pending'; // Manually reset / undone
-
-      // If comments or flags exist -> requires attention / redo
-      if (comments.length > 0 || hasFlags) {
-        return 'redo';
+      const review = state.reviews[productId];
+      if (!review || review.status === undefined || review.status === '') {
+        return 'approved'; // Inverterad logik: Godkänd som standard
       }
-
-      // Default baseline: APPROVED as standard (precis som på desktop)!
-      return 'approved';
+      if (review.status === 'angle_issue') return 'angle_issue';
+      if (review.status === 'redo') return 'redo';
+      if (review.status === 'pending') return 'pending';
+      if (review.status === 'approved') return 'approved';
+      return review.status;
     }
 
     function handleImageError(img) {
@@ -2272,7 +2352,7 @@
           <div class="slide-badge">Bild ${escapeHtml(imgLabel)}</div>
           ${removeBtnHtml}
           <div class="zoom-tap-hint" onclick="openMobileZoom('${s.url}', '${escapeJsString(prod.model)} - Bild ${escapeJsString(imgLabel)}', ${idx})">🔍 Zooma</div>
-          <img src="${s.url}" alt="Bild ${escapeHtml(shotKey)}" loading="${idx === 0 ? 'eager' : 'lazy'}" onerror="handleImageError(this)" onclick="openMobileZoom('${s.url}', '${escapeJsString(prod.model)} - Bild ${escapeJsString(imgLabel)}', ${idx})" />
+          <img src="${sizedUrl(s.url, 1080)}" alt="Bild ${escapeHtml(shotKey)}" loading="${idx === 0 ? 'eager' : 'lazy'}" onerror="handleImageError(this)" onclick="openMobileZoom('${s.url}', '${escapeJsString(prod.model)} - Bild ${escapeJsString(imgLabel)}', ${idx})" />
         `;
         carousel.appendChild(slide);
 
@@ -2323,6 +2403,9 @@
         if (effStatus === 'approved') {
           resetBar.style.display = 'flex';
           resetText.innerHTML = `Status: <b style="color:#34D399;">🟢 Godkänd</b>${review.reviewer ? ' av ' + escapeHtml(review.reviewer) : ' (Standard)'}`;
+        } else if (effStatus === 'angle_issue') {
+          resetBar.style.display = 'flex';
+          resetText.innerHTML = `Status: <b style="color:#F59E0B;">🟡 Vinkelfel</b>${review.reviewer ? ' av ' + escapeHtml(review.reviewer) : ''}`;
         } else if (effStatus === 'redo') {
           resetBar.style.display = 'flex';
           resetText.innerHTML = `Status: <b style="color:#F87171;">🔴 Gör om</b>${review.reviewer ? ' av ' + escapeHtml(review.reviewer) : (comments.length > 0 ? ' (Anmärkning finns)' : '')}`;
@@ -2404,7 +2487,11 @@
     }
 
     async function setMobileStatus(status) {
-      if (!state.reviewer) { state.reviewer = 'Andro'; }
+      if (!state.reviewer) {
+        openNameModal();
+        showToast('Skriv ditt namn först.');
+        return;
+      }
       const prod = state.products[state.currentProductIndex];
       if (!prod) return;
 
@@ -2455,7 +2542,11 @@
     }
 
     async function toggleChecklistFlag(flagName, value) {
-      if (!state.reviewer) { openNameModal(); return; }
+      if (!state.reviewer) {
+        openNameModal();
+        showToast('Skriv ditt namn först.');
+        return;
+      }
       const prod = state.products[state.currentProductIndex];
       if (!prod) return;
 
@@ -2464,7 +2555,7 @@
       review.flags[flagName] = value;
 
       try {
-        await fetch(`/api/checklist/toggle?batch=${encodeURIComponent(state.currentBatchId)}`, {
+        const res = await fetch(`/api/checklist/toggle?batch=${encodeURIComponent(state.currentBatchId)}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -2474,6 +2565,17 @@
             reviewer: state.reviewer
           })
         });
+        const data = await res.json();
+        if (data && data.reviews) {
+          state.reviews = data.reviews;
+        }
+        renderMobileProduct(false);
+        if (state.mobileView === 'grid') {
+          renderMobileGrid();
+        }
+        if (document.getElementById('mobileZoomModal')?.classList.contains('active')) {
+          updateZoomModalContent();
+        }
       } catch (err) {
         console.error('Kunde inte spara checklista:', err);
       }
@@ -2557,7 +2659,11 @@
     }
 
     async function submitMobileComment() {
-      if (!state.reviewer) { state.reviewer = 'Andro'; }
+      if (!state.reviewer) {
+        openNameModal();
+        showToast('Skriv ditt namn först.');
+        return;
+      }
       const inp = document.getElementById('mCommentInput');
       const text = inp.value.trim();
       if (!text) return;
@@ -2706,15 +2812,16 @@
         let statusBadge = '🟢';
         let statusClass = 'status-approved';
         if (effStatus === 'approved') { statusBadge = '🟢'; statusClass = 'status-approved'; }
-        if (effStatus === 'redo') { statusBadge = '🔴'; statusClass = 'status-redo'; }
-        if (effStatus === 'pending') { statusBadge = '⚪'; statusClass = 'status-pending'; }
+        else if (effStatus === 'angle_issue') { statusBadge = '🟡'; statusClass = 'status-angle_issue'; }
+        else if (effStatus === 'redo') { statusBadge = '🔴'; statusClass = 'status-redo'; }
+        else if (effStatus === 'pending') { statusBadge = '⚪'; statusClass = 'status-pending'; }
 
         const card = document.createElement('div');
         card.className = `m-grid-card ${statusClass}`;
         card.onclick = () => openProductFromGrid(idx);
         card.innerHTML = `
           <div class="m-card-thumb-wrap">
-            <img src="${shot01.url || ''}" alt="${escapeHtml(prod.model)}" loading="lazy" onerror="handleImageError(this)" />
+            <img src="${sizedUrl(shot01.url, 480)}" alt="${escapeHtml(prod.model)}" loading="lazy" onerror="handleImageError(this)" />
             <div class="m-card-status-badge">${statusBadge}</div>
             <div class="mobile-guide-overlay m-grid-guide-overlay" style="display: ${state.mobileGridGuides ? 'block' : 'none'};">
               <div class="guide-line-crown"></div>
@@ -2747,7 +2854,11 @@
     }
 
     async function quickSetMobileStatus(productId, status) {
-      if (!state.reviewer) { state.reviewer = 'Andro'; }
+      if (!state.reviewer) {
+        openNameModal();
+        showToast('Skriv ditt namn först.');
+        return;
+      }
       const currentEff = getEffectiveMobileStatus(productId);
       const review = state.reviews[productId] || {};
       let newStatus = status;
@@ -2791,7 +2902,11 @@
     let popupTargetShot = 'all';
 
     function openCommentPopup(productId = null, context = null) {
-      if (!state.reviewer) { state.reviewer = 'Andro'; }
+      if (!state.reviewer) {
+        openNameModal();
+        showToast('Skriv ditt namn först.');
+        return;
+      }
       const prod = productId 
         ? state.products.find(p => p.id === productId) 
         : state.products[state.currentProductIndex];
@@ -2886,7 +3001,11 @@
     }
 
     async function submitPopupComment() {
-      if (!state.reviewer) { state.reviewer = 'Andro'; }
+      if (!state.reviewer) {
+        openNameModal();
+        showToast('Skriv ditt namn först.');
+        return;
+      }
       const input = document.getElementById('mPopupCommentInput');
       const text = input ? input.value.trim() : '';
       if (!text) {
@@ -2954,10 +3073,13 @@
 
       // 1. Status bar in popup
       if (statusBar && statusTag) {
-        const effStatus = review.status || 'pending';
+        const effStatus = getEffectiveMobileStatus(prodId);
         if (effStatus === 'approved') {
           statusBar.style.display = 'flex';
           statusTag.innerHTML = `Status: <span style="color: #34D399; font-weight: 700;">🟢 Godkänd</span> ${review.reviewer ? '(' + escapeHtml(review.reviewer) + ')' : ''}`;
+        } else if (effStatus === 'angle_issue') {
+          statusBar.style.display = 'flex';
+          statusTag.innerHTML = `Status: <span style="color: #F59E0B; font-weight: 700;">🟡 Vinkelfel</span> ${review.reviewer ? '(' + escapeHtml(review.reviewer) + ')' : ''}`;
         } else if (effStatus === 'redo') {
           statusBar.style.display = 'flex';
           statusTag.innerHTML = `Status: <span style="color: #F87171; font-weight: 700;">🔴 Gör om</span> ${review.reviewer ? '(' + escapeHtml(review.reviewer) + ')' : ''}`;
@@ -2999,15 +3121,20 @@
     }
 
     async function deleteMobileComment(productId, commentId) {
+      if (!state.reviewer) {
+        openNameModal();
+        showToast('Skriv ditt namn först.');
+        return;
+      }
       if (!confirm('Vill du ta bort denna kommentar?')) return;
       try {
         const res = await fetch(`/api/comment/delete?batch=${encodeURIComponent(state.currentBatchId)}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ product_id: productId, comment_id: commentId })
+          body: JSON.stringify({ product_id: productId, comment_id: commentId, reviewer: state.reviewer })
         });
-        const data = await res.json();
-        if (data.status === 'ok') {
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.status === 'ok') {
           state.reviews = data.reviews;
           renderMobileProduct(false);
           if (state.mobileView === 'grid') renderMobileGrid();
@@ -3016,14 +3143,21 @@
           }
           renderPopupCommentsList(productId);
           showToast('✓ Kommentar borttagen');
+        } else {
+          showToast(data.error || data.message || 'Kunde inte ta bort kommentar');
         }
       } catch (err) {
         console.error('Kunde inte ta bort kommentar:', err);
+        showToast('Fel vid borttagning av kommentar');
       }
     }
 
     async function clearMobileStatus(productId = null) {
-      if (!state.reviewer) { state.reviewer = 'Andro'; }
+      if (!state.reviewer) {
+        openNameModal();
+        showToast('Skriv ditt namn först.');
+        return;
+      }
       const prodId = productId || (state.products[state.currentProductIndex] && state.products[state.currentProductIndex].id);
       if (!prodId) return;
 
@@ -3094,7 +3228,7 @@
       updateZoomModalContent();
       if (imgUrl) {
         const img = document.getElementById('zoomImg');
-        if (img) img.src = imgUrl;
+        if (img) img.src = sizedUrl(imgUrl, 1600);
       }
       if (title) {
         const titleEl = document.getElementById('zoomTitle');
@@ -3129,7 +3263,7 @@
       if (!s) return;
 
       const img = document.getElementById('zoomImg');
-      if (img) img.src = s.url;
+      if (img) img.src = sizedUrl(s.url, 1600);
 
       const shotKey = s.base_shot || s.shot || String(state.currentShotIndex + 1).padStart(2, '0');
       const dispLabel = s.label || shotKey;

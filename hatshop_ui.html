@@ -1878,6 +1878,11 @@
 </head>
 <body>
 
+  <!-- Offline Banner -->
+  <div id="hubOfflineBanner" style="display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 999999; background: #d97706; color: #ffffff; padding: 10px 16px; text-align: center; font-size: 13px; font-weight: 600; box-shadow: 0 2px 10px rgba(0,0,0,0.35); line-height: 1.4;">
+    Hubben är offline just nu (datorn som kör den är avstängd). Sidan uppdateras automatiskt när den är tillbaka.
+  </div>
+
   <!-- Top Navigation Header -->
   <header>
     <div class="brand-section">
@@ -2748,16 +2753,67 @@
   </div>
 
   <script>
-    // Automatically bypass ngrok interstitial warning on all API calls
+    let isHubOffline = false;
+    function setHubReachability(online) {
+      const banner = document.getElementById('hubOfflineBanner');
+      if (!online) {
+        if (!isHubOffline) {
+          isHubOffline = true;
+          if (banner) banner.style.display = 'block';
+        }
+      } else {
+        if (isHubOffline) {
+          isHubOffline = false;
+          if (banner) banner.style.display = 'none';
+          // Reload the current batch's products once when back online
+          setTimeout(() => {
+            if (state.currentBatchId) {
+              const currentProdId = state.products[state.currentProductIndex]?.id || null;
+              reloadBatchProducts(currentProdId);
+            } else {
+              initBatches();
+            }
+          }, 0);
+        }
+      }
+    }
+
+    // Automatically bypass ngrok interstitial warning and track hub reachability on all API calls
     const _origFetch = window.fetch;
-    window.fetch = function(url, options = {}) {
+    window.fetch = async function(url, options = {}) {
       options = options || {};
       options.headers = options.headers || {};
       if (typeof options.headers === 'object' && !(options.headers instanceof Headers)) {
         options.headers['ngrok-skip-browser-warning'] = 'true';
       }
-      return _origFetch.call(this, url, options);
+      const urlStr = typeof url === 'string' ? url : (url && url.url ? url.url : '');
+      const isApiCall = typeof urlStr === 'string' && urlStr.includes('/api/');
+      try {
+        const res = await _origFetch.call(this, url, options);
+        if (isApiCall) {
+          if ([502, 503, 504, 530].includes(res.status)) {
+            setHubReachability(false);
+          } else {
+            setHubReachability(true);
+          }
+        }
+        return res;
+      } catch (err) {
+        if (isApiCall) {
+          setHubReachability(false);
+        }
+        throw err;
+      }
     };
+
+    let lastProductsFingerprint = '';
+    function getProductsFingerprint(products) {
+      if (!Array.isArray(products)) return '';
+      return products.map(p => {
+        const shots = (p.variants && (p.variants[state.currentSource] || Object.values(p.variants)[0])) || [];
+        return `${p.id}:${shots.map(s => s.filename || '').join(',')}`;
+      }).join('|');
+    }
 
     const state = {
       batches: [],
@@ -3113,6 +3169,7 @@
         state.products = data.products || [];
         state.reviews = data.reviews || {};
         state.currentProductIndex = 0;
+        lastProductsFingerprint = getProductsFingerprint(state.products);
 
         await fetchRatings();
 
@@ -3310,27 +3367,49 @@
       updateUndoButton();
     }
 
-    async function reloadBatchProducts(preserveProductId = null) {
+    async function reloadBatchProducts(preserveProductId = null, preloadedData = null) {
       const batchId = state.currentBatchId;
       if (!batchId) return;
       try {
-        const res = await fetch(`/api/products?batch=${encodeURIComponent(batchId)}&reviewer=${encodeURIComponent(state.reviewer || '')}`);
-        if (!res.ok) return;
-        const data = await res.json();
-        state.currentBatch = data.batch;
+        let data = preloadedData;
+        if (!data) {
+          const res = await fetch(`/api/products?batch=${encodeURIComponent(batchId)}&reviewer=${encodeURIComponent(state.reviewer || '')}`);
+          if (!res.ok) return;
+          data = await res.json();
+        }
+
+        const prevProductIndex = state.currentProductIndex;
+        const prevProduct = state.products[prevProductIndex] || null;
+        const effectivePreserveId = preserveProductId || (prevProduct ? prevProduct.id : null);
+
+        const lbModal = document.getElementById('lightboxModal');
+        const isLbActive = lbModal && lbModal.classList.contains('active');
+        const prevLbProd = isLbActive ? (state.products[lbCurrentProductIndex] || null) : null;
+        const prevLbProdId = prevLbProd ? prevLbProd.id : null;
+        const prevLbShots = prevLbProd ? (prevLbProd.variants[state.currentSource] || Object.values(prevLbProd.variants)[0] || []) : [];
+        const prevLbShot = prevLbShots[lbCurrentShotIndex] || null;
+        const prevLbFilename = prevLbShot ? prevLbShot.filename : null;
+        const prevLbProdIndex = lbCurrentProductIndex;
+        const prevLbShotIndex = lbCurrentShotIndex;
+
+        state.currentBatch = data.batch || state.currentBatch;
         state.products = data.products || [];
         state.reviews = data.reviews || {};
+        lastProductsFingerprint = getProductsFingerprint(state.products);
 
         let targetIdx = 0;
-        if (preserveProductId) {
-          const foundIdx = state.products.findIndex(p => p.id === preserveProductId);
+        if (state.products.length === 0) {
+          targetIdx = 0;
+          state.currentProductIndex = 0;
+        } else if (effectivePreserveId) {
+          const foundIdx = state.products.findIndex(p => p.id === effectivePreserveId);
           if (foundIdx >= 0) {
             targetIdx = foundIdx;
           } else {
-            targetIdx = Math.min(state.currentProductIndex, Math.max(0, state.products.length - 1));
+            targetIdx = Math.min(prevProductIndex, Math.max(0, state.products.length - 1));
           }
         } else {
-          targetIdx = Math.min(state.currentProductIndex, Math.max(0, state.products.length - 1));
+          targetIdx = Math.min(prevProductIndex, Math.max(0, state.products.length - 1));
         }
 
         renderProductSidebar();
@@ -3340,28 +3419,46 @@
         renderReportTable();
         await refreshUndoCount();
 
-        // Re-render lightbox if it is currently open
-        const lbModal = document.getElementById('lightboxModal');
-        if (lbModal && lbModal.classList.contains('active')) {
-          let targetLbProdIdx = -1;
-          if (preserveProductId) {
-            targetLbProdIdx = state.products.findIndex(p => p.id === preserveProductId);
-          }
-          if (targetLbProdIdx === -1 && state.products.length > 0) {
-            targetLbProdIdx = Math.min(lbCurrentProductIndex, state.products.length - 1);
-          }
+        // After remove (local or synced), if onion view shows a removed image, re-render it
+        if (typeof checkAndRefreshOnionOnRemove === 'function') {
+          checkAndRefreshOnionOnRemove();
+        }
 
-          if (targetLbProdIdx >= 0 && targetLbProdIdx < state.products.length) {
-            const lbProd = state.products[targetLbProdIdx];
-            const lbShots = lbProd.variants[state.currentSource] || Object.values(lbProd.variants)[0] || [];
-            if (lbShots.length === 0) {
-              closeLightbox();
-            } else {
-              const clampedShotIdx = Math.min(lbCurrentShotIndex, lbShots.length - 1);
-              showLightboxProduct(targetLbProdIdx, clampedShotIdx);
-            }
-          } else {
+        // Re-render lightbox if it is currently open
+        if (isLbActive) {
+          if (state.products.length === 0) {
             closeLightbox();
+          } else {
+            let targetLbProdIdx = -1;
+            if (prevLbProdId) {
+              targetLbProdIdx = state.products.findIndex(p => p.id === prevLbProdId);
+            }
+            if (targetLbProdIdx === -1) {
+              targetLbProdIdx = Math.min(prevLbProdIndex, state.products.length - 1);
+            }
+
+            if (targetLbProdIdx >= 0 && targetLbProdIdx < state.products.length) {
+              const lbProd = state.products[targetLbProdIdx];
+              const lbShots = lbProd.variants[state.currentSource] || Object.values(lbProd.variants)[0] || [];
+              if (lbShots.length === 0) {
+                closeLightbox();
+              } else {
+                let targetShotIdx = -1;
+                if (prevLbFilename && targetLbProdIdx === state.products.findIndex(p => p.id === prevLbProdId)) {
+                  targetShotIdx = lbShots.findIndex(s => s.filename === prevLbFilename);
+                }
+
+                if (targetShotIdx >= 0) {
+                  showLightboxProduct(targetLbProdIdx, targetShotIdx);
+                } else {
+                  // The image disappeared: move to nearest remaining image
+                  const clampedShotIdx = Math.max(0, Math.min(prevLbShotIndex, lbShots.length - 1));
+                  showLightboxProduct(targetLbProdIdx, clampedShotIdx);
+                }
+              }
+            } else {
+              closeLightbox();
+            }
           }
         }
       } catch (e) {
@@ -3882,9 +3979,21 @@
     async function pollReviewsFromServer() {
       if (document.hidden || !state.currentBatchId) return;
       try {
-        const res = await fetch(`/api/products?batch=${encodeURIComponent(state.currentBatchId)}`);
+        const res = await fetch(`/api/products?batch=${encodeURIComponent(state.currentBatchId)}&reviewer=${encodeURIComponent(state.reviewer || '')}`);
+        if (!res.ok) return;
         const data = await res.json();
-        if (data.reviews && JSON.stringify(data.reviews) !== JSON.stringify(state.reviews)) {
+        if (!data || !Array.isArray(data.products)) return;
+
+        const newProducts = data.products;
+        const newFingerprint = getProductsFingerprint(newProducts);
+        const productsChanged = lastProductsFingerprint && (newFingerprint !== lastProductsFingerprint);
+
+        if (productsChanged) {
+          const currentProd = state.products[state.currentProductIndex];
+          const currentProdId = currentProd ? currentProd.id : null;
+          await reloadBatchProducts(currentProdId, data);
+        } else if (data.reviews && JSON.stringify(data.reviews) !== JSON.stringify(state.reviews)) {
+          // Do NOT re-render when only reviews changed; keep today's behaviour for reviews.
           state.reviews = data.reviews;
           updateQAStats();
           if (state.currentMode === 'report') renderReportTable();
@@ -3897,6 +4006,9 @@
             renderProtoCommentsFeed();
             updateProtoStatusButtons();
           }
+        }
+        if (!lastProductsFingerprint) {
+          lastProductsFingerprint = newFingerprint;
         }
       } catch (e) {}
     }
@@ -5117,8 +5229,22 @@
         const res = await fetch(`/api/comment/delete?batch=${encodeURIComponent(state.currentBatchId)}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ product_id: productId, comment_id: commentId })
+          body: JSON.stringify({
+            product_id: productId,
+            comment_id: commentId,
+            reviewer: state.reviewer
+          })
         });
+        if (res.status === 403) {
+          const errData = await res.json().catch(() => ({}));
+          showToast(errData.error || errData.message || 'Du kan bara ta bort dina egna kommentarer.');
+          return;
+        }
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          showToast('⚠️ ' + (errData.error || errData.message || 'Kunde inte ta bort kommentar'));
+          return;
+        }
         const data = await res.json();
         if (data.status === 'ok') {
           state.reviews = data.reviews;
@@ -5171,23 +5297,45 @@
     function populateDropdowns() {
       const onionA = document.getElementById('onionCapA');
       const onionB = document.getElementById('onionCapB');
+      if (!onionA || !onionB) return;
+      const prevA = onionA.value;
+      const prevB = onionB.value;
       onionA.innerHTML = ''; onionB.innerHTML = '';
       state.products.forEach(prod => {
         const opt1 = new Option(`${prod.model} (${prod.color})`, prod.id);
         const opt2 = new Option(`${prod.model} (${prod.color})`, prod.id);
         onionA.add(opt1); onionB.add(opt2);
       });
-      if (onionB.options.length > 1) onionB.selectedIndex = 1;
+      if (state.products.some(p => p.id === prevA)) {
+        onionA.value = prevA;
+      }
+      if (state.products.some(p => p.id === prevB)) {
+        onionB.value = prevB;
+      } else if (onionB.options.length > 1) {
+        onionB.selectedIndex = 1;
+      }
     }
 
     function updateOnion() {
-      const capAId = document.getElementById('onionCapA').value;
-      const capBId = document.getElementById('onionCapB').value;
-      const shotNum = document.getElementById('onionShot').value;
+      const onionA = document.getElementById('onionCapA');
+      const onionB = document.getElementById('onionCapB');
+      const onionShot = document.getElementById('onionShot');
+      if (!onionA || !onionB || !onionShot) return;
 
-      const prodA = state.products.find(p => p.id === capAId);
-      const prodB = state.products.find(p => p.id === capBId);
-      if (!prodA || !prodB) return;
+      const capAId = onionA.value;
+      const capBId = onionB.value;
+      const shotNum = onionShot.value;
+
+      const prodA = state.products.find(p => p.id === capAId) || state.products[0];
+      const prodB = state.products.find(p => p.id === capBId) || (state.products.length > 1 ? state.products[1] : prodA);
+
+      const imgElemA = document.getElementById('onionImgA');
+      const imgElemB = document.getElementById('onionImgB');
+      if (!prodA || !prodB) {
+        if (imgElemA) imgElemA.src = '';
+        if (imgElemB) imgElemB.src = '';
+        return;
+      }
 
       const shotsA = prodA.variants[state.currentSource] || Object.values(prodA.variants)[0] || [];
       const shotsB = prodB.variants[state.currentSource] || Object.values(prodB.variants)[0] || [];
@@ -5195,8 +5343,52 @@
       const imgA = shotsA.find(s => s.shot === shotNum) || shotsA[0] || {};
       const imgB = shotsB.find(s => s.shot === shotNum) || shotsB[0] || {};
 
-      document.getElementById('onionImgA').src = imgA.url || '';
-      document.getElementById('onionImgB').src = imgB.url || '';
+      if (imgElemA) imgElemA.src = imgA.url || '';
+      if (imgElemB) imgElemB.src = imgB.url || '';
+    }
+
+    function checkAndRefreshOnionOnRemove() {
+      const imgElemA = document.getElementById('onionImgA');
+      const imgElemB = document.getElementById('onionImgB');
+      if (!imgElemA && !imgElemB) return;
+      const srcA = imgElemA ? (imgElemA.getAttribute('src') || imgElemA.src || '') : '';
+      const srcB = imgElemB ? (imgElemB.getAttribute('src') || imgElemB.src || '') : '';
+
+      if (!srcA && !srcB) return;
+
+      const availableFiles = new Set();
+      const availableUrls = new Set();
+      state.products.forEach(p => {
+        Object.values(p.variants || {}).forEach(shots => {
+          if (Array.isArray(shots)) {
+            shots.forEach(s => {
+              if (s.filename) availableFiles.add(s.filename);
+              if (s.url) {
+                availableUrls.add(s.url);
+                availableUrls.add(s.url.split('?')[0]);
+              }
+            });
+          }
+        });
+      });
+
+      function isImageRemoved(src) {
+        if (!src) return false;
+        let clean = src;
+        try {
+          const parsed = new URL(src, window.location.origin);
+          clean = parsed.pathname;
+        } catch (e) {}
+        const fn = getBasename(clean);
+        if (fn && availableFiles.has(fn)) return false;
+        if (availableUrls.has(src) || availableUrls.has(clean)) return false;
+        return true;
+      }
+
+      if (isImageRemoved(srcA) || isImageRemoved(srcB) || state.currentMode === 'onion') {
+        populateDropdowns();
+        updateOnion();
+      }
     }
 
     function setOnionOpacity(val) {
@@ -6306,7 +6498,7 @@
       if (lbRemoveBtn) {
         if (state.canRemove && activeShot && activeShot.filename) {
           lbRemoveBtn.style.display = 'inline-flex';
-          lbRemoveBtn.onclick = (e) => removeDesktopImage(prod.id, activeShot.filename, e);
+          lbRemoveBtn.onclick = (e) => removeLightboxCurrentImage(e);
         } else {
           lbRemoveBtn.style.display = 'none';
           lbRemoveBtn.onclick = null;
@@ -6317,7 +6509,11 @@
 
     function removeLightboxCurrentImage(event) {
       if (event && event.stopPropagation) event.stopPropagation();
-      if (!state.isAdmin || state.products.length === 0) return;
+      if (!state.canRemove) {
+        showToast('Skriv ditt namn i hubben först för att kunna flytta ut bilder.');
+        return;
+      }
+      if (state.products.length === 0) return;
       const prod = state.products[lbCurrentProductIndex];
       if (!prod) return;
       const shots = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
@@ -6615,10 +6811,8 @@
             return;
           }
           if (e.key === 'Delete') {
-            if (state.isAdmin) {
-              e.preventDefault();
-              removeLightboxCurrentImage(e);
-            }
+            e.preventDefault();
+            removeLightboxCurrentImage(e);
             return;
           }
         }
@@ -6766,9 +6960,8 @@
             renderProductSidebar();
             if (state.currentMode === 'angle') renderAngleGrid();
             if (state.currentMode === 'product') {
-              updateDecisionButtons();
-              renderComments();
-              renderChecklist();
+              renderProductSidebar();
+              renderCommentsFeed();
             }
           }
           lastSyncDesktopReviewsStr = newStr;

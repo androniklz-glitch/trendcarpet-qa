@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://habitat-metric-timothy-revolution.trycloudflare.com/$1"
+      "destination": "https://instrumentation-painting-climb-salmon.trycloudflare.com/$1"
     }
   ]
 }

@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://point-activity-responded-achievements.trycloudflare.com/$1"
+      "destination": "https://bedford-ton-approximate-windsor.trycloudflare.com/$1"
     }
   ]
 }

@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://bedford-ton-approximate-windsor.trycloudflare.com/$1"
+      "destination": "https://excess-cookie-participating-interstate.trycloudflare.com/$1"
     }
   ]
 }

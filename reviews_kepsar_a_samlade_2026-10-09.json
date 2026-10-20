@@ -1,0 +1,61 @@
+{
+  "Garda-Hunter-Black": {
+    "status": "redo",
+    "reviewer": "Jesper",
+    "updatedAt": "2026-10-14T11:11:58.268450",
+    "comments": [
+      {
+        "id": "c_1791969118267",
+        "author": "Jesper",
+        "text": "Keps över öron. ta  bort",
+        "shots": [
+          "99"
+        ],
+        "drawings": [],
+        "time": "11:11"
+      }
+    ]
+  },
+  "Garda-Ranger-LightGrey": {
+    "status": "redo",
+    "reviewer": "Jesper",
+    "updatedAt": "2026-10-14T11:14:53.685865",
+    "comments": [
+      {
+        "id": "c_1791969293685",
+        "author": "Jesper",
+        "text": "Keps över öron. Ta bort",
+        "shots": [
+          "99"
+        ],
+        "drawings": [],
+        "time": "11:14"
+      }
+    ]
+  },
+  "Garda-Ranger-Navy": {
+    "status": "angle_issue",
+    "reviewer": "Amalia",
+    "updatedAt": "2026-10-14T11:26:52.385101",
+    "comments": [
+      {
+        "id": "c_1791969343899",
+        "author": "Jesper",
+        "text": "Vinkeln skärmen, gör om eller ta bort.",
+        "shots": [
+          "99"
+        ],
+        "drawings": [],
+        "time": "11:15"
+      },
+      {
+        "id": "c_1791970012383",
+        "author": "Amalia",
+        "text": "Gillar inte bilden med västen och skärmen som jeppe skriver",
+        "shots": [],
+        "drawings": [],
+        "time": "11:26"
+      }
+    ]
+  }
+}

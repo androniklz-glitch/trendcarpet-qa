@@ -1588,7 +1588,8 @@
 
       <div class="header-actions">
         <div class="reviewer-btn" id="mBtnPublishBatch" onclick="toggleMobileBatchPublish()" style="display: none; font-size: 15px;" title="Publicera eller gör mappen privat">🔒</div>
-        <div class="reviewer-btn" onclick="copyMobileOneDriveLink()" id="mBtnOneDrive" title="Kopiera OneDrive-länk">☁️</div>
+        <div class="reviewer-btn" onclick="copyMobileOneDriveLink()" id="mBtnOneDrive" title="Öppna / kopiera OneDrive-länk">☁️</div>
+        <div class="reviewer-btn" onclick="openMobileZipPrompt()" id="mBtnZip" title="Ladda ner bilder som .zip (markerade, Sajt-urval eller hela mappen)">📦<span id="mZipCountBadge" style="display:none; font-size:10px; background:#3b82f6; color:#fff; border-radius:999px; padding:0 4px; margin-left:2px;">0</span></div>
         <div class="reviewer-btn" onclick="copyMobileShareLink()" title="Dela länk till denna mapp">🔗</div>
         <button class="reviewer-btn" id="mBtnRefresh" onclick="hardReloadApp()" title="Uppdatera" aria-label="Uppdatera" style="min-width: 36px; min-height: 36px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-family: inherit;">🔄</button>
         <div class="reviewer-btn" onclick="openNameModal()" title="Klicka för att byta namn">
@@ -1792,8 +1793,8 @@
   <div class="name-modal" id="nameModal">
     <div class="name-modal-card">
       <h3 style="font-size: 15px; font-weight: 700; color: #fff;">Vem granskar?</h3>
-      <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Välj ditt namn med ett klick eller skriv in det nedan:</p>
-      <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;">
+      <p id="mNameModalDesc" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Välj ditt namn med ett klick eller skriv in det nedan:</p>
+      <div id="mCamaQuickReviewersWrap" style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;">
         <button type="button" class="m-chip-btn" style="flex: 1; min-width: 70px; padding: 8px 4px; background: rgba(56, 189, 248, 0.15); border: 1px solid var(--accent-blue); border-radius: 8px; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;" onclick="selectQuickMobileReviewer('Jesper')">👤 Jesper</button>
         <button type="button" class="m-chip-btn" style="flex: 1; min-width: 70px; padding: 8px 4px; background: rgba(56, 189, 248, 0.15); border: 1px solid var(--accent-blue); border-radius: 8px; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;" onclick="selectQuickMobileReviewer('Amalia')">👤 Amalia</button>
         <button type="button" class="m-chip-btn" style="flex: 1; min-width: 70px; padding: 8px 4px; background: rgba(56, 189, 248, 0.15); border: 1px solid var(--accent-blue); border-radius: 8px; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;" onclick="selectQuickMobileReviewer('Anton')">👤 Anton</button>
@@ -1902,6 +1903,7 @@
     <div class="zoom-viewport" id="zoomViewport">
       <div class="zoom-content" id="zoomContent">
         <img id="zoomImg" src="" alt="Zoomad bild" />
+        <video id="zoomVideo" controls loop playsinline preload="metadata" style="display: none; max-width: 100%; max-height: 100%; object-fit: contain; background: #000;"></video>
         <div class="mobile-guide-overlay" id="zoomGuideOverlay" style="display: none;">
           <div class="guide-line-crown"></div>
           <div class="guide-line-center"></div>
@@ -1988,6 +1990,13 @@
       return url + (url.includes('?') ? '&' : '?') + 'w=' + w;
     }
 
+    function isVideoShot(shotOrUrl) {
+      if (!shotOrUrl) return false;
+      if (typeof shotOrUrl === 'object' && shotOrUrl.is_video) return true;
+      const s = typeof shotOrUrl === 'string' ? shotOrUrl : ((shotOrUrl.filename || '') + ' ' + (shotOrUrl.url || ''));
+      return /\.(mp4|webm|mov)(\b|\?|$)/i.test(s);
+    }
+
     const state = {
       batches: [],
       currentBatchId: '',
@@ -1995,6 +2004,7 @@
       reviews: {},
       ratings: {},
       undoCount: 0,
+      isAdmin: false,
       canRemove: false,
       reviewer: localStorage.getItem('hatshop_reviewer') || '',
       currentProductIndex: 0,
@@ -2014,9 +2024,6 @@
         localStorage.setItem('hatshop_reviewer', state.reviewer);
       }
       updateReviewerDisplay();
-      if (!state.reviewer) {
-        openNameModal();
-      }
       await initBatches();
       setupCarouselTouch();
       setupZoomTouchEvents();
@@ -2028,7 +2035,18 @@
       if (el) el.innerText = state.reviewer || 'Ange namn';
     }
 
+    function applyMobileRoleAndOrgVisibility() {
+      const isCama = (!state.userOrg || state.userOrg === 'cama');
+      const quickWrap = document.getElementById('mCamaQuickReviewersWrap');
+      if (quickWrap) quickWrap.style.display = isCama ? 'flex' : 'none';
+      const descEl = document.getElementById('mNameModalDesc');
+      if (descEl) descEl.innerText = isCama ? 'Välj ditt namn med ett klick eller skriv in det nedan:' : 'Skriv ditt namn nedan:';
+      const odBtn = document.getElementById('mBtnOneDrive');
+      if (odBtn) odBtn.style.display = (isCama || state.isAdmin) ? 'flex' : 'none';
+    }
+
     function openNameModal() {
+      applyMobileRoleAndOrgVisibility();
       document.getElementById('mNameInput').value = state.reviewer || '';
       document.getElementById('nameModal').classList.add('active');
       history.pushState({ modal: 'name' }, '');
@@ -2082,6 +2100,26 @@
         state.batches = data.batches || [];
         state.isAdmin = data.is_admin || false;
         state.canRemove = data.can_remove || state.isAdmin;
+        state.userOrg = data.user_org || 'cama';
+        state.serverUserName = data.user_name || '';
+
+        const camaQuickNames = ['Andro', 'Jesper', 'Amalia', 'Anton'];
+        if (state.serverUserName && (!state.reviewer || (state.userOrg !== 'cama' && camaQuickNames.includes(state.reviewer)))) {
+          state.reviewer = state.serverUserName;
+          localStorage.setItem('hatshop_reviewer', state.reviewer);
+        } else if (state.userOrg === 'reforma' && (!state.reviewer || camaQuickNames.includes(state.reviewer))) {
+          state.reviewer = 'Reforma';
+          localStorage.setItem('hatshop_reviewer', state.reviewer);
+        }
+
+        applyMobileRoleAndOrgVisibility();
+        updateReviewerDisplay();
+        if (!state.reviewer) {
+          openNameModal();
+        } else {
+          const nameModal = document.getElementById('nameModal');
+          if (nameModal) nameModal.classList.remove('active');
+        }
         const select = document.getElementById('mobileBatchSelect');
         select.innerHTML = '';
         state.batches.forEach(b => {
@@ -2153,6 +2191,8 @@
     }
 
     async function switchBatch(batchId) {
+      if (state.selectedShots) state.selectedShots.clear();
+      updateMobileZipBadge();
       state.currentBatchId = batchId;
       state.currentProductIndex = 0;
       try {
@@ -2240,7 +2280,7 @@
 
     function copyMobileProductShareLink() {
       const prod = state.products && state.products[state.currentProductIndex];
-      const prodName = prod ? prod.model : 'produkten';
+      const prodName = prod ? (prod.display_name || prod.model) : 'produkten';
       const url = getPermanentMobileShareUrl(true);
       navigator.clipboard.writeText(url).then(() => {
         showToast(`🔗 Permanent länk till "${prodName}" kopierad!`);
@@ -2249,43 +2289,170 @@
       });
     }
 
+    state.selectedShots = new Set();
+    state.sortGoldFirst = false;
+
+    function getMobileShotSelectId(prodId, relPath, filename) {
+      return `${prodId}::${relPath || filename || ''}`;
+    }
+
+    function updateMobileZipBadge() {
+      const count = state.selectedShots ? state.selectedShots.size : 0;
+      const badge = document.getElementById('mZipCountBadge');
+      if (badge) {
+        badge.style.display = count > 0 ? 'inline-block' : 'none';
+        badge.textContent = String(count);
+      }
+    }
+
+    function toggleMobileShotSelection(prodId, relPath, filename, checked, ev) {
+      if (ev && ev.stopPropagation) ev.stopPropagation();
+      const key = getMobileShotSelectId(prodId, relPath, filename);
+      if (checked) state.selectedShots.add(key);
+      else state.selectedShots.delete(key);
+      updateMobileZipBadge();
+    }
+
+    async function openMobileZipPrompt() {
+      if (!state.currentBatchId) return;
+      const selCount = state.selectedShots ? state.selectedShots.size : 0;
+      const prod = state.products[state.currentProductIndex];
+      const prodTitle = prod ? (prod.display_name || prod.model) : '';
+      const choice = prompt(
+        `📦 Ladda ner bilder som .zip:\n` +
+        `1 = ☑️ Markerade bilder (${selCount} st)\n` +
+        `2 = 🏆 Sajt-urval / Guldset (hela mappen, 1:1, 2–4/modell)\n` +
+        `3 = 🏆 Sajt-urval (aktuell produkt: ${prodTitle})\n` +
+        `4 = 📸 Alla bilder för aktuell produkt\n` +
+        `5 = 📁 Hela mappen (alla bilder)\n\n` +
+        `Skriv 1, 2, 3, 4 eller 5:`,
+        selCount > 0 ? '1' : '2'
+      );
+      if (!choice) return;
+      const c = choice.trim();
+      if (c === '1') {
+        if (selCount === 0) {
+          showToast('Kryssa i ☑️ på minst en bild först!');
+          return;
+        }
+        showToast(`📦 Skapar ZIP med ${selCount} bilder...`, 3500);
+        try {
+          const res = await fetch(`/api/download-zip?batch=${encodeURIComponent(state.currentBatchId)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              batch_id: state.currentBatchId,
+              mode: 'selected',
+              items: Array.from(state.selectedShots)
+            })
+          });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            showToast('⚠️ ' + (err.message || 'Kunde inte skapa ZIP'));
+            return;
+          }
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${state.currentBatchId}_valda_${selCount}st.zip`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 5000);
+          showToast('✓ ZIP-nedladdning startad!');
+        } catch (e) {
+          showToast('⚠️ Fel vid ZIP-nedladdning');
+        }
+        return;
+      }
+      const params = new URLSearchParams({ batch: state.currentBatchId });
+      if (c === '2') {
+        params.set('mode', 'gold');
+      } else if (c === '3') {
+        params.set('mode', 'gold');
+        if (prod) params.set('product_id', prod.id);
+      } else if (c === '4') {
+        params.set('mode', 'product');
+        if (prod) params.set('product_id', prod.id);
+      } else if (c === '5') {
+        params.set('mode', 'all');
+      } else {
+        return;
+      }
+      try {
+        const dryParams = new URLSearchParams(params);
+        dryParams.set('dry_run', '1');
+        const checkRes = await fetch(`/api/download-zip?${dryParams.toString()}`);
+        const checkData = await checkRes.json().catch(() => ({}));
+        if (!checkRes.ok || checkData.status === 'error') {
+          showToast('⚠️ ' + (checkData.message || 'Inga lokala filer kunde packas till ZIP.'));
+          return;
+        }
+        if (checkData.skipped_cloud > 0) {
+          showToast(`📦 Startar ZIP (${checkData.count} filer, ${checkData.skipped_cloud} molnfiler hoppades över)...`, 4000);
+        } else {
+          showToast(`📦 Startar ZIP-nedladdning (${checkData.count} filer)...`, 3000);
+        }
+      } catch (e) {
+        showToast('⚠️ Kunde inte kontrollera ZIP-underlag.');
+        return;
+      }
+      window.location.href = `/api/download-zip?${params.toString()}`;
+    }
+
     function copyMobileOneDriveLink() {
       const batch = state.batches.find(b => b.id === state.currentBatchId);
       const link = batch?.onedrive_url;
       if (!link) {
+        if (!state.isAdmin) {
+          showToast('Ingen OneDrive-länk satt — använd 📦 för att ladda ner direkt som .zip!');
+          return;
+        }
         const input = prompt('Klistra in OneDrive / SharePoint-länk för mappen:');
         if (!input || !input.trim()) return;
         const trimmed = input.trim();
         fetch(`/api/batch/set_onedrive?batch=${encodeURIComponent(state.currentBatchId)}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ batch_id: state.currentBatchId, onedrive_url: trimmed })
-        }).then(() => {
+          body: JSON.stringify({ batch_id: state.currentBatchId, onedrive_url: trimmed, reviewer: state.reviewer })
+        }).then(async (r) => {
+          const d = await r.json().catch(() => ({}));
+          if (!r.ok || d.status === 'error') {
+            showToast('⚠️ ' + (d.message || 'Ogiltig OneDrive-länk'));
+            return;
+          }
           if (batch) batch.onedrive_url = trimmed;
           navigator.clipboard.writeText(trimmed).catch(() => {});
           showToast('☁️ OneDrive-länk sparad och kopierad!');
         });
         return;
       }
-      navigator.clipboard.writeText(link).then(() => {
-        showToast('☁️ OneDrive-länk kopierad till urklipp!');
-      }).catch(() => {
-        prompt('Kopiera OneDrive-länk:', link);
-      });
+      window.open(link, '_blank', 'noopener');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(link).catch(() => {});
+      }
+      showToast('☁️ Öppnar OneDrive (och kopierade länken)!');
     }
 
     let lastProductsFingerprint = '';
 
     function getProductShots(prod) {
       if (!prod || !prod.variants) return [];
-      return prod.variants['1500px iphone'] || Object.values(prod.variants)[0] || [];
+      const raw = prod.variants['1500px iphone'] || Object.values(prod.variants)[0] || [];
+      if (state.sortGoldFirst === false || !(prod.gold_count > 0)) return raw;
+      const studio = raw.filter(s => s.is_studio_packshot);
+      const ai = raw.filter(s => !s.is_studio_packshot);
+      const gold = ai.filter(s => s.in_gold_set).sort((a, b) => (a.gold_rank || 99) - (b.gold_rank || 99));
+      const rest = ai.filter(s => !s.in_gold_set);
+      return [...studio, ...gold, ...rest];
     }
 
     function getProductsFingerprint(products) {
       if (!Array.isArray(products)) return '';
       return products.map(p => {
         const shots = getProductShots(p);
-        return `${p.id}:${shots.map(s => s.filename || '').join(',')}`;
+        return `${p.id}:${shots.map(s => `${s.filename || ''}:${s.in_gold_set ? (s.gold_rank || 1) : 0}:${s.is_studio_packshot ? 1 : 0}:${s.site_eligible ? 1 : 0}`).join(',')}`;
       }).join('|');
     }
 
@@ -2302,6 +2469,8 @@
           showToast('🔒 ' + data.message);
           return;
         }
+        if (typeof data.is_admin === 'boolean') state.isAdmin = data.is_admin;
+        if (typeof data.can_remove === 'boolean') state.canRemove = data.can_remove || state.isAdmin;
         state.products = data.products || [];
         state.reviews = data.reviews || {};
         lastProductsFingerprint = getProductsFingerprint(state.products);
@@ -2593,9 +2762,10 @@
       const prod = state.products[state.currentProductIndex];
       if (!prod) return;
       const shots = getProductShots(prod);
-      const s = shots[state.currentShotIndex] || shots[0];
+      const fn = document.getElementById('zoomImg')?.dataset.filename;
+      const s = (fn && shots.find(x => x.filename === fn)) || shots[state.currentShotIndex] || shots[0];
       if (!s || !s.filename) return;
-      const shotKey = s.base_shot || s.shot || String(state.currentShotIndex + 1).padStart(2, '0');
+      const shotKey = s.comment_key || s.base_shot || s.shot || String(state.currentShotIndex + 1).padStart(2, '0');
       const dispLabel = s.label || shotKey;
       await removeMobileImage(prod.id, s.filename, dispLabel, event);
     }
@@ -2683,6 +2853,8 @@
         }
         if (!res.ok) {
           showToast('Kunde inte spara betyg');
+        } else {
+          loadBatch(state.currentBatchId, productId);
         }
       } catch (err) {
         console.error('Error saving rating:', err);
@@ -2760,10 +2932,11 @@
       }
       const prod = state.products[state.currentProductIndex];
       const review = state.reviews[prod.id] || {};
+      const prodTitle = prod.display_name || prod.model;
 
       // 1. Titles & Counter
       const vHeadTag = prod.has_new_version ? ` <span class="version-pill" style="margin-left: 6px; font-size: 11px;">🔄 Ny version</span>` : '';
-      document.getElementById('mModelTitle').innerHTML = `${escapeHtml(prod.model)}${vHeadTag} <span onclick="copyMobileProductShareLink()" title="Dela permanent länk till ${escapeHtml(prod.model)}" style="cursor: pointer; font-size: 13px; margin-left: 6px; padding: 2px 6px; border-radius: 6px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; vertical-align: middle;">🔗</span>`;
+      document.getElementById('mModelTitle').innerHTML = `${escapeHtml(prodTitle)}${vHeadTag} <span onclick="copyMobileProductShareLink()" title="Dela permanent länk till ${escapeHtml(prodTitle)}" style="cursor: pointer; font-size: 13px; margin-left: 6px; padding: 2px 6px; border-radius: 6px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; vertical-align: middle;">🔗</span>`;
       document.getElementById('mModelSubtitle').innerText = `${prod.brand} • ${prod.color}`;
       document.getElementById('mCounterPill').innerText = `${state.currentProductIndex + 1} / ${state.products.length}`;
       updateGridLabels();
@@ -2771,7 +2944,7 @@
       // 2. Render Carousel Slides
       const carousel = document.getElementById('mobileCarousel');
       const dots = document.getElementById('carouselDots');
-      const shots = prod.variants['1500px iphone'] || Object.values(prod.variants)[0] || [];
+      const shots = getProductShots(prod);
       const targetShotIndex = resetIndex
         ? 0
         : Math.max(0, Math.min(state.currentShotIndex, Math.max(0, shots.length - 1)));
@@ -2782,29 +2955,63 @@
       shots.forEach((s, idx) => {
         const slide = document.createElement('div');
         slide.className = 'carousel-slide';
-        const shotKey = s.base_shot || s.shot || String(idx + 1).padStart(2, '0');
+        const shotKey = s.comment_key || s.base_shot || s.shot || String(idx + 1).padStart(2, '0');
         const imgLabel = s.label || shotKey;
-        const removeBtnHtml = state.canRemove ? `
+        const canRemoveThis = state.canRemove && !s.is_studio_packshot;
+        const removeBtnHtml = canRemoveThis ? `
           <button class="m-remove-image-btn" onclick="event.stopPropagation(); removeMobileImage('${escapeJsString(prod.id)}', '${escapeJsString(s.filename || '')}', '${escapeJsString(imgLabel)}', event)" title="Flytta ut bild">🗑 Flytta ut</button>
         ` : '';
         let vBadge = '';
-        if (prod.has_new_version || s.is_new_version) {
-          vBadge = `<span class="version-pill">🔄 Ny version</span>`;
+        if (s.is_new_version) {
+          vBadge = `<span class="version-pill">🔄 Ny version (${escapeHtml(s.version_tag || '-n')})</span>`;
         } else if (s.is_primary === false) {
           vBadge = `<span class="version-pill-earlier">⏳ Tidigare</span>`;
         }
+        let goldBadgeHtml = '';
+        if (s.is_studio_packshot) {
+          goldBadgeHtml = `<span style="background:rgba(59,130,246,0.25); border:1px solid rgba(96,165,250,0.5); color:#93c5fd; font-size:10.5px; font-weight:700; padding:2px 7px; border-radius:999px;">🔒 Studio</span>`;
+        } else if (s.in_gold_set) {
+          const isStar = (s.stars_count || 0) > 0;
+          const bIcon = isStar ? '⭐' : '🏆';
+          const bText = isStar ? `Sajt #${s.gold_rank} (${s.stars_avg}★)` : `Sajt #${s.gold_rank}`;
+          goldBadgeHtml = `<span style="background:rgba(245,158,11,0.3); border:1px solid rgba(251,191,36,0.75); color:#fde68a; font-size:10.5px; font-weight:700; padding:2px 7px; border-radius:999px;">${bIcon} ${bText}</span>`;
+        }
+        let fmtBadgeHtml = '';
+        if (isVideoShot(s)) {
+          const al = (s.aspect_label || '9:16').replace(/^🎬\s*/, '');
+          fmtBadgeHtml = `<span style="background:rgba(59,130,246,0.22); border:1px solid rgba(96,165,250,0.45); color:#93c5fd; font-size:10px; font-weight:700; padding:2px 6px; border-radius:999px;">🎬 Video ${escapeHtml(al)}</span>`;
+        } else if (!s.is_studio_packshot && s.site_eligible === false) {
+          const al = s.aspect_label || 'Ej 1:1';
+          fmtBadgeHtml = `<span style="background:rgba(148,163,184,0.22); border:1px solid rgba(148,163,184,0.45); color:#cbd5e1; font-size:10px; font-weight:700; padding:2px 6px; border-radius:999px;">📐 ${escapeHtml(al)} · Ej 1:1</span>`;
+        }
+        const selKey = getMobileShotSelectId(prod.id, s.rel_path, s.filename);
+        const isChecked = state.selectedShots && state.selectedShots.has(selKey);
+        const safePid = escapeJsString(prod.id);
+        const safeRel = escapeJsString(s.rel_path || '');
+        const safeFn = escapeJsString(s.filename || '');
+
         slide.innerHTML = `
-          <div style="position: absolute; top: 8px; left: 8px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; z-index: 10; pointer-events: none;">
-            <div class="slide-badge" style="position: static;">Bild ${escapeHtml(imgLabel)}</div>
+          <div style="position: absolute; top: 8px; left: 8px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; z-index: 10;">
+            <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
+              <label onclick="event.stopPropagation()" style="display:inline-flex; align-items:center; gap:3px; background:rgba(15,23,42,0.8); border:1px solid rgba(255,255,255,0.2); padding:3px 6px; border-radius:6px; color:#fff; font-size:11px; cursor:pointer;">
+                <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleMobileShotSelection('${safePid}', '${safeRel}', '${safeFn}', this.checked, event)" style="width:14px; height:14px; accent-color:#3b82f6; margin:0;">
+              </label>
+              <div class="slide-badge" style="position: static; pointer-events: none;">Bild ${escapeHtml(imgLabel)}</div>
+              ${goldBadgeHtml}
+              ${fmtBadgeHtml}
+            </div>
             ${vBadge}
           </div>
           <div style="position: absolute; top: 8px; right: 8px; display: flex; align-items: center; gap: 6px; z-index: 10;">
             ${removeBtnHtml}
-            <div class="zoom-tap-hint" onclick="openMobileZoom('${s.url}', '${escapeJsString(prod.model)} - Bild ${escapeJsString(imgLabel)}', ${idx})">🔍 Zooma</div>
+            <div class="zoom-tap-hint" onclick="openMobileZoom('${s.url}', '${escapeJsString(prodTitle)} - Bild ${escapeJsString(imgLabel)}', ${idx})">${isVideoShot(s) ? '🎬 Storvy' : '🔍 Zooma'}</div>
           </div>
-          <a href="${downloadUrl(s.url)}" download class="btn-download-image" onclick="event.stopPropagation()" title="Ladda ner originalbild" aria-label="Ladda ner originalbild" style="position: absolute; bottom: 52px; left: 10px; z-index: 10;">⬇</a>
-          <img src="${sizedUrl(s.url, 1080)}" alt="Bild ${escapeHtml(shotKey)}" loading="${idx === 0 ? 'eager' : 'lazy'}" onerror="handleImageError(this)" onclick="openMobileZoom('${s.url}', '${escapeJsString(prod.model)} - Bild ${escapeJsString(imgLabel)}', ${idx})" />
-          <div class="carousel-slide-stars" style="position: absolute; bottom: 44px; left: 50%; transform: translateX(-50%); z-index: 10; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 2px 8px; display: inline-flex; align-items: center; justify-content: center; pointer-events: auto;">
+          <a href="${downloadUrl(s.url)}" download class="btn-download-image" onclick="event.stopPropagation()" title="Ladda ner originalfil" aria-label="Ladda ner originalfil" style="position: absolute; bottom: ${isVideoShot(s) ? '76px' : '52px'}; left: 10px; z-index: 10;">⬇</a>
+          ${isVideoShot(s)
+            ? `<video src="${s.url}" poster="${sizedUrl(s.url, 600)}" controls loop muted playsinline preload="metadata" style="width:100%; height:100%; object-fit:contain; background:#000;"></video>`
+            : `<img src="${sizedUrl(s.url, 1080)}" alt="Bild ${escapeHtml(shotKey)}" loading="${idx === 0 ? 'eager' : 'lazy'}" onerror="handleImageError(this)" onclick="openMobileZoom('${s.url}', '${escapeJsString(prodTitle)} - Bild ${escapeJsString(imgLabel)}', ${idx})" />`
+          }
+          <div class="carousel-slide-stars" style="position: absolute; bottom: ${isVideoShot(s) ? '72px' : '44px'}; left: 50%; transform: translateX(-50%); z-index: 10; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 2px 8px; display: inline-flex; align-items: center; justify-content: center; pointer-events: auto;">
             ${renderStars(prod.id, s.filename)}
           </div>
         `;
@@ -2906,7 +3113,7 @@
 
     function carouselNext() {
       const prod = state.products[state.currentProductIndex];
-      const shots = prod.variants['1500px iphone'] || Object.values(prod.variants)[0] || [];
+      const shots = getProductShots(prod);
       if (state.currentShotIndex < shots.length - 1) {
         scrollCarouselTo(state.currentShotIndex + 1);
       }
@@ -3052,7 +3259,7 @@
     function renderSheetShotPills(shots, resetTarget = false) {
       const container = document.getElementById('mPillsRow');
       if (!container) return;
-      const validShotIds = (shots || []).map((s, idx) => s.base_shot || s.shot || String(idx + 1).padStart(2, '0'));
+      const validShotIds = (shots || []).map((s, idx) => s.comment_key || s.base_shot || s.shot || String(idx + 1).padStart(2, '0'));
       if (resetTarget || (state.commentShotTarget !== 'all' && !validShotIds.includes(state.commentShotTarget))) {
         state.commentShotTarget = 'all';
       }
@@ -3065,7 +3272,7 @@
       container.appendChild(allPill);
 
       (shots || []).forEach((s, idx) => {
-        const shotKey = s.base_shot || s.shot || String(idx + 1).padStart(2, '0');
+        const shotKey = s.comment_key || s.base_shot || s.shot || String(idx + 1).padStart(2, '0');
         const dispLabel = s.label || shotKey;
         const pill = document.createElement('span');
         pill.className = `m-pill ${state.commentShotTarget === shotKey ? 'active' : ''}`;
@@ -3271,12 +3478,13 @@
       }
 
       state.products.forEach((prod, idx) => {
-        const shots = prod.variants['1500px iphone'] || Object.values(prod.variants)[0] || [];
+        const shots = getProductShots(prod);
         const shot01 = shots.find(s => (s.base_shot || s.shot) === '01') || shots[0] || {};
         const review = state.reviews[prod.id] || {};
         const effStatus = getEffectiveMobileStatus(prod.id);
         const comments = review.comments || [];
         const commentsCount = comments.length;
+        const prodTitle = prod.display_name || prod.model;
 
         let statusBadge = '🟢';
         let statusClass = 'status-approved';
@@ -3286,7 +3494,7 @@
         else if (effStatus === 'pending') { statusBadge = '⚪'; statusClass = 'status-pending'; }
 
         let gridVBadge = '';
-        if (prod.has_new_version || shot01.is_new_version) {
+        if (prod.has_new_version) {
           gridVBadge = ` <span class="version-pill" style="font-size: 10px; padding: 1px 6px; margin-left: 4px;">🔄 Ny version</span>`;
         } else if (shot01.is_primary === false) {
           gridVBadge = ` <span class="version-pill-earlier" style="font-size: 10px; padding: 1px 6px; margin-left: 4px;">⏳ Tidigare</span>`;
@@ -3297,7 +3505,7 @@
         card.onclick = () => openProductFromGrid(idx);
         card.innerHTML = `
           <div class="m-card-thumb-wrap">
-            <img src="${sizedUrl(shot01.url, 480)}" alt="${escapeHtml(prod.model)}" loading="lazy" onerror="handleImageError(this)" />
+            <img src="${sizedUrl(shot01.url, 480)}" alt="${escapeHtml(prodTitle)}" loading="lazy" onerror="handleImageError(this)" />
             <a href="${downloadUrl(shot01.url)}" download class="btn-download-image" onclick="event.stopPropagation()" title="Ladda ner originalbild" aria-label="Ladda ner originalbild" style="position: absolute; bottom: 6px; left: 6px; z-index: 5;">⬇</a>
             <div class="m-card-status-badge">${statusBadge}</div>
             <div class="mobile-guide-overlay m-grid-guide-overlay" style="display: ${state.mobileGridGuides ? 'block' : 'none'};">
@@ -3310,13 +3518,13 @@
             </div>
           </div>
           <div class="m-card-info">
-            <div class="m-card-title">${escapeHtml(prod.model)}${gridVBadge}</div>
+            <div class="m-card-title">${escapeHtml(prodTitle)}${gridVBadge}</div>
             <div class="m-card-sub">${escapeHtml(prod.color || prod.brand)}</div>
           </div>
           <div class="m-card-actions" onclick="event.stopPropagation()">
-            <button class="m-mini-btn ${effStatus === 'approved' ? 'active-ok' : ''}" onclick="quickSetMobileStatus('${prod.id}', 'approved')" title="Godkänn">✓</button>
-            <button class="m-mini-btn ${commentsCount > 0 ? 'active-comment' : ''}" onclick="openCommentPopup('${prod.id}')" title="Kommentera">💬 ${commentsCount > 0 ? commentsCount : ''}</button>
-            <button class="m-mini-btn ${effStatus === 'redo' ? 'active-redo' : ''}" onclick="quickSetMobileStatus('${prod.id}', 'redo')" title="Gör om">✕</button>
+            <button class="m-mini-btn ${effStatus === 'approved' ? 'active-ok' : ''}" onclick="quickSetMobileStatus('${escapeJsString(prod.id)}', 'approved')" title="Godkänn">✓</button>
+            <button class="m-mini-btn ${commentsCount > 0 ? 'active-comment' : ''}" onclick="openCommentPopup('${escapeJsString(prod.id)}')" title="Kommentera">💬 ${commentsCount > 0 ? commentsCount : ''}</button>
+            <button class="m-mini-btn ${effStatus === 'redo' ? 'active-redo' : ''}" onclick="quickSetMobileStatus('${escapeJsString(prod.id)}', 'redo')" title="Gör om">✕</button>
           </div>
         `;
         container.appendChild(card);
@@ -3398,7 +3606,7 @@
         titleEl.innerText = context === 'redo' ? '🔴 Vad behöver göras om?' : '💬 Lämna anmärkning';
       }
       if (subEl) {
-        subEl.innerText = `${prod.model} (${prod.color || ''})`;
+        subEl.innerText = `${prod.display_name || prod.model} (${prod.color || ''})`;
       }
 
       const input = document.getElementById('mPopupCommentInput');
@@ -3435,8 +3643,8 @@
     function renderPopupShotPills(prod) {
       const container = document.getElementById('mPopupShotPills');
       if (!container) return;
-      const shots = prod.variants['1500px iphone'] || Object.values(prod.variants)[0] || [];
-      const validShotIds = shots.map((s, idx) => s.base_shot || s.shot || String(idx + 1).padStart(2, '0'));
+      const shots = getProductShots(prod);
+      const validShotIds = shots.map((s, idx) => s.comment_key || s.base_shot || s.shot || String(idx + 1).padStart(2, '0'));
       if (popupTargetShot !== 'all' && !validShotIds.includes(popupTargetShot)) {
         popupTargetShot = 'all';
       }
@@ -3449,7 +3657,7 @@
       container.appendChild(allBtn);
 
       shots.forEach((s, idx) => {
-        const shotKey = s.base_shot || s.shot || String(idx + 1).padStart(2, '0');
+        const shotKey = s.comment_key || s.base_shot || s.shot || String(idx + 1).padStart(2, '0');
         const dispLabel = s.label || shotKey;
         const btn = document.createElement('button');
         btn.className = `m-pill ${popupTargetShot === shotKey ? 'active' : ''}`;
@@ -3703,7 +3911,7 @@
       }
       resetZoom();
       updateZoomModalContent();
-      if (imgUrl) {
+      if (imgUrl && !isVideoShot(imgUrl)) {
         const img = document.getElementById('zoomImg');
         if (img) img.src = sizedUrl(imgUrl, 1600);
       }
@@ -3718,6 +3926,12 @@
     }
 
     function closeMobileZoom(syncHistory = true) {
+      const vid = document.getElementById('zoomVideo');
+      if (vid) {
+        try { vid.pause(); } catch (e) {}
+        vid.removeAttribute('src');
+        vid.style.display = 'none';
+      }
       const modal = document.getElementById('mobileZoomModal');
       if (modal && modal.classList.contains('active')) {
         modal.classList.remove('active');
@@ -3731,7 +3945,7 @@
     function updateZoomModalContent() {
       const prod = state.products[state.currentProductIndex];
       if (!prod) return;
-      const shots = prod.variants['1500px iphone'] || Object.values(prod.variants)[0] || [];
+      const shots = getProductShots(prod);
       if (shots.length === 0) return;
       if (state.currentShotIndex >= shots.length) {
         state.currentShotIndex = Math.max(0, shots.length - 1);
@@ -3740,23 +3954,54 @@
       if (!s) return;
 
       const img = document.getElementById('zoomImg');
-      if (img) img.src = sizedUrl(s.url, 1600);
-
-      const shotKey = s.base_shot || s.shot || String(state.currentShotIndex + 1).padStart(2, '0');
-      const dispLabel = s.label || shotKey;
-      const titleEl = document.getElementById('zoomTitle');
-      if (titleEl) {
-        titleEl.innerText = `${prod.model} - Bild ${dispLabel} (${state.currentProductIndex + 1}/${state.products.length})`;
+      const vid = document.getElementById('zoomVideo');
+      if (isVideoShot(s)) {
+        if (img) img.style.display = 'none';
+        if (vid) {
+          vid.style.display = 'block';
+          vid.src = s.url || '';
+          vid.poster = sizedUrl(s.url, 600);
+          vid.play().catch(() => {});
+        }
+      } else {
+        if (vid) {
+          try { vid.pause(); } catch (e) {}
+          vid.removeAttribute('src');
+          vid.style.display = 'none';
+        }
+        if (img) {
+          img.style.display = 'block';
+          img.src = sizedUrl(s.url, 1600);
+          img.dataset.filename = s.filename || '';
+        }
       }
 
-      // Version badge in zoom header
+      const shotKey = s.comment_key || s.base_shot || s.shot || String(state.currentShotIndex + 1).padStart(2, '0');
+      const dispLabel = s.label || shotKey;
+      const prodTitle = prod.display_name || prod.model;
+      const titleEl = document.getElementById('zoomTitle');
+      if (titleEl) {
+        titleEl.innerText = `${prodTitle} - Bild ${dispLabel} (${state.currentProductIndex + 1}/${state.products.length})`;
+      }
+
+      // Version / format badge in zoom header
       const zoomVBadge = document.getElementById('zoomVersionBadge');
       if (zoomVBadge) {
-        if (prod.has_new_version || s.is_new_version) {
-          zoomVBadge.innerHTML = `<span class="version-pill" style="font-size: 10px; padding: 2px 6px;">🔄 Ny version</span>`;
-          zoomVBadge.style.display = 'inline-flex';
+        let badges = [];
+        if (s.is_new_version) {
+          badges.push(`<span class="version-pill" style="font-size: 10px; padding: 2px 6px;">🔄 Ny version (${escapeHtml(s.version_tag || '-n')})</span>`);
         } else if (s.is_primary === false) {
-          zoomVBadge.innerHTML = `<span class="version-pill-earlier" style="font-size: 10px; padding: 2px 6px;">⏳ Tidigare</span>`;
+          badges.push(`<span class="version-pill-earlier" style="font-size: 10px; padding: 2px 6px;">⏳ Tidigare</span>`);
+        }
+        if (isVideoShot(s)) {
+          const al = (s.aspect_label || '9:16').replace(/^🎬\s*/, '');
+          badges.push(`<span style="background:rgba(59,130,246,0.22); border:1px solid rgba(96,165,250,0.45); color:#93c5fd; font-size:10px; font-weight:700; padding:2px 6px; border-radius:999px;">🎬 Video ${escapeHtml(al)}</span>`);
+        } else if (!s.is_studio_packshot && s.site_eligible === false) {
+          const al = s.aspect_label || 'Ej 1:1';
+          badges.push(`<span style="background:rgba(148,163,184,0.22); border:1px solid rgba(148,163,184,0.45); color:#cbd5e1; font-size:10px; font-weight:700; padding:2px 6px; border-radius:999px;">📐 ${escapeHtml(al)} · Ej 1:1</span>`);
+        }
+        if (badges.length > 0) {
+          zoomVBadge.innerHTML = badges.join(' ');
           zoomVBadge.style.display = 'inline-flex';
         } else {
           zoomVBadge.innerHTML = '';
@@ -3793,7 +4038,8 @@
       // Remove and undo buttons in zoom header
       const zoomRemoveBtn = document.getElementById('zoomBtnRemove');
       if (zoomRemoveBtn) {
-        zoomRemoveBtn.style.display = (state.canRemove && s && s.filename) ? 'inline-flex' : 'none';
+        const canRemoveThis = state.canRemove && s && s.filename && (state.isAdmin || !s.is_studio_packshot);
+        zoomRemoveBtn.style.display = canRemoveThis ? 'inline-flex' : 'none';
       }
       const zoomUndoBtn = document.getElementById('zoomBtnUndo');
       if (zoomUndoBtn) {
@@ -3829,7 +4075,7 @@
       if (!container) return;
       container.innerHTML = '';
       shots.forEach((s, idx) => {
-        const shotKey = s.base_shot || s.shot || String(idx + 1).padStart(2, '0');
+        const shotKey = s.comment_key || s.base_shot || s.shot || String(idx + 1).padStart(2, '0');
         const dispLabel = s.label || shotKey;
         const pill = document.createElement('button');
         pill.className = `m-pill ${idx === state.currentShotIndex ? 'active' : ''}`;
@@ -3850,7 +4096,8 @@
         renderMobileProduct(true);
         updateZoomModalContent();
         if (state.mobileView === 'grid') renderMobileGrid();
-        showToast(`Nästa: ${state.products[state.currentProductIndex].model}`);
+        const p = state.products[state.currentProductIndex];
+        showToast(`Nästa: ${p.display_name || p.model}`);
       } else {
         showToast('Sista modellen i mappen');
       }
@@ -3864,7 +4111,8 @@
         renderMobileProduct(true);
         updateZoomModalContent();
         if (state.mobileView === 'grid') renderMobileGrid();
-        showToast(`Föregående: ${state.products[state.currentProductIndex].model}`);
+        const p = state.products[state.currentProductIndex];
+        showToast(`Föregående: ${p.display_name || p.model}`);
       } else {
         showToast('Första modellen i mappen');
       }
@@ -3873,7 +4121,7 @@
     function zoomNextAngle() {
       const prod = state.products[state.currentProductIndex];
       if (!prod) return;
-      const shots = prod.variants['1500px iphone'] || Object.values(prod.variants)[0] || [];
+      const shots = getProductShots(prod);
       if (state.currentShotIndex < shots.length - 1) {
         state.currentShotIndex++;
         updateZoomModalContent();

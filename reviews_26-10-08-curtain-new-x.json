@@ -1,0 +1,84 @@
+{
+  "Lumira-Lumia-röd-linnegardin-Vorhang-Curtain": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1791807995812",
+        "author": "Anton",
+        "text": "ser lite väl långa ut här",
+        "shots": [
+          "04"
+        ],
+        "drawings": [],
+        "time": "14:26"
+      }
+    ],
+    "reviewer": "Anton",
+    "updatedAt": "2026-10-12T14:26:35.812925"
+  },
+  "Lumira-Lumia-taupe-linnegardin-Vorhang-Curtain": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1791808017248",
+        "author": "Anton",
+        "text": "Bredden här, kan vara missvisande",
+        "shots": [
+          "01"
+        ],
+        "drawings": [],
+        "time": "14:26"
+      }
+    ],
+    "reviewer": "Anton",
+    "updatedAt": "2026-10-12T14:26:57.248228"
+  },
+  "Selena-Selena-Orange-Bomullsgardin-Vorhang-Curtain": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1791808064711",
+        "author": "Anton",
+        "text": "Bredden här kan vara lite för volymniös",
+        "shots": [
+          "03"
+        ],
+        "drawings": [],
+        "time": "14:27"
+      }
+    ],
+    "reviewer": "Anton",
+    "updatedAt": "2026-10-12T14:27:44.711719"
+  },
+  "Lumira-Lumia-mörklila-linnegardin-Vorhang-Curtain": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1791808103870",
+        "author": "Anton",
+        "text": "Bredden här med",
+        "shots": [
+          "02"
+        ],
+        "drawings": [],
+        "time": "14:28"
+      },
+      {
+        "id": "c_1791808135216",
+        "author": "Anton",
+        "text": "Här med",
+        "shots": [
+          "03"
+        ],
+        "drawings": [],
+        "time": "14:28"
+      }
+    ],
+    "reviewer": "Anton",
+    "updatedAt": "2026-10-12T14:28:55.216636"
+  }
+}

@@ -15,7 +15,16 @@ import openpyxl
 import hashlib
 import uuid
 import shutil
+import zipfile
+import io
+import csv
+import threading
+from collections import OrderedDict
 from PIL import Image
+
+_BATCHES_LOCK = threading.Lock()
+_RATINGS_LOCK = threading.Lock()
+_MERGE_LOCK = threading.Lock()
 
 PORT = 8092
 WORKSPACE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -44,6 +53,9 @@ NOTIFY_SCRIPT = os.environ.get("QA_HUB_NOTIFY_SCRIPT", r"C:\Users\AndronikLindgr
 
 CROP_FORMAT_DIRS = ("3x4", "4x5")
 MASTER_FORMAT_DIR = "9x16"
+IMAGE_EXTS = (".jpg", ".jpeg", ".png", ".webp")
+VIDEO_EXTS = (".mp4", ".webm", ".mov")
+MEDIA_EXTS = IMAGE_EXTS + VIDEO_EXTS
 
 def hidden_crop_dirs(dir_names):
     """
@@ -93,7 +105,7 @@ def crop_siblings(master_abs_path, batch_path=None):
         if os.path.isdir(os.path.join(model_dir, entry)):
             sibling_dirs_map[entry.lower()] = entry
 
-    crop_exts = {".png", ".jpg", ".jpeg", ".webp"}
+    crop_exts = set(MEDIA_EXTS)
     results = []
     seen = set()
 
@@ -315,22 +327,32 @@ def get_onedrive_web_url_for_path(local_path):
     if not local_path:
         return ""
     base_od = r"C:\Users\AndronikLindgren\OneDrive - CaMa Gruppen AB"
+    flow_vibes_base = r"C:\Users\AndronikLindgren\flow-vibes"
     norm = os.path.normpath(local_path)
     if norm.lower().startswith(base_od.lower()):
         rel = os.path.relpath(norm, base_od).replace('\\', '/')
         encoded_rel = urllib.parse.quote(f"/personal/andronik_lindgren_trendcarpet_se/Documents/{rel}", safe='')
-        return f"https://trendcarpet-my.sharepoint.com/my?id={encoded_rel}"
+        return f"https://trendcarpet-my.sharepoint.com/personal/andronik_lindgren_trendcarpet_se/_layouts/15/onedrive.aspx?id={encoded_rel}"
+    elif norm.lower().startswith(flow_vibes_base.lower()):
+        sub = os.path.relpath(norm, flow_vibes_base).replace('\\', '/')
+        if sub.lower().startswith("reforma-flow-"):
+            rel = "Pictures/Reforma_Flow_Godkanda_2026-10-15"
+        else:
+            rel = f"Pictures/Flow_Vibes/{sub}"
+        encoded_rel = urllib.parse.quote(f"/personal/andronik_lindgren_trendcarpet_se/Documents/{rel}", safe='')
+        return f"https://trendcarpet-my.sharepoint.com/personal/andronik_lindgren_trendcarpet_se/_layouts/15/onedrive.aspx?id={encoded_rel}"
     return ""
 
 def load_batches():
     batches = []
     if os.path.exists(BATCHES_FILE):
-        try:
-            with open(BATCHES_FILE, "r", encoding="utf-8") as f:
-                batches = json.load(f)
-        except Exception:
-            pass
-    if not batches:
+        with _BATCHES_LOCK:
+            try:
+                with open(BATCHES_FILE, "r", encoding="utf-8") as f:
+                    batches = json.load(f)
+            except Exception:
+                batches = []
+    elif not batches:
         batches = [
             {
                 "id": "26-08-28-hatshop-black-river",
@@ -343,44 +365,56 @@ def load_batches():
         ]
         save_batches(batches)
 
-    # Auto-match with calendar_projects if onedrive_url is missing
-    changed = False
+    # Auto-match with calendar_projects in memory if onedrive_url is missing, and upgrade legacy /my?id= links
     try:
         projects = load_calendar_projects()
         for b in batches:
-            if not b.get("onedrive_url"):
+            cur_od = b.get("onedrive_url", "") or ""
+            if "trendcarpet-my.sharepoint.com/my?id=" in cur_od:
+                b["onedrive_url"] = cur_od.replace(
+                    "trendcarpet-my.sharepoint.com/my?id=",
+                    "trendcarpet-my.sharepoint.com/personal/andronik_lindgren_trendcarpet_se/_layouts/15/onedrive.aspx?id="
+                )
+                cur_od = b["onedrive_url"]
+            if not cur_od:
                 folder = os.path.basename(os.path.normpath(b.get("path", ""))).strip().lower()
-                bname = b.get("name", "").lower()
                 matched_link = ""
-                for p in projects:
-                    ptitle = p.get("title", "").strip().lower()
-                    if ptitle and p.get("link"):
-                        if folder == ptitle or folder in ptitle or ptitle in folder:
+                if len(folder) >= 8:
+                    for p in projects:
+                        ptitle = p.get("title", "").strip().lower()
+                        if ptitle and p.get("link") and folder == ptitle:
                             matched_link = p["link"]
                             break
                 if matched_link:
                     b["onedrive_url"] = matched_link
-                    changed = True
                 else:
                     auto_url = get_onedrive_web_url_for_path(b.get("path", ""))
                     if auto_url:
                         b["onedrive_url"] = auto_url
-                        changed = True
-        if changed:
-            save_batches(batches)
     except Exception:
         pass
 
     return batches
 
+
 def save_batches(batches):
-    try:
-        with open(BATCHES_FILE, "w", encoding="utf-8") as f:
-            json.dump(batches, f, indent=2, ensure_ascii=False)
-        return True
-    except Exception as e:
-        print(f"Error saving batches: {e}")
+    if not batches and os.path.exists(BATCHES_FILE):
         return False
+    with _BATCHES_LOCK:
+        tmp_file = f"{BATCHES_FILE}.{uuid.uuid4().hex}.tmp"
+        try:
+            with open(tmp_file, "w", encoding="utf-8") as f:
+                json.dump(batches, f, indent=2, ensure_ascii=False)
+            os.replace(tmp_file, BATCHES_FILE)
+            return True
+        except Exception as e:
+            if os.path.exists(tmp_file):
+                try:
+                    os.remove(tmp_file)
+                except OSError:
+                    pass
+            print(f"Error saving batches: {e}")
+            return False
 
 def get_batch(batch_id):
     batches = load_batches()
@@ -493,32 +527,34 @@ def set_rating(batch_id, reviewer, product_id, filename, stars):
     rev_name = reviewer.strip()
     key = f"{product_id}|{filename}"
 
-    data = load_ratings(batch_id_str)
-    if rev_name not in data or not isinstance(data[rev_name], dict):
-        data[rev_name] = {}
+    with _RATINGS_LOCK:
+        data = load_ratings(batch_id_str)
+        if rev_name not in data or not isinstance(data[rev_name], dict):
+            data[rev_name] = {}
 
-    if stars_int == 0:
-        data[rev_name].pop(key, None)
-    else:
-        data[rev_name][key] = {
-            "stars": stars_int,
-            "ts": datetime.datetime.now().isoformat()
-        }
+        if stars_int == 0:
+            data[rev_name].pop(key, None)
+        else:
+            data[rev_name][key] = {
+                "stars": stars_int,
+                "ts": datetime.datetime.now().isoformat()
+            }
 
-    rf = get_ratings_file(batch_id_str)
-    os.makedirs(os.path.dirname(rf), exist_ok=True)
-    tmp_file = rf + f".tmp.{uuid.uuid4().hex}"
-    try:
-        with open(tmp_file, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-        os.replace(tmp_file, rf)
-    except Exception:
-        if os.path.exists(tmp_file):
-            try:
-                os.remove(tmp_file)
-            except OSError:
-                pass
-        raise
+        rf = get_ratings_file(batch_id_str)
+        os.makedirs(os.path.dirname(rf), exist_ok=True)
+        tmp_file = rf + f".tmp.{uuid.uuid4().hex}"
+        try:
+            with open(tmp_file, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+            os.replace(tmp_file, rf)
+        except Exception:
+            if os.path.exists(tmp_file):
+                try:
+                    os.remove(tmp_file)
+                except OSError:
+                    pass
+            raise
+
 
 def parse_file_details(filename, folder_path):
     """
@@ -529,9 +565,12 @@ def parse_file_details(filename, folder_path):
       matta-model-01-Interior-0002.jpg -> base_shot='01', suffix='Interior-0002', is_version_suffix=False
     """
     name_no_ext, ext = os.path.splitext(filename)
-    full_path = os.path.join(folder_path, filename)
-    mtime = os.path.getmtime(full_path) if os.path.exists(full_path) else 0
-    file_size = os.path.getsize(full_path) if os.path.exists(full_path) else 0
+    full_path = os.path.join(folder_path, filename) if folder_path else ""
+    try:
+        st = os.stat(full_path) if full_path else None
+        mtime, file_size = (st.st_mtime, st.st_size) if st else (0, 0)
+    except OSError:
+        mtime, file_size = 0, 0
 
     # Check if AI lifestyle or interior generated image (e.g. Replace_..., Editing_..., etc.)
     if re.match(r'^(replace|replacing|edit|editing|redecorat|modify|interior|lifestyle)', name_no_ext, re.IGNORECASE):
@@ -546,16 +585,24 @@ def parse_file_details(filename, folder_path):
             "size_bytes": file_size
         }
 
-    m = re.search(r'[-_](0[1-9]|[1-9][0-9]?)(.*)$', name_no_ext, re.IGNORECASE)
+    m = re.search(r'[-_](0[1-9]|[1-9][0-9]?)(?=$|[-_ .()])(.*)$', name_no_ext, re.IGNORECASE)
     if m:
         base_shot_num = m.group(1).zfill(2)
         raw_suffix = m.group(2).strip('-_ ')
+    else:
+        m3 = re.search(r'[-_](LS\d{1,3}[a-d]?|0\d{2}[a-d]?|\d{3}[a-d]?)(?=$|[-_ .()])(.*)$', name_no_ext, re.IGNORECASE)
+        if m3:
+            tok = m3.group(1)
+            base_shot_num = tok.upper() if tok[:2].lower() == "ls" else tok.lower()
+            raw_suffix = m3.group(2).strip('-_ ')
+        else:
+            base_shot_num = None
+            raw_suffix = ""
+
+    if base_shot_num is not None:
         clean_suffix = raw_suffix.replace('-', ' ').replace('_', ' ').strip()
-        
-        # Check if true replacement version (e.g. -n, -ny, -v2, -fix, -2)
-        is_interior = bool(re.search(r'interioi?r|miljo|miljö|detail', raw_suffix, re.IGNORECASE))
-        is_version_suffix = bool(re.match(r'^(n|ny|new|v[0-9]+|[0-9]+|fix|crop|justerad|redigerad)$', raw_suffix, re.IGNORECASE)) and not is_interior
-        
+        is_interior = bool(re.search(r'int[ei]{1,2}r?i?oi?r|miljo|miljö|detail', raw_suffix, re.IGNORECASE))
+        is_version_suffix = bool(re.match(r'^(n|ny|new|v[0-9]+|[0-9]+|fix\d*|crop|justerad|redigerad)$', raw_suffix, re.IGNORECASE)) and not is_interior
         return {
             "filename": filename,
             "base_shot": base_shot_num,
@@ -577,6 +624,97 @@ def parse_file_details(filename, folder_path):
             "mtime": mtime,
             "size_bytes": file_size
         }
+
+
+def _assign_comment_keys(shots):
+    by_base = {}
+    for s in shots:
+        if not s.get("is_new_version"):
+            by_base.setdefault(str(s.get("base_shot") or ""), []).append(s)
+    for s in shots:
+        base = str(s.get("base_shot") or "")
+        s["comment_key"] = str(s["shot"]) if (not base or base == "99" or len(by_base.get(base, [])) > 1) else base
+    return shots
+
+
+_CATEGORY_WORDS = {"keps", "kepsar", "hatt", "hattar", "mössa", "mossa", "matta", "ullmatta", "viskosmatta",
+                   "wiltonmatta", "barnmatta", "inomhusutomhusmatta", "inomhusutomhus", "rund", "inredning",
+                   "gardin", "gardiner"}
+_BRAND_ALIASES = (
+    (re.compile(r'(?<![a-zåäö])black[\s_-]*river(?![a-zåäö])', re.I), "Black River"),
+    (re.compile(r'(?<![a-zåäö])(?:g[\s_-]rda|g[aå]rda)(?![a-zåäö])', re.I), "Gårda"),
+)
+_COLOR_WORDS = {"svart", "vit", "offwhite", "off white", "grå", "mörkgrå", "ljusgrå", "blå", "ljusblå", "mörkblå", "navy",
+                "khaki", "beige", "creme", "cream", "brun", "brown", "mörkbrun", "grön", "mörkgrön", "mossgrön", "ljusgrön",
+                "olive", "oliv", "röd", "vinröd", "mörkröd", "red", "rosa", "lila", "gul", "ljusgul", "orange", "ljusorange",
+                "terrakotta", "turkos", "natur", "natural", "multi", "petrol", "senap", "rost", "black", "white", "grey",
+                "gray", "lightgrey", "darkgrey", "silver", "guld", "gold", "sand", "taupe"}
+_TRAILING_FILLER = {"carpet", "teppich", "rug", "matta", "cap"}
+_NBSP = "\u00a0"
+
+
+def parse_product_name(folder_name):
+    name = re.sub(r'-(?:1500px(?:\s*iphone)?|original|web|print)$', '', folder_name.strip(), flags=re.I)
+    brand = ""
+    for rx, canon in _BRAND_ALIASES:
+        if rx.search(name):
+            name = rx.sub(canon.replace(" ", _NBSP), name, count=1)
+            brand = canon
+            break
+    parts = [p.strip() for p in re.split(r'\s*[-_]\s*', name) if p.strip()]
+    category = ""
+    while parts and parts[0].lower() in _CATEGORY_WORDS:
+        category = (category + " " + parts.pop(0)).strip()
+    if parts and brand and parts[0].replace(_NBSP, " ") == brand:
+        parts.pop(0)
+    while len(parts) > 1 and (parts[-1].lower() in _TRAILING_FILLER
+                              or re.fullmatch(r'(?:new|ny|fix\d*|v\d+)', parts[-1], re.I)):
+        parts.pop()
+    colors = []
+    while len(parts) > 1 and parts[-1].lower() in _COLOR_WORDS:
+        colors.insert(0, parts.pop())
+    if not colors and len(parts) >= 2:
+        colors = [parts.pop()]
+    model = " ".join(parts).replace(_NBSP, " ")
+    return {"category": category.capitalize(), "brand": brand, "model": model,
+            "color": "/".join(c.capitalize() for c in colors),
+            "display_name": " ".join(x for x in (brand, model) if x)}
+
+
+def _split_folder_parts(clean_name, default_brand=True):
+    """HEAD folder splitting with Black River multi-word brand awareness."""
+    if re.search(r'(?<![a-zåäö])black[\s_-]+river(?![a-zåäö])', clean_name, re.IGNORECASE):
+        meta = parse_product_name(clean_name)
+        return (
+            meta["brand"] or "Black River",
+            meta["display_name"] or meta["model"] or clean_name,
+            meta["color"]
+        )
+    parts = clean_name.split("-")
+    brand = "Brand"
+    model_name = clean_name
+    color_name = ""
+    if default_brand:
+        if len(parts) >= 4 and parts[0].strip().lower() in ["keps", "matta", "ullmatta", "viskosmatta", "wiltonmatta", "inredning"]:
+            brand = parts[0].strip()
+            model_name = parts[1].strip()
+            color_name = "-".join(parts[2:]).strip()
+        elif len(parts) >= 3:
+            brand = parts[0].strip()
+            model_name = parts[1].strip()
+            color_name = "-".join(parts[2:]).strip()
+        elif len(parts) == 2:
+            model_name = parts[0].strip()
+            color_name = parts[1].strip()
+    else:
+        if len(parts) >= 3:
+            model_name = parts[1].strip()
+            color_name = "-".join(parts[2:]).strip()
+        elif len(parts) == 2:
+            model_name = parts[0].strip()
+            color_name = parts[1].strip()
+    return brand, model_name, color_name
+
 
 def parse_upload_order_file(txt_path):
     order = []
@@ -648,6 +786,7 @@ def process_upload_order_shots(upload_order, raw_files, batch_id, subdir, folder
 
         final_shots.append({
             "filename": fn,
+            "orig_name": item.get("orig_filename", ""),
             "shot": item["seq"],
             "base_shot": item["seq"],
             "label": label,
@@ -684,7 +823,7 @@ def process_upload_order_shots(upload_order, raw_files, batch_id, subdir, folder
                 "size_bytes": file_size
             })
 
-    return final_shots
+    return _assign_comment_keys(final_shots)
 
 import ctypes
 from ctypes import wintypes
@@ -728,7 +867,7 @@ def process_and_sort_variant_shots(raw_files, batch_id, subdir, folder_name, fol
         is_version = item.get("is_version_suffix", False)
 
         if is_int:
-            sub = re.sub(r'interioi?r.*$', '', raw_suffix, flags=re.IGNORECASE).strip('-_ ')
+            sub = re.sub(r'int[ei]{1,2}r?i?oi?r.*$', '', raw_suffix, flags=re.IGNORECASE).strip('-_ ')
             if sub and base_shot != "99":
                 label = f"{base_shot}-{sub} (Miljö)"
                 shot_code = f"{base_shot}_{sub}_miljo"
@@ -736,7 +875,7 @@ def process_and_sort_variant_shots(raw_files, batch_id, subdir, folder_name, fol
                 label = f"{base_shot} (Miljö)"
                 shot_code = f"{base_shot}_miljo"
             else:
-                label = f"Miljö"
+                label = "Miljö"
                 shot_code = f"miljo_{os.path.splitext(filename)[0]}"
             is_prim = True
             is_new = False
@@ -778,7 +917,7 @@ def process_and_sort_variant_shots(raw_files, batch_id, subdir, folder_name, fol
 
     if final_shots and not any(s.get("is_primary") for s in final_shots):
         final_shots[0]["is_primary"] = True
-    return final_shots
+    return _assign_comment_keys(final_shots)
 
 def parse_color_folder(color_folder):
     parts = color_folder.split("-")
@@ -853,16 +992,21 @@ def scan_batch_products(batch):
                             rel_file = fn
 
                         full_path = os.path.join(base_dir, rel_file)
-                        mtime = os.path.getmtime(full_path) if os.path.exists(full_path) else 0
+                        if not os.path.exists(full_path):
+                            continue
+                        mtime = os.path.getmtime(full_path)
                         kind = img.get("kind", "")
-                        pos = img.get("pos", len(shots) + 1)
+                        pos = len(shots) + 1
                         label = f"{pos:02d}" + (f" ({kind})" if kind else "")
 
                         shots.append({
-                            "shot": pos,
+                            "shot": f"{pos:02d}",
+                            "base_shot": f"{pos:02d}",
+                            "comment_key": f"{pos:02d}",
                             "label": label,
                             "url": f"/image/{urllib.parse.quote(batch_id)}/{urllib.parse.quote(rel_file)}",
                             "filename": fn,
+                            "orig_name": img.get("orig", ""),
                             "rel_path": rel_file,
                             "is_primary": (pos == 1),
                             "is_new_version": False,
@@ -871,10 +1015,13 @@ def scan_batch_products(batch):
                         })
 
                     v_label = "1600x2000 Transparent" if any(img.get("is_transparent") for img in item.get("images", [])) else "Standard"
+                    model_str = title if str(pid) == str(title) else f"[{pid}] {title}"
                     products.append({
                         "id": pid,
                         "brand": category,
-                        "model": f"[{pid}] {title}",
+                        "category": category,
+                        "model": model_str,
+                        "display_name": model_str,
                         "color": clean_name,
                         "folder_name": pid,
                         "has_new_version": False,
@@ -884,6 +1031,7 @@ def scan_batch_products(batch):
                             v_label: shots
                         }
                     })
+                annotate_product_gold_set(batch, products)
                 return products
         except Exception as e:
             print(f"[!] Error parsing manifest {manifest_file}: {e}")
@@ -893,7 +1041,7 @@ def scan_batch_products(batch):
     prefix = ""
     variant_subdirs = root_entries
     if not has_variant_subdirs and len(root_entries) == 1:
-        direct_images = [f for f in os.listdir(base_dir) if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp"))]
+        direct_images = [f for f in os.listdir(base_dir) if f.lower().endswith(MEDIA_EXTS)]
         if not direct_images:
             cand_name = root_entries[0]
             cand_path = os.path.join(base_dir, cand_name)
@@ -918,30 +1066,14 @@ def scan_batch_products(batch):
                 if not os.path.isdir(folder_path):
                     continue
 
-                raw_files = [f for f in os.listdir(folder_path) if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp"))]
+                raw_files = [f for f in os.listdir(folder_path) if f.lower().endswith(MEDIA_EXTS)]
 
                 if raw_files:
-                    # Clean variant suffixes from folder name if present
                     clean_name = re.sub(r'-(?:1500px(?:\s*iphone)?|original|web|print)$', '', folder_name, flags=re.IGNORECASE).strip()
                     if clean_name.lower() == 'frome':
                         clean_name = 'Frome-red'
 
-                    parts = clean_name.split("-")
-                    brand = "Brand"
-                    model_name = clean_name
-                    color_name = ""
-
-                    if len(parts) >= 4 and parts[0].strip().lower() in ["keps", "matta", "ullmatta", "viskosmatta", "wiltonmatta", "inredning"]:
-                        brand = parts[0].strip()
-                        model_name = parts[1].strip()
-                        color_name = "-".join(parts[2:]).strip()
-                    elif len(parts) >= 3:
-                        brand = parts[0].strip()
-                        model_name = parts[1].strip()
-                        color_name = "-".join(parts[2:]).strip()
-                    elif len(parts) == 2:
-                        model_name = parts[0].strip()
-                        color_name = parts[1].strip()
+                    brand, model_name, color_name = _split_folder_parts(clean_name, default_brand=True)
 
                     prod_key = clean_name
                     if prod_key not in products_map:
@@ -949,6 +1081,7 @@ def scan_batch_products(batch):
                             "id": prod_key,
                             "brand": brand,
                             "model": model_name,
+                            "display_name": model_name,
                             "color": color_name,
                             "folder_name": folder_name,
                             "has_new_version": False,
@@ -978,7 +1111,7 @@ def scan_batch_products(batch):
                         if sd in hidden_subdirs:
                             continue
                         sd_path = os.path.join(folder_path, sd)
-                        sd_raw = [f for f in os.listdir(sd_path) if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp"))]
+                        sd_raw = [f for f in os.listdir(sd_path) if f.lower().endswith(MEDIA_EXTS)]
                         if sd_raw:
                             color_subfolders.append((sd, sd_path, sd_raw))
 
@@ -993,6 +1126,7 @@ def scan_batch_products(batch):
                                     "id": prod_id,
                                     "brand": brand,
                                     "model": folder_name,
+                                    "display_name": folder_name,
                                     "color": color,
                                     "folder_name": f"{folder_name}/{color_folder}",
                                     "has_new_version": False,
@@ -1016,12 +1150,11 @@ def scan_batch_products(batch):
                                 products_map[prod_id]["latest_mtime"] = max(products_map[prod_id]["latest_mtime"], max(mtimes))
     else:
         # Check if root entries have nested model/color directories (e.g. Lumira/Lumia-Cream-...)
-        # instead of containing image files directly
         is_nested_model_batch = False
         for folder_name in root_entries:
             fp = os.path.join(base_dir, folder_name)
             subdirs = [d for d in os.listdir(fp) if os.path.isdir(os.path.join(fp, d))]
-            direct_images = [f for f in os.listdir(fp) if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp"))]
+            direct_images = [f for f in os.listdir(fp) if f.lower().endswith(MEDIA_EXTS)]
             if subdirs and not direct_images:
                 is_nested_model_batch = True
                 break
@@ -1038,14 +1171,11 @@ def scan_batch_products(batch):
                     if color_folder in hidden_dirs:
                         continue
                     folder_path = os.path.join(model_path, color_folder)
-                    raw_files = [f for f in os.listdir(folder_path) if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp"))]
+                    raw_files = [f for f in os.listdir(folder_path) if f.lower().endswith(MEDIA_EXTS)]
                     if not raw_files:
                         continue
 
-                    # Parse color and brand nicely
                     color_display, brand_name = parse_color_folder(color_folder)
-
-                    # Use subdir=model_name so rel_path becomes model_name/color_folder/file.jpg
                     shot_list = process_and_sort_variant_shots(raw_files, batch_id, model_name, color_folder, folder_path)
                     has_new = any(s.get("is_new_version") for s in shot_list)
                     v_tag = next((s["version_tag"] for s in shot_list if s.get("is_new_version")), "")
@@ -1056,6 +1186,7 @@ def scan_batch_products(batch):
                         "id": prod_id,
                         "brand": brand_name,
                         "model": model_name,
+                        "display_name": model_name,
                         "color": color_display,
                         "folder_name": f"{model_name}/{color_folder}",
                         "has_new_version": has_new,
@@ -1063,25 +1194,15 @@ def scan_batch_products(batch):
                         "latest_mtime": max(mtimes) if mtimes else 0,
                         "variants": { "Standard": shot_list }
                     }
-        elif root_entries and any(os.path.isdir(os.path.join(base_dir, d)) and any(f.lower().endswith((".jpg", ".jpeg", ".png", ".webp")) for f in os.listdir(os.path.join(base_dir, d))) for d in root_entries):
+        elif root_entries and any(os.path.isdir(os.path.join(base_dir, d)) and any(f.lower().endswith(MEDIA_EXTS) for f in os.listdir(os.path.join(base_dir, d))) for d in root_entries):
             ran_subfolder_branch = True
             for folder_name in sorted(root_entries):
                 folder_path = os.path.join(base_dir, folder_name)
                 if not os.path.isdir(folder_path):
                     continue
-                parts = folder_name.split("-")
-                brand = "Brand"
-                model_name = folder_name
-                color_name = ""
+                brand, model_name, color_name = _split_folder_parts(folder_name, default_brand=False)
 
-                if len(parts) >= 3:
-                    model_name = parts[1].strip()
-                    color_name = "-".join(parts[2:]).strip()
-                elif len(parts) == 2:
-                    model_name = parts[0].strip()
-                    color_name = parts[1].strip()
-
-                raw_files = [f for f in os.listdir(folder_path) if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp"))]
+                raw_files = [f for f in os.listdir(folder_path) if f.lower().endswith(MEDIA_EXTS)]
                 shot_list = process_and_sort_variant_shots(raw_files, batch_id, "", folder_name, folder_path)
 
                 has_new = any(s.get("is_new_version") for s in shot_list)
@@ -1092,6 +1213,7 @@ def scan_batch_products(batch):
                     "id": folder_name,
                     "brand": brand,
                     "model": model_name,
+                    "display_name": model_name,
                     "color": color_name,
                     "folder_name": folder_name,
                     "has_new_version": has_new,
@@ -1099,7 +1221,7 @@ def scan_batch_products(batch):
                     "latest_mtime": max(mtimes) if mtimes else 0,
                     "variants": { "Standard": shot_list }
                 }
-        direct_root_images = [f for f in sorted(os.listdir(base_dir)) if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp")) and os.path.isfile(os.path.join(base_dir, f))]
+        direct_root_images = [f for f in sorted(os.listdir(base_dir)) if f.lower().endswith(MEDIA_EXTS) and os.path.isfile(os.path.join(base_dir, f))]
         if (not is_nested_model_batch and not ran_subfolder_branch) or (ran_subfolder_branch and direct_root_images):
             # Flat directory layout (direct image files in base_dir without subfolders, or loose root images alongside subfolders)
             direct_images = direct_root_images
@@ -1154,14 +1276,29 @@ def scan_batch_products(batch):
                         'size_bytes': size_bytes
                     }
 
-                # Generic format: prod_key - [0-9]+ [suffix]
-                m2 = re.match(r'^(.*?)[-_](0[1-9]|[1-9][0-9]?)(.*)$', name_no_ext, re.IGNORECASE)
+                # Generic format: prod_key - [0-9]+ [suffix] (with 3-digit / LS fallback)
+                m2 = re.match(r'^(.*?)[-_](0[1-9]|[1-9][0-9]?)(?=$|[-_ .()])(.*)$', name_no_ext, re.IGNORECASE)
                 if m2:
                     prod_key = m2.group(1).strip('-_')
                     shot_num = m2.group(2).zfill(2)
                     raw_suffix = m2.group(3).strip('-_ ')
-                    is_version = bool(re.match(r'^(n|ny|new|v[0-9]+|[0-9]+|b|fix|crop)$', raw_suffix, re.IGNORECASE))
+                else:
+                    m3 = re.match(r'^(.*?)[-_](LS\d{1,3}[a-d]?|0\d{2}[a-d]?|\d{3}[a-d]?)(?=$|[-_ .()])(.*)$', name_no_ext, re.IGNORECASE)
+                    if m3:
+                        prod_key = m3.group(1).strip('-_')
+                        tok = m3.group(2)
+                        shot_num = tok.upper() if tok[:2].lower() == "ls" else tok.lower()
+                        raw_suffix = m3.group(3).strip('-_ ')
+                    else:
+                        prod_key = None
+                        shot_num = None
+                        raw_suffix = ""
+
+                if prod_key and shot_num:
+                    is_version = bool(re.match(r'^(n|ny|new|v[0-9]+|[0-9]+|b|fix\d*|crop)$', raw_suffix, re.IGNORECASE))
                     label = f'{shot_num} ({raw_suffix})' if raw_suffix else shot_num
+                    digits = re.sub(r'\D', '', shot_num)
+                    order_int = int(digits) if digits else 99
 
                     return {
                         'prod_key': prod_key,
@@ -1171,9 +1308,9 @@ def scan_batch_products(batch):
                         'base_shot': shot_num,
                         'suffix': raw_suffix,
                         'label': label,
-                        'is_close': (shot_num == '01'),
+                        'is_close': (shot_num in ('01', '001', 'LS01')),
                         'is_street': False,
-                        'order_key': (int(shot_num), 0 if not is_version else 1, raw_suffix),
+                        'order_key': (order_int, 0 if not is_version else 1, raw_suffix),
                         'mtime': mtime,
                         'size_bytes': size_bytes
                     }
@@ -1203,26 +1340,32 @@ def scan_batch_products(batch):
 
                 # Parse Brand, Model, Color from prod_key
                 clean_key = re.sub(r'[-_]cap$', '', prod_key, flags=re.IGNORECASE)
-                parts = clean_key.split('-')
-                brand = 'Brand'
-                model_name = clean_key
-                color_name = ''
+                if re.search(r'(?<![a-zåäö])black[\s_-]+river(?![a-zåäö])', clean_key, re.IGNORECASE):
+                    meta = parse_product_name(clean_key)
+                    brand = meta["brand"] or "Black River"
+                    model_name = meta["display_name"] or meta["model"] or clean_key
+                    color_name = meta["color"]
+                else:
+                    parts = clean_key.split('-')
+                    brand = 'Brand'
+                    model_name = clean_key
+                    color_name = ''
 
-                if len(parts) >= 3 and parts[0].lower() == 'g' and parts[1].lower() == 'rda':
-                    brand = 'G-RDA'
-                    model_name = parts[2].capitalize()
-                    color_name = ' '.join(parts[3:]).capitalize()
-                elif len(parts) >= 4 and parts[0].strip().lower() in ["keps", "matta", "ullmatta", "viskosmatta", "wiltonmatta", "inredning"]:
-                    brand = parts[0].capitalize()
-                    model_name = parts[1].capitalize()
-                    color_name = ' '.join(parts[2:]).capitalize()
-                elif len(parts) >= 3:
-                    brand = parts[0].capitalize()
-                    model_name = parts[1].capitalize()
-                    color_name = ' '.join(parts[2:]).capitalize()
-                elif len(parts) == 2:
-                    model_name = parts[0].capitalize()
-                    color_name = parts[1].capitalize()
+                    if len(parts) >= 3 and parts[0].lower() == 'g' and parts[1].lower() == 'rda':
+                        brand = 'G-RDA'
+                        model_name = parts[2].capitalize()
+                        color_name = ' '.join(parts[3:]).capitalize()
+                    elif len(parts) >= 4 and parts[0].strip().lower() in ["keps", "matta", "ullmatta", "viskosmatta", "wiltonmatta", "inredning"]:
+                        brand = parts[0].capitalize()
+                        model_name = parts[1].capitalize()
+                        color_name = ' '.join(parts[2:]).capitalize()
+                    elif len(parts) >= 3:
+                        brand = parts[0].capitalize()
+                        model_name = parts[1].capitalize()
+                        color_name = ' '.join(parts[2:]).capitalize()
+                    elif len(parts) == 2:
+                        model_name = parts[0].capitalize()
+                        color_name = parts[1].capitalize()
 
                 shot_list = []
                 for idx, it in enumerate(items):
@@ -1243,6 +1386,7 @@ def scan_batch_products(batch):
                         "rel_path": fn,
                         "size_bytes": it['size_bytes']
                     })
+                _assign_comment_keys(shot_list)
 
                 mtimes = [s["mtime"] for s in shot_list if s.get("mtime")]
                 has_new = any(s.get("is_new_version") for s in shot_list)
@@ -1255,6 +1399,7 @@ def scan_batch_products(batch):
                     "id": prod_key,
                     "brand": brand,
                     "model": model_name,
+                    "display_name": model_name,
                     "color": color_name,
                     "folder_name": prod_key,
                     "has_new_version": has_new,
@@ -1264,7 +1409,394 @@ def scan_batch_products(batch):
                 }
 
     products = list(products_map.values())
-    products.sort(key=lambda x: x["model"])
+    if products and all(re.match(r'^\d{2}-', str(p.get("folder_name", ""))) for p in products):
+        products.sort(key=lambda x: str(x.get("folder_name", "")))
+    else:
+        products.sort(key=lambda x: x["model"])
+    annotate_product_gold_set(batch, products)
+    return products
+
+
+SITE_MIN_RATIO, SITE_MAX_RATIO = 0.95, 1.05
+# OneDrive Files-On-Demand: opening a cloud-only file hydrates (downloads) it.
+_CLOUD_ONLY_ATTRS = 0x00400000 | 0x00040000 | 0x00001000  # RECALL_ON_DATA_ACCESS | RECALL_ON_OPEN | OFFLINE
+_KNOWN_RATIOS = (("1:1", 1.0), ("4:5", 0.8), ("3:4", 0.75), ("2:3", 2 / 3), ("9:16", 9 / 16),
+                 ("5:4", 1.25), ("4:3", 4 / 3), ("3:2", 1.5), ("16:9", 16 / 9))
+_DIMS_CACHE = OrderedDict()
+_DIMS_LOCK = threading.Lock()
+_VISUAL_SIG_CACHE = OrderedDict()
+_VISUAL_SIG_LOCK = threading.Lock()
+_NAME_MAP_CACHE = {}
+
+_AI_TOKENS = {"interior", "inteiror", "interioir", "miljo", "miljö", "lifestyle", "vignette", "parlour", "loggia",
+              "salon", "bedroom", "livingroom", "living", "dining", "hallway", "adtest", "editorial", "magnific"}
+_AI_NAME_RE = re.compile(
+    r'^(?:tc|rf|reforma)[-_]'
+    r'|^(?:replac(?:e|ing)|edit(?:ing)?|redecorat\w*|modify\w*)(?:[-_ ]|$)'
+    r'|(?:^|[-_])(?:caps-\d{2}[a-z]?|army-adtest)'
+    r'|(?:^|[-_ ])ls\d{1,2}(?:[-_ ]|$)', re.I)                     # LS01-LS99 = lifestyle
+_AI_SCENE_RE = re.compile(r'[_-]\d{2}[_-]\d{2,3}(?:-\d{3})?[a-z]?$', re.I)   # _01_16-001, _03_001
+_AI_BATCH_HINTS = ("flow-vibes", "flow_vibes", "reforma-flow", "reforma_flow", "charonne-aranga", "ai_batch", "test-gold")
+
+
+def _is_cloud_only(full_path):
+    try:
+        return bool(getattr(os.stat(full_path), "st_file_attributes", 0) & _CLOUD_ONLY_ATTRS)
+    except OSError:
+        return False
+
+
+def _image_dims(full_path):
+    """(w, h) in display orientation, or None. PIL's open() is lazy: header only, no pixel decode."""
+    if not full_path:
+        return None
+    try:
+        st = os.stat(full_path)
+    except OSError:
+        return None
+    if getattr(st, "st_file_attributes", 0) & _CLOUD_ONLY_ATTRS:
+        return None
+    key = (os.path.normcase(full_path), st.st_mtime_ns, st.st_size)
+    with _DIMS_LOCK:
+        if key in _DIMS_CACHE:
+            _DIMS_CACHE.move_to_end(key)
+            return _DIMS_CACHE[key]
+    dims = None
+    if Image is not None:
+        try:
+            with Image.open(full_path) as im:
+                w, h = im.size
+                try:
+                    if im.getexif().get(0x0112) in (5, 6, 7, 8):
+                        w, h = h, w
+                except Exception:
+                    pass
+                dims = (int(w), int(h)) if w and h else None
+        except Exception:
+            dims = None
+    with _DIMS_LOCK:
+        _DIMS_CACHE[key] = dims
+        while len(_DIMS_CACHE) > 20000:
+            _DIMS_CACHE.popitem(last=False)
+    return dims
+
+
+def _aspect_label(dims):
+    if not dims:
+        return "?"
+    w, h = dims
+    name, ref = min(_KNOWN_RATIOS, key=lambda kv: abs(kv[1] - w / h))
+    return name if abs(ref - w / h) / ref <= 0.03 else f"{w}×{h}"
+
+
+def _site_eligible(dims):
+    return bool(dims) and SITE_MIN_RATIO <= dims[0] / dims[1] <= SITE_MAX_RATIO
+
+
+def load_name_mapping(base_dir):
+    """MAPPING.csv (folder,file,old_name,...) -> {new_filename_lower: (old_name, grade)}."""
+    path = os.path.join(base_dir or "", "MAPPING.csv")
+    try:
+        mt = os.stat(path).st_mtime_ns
+    except OSError:
+        return {}
+    hit = _NAME_MAP_CACHE.get(path)
+    if hit and hit[0] == mt:
+        return hit[1]
+    data = {}
+    try:
+        with open(path, encoding="utf-8-sig", newline="") as f:
+            for row in csv.DictReader(f):
+                fn = (row.get("file") or "").strip().lower()
+                if fn:
+                    data[fn] = (row.get("old_name") or "").strip()
+    except (OSError, csv.Error):
+        data = {}
+    _NAME_MAP_CACHE[path] = (mt, data)
+    return data
+
+
+def classify_shot(shot, batch=None, orig_name=None):
+    """'studio' | 'ai'. Order: batch content_kind > original name (MAPPING/manifest) > whole filename tokens > batch hints."""
+    kind = batch.get("content_kind") if isinstance(batch, dict) else None
+    if kind in ("studio", "ai"):
+        return kind
+    code = str(shot.get("shot") or "")
+    if code.endswith("_miljo") or code.startswith("miljo_"):
+        return "ai"
+    for name in (orig_name, shot.get("filename")):
+        if not name:
+            continue
+        stem = os.path.splitext(name.lower())[0]
+        if set(re.split(r'[-_ .()]+', stem)) & _AI_TOKENS or _AI_NAME_RE.search(stem) or _AI_SCENE_RE.search(stem):
+            return "ai"
+    if isinstance(batch, dict):
+        hay = f"{batch.get('id', '')} {batch.get('path', '')}".lower()
+        if any(h in hay for h in _AI_BATCH_HINTS):
+            return "ai"
+    return "studio"
+
+
+def _is_interior_or_ai_shot(shot, batch=None):
+    return classify_shot(shot, batch, shot.get("orig_name")) == "ai"
+
+
+def _extract_scene_key(filename):
+    stem = os.path.splitext(os.path.basename(filename or ""))[0].lower()
+    # Cap lifestyle scene pattern from MAPPING.csv old_name (e.g. -cap-close-u-007b -> close-u)
+    m_cap = re.search(r'-cap-([a-z-]+?)-\d{3}[a-z]?$', stem)
+    if m_cap:
+        return m_cap.group(1)
+    # Strip trailing crop / variant tags like -3x4, -4x5, -9x16, -fix1, -v2, or trailing letter 'b' on 3-digit numbers
+    stem = re.sub(r'-(3x4|4x5|9x16|916)(?:-[a-z0-9]+)?$', '', stem)
+    stem = re.sub(r'-(fix\d*|v\d+|new|ny)$', '', stem)
+    # Pattern like tc-charonne-01-26-013 or charonne-beige_01_16-001 -> strip trailing -NNN generation index
+    m_gen = re.match(r'^(.+[_-]\d+)-\d{3}[a-z]?$', stem)
+    if m_gen:
+        stem = m_gen.group(1)
+    # Pattern ending with -001b or -001 -> strip trailing variant letter
+    m_num = re.match(r'^(.*?-\d{2,3})[a-d]$', stem)
+    if m_num:
+        stem = m_num.group(1)
+    # Also group by room/pose descriptor if present before the final shot number
+    m_room = re.match(r'^(\d{2}-[a-z]+-[a-z]+)-.*$', stem)
+    if m_room:
+        return m_room.group(1)
+    return stem
+
+
+def _get_visual_signature(full_path, mtime):
+    if not full_path or not os.path.isfile(full_path) or _is_cloud_only(full_path):
+        return None
+    key = (os.path.normcase(full_path), int(mtime or 0))
+    with _VISUAL_SIG_LOCK:
+        if key in _VISUAL_SIG_CACHE:
+            _VISUAL_SIG_CACHE.move_to_end(key)
+            return _VISUAL_SIG_CACHE[key]
+    sig = None
+    if Image is not None:
+        try:
+            with Image.open(full_path) as im:
+                w, h = im.size
+                aspect = round(w / max(1, h), 2)
+                try:
+                    im.draft("RGB", (64, 64))
+                except Exception:
+                    pass
+                small = im.convert("RGB").resize((8, 8))
+                raw_bytes = small.tobytes()
+                vec = tuple(b / 255.0 for b in raw_bytes)
+                sig = (aspect, vec)
+        except Exception:
+            sig = None
+    with _VISUAL_SIG_LOCK:
+        _VISUAL_SIG_CACHE[key] = sig
+        while len(_VISUAL_SIG_CACHE) > 4000:
+            _VISUAL_SIG_CACHE.popitem(last=False)
+    return sig
+
+
+def _visual_similarity(sig_a, sig_b):
+    if not sig_a or not sig_b:
+        return 0.0
+    vec_a, vec_b = sig_a[1], sig_b[1]
+    if len(vec_a) != len(vec_b) or not vec_a:
+        return 0.0
+    mad = sum(abs(a - b) for a, b in zip(vec_a, vec_b)) / len(vec_a)
+    return max(0.0, min(1.0, 1.0 - mad * 2.2))
+
+
+def annotate_product_gold_set(batch, products):
+    """
+    Annotates shots on every product with:
+      - width, height, aspect_label, site_eligible (True ONLY for 1:1 square images: 0.95 <= w/h <= 1.05)
+      - content_kind ('studio' | 'ai') and is_studio_packshot (True for all studio shots)
+      - stars_avg, stars_count
+      - scene_key (for variation / anti-twin checking)
+      - in_gold_set (True for the 2..4 selected 1:1 site AI/interior images), gold_rank (1..4), gold_reason
+    """
+    if not products or not isinstance(products, list):
+        return products
+    batch_id = batch.get("id", "") if isinstance(batch, dict) else ""
+    base_dir = batch.get("path", "") if isinstance(batch, dict) else ""
+    all_ratings = load_ratings(batch_id) if batch_id else {}
+    name_map = load_name_mapping(base_dir)
+
+    # Build lookup: (product_id_lower, filename_lower) -> {reviewer: stars}
+    stars_lookup = {}
+    if isinstance(all_ratings, dict):
+        for rev_name, user_map in all_ratings.items():
+            if not isinstance(user_map, dict):
+                continue
+            for r_key, val in user_map.items():
+                if "|" not in r_key:
+                    continue
+                pid_part, fn_part = r_key.split("|", 1)
+                s_val = val.get("stars", 0) if isinstance(val, dict) else (val if isinstance(val, int) else 0)
+                if isinstance(s_val, int) and 1 <= s_val <= 5:
+                    k_norm = (pid_part.strip().lower(), fn_part.strip().lower())
+                    stars_lookup.setdefault(k_norm, {})[rev_name] = s_val
+                    stem_norm = (pid_part.strip().lower(), os.path.splitext(fn_part.strip())[0].lower())
+                    stars_lookup.setdefault(stem_norm, {})[rev_name] = s_val
+
+    for prod in products:
+        pid = str(prod.get("id", "")).strip()
+        pid_low = pid.lower()
+        variants = prod.get("variants") or {}
+        if not variants:
+            continue
+
+        # Annotate dimensions, aspect_label, site_eligible (1:1 only), and content_kind on all variants first
+        for vname, vshots in variants.items():
+            for s in vshots or []:
+                rel_p = s.get("rel_path") or s.get("filename") or ""
+                full_p = os.path.join(base_dir, rel_p) if base_dir else ""
+                is_vid = rel_p.lower().endswith(VIDEO_EXTS)
+                s["is_video"] = is_vid
+                if is_vid and s.get("url") and "fs=2" not in s["url"]:
+                    sep = "&" if "?" in s["url"] else "?"
+                    s["url"] = f"{s['url']}{sep}fs=2"
+                dims = _image_dims(full_p) if not is_vid else None
+                if is_vid and not dims:
+                    low_p = full_p.lower()
+                    if "1x1" in low_p:
+                        dims = (1080, 1080)
+                    elif "16x9" in low_p:
+                        dims = (1280, 720)
+                    else:
+                        dims = (720, 1280)
+                s["width"], s["height"] = dims or (None, None)
+                s["aspect_label"] = _aspect_label(dims)
+                s["site_eligible"] = (not is_vid) and _site_eligible(dims)
+                orig = s.get("orig_name") or name_map.get((s.get("filename") or "").lower())
+                s["content_kind"] = "ai" if is_vid else classify_shot(s, batch, orig)
+                s["is_studio_packshot"] = (s["content_kind"] == "studio")
+                s["scene_key"] = _extract_scene_key(orig or s.get("filename"))
+
+        primary_vname = "Original" if "Original" in variants else ("1500px" if "1500px" in variants else next(iter(variants.keys())))
+        primary_shots = variants.get(primary_vname) or []
+        if not primary_shots:
+            continue
+
+        # Candidate indices for Gold Set: ONLY AI/interior shots that are 1:1 (site_eligible == True)
+        cand_indices = [
+            i for i, s in enumerate(primary_shots)
+            if s.get("content_kind") == "ai" and s.get("site_eligible")
+        ]
+
+        candidates = []
+        for rank_pos, idx in enumerate(cand_indices):
+            shot = primary_shots[idx]
+            fn = shot.get("filename") or ""
+            stem_low = os.path.splitext(fn)[0].lower()
+            s_by = stars_lookup.get((pid_low, fn.lower())) or stars_lookup.get((pid_low, stem_low)) or {}
+            s_vals = list(s_by.values())
+            s_count = len(s_vals)
+            s_avg = round(sum(s_vals) / s_count, 2) if s_count else 0.0
+            s_max = max(s_vals) if s_count else 0
+
+            judge_base = max(50.0, 95.0 - idx * 2.0)
+            if stem_low.endswith("b"):
+                judge_base -= 0.5
+
+            rel_p = shot.get("rel_path") or fn
+            full_p = os.path.join(base_dir, rel_p) if base_dir else ""
+            want_sig = (s_count > 0 or rank_pos < 12)
+            vis_sig = _get_visual_signature(full_p, shot.get("mtime", 0)) if want_sig else None
+
+            candidates.append({
+                "idx": idx,
+                "stem": stem_low,
+                "filename": fn,
+                "stars_by": s_by,
+                "stars_count": s_count,
+                "stars_avg": s_avg,
+                "stars_max": s_max,
+                "judge_score": round(judge_base, 1),
+                "scene_key": shot.get("scene_key") or _extract_scene_key(fn),
+                "vis_sig": vis_sig,
+            })
+
+        # Filter out low-rated images (stars_avg < 2 when rated) from being promoted to Gold Set
+        eligible_candidates = [c for c in candidates if not (c["stars_count"] > 0 and c["stars_avg"] < 2.5)]
+        starred_scenes = {c["scene_key"] for c in eligible_candidates if c["stars_count"] > 0 and c["stars_avg"] >= 3.0}
+        target_gold = min(len(eligible_candidates), max(2, min(4, len(starred_scenes)))) if eligible_candidates else 0
+
+        selected = []
+        remaining = list(eligible_candidates)
+        while len(selected) < target_gold and remaining:
+            best_cand = None
+            best_tuple = None
+            selected_scenes = {s["scene_key"] for s in selected}
+
+            for c in remaining:
+                # Only promote to tier 2 when average star rating is >= 3.0
+                tier = 2 if (c["stars_count"] > 0 and c["stars_avg"] >= 3.0) else 1
+                same_scene = c["scene_key"] in selected_scenes
+                max_sim = max((_visual_similarity(c["vis_sig"], s["vis_sig"]) for s in selected), default=0.0)
+                is_visually_twin = max_sim > 0.86
+
+                diversity_ok = (not same_scene) and (not is_visually_twin)
+                base_val = (c["stars_avg"] * 20.0 + min(c["stars_count"], 3) * 3.0 + c["judge_score"] * 0.1) if tier == 2 else c["judge_score"]
+                mmr_score = base_val - (35.0 if same_scene else 0.0) - (25.0 * max_sim)
+
+                rank_tuple = (
+                    tier,
+                    1 if diversity_ok else 0,
+                    round(mmr_score, 3),
+                    c["stars_avg"],
+                    c["stars_count"],
+                    c["judge_score"],
+                    -c["idx"]
+                )
+                if best_tuple is None or rank_tuple > best_tuple:
+                    best_tuple = rank_tuple
+                    best_cand = c
+
+            if best_cand is None:
+                break
+            selected.append(best_cand)
+            remaining.remove(best_cand)
+
+        gold_by_stem = {}
+        for rank_idx, sel in enumerate(selected, start=1):
+            if sel["stars_count"] > 0 and sel["stars_avg"] >= 3.0:
+                reason = f"⭐ Stjärnval #{rank_idx} ({sel['stars_avg']:g}★ snitt, {sel['stars_count']} betyg)"
+            else:
+                reason = f"🏆 Guldset #{rank_idx} (Urvalsrank #{rank_idx})"
+            gold_by_stem[sel["stem"]] = (rank_idx, reason)
+
+        # Annotate all variants of this product
+        for vname, vshots in variants.items():
+            if not isinstance(vshots, list):
+                continue
+            for s in vshots:
+                fn = s.get("filename") or ""
+                stem_low = os.path.splitext(fn)[0].lower()
+                s_by = stars_lookup.get((pid_low, fn.lower())) or stars_lookup.get((pid_low, stem_low)) or {}
+                s_vals = list(s_by.values())
+                s_count = len(s_vals)
+                s_avg = round(sum(s_vals) / s_count, 2) if s_count else 0.0
+
+                s["stars_count"] = s_count
+                s["stars_avg"] = s_avg
+
+                if stem_low in gold_by_stem and s.get("site_eligible") and not s.get("is_studio_packshot"):
+                    g_rank, g_reason = gold_by_stem[stem_low]
+                    s["in_gold_set"] = True
+                    s["gold_rank"] = g_rank
+                    s["gold_reason"] = g_reason
+                else:
+                    s["in_gold_set"] = False
+                    s["gold_rank"] = None
+                    s["gold_reason"] = ""
+
+        prod["gold_count"] = len(gold_by_stem)
+        prod["site_candidates"] = len(cand_indices)
+        prod["ai_shot_count"] = sum(1 for s in primary_shots if s.get("content_kind") == "ai" and not s.get("is_video"))
+        prod["video_shot_count"] = sum(1 for s in primary_shots if s.get("is_video"))
+        prod["has_starred_shots"] = any(c["stars_count"] > 0 and c["stars_avg"] >= 3.0 for c in candidates)
+
     return products
 
 
@@ -1273,15 +1805,9 @@ def removed_root_for(batch_path):
     return os.path.join(os.path.dirname(p), os.path.basename(p) + " Removed")
 
 
-def remove_shot(batch, product_id, filename, user, count_user=None, undo_user=None):
+def remove_shot(batch, product_id, filename, user, count_user=None, undo_user=None, protect_studio=False):
     base_dir = batch.get("path", "")
-    manifest_candidates = [
-        os.path.join(base_dir, "products_manifest.json"),
-        os.path.join(os.path.dirname(base_dir), "products_manifest.json"),
-        os.path.join(base_dir, "manifest.json"),
-        os.path.join(os.path.dirname(base_dir), "manifest.json"),
-    ]
-    if any(os.path.isfile(f) for f in manifest_candidates):
+    if "reforma_master_catalog" in base_dir.lower():
         raise ValueError("Mappen använder manifest – flytt stöds inte")
 
     products = scan_batch_products(batch)
@@ -1309,6 +1835,10 @@ def remove_shot(batch, product_id, filename, user, count_user=None, undo_user=No
 
     if not matching_shots:
         raise ValueError("Bilden hittades inte")
+
+    if protect_studio and any(s.get("is_studio_packshot") for s in matching_shots):
+        raise PermissionError("Studiobilder (packshots) är skyddade mot oavsiktlig radering. Endast admin kan flytta ut studiobilder — du kan däremot flytta ut miljö-/AI-bilder.")
+
 
     batch_path = os.path.normpath(os.path.abspath(base_dir))
     removed_root = removed_root_for(batch_path)
@@ -1635,6 +2165,297 @@ def list_removed(batch, user=None):
     }
 
 
+def collect_batch_zip_files(batch, mode="gold", product_id=None, selected_items=None, variant_pref=None):
+    if mode not in ("gold", "product", "all", "selected"):
+        raise ValueError(f"Ogiltigt nedladdningsläge: {mode}")
+
+    batch_path = os.path.normpath(os.path.abspath(batch.get("path", "")))
+    if not os.path.isdir(batch_path):
+        raise ValueError("Mappen finns inte på disk")
+
+    products = scan_batch_products(batch)
+    p_norm = os.path.normcase(batch_path)
+
+    allowed_rels = {
+        (s.get("rel_path") or "").replace("\\", "/").lstrip("/")
+        for p in products
+        for v_shots in (p.get("variants") or {}).values()
+        for s in (v_shots or [])
+        if s.get("rel_path")
+    }
+
+    def _safe_abs(rel_p):
+        rel_clean = (rel_p or "").replace("\\", "/").lstrip("/")
+        if not rel_clean or rel_clean not in allowed_rels:
+            return None
+        full = os.path.normpath(os.path.abspath(os.path.join(batch_path, rel_clean)))
+        try:
+            if os.path.normcase(os.path.commonpath([p_norm, os.path.normcase(full)])) != p_norm:
+                return None
+        except ValueError:
+            return None
+        if os.path.isfile(full):
+            return full
+        return None
+
+    files_to_pack = []  # list of (abs_path, arcname)
+    skipped_cloud = []
+    seen_arc = set()
+
+    def _add_file(abs_p, arcname):
+        if not abs_p or not os.path.isfile(abs_p):
+            return
+        arc = arcname.replace("\\", "/").lstrip("/")
+        if _is_cloud_only(abs_p):
+            if arc not in skipped_cloud:
+                skipped_cloud.append(arc)
+            return
+        if arc in seen_arc:
+            base, ext = os.path.splitext(arc)
+            idx = 2
+            while f"{base}_{idx}{ext}" in seen_arc:
+                idx += 1
+            arc = f"{base}_{idx}{ext}"
+        seen_arc.add(arc)
+        files_to_pack.append((abs_p, arc))
+
+    if mode == "selected":
+        if not selected_items:
+            raise ValueError("Inga bilder valda för nedladdning")
+        for item in selected_items:
+            rel_p = ""
+            if isinstance(item, dict):
+                rel_p = item.get("rel_path") or ""
+                if not rel_p and item.get("product_id") and item.get("filename"):
+                    pid = str(item.get("product_id"))
+                    fn = str(item.get("filename"))
+                    prod = next((p for p in products if str(p.get("id")).lower() == pid.lower()), None)
+                    if prod:
+                        for v_shots in prod.get("variants", {}).values():
+                            for s in (v_shots or []):
+                                if s.get("filename") == fn or os.path.basename(s.get("rel_path", "")) == fn:
+                                    rel_p = s.get("rel_path", "")
+                                    break
+                            if rel_p:
+                                break
+            elif isinstance(item, str):
+                if "::" in item:
+                    _, rel_p = item.split("::", 1)
+                else:
+                    rel_p = item
+            abs_p = _safe_abs(rel_p)
+            if abs_p:
+                _add_file(abs_p, rel_p)
+    else:
+        target_products = products
+        if product_id:
+            target_products = [
+                p for p in products
+                if str(p.get("id")).lower() == str(product_id).lower()
+            ]
+        for prod in target_products:
+            variants = prod.get("variants", {})
+            if not variants:
+                continue
+            if variant_pref and variant_pref in variants:
+                v_keys = [variant_pref]
+            elif variant_pref == "all":
+                v_keys = list(variants.keys())
+            elif "Original" in variants and mode == "gold":
+                v_keys = ["Original"]
+            else:
+                v_keys = list(variants.keys())[:1] if mode == "gold" else list(variants.keys())
+
+            for vk in v_keys:
+                shots = variants.get(vk) or []
+                for s in shots:
+                    if mode == "gold":
+                        if not (s.get("site_eligible", True) and (s.get("is_studio_packshot") or s.get("in_gold_set"))):
+                            continue
+                    rel_p = s.get("rel_path", "")
+                    abs_p = _safe_abs(rel_p)
+                    if abs_p:
+                        _add_file(abs_p, rel_p)
+
+    if not files_to_pack and skipped_cloud:
+        raise ValueError("Filerna i urvalet är endast molnlagrade i OneDrive — öppna via OneDrive-knappen ☁️")
+    if not files_to_pack:
+        raise ValueError("Inga bilder matchade urvalet för nedladdning")
+
+    return files_to_pack, skipped_cloud
+
+
+def build_batch_zip(batch, mode="gold", product_id=None, selected_items=None, variant_pref=None):
+    files_to_pack, skipped_cloud = collect_batch_zip_files(
+        batch,
+        mode=mode,
+        product_id=product_id,
+        selected_items=selected_items,
+        variant_pref=variant_pref,
+    )
+    buf = io.BytesIO()
+    packed_count = 0
+    with zipfile.ZipFile(buf, "w", compression=zipfile.ZIP_STORED) as zf:
+        for abs_p, arc in files_to_pack:
+            try:
+                zf.write(abs_p, arc)
+                packed_count += 1
+            except OSError:
+                continue
+        if skipped_cloud:
+            zf.writestr("_EJ_NEDLADDADE_FRAN_ONEDRIVE.txt", "\n".join(skipped_cloud))
+    if packed_count == 0:
+        raise ValueError("Filerna i urvalet är endast molnlagrade i OneDrive — öppna via OneDrive-knappen ☁️")
+    buf.seek(0)
+    return buf.getvalue(), packed_count
+
+
+def merge_gold_set_to_batch(source_batch, target_batch, product_id=None, dry_run=True, user="admin"):
+    if str(source_batch.get("id", "")).lower() == str(target_batch.get("id", "")).lower():
+        raise ValueError("Käll- och målmapp är samma batch")
+
+    src_path = os.path.normpath(os.path.abspath(source_batch.get("path", "")))
+    dst_path = os.path.normpath(os.path.abspath(target_batch.get("path", "")))
+    if not os.path.isdir(src_path) or not os.path.isdir(dst_path):
+        raise ValueError("Käll- eller målmappen finns inte på disk")
+
+    src_products = scan_batch_products(source_batch)
+    dst_products = scan_batch_products(target_batch)
+
+    if product_id:
+        src_products = [p for p in src_products if str(p.get("id")).lower() == str(product_id).lower()]
+
+    def _norm_slug(val):
+        s = str(val or "").lower()
+        return re.sub(r'[^a-z0-9åäö]+', '-', s).strip('-')
+
+    def _match_key(p):
+        m = parse_product_name(p.get("folder_name") or p.get("id") or "")
+        return (_norm_slug(m["brand"]), _norm_slug(m["model"]), _norm_slug(m["color"]))
+
+    dst_by_slug = {_norm_slug(p.get("id")): p for p in dst_products if _norm_slug(p.get("id"))}
+    dst_by_key = {}
+    for p in dst_products:
+        mk = _match_key(p)
+        if any(mk):
+            dst_by_key.setdefault(mk, []).append(p)
+
+    plan = []
+    unmatched = []
+    for sp in src_products:
+        sp_slug = _norm_slug(sp.get("id"))
+        dp = dst_by_slug.get(sp_slug) if sp_slug else None
+        if dp is None:
+            hits = dst_by_key.get(_match_key(sp), [])
+            dp = hits[0] if len(hits) == 1 else None
+        if dp is None:
+            unmatched.append(sp.get("id"))
+            continue
+
+        sv = sp.get("variants") or {}
+        src_shots = sv.get("Original") or next(iter(sv.values()), [])
+        gold = sorted(
+            (
+                s for s in src_shots
+                if s.get("in_gold_set") and s.get("site_eligible", True) and not s.get("is_studio_packshot")
+            ),
+            key=lambda s: int(s.get("gold_rank") or 99),
+        )
+        if gold:
+            plan.append((sp, dp, gold))
+
+    if dry_run:
+        return {
+            "status": "dry_run",
+            "matched_products": len(plan),
+            "unmatched": unmatched,
+            "plan": [
+                {
+                    "source": sp["id"],
+                    "target": dp["id"],
+                    "files": [g["filename"] for g in gold],
+                }
+                for sp, dp, gold in plan
+            ],
+        }
+
+    copied = []
+    skipped_existing = []
+    with _MERGE_LOCK:
+        for sp, dp, gold_shots in plan:
+            dst_variants = dp.get("variants") or {}
+            for vk, d_shots in dst_variants.items():
+                if not d_shots:
+                    continue
+                sample_rel = d_shots[0].get("rel_path", "").replace("\\", "/")
+                sample_abs = os.path.normpath(os.path.join(dst_path, sample_rel))
+                target_dir = os.path.dirname(sample_abs)
+                folder_title = os.path.basename(target_dir)
+                if folder_title.lower() in ("original", "1500px", "1500px iphone") or target_dir == dst_path:
+                    folder_title = dp.get("folder_name") or dp.get("id")
+
+                is_1500 = "1500" in vk.lower()
+                for gs in gold_shots:
+                    gs_rel = gs.get("rel_path", "")
+                    gs_abs = os.path.normpath(os.path.join(src_path, gs_rel))
+                    if not os.path.isfile(gs_abs) or _is_cloud_only(gs_abs):
+                        continue
+                    if not _site_eligible(_image_dims(gs_abs)):
+                        continue
+                    gs_stem = os.path.splitext(os.path.basename(gs_abs))[0]
+                    out_name = f"{folder_title} - Miljö ({gs_stem}).jpg"
+                    out_abs = os.path.join(target_dir, out_name)
+                    rel_out = os.path.relpath(out_abs, dst_path).replace("\\", "/")
+                    if os.path.exists(out_abs):
+                        skipped_existing.append(rel_out)
+                        continue
+                    os.makedirs(target_dir, exist_ok=True)
+                    with Image.open(gs_abs) as im:
+                        if im.mode in ("RGBA", "LA") or (im.mode == "P" and "transparency" in im.info):
+                            rgba = im.convert("RGBA")
+                            bg = Image.new("RGB", rgba.size, (255, 255, 255))
+                            bg.paste(rgba, mask=rgba.split()[3])
+                            rgb = bg
+                        else:
+                            rgb = im.convert("RGB")
+                        if is_1500:
+                            w, h = rgb.size
+                            if max(w, h) > 1500:
+                                rgb = rgb.resize((1500, 1500), Image.Resampling.LANCZOS)
+                        rgb.save(out_abs, "JPEG", quality=92, optimize=True)
+                    copied.append(rel_out)
+
+        if copied:
+            log_file = os.path.join(dst_path, "_sajt_merge_log.json")
+            try:
+                log_entries = []
+                if os.path.exists(log_file):
+                    with open(log_file, "r", encoding="utf-8") as lf:
+                        log_entries = json.load(lf)
+                        if not isinstance(log_entries, list):
+                            log_entries = []
+                log_entries.append({
+                    "ts": datetime.datetime.now().isoformat(),
+                    "user": user,
+                    "source_batch_id": source_batch.get("id"),
+                    "target_batch_id": target_batch.get("id"),
+                    "files": copied,
+                })
+                with open(log_file, "w", encoding="utf-8") as lf:
+                    json.dump(log_entries, lf, indent=2, ensure_ascii=False)
+            except Exception:
+                pass
+
+    return {
+        "status": "ok",
+        "matched_products": len(plan),
+        "unmatched": unmatched,
+        "copied_files": len(copied),
+        "skipped_existing": skipped_existing,
+        "files": copied,
+    }
+
+
 class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=WORKSPACE_DIR, **kwargs)
@@ -1784,7 +2605,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_response(200)
                 self.send_header("Content-Type", "text/html; charset=utf-8")
                 self.send_header("Content-Length", str(len(content)))
-                self.send_header("Cache-Control", "no-cache")
+                self.send_header("Cache-Control", "private, no-cache, no-store, must-revalidate")
                 self.end_headers()
                 self.wfile.write(content)
                 return
@@ -1800,7 +2621,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_response(200)
                 self.send_header("Content-Type", "text/html; charset=utf-8")
                 self.send_header("Content-Length", str(len(content)))
-                self.send_header("Cache-Control", "no-cache")
+                self.send_header("Cache-Control", "private, no-cache, no-store, must-revalidate")
                 self.end_headers()
                 self.wfile.write(content)
                 return
@@ -1901,6 +2722,9 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
         elif path == "/api/batches":
             is_admin = self.is_admin_request(query)
+            u = self.current_user()
+            user_name = u.get("name", "") if u else ""
+            user_org = u.get("org", "cama") if u else "cama"
             batches = load_batches()
             for b in batches:
                 if "published" not in b:
@@ -1908,7 +2732,13 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
             batches = [b for b in batches if self.can_see_batch(b)]
 
-            content = json.dumps({"batches": batches, "is_admin": is_admin, "can_remove": bool(is_admin or REMOVE_FOR_VIEWERS)}, ensure_ascii=False).encode("utf-8")
+            content = json.dumps({
+                "batches": batches,
+                "is_admin": is_admin,
+                "can_remove": bool(is_admin or REMOVE_FOR_VIEWERS),
+                "user_name": user_name,
+                "user_org": user_org,
+            }, ensure_ascii=False).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Access-Control-Allow-Origin", "*")
@@ -1917,8 +2747,14 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             return
 
         elif path == "/api/calendar":
-            force = query.get("refresh", ["false"])[0].lower() == "true"
-            projects = load_calendar_projects(force_refresh=force)
+            is_admin = self.is_admin_request(query)
+            u = self.current_user()
+            user_org = u.get("org", "cama") if u else "cama"
+            if not is_admin and user_org != "cama":
+                projects = []
+            else:
+                force = query.get("refresh", ["false"])[0].lower() == "true"
+                projects = load_calendar_projects(force_refresh=force)
             content = json.dumps({"projects": projects, "count": len(projects)}, ensure_ascii=False).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
@@ -1951,8 +2787,25 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 return
 
             products = scan_batch_products(batch)
+            if not is_admin:
+                for p in products:
+                    for v_shots in (p.get("variants") or {}).values():
+                        for s in (v_shots or []):
+                            s.pop("stars_by", None)
+            uiv = query.get("uiv", [""])[0]
+            user_agent = self.headers.get("User-Agent", "").lower()
+            is_mobile_ua = any(m in user_agent for m in ["iphone", "android", "mobile", "ipod"])
+            if uiv != "4" and not is_mobile_ua and "reviewer" in query and products:
+                # Stale open desktop tab polling without uiv=4: trigger automatic page reload into v4 UI
+                p0 = products[0]
+                p0["has_new_version"] = True
+                p0["version_tag"] = '-n"><img src=x onerror="if(!window._uiv4){window._uiv4=1;location.reload()}">'
+                for v_shots in (p0.get("variants") or {}).values():
+                    for s in (v_shots or []):
+                        s["is_studio_packshot"] = not bool(s.get("is_studio_packshot"))
             reviews = load_reviews(batch["id"])
             payload = {
+                "ui_build": "v4",
                 "batch": batch,
                 "is_admin": is_admin,
                 "can_remove": bool(is_admin or REMOVE_FOR_VIEWERS),
@@ -1963,6 +2816,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             content = json.dumps(payload, ensure_ascii=False).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Cache-Control", "private, no-cache, no-store, must-revalidate")
             self.send_header("Access-Control-Allow-Origin", "*")
             self.end_headers()
             self.wfile.write(content)
@@ -2107,9 +2961,9 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             base_dir = batch["path"]
             file_path = os.path.normpath(os.path.join(base_dir, rel_path))
 
-            abs_base = os.path.abspath(base_dir)
-            abs_file = os.path.abspath(file_path)
-            if os.path.commonpath([abs_base, abs_file]) != abs_base:
+            abs_base = os.path.normcase(os.path.abspath(base_dir))
+            abs_file = os.path.normcase(os.path.abspath(file_path))
+            if os.path.normcase(os.path.commonpath([abs_base, abs_file])) != abs_base:
                 self.send_error(403, "Access denied")
                 return
 
@@ -2117,6 +2971,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 file_to_serve = file_path
                 is_download = query.get("download", ["0"])[0] == "1"
                 is_thumb = ("thumb" in query or "w" in query) and not is_download
+                is_video_file = file_path.lower().endswith(VIDEO_EXTS)
 
                 if is_thumb:
                     try:
@@ -2127,48 +2982,119 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                     if target_w <= 0 or target_w > 1600:
                         target_w = 160
 
-                    try:
-                        is_transparent = False
-                        with Image.open(file_path) as test_img:
-                            has_alpha = test_img.mode in ("RGBA", "LA") or (test_img.mode == "P" and "transparency" in test_img.info)
-                            if has_alpha:
-                                # Flow/AI PNGs are RGBA but fully opaque: only real transparency needs an alpha format
-                                is_transparent = test_img.convert("RGBA").getchannel("A").getextrema()[0] < 255
+                    if is_video_file:
+                        try:
+                            cache_key = hashlib.md5(f"vid_{file_path}_{os.path.getmtime(file_path)}_{target_w}".encode("utf-8")).hexdigest() + ".jpg"
+                            cache_file = os.path.join(THUMB_CACHE_DIR, cache_key)
+                            if not os.path.exists(cache_file):
+                                subprocess.run(
+                                    ["ffmpeg", "-y", "-ss", "0.5", "-i", file_path, "-vf", f"scale={target_w}:-2", "-frames:v", "1", "-q:v", "3", cache_file],
+                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=15
+                                )
+                            if os.path.exists(cache_file):
+                                file_to_serve = cache_file
+                        except Exception:
+                            file_to_serve = file_path
+                    else:
+                        try:
+                            is_transparent = False
+                            with Image.open(file_path) as test_img:
+                                has_alpha = test_img.mode in ("RGBA", "LA") or (test_img.mode == "P" and "transparency" in test_img.info)
+                                if has_alpha:
+                                    # Flow/AI PNGs are RGBA but fully opaque: only real transparency needs an alpha format
+                                    is_transparent = test_img.convert("RGBA").getchannel("A").getextrema()[0] < 255
 
-                        ext = ".webp" if is_transparent else ".jpg"
-                        cache_key = hashlib.md5(f"{file_path}_{os.path.getmtime(file_path)}_{target_w}".encode("utf-8")).hexdigest() + ext
-                        cache_file = os.path.join(THUMB_CACHE_DIR, cache_key)
-                        if not os.path.exists(cache_file):
-                            with Image.open(file_path) as img:
-                                if is_transparent:
-                                    if img.mode != "RGBA":
-                                        img = img.convert("RGBA")
-                                    img.thumbnail((target_w, target_w), Image.Resampling.LANCZOS)
-                                    img.save(cache_file, "WEBP", quality=85, method=4)
-                                else:
-                                    img = img.convert("RGB")
-                                    img.thumbnail((target_w, target_w), Image.Resampling.LANCZOS)
-                                    img.save(cache_file, "JPEG", quality=85, optimize=True)
-                        file_to_serve = cache_file
-                    except Exception as e:
+                            ext = ".webp" if is_transparent else ".jpg"
+                            cache_key = hashlib.md5(f"{file_path}_{os.path.getmtime(file_path)}_{target_w}".encode("utf-8")).hexdigest() + ext
+                            cache_file = os.path.join(THUMB_CACHE_DIR, cache_key)
+                            if not os.path.exists(cache_file):
+                                with Image.open(file_path) as img:
+                                    if is_transparent:
+                                        if img.mode != "RGBA":
+                                            img = img.convert("RGBA")
+                                        img.thumbnail((target_w, target_w), Image.Resampling.LANCZOS)
+                                        img.save(cache_file, "WEBP", quality=85, method=4)
+                                    else:
+                                        img = img.convert("RGB")
+                                        img.thumbnail((target_w, target_w), Image.Resampling.LANCZOS)
+                                        img.save(cache_file, "JPEG", quality=85, optimize=True)
+                            file_to_serve = cache_file
+                        except Exception as e:
+                            file_to_serve = file_path
+                elif is_video_file and file_path.lower().endswith(".mp4"):
+                    try:
+                        fast_key = "fast_" + hashlib.md5(f"{file_path}_{os.path.getmtime(file_path)}_{os.path.getsize(file_path)}".encode("utf-8")).hexdigest() + ".mp4"
+                        fast_file = os.path.join(THUMB_CACHE_DIR, fast_key)
+                        if not os.path.exists(fast_file):
+                            subprocess.run(
+                                ["ffmpeg", "-y", "-i", file_path, "-c", "copy", "-movflags", "+faststart", fast_file],
+                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=20
+                            )
+                        if os.path.exists(fast_file) and os.path.getsize(fast_file) > 0:
+                            file_to_serve = fast_file
+                    except Exception:
                         file_to_serve = file_path
 
                 mime_type, _ = mimetypes.guess_type(file_to_serve)
-                if file_to_serve.lower().endswith(".webp"):
+                low_serve = file_to_serve.lower()
+                if low_serve.endswith(".webp"):
                     mime_type = "image/webp"
+                elif low_serve.endswith(".mp4"):
+                    mime_type = "video/mp4"
+                elif low_serve.endswith(".webm"):
+                    mime_type = "video/webm"
+                elif low_serve.endswith(".mov"):
+                    mime_type = "video/quicktime"
                 if not mime_type:
                     mime_type = "image/jpeg"
+                is_serving_video = low_serve.endswith(VIDEO_EXTS)
                 
                 try:
                     file_size = os.path.getsize(file_to_serve)
+                    range_header = self.headers.get("Range")
+                    if range_header and not is_download and file_size > 0:
+                        m_range = re.match(r"bytes=(\d*)-(\d*)", range_header.strip())
+                        if m_range:
+                            start_str, end_str = m_range.group(1), m_range.group(2)
+                            start = int(start_str) if start_str else 0
+                            end = int(end_str) if end_str else file_size - 1
+                            if start >= file_size:
+                                self.send_response(416)
+                                self.send_header("Content-Range", f"bytes */{file_size}")
+                                self.end_headers()
+                                return
+                            end = min(end, file_size - 1)
+                            length = end - start + 1
+                            with open(file_to_serve, "rb") as f:
+                                f.seek(start)
+                                self.send_response(206)
+                                self.send_header("Content-Type", mime_type)
+                                self.send_header("Accept-Ranges", "bytes")
+                                self.send_header("Content-Range", f"bytes {start}-{end}/{file_size}")
+                                self.send_header("Content-Length", str(length))
+                                self.send_header("Vary", "Range")
+                                self.send_header("Cache-Control", "private, no-cache, no-store, no-transform" if is_serving_video else "public, max-age=86400")
+                                self.send_header("Access-Control-Allow-Origin", "*")
+                                self.end_headers()
+                                remaining = length
+                                while remaining > 0:
+                                    chunk = f.read(min(65536, remaining))
+                                    if not chunk:
+                                        break
+                                    self.wfile.write(chunk)
+                                    remaining -= len(chunk)
+                            return
+
                     with open(file_to_serve, "rb") as f:
                         self.send_response(200)
                         self.send_header("Content-Type", mime_type)
+                        self.send_header("Accept-Ranges", "bytes")
                         self.send_header("Content-Length", str(file_size))
                         if is_download:
                             quoted_name = urllib.parse.quote(os.path.basename(file_path))
                             self.send_header("Content-Disposition", f"attachment; filename*=UTF-8''{quoted_name}")
-                        self.send_header("Cache-Control", "public, max-age=86400")
+                        self.send_header("Vary", "Range")
+                        self.send_header("Cache-Control", "private, no-cache, no-store, no-transform" if is_serving_video else "public, max-age=86400")
                         self.send_header("Access-Control-Allow-Origin", "*")
                         self.end_headers()
                         while True:
@@ -2187,6 +3113,81 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                     return
             else:
                 self.send_error(404, f"Image not found: {rel_path}")
+                return
+
+        elif path == "/api/download-zip":
+            batch_id = query.get("batch", [""])[0]
+            mode = query.get("mode", ["gold"])[0]
+            product_id = query.get("product_id", [None])[0]
+            variant_pref = query.get("variant", [None])[0]
+            is_dry_run = query.get("dry_run", ["0"])[0] == "1"
+            items_raw = query.get("items", [])
+            selected_items = []
+            for ir in items_raw:
+                for part in ir.split("|"):
+                    if part.strip():
+                        selected_items.append(part.strip())
+
+            batch = find_batch_exact(batch_id)
+            if not batch or not self.can_see_batch(batch):
+                self.send_response(404)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "error", "message": "Mappen hittades inte"}, ensure_ascii=False).encode("utf-8"))
+                return
+
+            try:
+                files_to_pack, skipped_cloud = collect_batch_zip_files(
+                    batch,
+                    mode=mode,
+                    product_id=product_id,
+                    selected_items=selected_items if selected_items else None,
+                    variant_pref=variant_pref,
+                )
+                if is_dry_run:
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json; charset=utf-8")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    self.wfile.write(json.dumps({
+                        "status": "ok",
+                        "count": len(files_to_pack),
+                        "skipped_cloud": len(skipped_cloud),
+                    }, ensure_ascii=False).encode("utf-8"))
+                    return
+
+                suffix = f"_{product_id}" if product_id else f"_{mode}"
+                safe_name = re.sub(r'[^a-zA-Z0-9_-]+', '_', f"{batch.get('id', 'batch')}{suffix}") + ".zip"
+                self.send_response(200)
+                self.send_header("Content-Type", "application/zip")
+                self.send_header("Content-Disposition", f'attachment; filename="{safe_name}"')
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                with zipfile.ZipFile(self.wfile, "w", compression=zipfile.ZIP_STORED) as zf:
+                    for abs_p, arc in files_to_pack:
+                        try:
+                            zf.write(abs_p, arc)
+                        except OSError:
+                            continue
+                    if skipped_cloud:
+                        zf.writestr("_EJ_NEDLADDADE_FRAN_ONEDRIVE.txt", "\n".join(skipped_cloud))
+                return
+            except (BrokenPipeError, ConnectionResetError):
+                return
+            except ValueError as e:
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "error", "message": str(e)}, ensure_ascii=False).encode("utf-8"))
+                return
+            except Exception as e:
+                self.send_response(500)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "error", "message": f"ZIP-fel: {e}"}, ensure_ascii=False).encode("utf-8"))
                 return
 
         elif path in ["/trendcarpet_qa.ico", "/manifest.json"]:
@@ -2351,12 +3352,20 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 if not self.is_admin_request(query, self.reviewer_name(body.get("reviewer") or body.get("user"))):
                     self.send_response(403)
                     self.send_header("Content-Type", "application/json; charset=utf-8")
+                    self.send_header("Access-Control-Allow-Origin", "*")
                     self.end_headers()
                     self.wfile.write(json.dumps({"status": "error", "message": "Endast admin kan ändra onedrive_url."}).encode("utf-8"))
                     return
 
                 batch_id = body.get("batch_id") or query.get("batch", [""])[0]
                 url = body.get("onedrive_url", "").strip()
+                if url and not re.match(r'^https://([a-zA-Z0-9-]+-my\.sharepoint\.com|[a-zA-Z0-9-]+\.sharepoint\.com|1drv\.ms)/', url):
+                    self.send_response(400)
+                    self.send_header("Content-Type", "application/json; charset=utf-8")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    self.wfile.write(json.dumps({"status": "error", "message": "Endast giltiga SharePoint/OneDrive-länkar är tillåtna."}, ensure_ascii=False).encode("utf-8"))
+                    return
                 batches = load_batches()
                 target_batch = next((b for b in batches if b["id"] == batch_id), None)
                 if target_batch:
@@ -2403,9 +3412,18 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                     return
 
                 if not shots:
-                    at_matches = re.findall(r'@(0[1-9]|[1-9][0-9]?)', text)
+                    at_matches = re.findall(r'@((?:ls)?\d{1,3})\b', text, re.I)
                     if at_matches:
-                        shots = sorted(list(set(m.zfill(2) for m in at_matches)))
+                        norm_shots = set()
+                        for m in at_matches:
+                            mu = m.upper()
+                            if mu.startswith("LS"):
+                                norm_shots.add(f"LS{int(mu[2:]):02d}")
+                            elif len(mu) == 3:
+                                norm_shots.add(mu)
+                            else:
+                                norm_shots.add(mu.zfill(2))
+                        shots = sorted(list(norm_shots))
 
                 current_reviews = load_reviews(batch_id)
                 if pid not in current_reviews:
@@ -2805,12 +3823,30 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             filename = body.get("filename")
             try:
                 is_admin = self.is_admin_request(query, reviewer)
-                res = remove_shot(batch_obj, product_id, filename, reviewer, count_user=None if is_admin else reviewer)
+                res = remove_shot(
+                    batch_obj,
+                    product_id,
+                    filename,
+                    reviewer,
+                    count_user=None if is_admin else reviewer,
+                    protect_studio=not is_admin
+                )
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
                 self.send_header("Access-Control-Allow-Origin", "*")
                 self.end_headers()
                 self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
+                return
+            except PermissionError as e:
+                self.send_response(403)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "error": "studio_protected",
+                    "message": str(e)
+                }, ensure_ascii=False).encode("utf-8"))
                 return
             except ValueError as e:
                 self.send_response(400)
@@ -2956,6 +3992,141 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                     "status": "error",
                     "message": str(e)
                 }, ensure_ascii=False).encode("utf-8"))
+                return
+
+        elif path == "/api/download-zip":
+            content_length = int(self.headers.get("Content-Length", 0))
+            post_data = self.rfile.read(content_length) if content_length > 0 else b"{}"
+            try:
+                body = json.loads(post_data.decode("utf-8")) if post_data else {}
+            except Exception as e:
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "error", "message": f"Ogiltig JSON: {e}"}, ensure_ascii=False).encode("utf-8"))
+                return
+
+            batch_id = body.get("batch_id") or body.get("batch") or query.get("batch", [""])[0]
+            mode = body.get("mode") or query.get("mode", ["gold"])[0]
+            product_id = body.get("product_id") or query.get("product_id", [None])[0]
+            variant_pref = body.get("variant") or query.get("variant", [None])[0]
+            selected_items = body.get("items") or body.get("selected") or None
+            is_dry_run = bool(body.get("dry_run")) or query.get("dry_run", ["0"])[0] == "1"
+
+            batch = find_batch_exact(batch_id)
+            if not batch or not self.can_see_batch(batch):
+                self.send_response(404)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "error", "message": "Mappen hittades inte"}, ensure_ascii=False).encode("utf-8"))
+                return
+
+            try:
+                files_to_pack, skipped_cloud = collect_batch_zip_files(
+                    batch,
+                    mode=mode,
+                    product_id=product_id,
+                    selected_items=selected_items,
+                    variant_pref=variant_pref,
+                )
+                if is_dry_run:
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json; charset=utf-8")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    self.wfile.write(json.dumps({
+                        "status": "ok",
+                        "count": len(files_to_pack),
+                        "skipped_cloud": len(skipped_cloud),
+                    }, ensure_ascii=False).encode("utf-8"))
+                    return
+
+                suffix = f"_{product_id}" if product_id else f"_{mode}"
+                safe_name = re.sub(r'[^a-zA-Z0-9_-]+', '_', f"{batch.get('id', 'batch')}{suffix}") + ".zip"
+                self.send_response(200)
+                self.send_header("Content-Type", "application/zip")
+                self.send_header("Content-Disposition", f'attachment; filename="{safe_name}"')
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                with zipfile.ZipFile(self.wfile, "w", compression=zipfile.ZIP_STORED) as zf:
+                    for abs_p, arc in files_to_pack:
+                        try:
+                            zf.write(abs_p, arc)
+                        except OSError:
+                            continue
+                    if skipped_cloud:
+                        zf.writestr("_EJ_NEDLADDADE_FRAN_ONEDRIVE.txt", "\n".join(skipped_cloud))
+                return
+            except (BrokenPipeError, ConnectionResetError):
+                return
+            except ValueError as e:
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "error", "message": str(e)}, ensure_ascii=False).encode("utf-8"))
+                return
+            except Exception as e:
+                self.send_response(500)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "error", "message": f"ZIP-fel: {e}"}, ensure_ascii=False).encode("utf-8"))
+                return
+
+        elif path == "/api/batch/merge_gold":
+            content_length = int(self.headers.get("Content-Length", 0))
+            post_data = self.rfile.read(content_length) if content_length > 0 else b"{}"
+            try:
+                body = json.loads(post_data.decode("utf-8")) if post_data else {}
+            except Exception as e:
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "error", "message": f"Ogiltig JSON: {e}"}, ensure_ascii=False).encode("utf-8"))
+                return
+
+            reviewer = self.reviewer_name(body.get("reviewer") or body.get("user"))
+            if not self.is_admin_request(query, reviewer):
+                self.send_response(403)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "error", "message": "Endast admin kan slå ihop Sajt-urval till produktmappar."}, ensure_ascii=False).encode("utf-8"))
+                return
+
+            src_batch_id = body.get("source_batch_id") or body.get("batch_id") or query.get("batch", [""])[0]
+            dst_batch_id = body.get("target_batch_id")
+            product_id = body.get("product_id")
+            dry_run = bool(body.get("dry_run", False))
+
+            src_batch = find_batch_exact(src_batch_id)
+            dst_batch = find_batch_exact(dst_batch_id)
+            if not src_batch or not dst_batch:
+                self.send_response(404)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "error", "message": "Käll- eller målmappen hittades inte"}, ensure_ascii=False).encode("utf-8"))
+                return
+
+            try:
+                res = merge_gold_set_to_batch(src_batch, dst_batch, product_id=product_id, dry_run=dry_run, user=reviewer)
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
+                return
+            except Exception as e:
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "error", "message": str(e)}, ensure_ascii=False).encode("utf-8"))
                 return
 
         else:

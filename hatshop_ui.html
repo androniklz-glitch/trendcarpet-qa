@@ -1055,6 +1055,111 @@
     .rating-star.empty {
       color: #64748b;
     }
+    .gold-set-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 700;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(217, 119, 6, 0.32));
+      border: 1px solid rgba(251, 191, 36, 0.65);
+      color: #fde68a;
+      white-space: nowrap;
+      box-shadow: 0 0 8px rgba(245, 158, 11, 0.2);
+    }
+    .gold-set-badge.starred {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(5, 150, 105, 0.35));
+      border-color: rgba(52, 211, 153, 0.75);
+      color: #a7f3d0;
+    }
+    .studio-packshot-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 1px 6px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 600;
+      background: rgba(59, 130, 246, 0.14);
+      border: 1px solid rgba(96, 165, 250, 0.35);
+      color: #93c5fd;
+      white-space: nowrap;
+    }
+    .shot-box.in-gold-set {
+      border-color: rgba(251, 191, 36, 0.55);
+      box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.18);
+    }
+    .shot-select-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      user-select: none;
+      padding: 2px 5px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      transition: all 0.12s ease;
+    }
+    .shot-select-label:hover {
+      border-color: #60a5fa;
+      background: rgba(59, 130, 246, 0.15);
+    }
+    .shot-select-chk {
+      width: 14px;
+      height: 14px;
+      accent-color: #3b82f6;
+      cursor: pointer;
+      margin: 0;
+    }
+    .zip-menu-wrap {
+      position: relative;
+      display: inline-flex;
+    }
+    .zip-dropdown-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      min-width: 280px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.65);
+      padding: 6px;
+      z-index: 9999;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .zip-dropdown-menu.open {
+      display: flex;
+    }
+    .zip-menu-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 7px;
+      background: transparent;
+      border: none;
+      color: #e2e8f0;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .zip-menu-item:hover:not(:disabled) {
+      background: rgba(59, 130, 246, 0.18);
+      color: #fff;
+    }
+    .zip-menu-item:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
     .shot-box-image-wrap {
       aspect-ratio: 1 / 1;
       width: 100%;
@@ -1917,6 +2022,11 @@
     .lightbox-nav-btn:hover { background: #3b82f6; border-color: #60a5fa; transform: translateY(-50%) scale(1.1); }
     .lightbox-prev-btn { left: 16px; }
     .lightbox-next-btn { right: 16px; }
+    .fmt-badge {
+      display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 700;
+      background: rgba(148, 163, 184, 0.14); border: 1px solid rgba(148, 163, 184, 0.35);
+      color: #cbd5e1; border-radius: 10px; padding: 1px 6px; white-space: nowrap;
+    }
   </style>
 </head>
 <body>
@@ -1944,7 +2054,7 @@
         <select id="batchSelect" class="custom-select" onchange="switchBatch(this.value)" title="Välj produktmapp för kvalitetsgranskning">
           <!-- Loaded dynamically -->
         </select>
-        <button class="btn btn-sm btn-success" onclick="openAddBatchModal()" title="Skapa en ny mapp för ett fotoprojekt från datorn/OneDrive">
+        <button class="btn btn-sm btn-success" id="btnAddBatchTop" onclick="openAddBatchModal()" title="Skapa en ny mapp för ett fotoprojekt från datorn/OneDrive">
           + Ny Mapp
         </button>
         <!-- Publish Status & Toggle Button for Admin -->
@@ -1956,7 +2066,7 @@
         <button class="btn btn-sm btn-outline" onclick="copyBatchShareLink()" title="Kopiera permanent direktlänk (https://trendcarpet-qa.vercel.app) till denna mapp för kollegor i Teams">
           🔗 Dela mapp
         </button>
-        <div class="onedrive-action-group" title="OneDrive / SharePoint-länk">
+        <div class="onedrive-action-group" id="onedriveActionGroup" title="OneDrive / SharePoint-länk">
           <button class="btn btn-sm" id="btnCopyOneDrive" onclick="copyOneDriveLink()" title="Klicka för att kopiera OneDrive-länken till denna mapp">
             ☁️ Kopiera OneDrive-länk
           </button>
@@ -1967,6 +2077,40 @@
             ✏️
           </button>
         </div>
+        <div class="zip-menu-wrap">
+          <button class="btn btn-sm btn-outline" id="btnZipMenu" onclick="toggleZipMenu(event)" title="Ladda ner bilder direkt som .zip (markerade, Sajt-urval eller hela mappen)">
+            📦 Ladda ner (.zip) <span id="selectedZipBadge" style="display: none; background: #3b82f6; color: #fff; border-radius: 999px; padding: 0 6px; font-size: 10px; margin-left: 3px;">0</span> ▾
+          </button>
+          <div class="zip-dropdown-menu" id="zipDropdownMenu" onclick="event.stopPropagation()">
+            <button class="zip-menu-item" id="zipMenuSelectedBtn" onclick="downloadBatchZip('selected')" disabled>
+              <span>☑️ Markerade bilder</span>
+              <span id="zipMenuSelectedCount" style="color: #60a5fa;">0 valda</span>
+            </button>
+            <button class="zip-menu-item" onclick="downloadBatchZip('gold')">
+              <span>🏆 Sajt-urval / Guldset (hela mappen)</span>
+              <span style="color: #fbbf24;">2–4/modell</span>
+            </button>
+            <button class="zip-menu-item" onclick="downloadBatchZip('gold_product')">
+              <span>🏆 Sajt-urval (aktuell produkt)</span>
+              <span style="color: #fbbf24;">Aktuell</span>
+            </button>
+            <button class="zip-menu-item" onclick="downloadBatchZip('product')">
+              <span>📸 Alla bilder för aktuell produkt</span>
+              <span style="color: #94a3b8;">Produkt</span>
+            </button>
+            <button class="zip-menu-item" onclick="downloadBatchZip('all')">
+              <span>📁 Hela mappen (alla bilder)</span>
+              <span style="color: #94a3b8;">Alla</span>
+            </button>
+            <div style="border-top: 1px solid #1e293b; margin: 2px 0; padding-top: 4px; display: flex; justify-content: space-between; gap: 4px;">
+              <button class="btn btn-sm btn-outline" style="flex: 1; font-size: 11px;" onclick="selectAllCurrentProductShots()">☑️ Välj produkt</button>
+              <button class="btn btn-sm btn-outline" style="flex: 1; font-size: 11px;" onclick="clearSelectedShots()">✕ Rensa val</button>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-outline" id="btnMergeGoldBatch" onclick="openMergeGoldPrompt()" style="display: none; border-color: rgba(251, 191, 36, 0.5); color: #fde68a;" title="Kopiera Sajt-urvalet (Guldset / Stjärnval) från denna AI-mapp rakt in i motsvarande produktmapp (Original + 1500px)">
+          🚀 Slå ihop Sajt-urval
+        </button>
         <button class="btn btn-sm btn-outline" onclick="hardReloadApp()" title="Ladda om sidan helt färskt från servern (motsvarar Ctrl+F5) och rensa webbläsarens cache">
           🔄 Uppdatera
         </button>
@@ -1991,7 +2135,7 @@
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
         Protokoll
       </button>
-      <button class="tab-btn" onclick="switchMode('calendar')" title="Fotograferingskalender och arkiv över tidigare fotograferingar (Tangent: 5)">
+      <button class="tab-btn" id="tabBtnCalendar" onclick="switchMode('calendar')" title="Fotograferingskalender och arkiv över tidigare fotograferingar (Tangent: 5)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
         📅 Fotokalender & Arkiv
       </button>
@@ -2036,7 +2180,7 @@
         </div>
       </div>
 
-      <button class="btn btn-sm" onclick="openCurrentFolder()" title="Öppna den lokala projektmappen direkt i Windows Utforskaren">
+      <button class="btn btn-sm" id="btnOpenLocalFolderTop" onclick="openCurrentFolder()" title="Öppna den lokala projektmappen direkt i Windows Utforskaren">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
         Mapp
       </button>
@@ -2078,7 +2222,7 @@
               <p id="currentProductSubtitle" style="font-size: 13px; color: var(--text-muted);">-</p>
             </div>
             <div style="display: flex; gap: 8px;">
-              <button class="btn btn-sm" onclick="openSelectedProductFolder()">Öppna mapp</button>
+              <button class="btn btn-sm" id="btnOpenSelectedProdFolder" onclick="openSelectedProductFolder()">Öppna mapp</button>
             </div>
           </div>
           <div class="shots-grid" id="shotsGrid"></div>
@@ -2315,7 +2459,7 @@
         Ange ditt förnamn så att dina kollegor kan se vem som har godkänt bilderna och lämnat kommentarer i tråden.
       </p>
       
-      <div style="margin: 12px 0 8px 0;">
+      <div id="camaQuickReviewersWrap" style="margin: 12px 0 8px 0;">
         <label style="font-size: 12px; color: var(--text-dim); display: block; margin-bottom: 6px;">Snabbval:</label>
         <div style="display: flex; gap: 6px; flex-wrap: wrap;">
           <button type="button" class="btn btn-sm" style="background: rgba(56, 189, 248, 0.15); border: 1px solid var(--accent-blue); color: #fff; cursor: pointer;" onclick="selectQuickReviewer('Andro')">👤 Andro</button>
@@ -2326,8 +2470,8 @@
       </div>
 
       <div class="form-group" style="margin-top: 8px;">
-        <label>Eller skriv ditt förnamn:</label>
-        <input type="text" id="initialNameInput" class="form-input" placeholder="t.ex. Johan, Maria, Andronik..." onkeydown="if(event.key==='Enter') saveInitialName()" />
+        <label id="initialNameLabel">Eller skriv ditt förnamn:</label>
+        <input type="text" id="initialNameInput" class="form-input" placeholder="t.ex. Johan, Maria..." onkeydown="if(event.key==='Enter') saveInitialName()" />
       </div>
 
       <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px;">
@@ -2464,6 +2608,7 @@
             <span id="lbVersionPill"></span>
           </div>
           <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="btn btn-sm" onclick="fullscreenLightboxVideo()" id="lbBtnVideoFs" style="display: none; background: rgba(59, 130, 246, 0.2); border-color: #60a5fa; color: #93c5fd;" title="Öppna videospelaren i helskärm">⛶ Helskärm video</button>
             <button class="btn btn-sm" onclick="toggleLightboxDraw()" id="lbBtnDraw" title="Rita eller markera i bilden">✏️ Rita / Markera</button>
             <button class="btn btn-sm" onclick="toggleLightboxGuides()" id="lbBtnGuides" title="Slå på/av stödlinjer">📐 Stödlinjer</button>
             <span id="lbImageCounter" style="font-size: 12px; color: var(--text-dim); padding: 0 6px;"></span>
@@ -2492,6 +2637,7 @@
           <button class="lightbox-nav-btn lightbox-prev-btn" onclick="lightboxPrevShot(event)" title="Föregående bild / vinkel (Vänsterpil ⬅)">❮</button>
           <button class="lightbox-nav-btn lightbox-next-btn" onclick="lightboxNextShot(event)" title="Nästa bild / vinkel (Högerpil ➔)">❯</button>
           <img id="lightboxImg" src="" alt="Zoom Image">
+          <video id="lightboxVideo" controls loop playsinline style="display: none; max-width: 100%; max-height: 100%; width: auto; height: 100%; object-fit: contain; border-radius: 6px; background: #000;" onclick="event.stopPropagation()"></video>
           
           <!-- Drawing / Annotation Canvas Overlay -->
           <canvas id="lbAnnotateCanvas" class="annotation-canvas" style="display: none;"></canvas>
@@ -2854,8 +3000,27 @@
       if (!Array.isArray(products)) return '';
       return products.map(p => {
         const shots = (p.variants && (p.variants[state.currentSource] || Object.values(p.variants)[0])) || [];
-        return `${p.id}:${shots.map(s => s.filename || '').join(',')}`;
+        return `${p.id}:${shots.map(s => `${s.filename || ''}#${s.in_gold_set ? (s.gold_rank || 1) : 0}#${s.is_studio_packshot ? 1 : 0}`).join(',')}`;
       }).join('|');
+    }
+
+    function sortShotsForDisplay(prod, raw) {
+      const items = (raw || []).map((shot, origIdx) => ({ shot, origIdx }));
+      if (!state.sortGoldFirst || items.every(x => x.shot.is_studio_packshot) || !items.some(x => x.shot.in_gold_set)) return items;
+      return items.slice().sort((a, b) => {
+        const sa = a.shot, sb = b.shot;
+        const ga = (a.origIdx === 0 && sa.is_studio_packshot) ? 0 : (sa.in_gold_set ? 1 : 2);
+        const gb = (b.origIdx === 0 && sb.is_studio_packshot) ? 0 : (sb.in_gold_set ? 1 : 2);
+        if (ga !== gb) return ga - gb;
+        if (ga === 1) return (sa.gold_rank || 99) - (sb.gold_rank || 99);
+        return a.origIdx - b.origIdx;
+      });
+    }
+
+    function getDisplayShots(prod) {
+      if (!prod || !prod.variants) return [];
+      const raw = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
+      return sortShotsForDisplay(prod, raw).map(x => x.shot);
     }
 
     const state = {
@@ -2913,11 +3078,13 @@
     };
 
     window.addEventListener('DOMContentLoaded', async () => {
-      checkReviewerNameOnLoad();
+      updateReviewerDisplay();
       loadSavedGuides();
       setupGuideDragListeners();
       await initBatches();
-      await loadCalendarProjects();
+      if (state.isAdmin || state.userOrg === 'cama') {
+        await loadCalendarProjects();
+      }
       setupLightboxZoom();
       setupAnnotationCanvasListeners();
       setupKeyboardShortcuts();
@@ -3035,14 +3202,44 @@
       if (inp) inp.value = state.reviewer || '';
     }
 
+    function applyRoleAndOrgVisibility() {
+      const isCama = (!state.userOrg || state.userOrg === 'cama');
+      const quickWrap = document.getElementById('camaQuickReviewersWrap');
+      if (quickWrap) quickWrap.style.display = isCama ? 'block' : 'none';
+      const nameLbl = document.getElementById('initialNameLabel');
+      if (nameLbl) nameLbl.innerText = isCama ? 'Eller skriv ditt förnamn:' : 'Skriv ditt namn:';
+
+      const btnAddBatch = document.getElementById('btnAddBatchTop');
+      if (btnAddBatch) btnAddBatch.style.display = state.isAdmin ? 'inline-flex' : 'none';
+
+      const odGroup = document.getElementById('onedriveActionGroup');
+      if (odGroup) odGroup.style.display = (isCama || state.isAdmin) ? 'inline-flex' : 'none';
+
+      const btnEditOd = document.getElementById('btnEditOneDrive');
+      if (btnEditOd) btnEditOd.style.display = state.isAdmin ? 'inline-flex' : 'none';
+
+      const tabCal = document.getElementById('tabBtnCalendar');
+      if (tabCal) tabCal.style.display = (isCama || state.isAdmin) ? 'inline-flex' : 'none';
+
+      const btnLocalTop = document.getElementById('btnOpenLocalFolderTop');
+      if (btnLocalTop) btnLocalTop.style.display = state.isAdmin ? 'inline-flex' : 'none';
+
+      const btnLocalProd = document.getElementById('btnOpenSelectedProdFolder');
+      if (btnLocalProd) btnLocalProd.style.display = state.isAdmin ? 'inline-flex' : 'none';
+    }
+
     function checkReviewerNameOnLoad() {
       updateReviewerDisplay();
-      if (!state.reviewer) {
-        setTimeout(openNameModal, 400);
+      const modal = document.getElementById('nameModal');
+      if (state.reviewer) {
+        if (modal) modal.classList.remove('active');
+      } else {
+        setTimeout(openNameModal, 200);
       }
     }
 
     function openNameModal() {
+      applyRoleAndOrgVisibility();
       const modal = document.getElementById('nameModal');
       modal.classList.add('active');
       setTimeout(() => {
@@ -3107,6 +3304,20 @@
         state.batches = data.batches || [];
         state.isAdmin = data.is_admin || false;
         state.canRemove = data.can_remove || state.isAdmin;
+        state.userOrg = data.user_org || 'cama';
+        state.serverUserName = data.user_name || '';
+
+        const camaQuickNames = ['Andro', 'Jesper', 'Amalia', 'Anton'];
+        if (state.serverUserName && (!state.reviewer || (state.userOrg !== 'cama' && camaQuickNames.includes(state.reviewer)))) {
+          state.reviewer = state.serverUserName;
+          localStorage.setItem('hatshop_reviewer', state.reviewer);
+        } else if (state.userOrg === 'reforma' && (!state.reviewer || camaQuickNames.includes(state.reviewer))) {
+          state.reviewer = 'Reforma';
+          localStorage.setItem('hatshop_reviewer', state.reviewer);
+        }
+
+        applyRoleAndOrgVisibility();
+        checkReviewerNameOnLoad();
         
         const bSelect = document.getElementById('batchSelect');
         bSelect.innerHTML = '';
@@ -3197,6 +3408,8 @@
     async function loadBatch(batchId, updateUrl = true) {
       state.currentBatchId = batchId;
       document.getElementById('batchSelect').value = batchId;
+      if (state.selectedShots) state.selectedShots.clear();
+      updateZipMenuBadge();
 
       // Update URL query parameter without page reload
       if (updateUrl) {
@@ -3209,7 +3422,7 @@
       }
 
       try {
-        const res = await fetch(`/api/products?batch=${encodeURIComponent(batchId)}&reviewer=${encodeURIComponent(state.reviewer || '')}`);
+        const res = await fetch(`/api/products?batch=${encodeURIComponent(batchId)}&reviewer=${encodeURIComponent(state.reviewer || '')}&uiv=4`, { cache: 'no-store' });
         if (res.status === 403) {
           const errData = await res.json().catch(() => ({}));
           showToast('🔒 ' + (errData.message || 'Denna mapp är ett privat utkast och har inte delats ännu.'), 'error');
@@ -3322,6 +3535,7 @@
         }
       });
 
+      state.pendingOps = (state.pendingOps || 0) + 1;
       try {
         const res = await fetch(`/api/ratings?batch=${encodeURIComponent(state.currentBatchId || '')}`, {
           method: 'POST',
@@ -3339,12 +3553,247 @@
         }
         if (!res.ok) {
           showToast('Kunde inte spara betyg', 'error');
+        } else {
+          // Refresh Gold Set annotations from server while preserving scroll position
+          reloadBatchProducts(productId, null, true);
         }
       } catch (err) {
         console.error('Error saving rating:', err);
         showToast('Kunde inte ansluta till servern för betyg', 'error');
+      } finally {
+        state.pendingOps = Math.max(0, (state.pendingOps || 1) - 1);
       }
     }
+
+    // --- IMAGE SELECTION CHECKBOXES & DIRECT ZIP DOWNLOAD ---
+    state.selectedShots = new Set();
+    state.sortGoldFirst = false;
+    state.pendingOps = 0;
+
+    function getShotSelectId(prodId, relPath, filename) {
+      return `${prodId}::${relPath || filename || ''}`;
+    }
+
+    function toggleShotSelection(prodId, relPath, filename, checked, ev) {
+      if (ev && ev.stopPropagation) ev.stopPropagation();
+      const key = getShotSelectId(prodId, relPath, filename);
+      if (checked) {
+        state.selectedShots.add(key);
+      } else {
+        state.selectedShots.delete(key);
+      }
+      updateZipMenuBadge();
+    }
+
+    function updateZipMenuBadge() {
+      const count = state.selectedShots ? state.selectedShots.size : 0;
+      const badge = document.getElementById('selectedZipBadge');
+      const countLbl = document.getElementById('zipMenuSelectedCount');
+      const btnSel = document.getElementById('zipMenuSelectedBtn');
+      if (badge) {
+        badge.style.display = count > 0 ? 'inline-block' : 'none';
+        badge.textContent = String(count);
+      }
+      if (countLbl) countLbl.textContent = `${count} valda`;
+      if (btnSel) btnSel.disabled = (count === 0);
+
+      const mergeBtn = document.getElementById('btnMergeGoldBatch');
+      if (mergeBtn) {
+        mergeBtn.style.display = state.isAdmin ? 'inline-flex' : 'none';
+      }
+    }
+
+    function toggleZipMenu(ev) {
+      if (ev && ev.stopPropagation) ev.stopPropagation();
+      updateZipMenuBadge();
+      const menu = document.getElementById('zipDropdownMenu');
+      if (menu) menu.classList.toggle('open');
+    }
+
+    document.addEventListener('click', () => {
+      const menu = document.getElementById('zipDropdownMenu');
+      if (menu) menu.classList.remove('open');
+    });
+
+    function selectAllCurrentProductShots() {
+      const prod = state.products[state.currentProductIndex];
+      if (!prod) return;
+      const shots = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
+      shots.forEach(s => {
+        state.selectedShots.add(getShotSelectId(prod.id, s.rel_path, s.filename));
+      });
+      updateZipMenuBadge();
+      renderProductView();
+      showToast(`☑️ Markerade ${shots.length} bilder för ${prod.display_name || prod.model}`);
+    }
+
+    function clearSelectedShots() {
+      state.selectedShots.clear();
+      updateZipMenuBadge();
+      renderProductView();
+      showToast('Valda bilder rensade');
+    }
+
+    async function downloadBatchZip(mode) {
+      const menu = document.getElementById('zipDropdownMenu');
+      if (menu) menu.classList.remove('open');
+      if (!state.currentBatchId) return;
+
+      const prod = state.products[state.currentProductIndex];
+      let actualMode = mode;
+      let productId = null;
+      if (mode === 'gold_product') {
+        actualMode = 'gold';
+        productId = prod ? prod.id : null;
+      } else if (mode === 'product') {
+        productId = prod ? prod.id : null;
+      }
+
+      if (actualMode === 'selected') {
+        if (!state.selectedShots || state.selectedShots.size === 0) {
+          showToast('Kryssa i minst en bild först.');
+          return;
+        }
+        showToast(`📦 Skapar ZIP med ${state.selectedShots.size} markerade bilder...`, 4000);
+        state.pendingOps = (state.pendingOps || 0) + 1;
+        try {
+          const res = await fetch(`/api/download-zip?batch=${encodeURIComponent(state.currentBatchId)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              batch_id: state.currentBatchId,
+              mode: 'selected',
+              items: Array.from(state.selectedShots)
+            })
+          });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            showToast('⚠️ ' + (err.message || 'Kunde inte skapa ZIP'));
+            return;
+          }
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${state.currentBatchId}_valda_${state.selectedShots.size}st.zip`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 5000);
+          showToast('✓ ZIP-nedladdning startad!');
+        } catch (e) {
+          showToast('⚠️ Fel vid ZIP-nedladdning: ' + e.message);
+        } finally {
+          state.pendingOps = Math.max(0, (state.pendingOps || 1) - 1);
+        }
+        return;
+      }
+
+      const params = new URLSearchParams({
+        batch: state.currentBatchId,
+        mode: actualMode
+      });
+      if (productId) params.set('product_id', productId);
+      if (state.currentSource) params.set('variant', state.currentSource);
+      try {
+        const checkParams = new URLSearchParams(params);
+        checkParams.set('dry_run', '1');
+        const checkRes = await fetch(`/api/download-zip?${checkParams.toString()}`);
+        if (!checkRes.ok) {
+          const err = await checkRes.json().catch(() => ({}));
+          showToast('⚠️ ' + (err.message || 'Kunde inte skapa ZIP'));
+          return;
+        }
+      } catch (e) {
+        showToast('⚠️ Fel vid ZIP-kontroll: ' + e.message);
+        return;
+      }
+      showToast('📦 Förbereder ZIP-nedladdning...', 3500);
+      window.location.href = `/api/download-zip?${params.toString()}`;
+    }
+
+    function toggleGoldSort(enabled) {
+      state.sortGoldFirst = !!enabled;
+      renderProductView();
+      renderSubToolbar();
+      showToast(state.sortGoldFirst ? '🏆 Sajt-urval (Guldset + Stjärnval) visas först' : 'Visar mappens ursprungliga filordning');
+    }
+
+    async function openMergeGoldPrompt() {
+      if (!state.isAdmin) return;
+      const otherBatches = (state.batches || []).filter(b => b.id !== state.currentBatchId);
+      const listHint = otherBatches.slice(0, 12).map(b => `• ${b.id} (${b.name})`).join('\n');
+      const targetId = prompt(
+        `Slå ihop Sajt-urvalet (endast 1:1 Guldset/Stjärnval) från "${state.currentBatch?.name}" till en produktmapp.\n\nAnge målmappens ID:\n${listHint}`,
+        ''
+      );
+      if (!targetId || !targetId.trim()) return;
+      const cleanTarget = targetId.trim();
+      state.pendingOps = (state.pendingOps || 0) + 1;
+      try {
+        showToast('🔍 Kontrollerar produktmatchning & 1:1-urval...', 4000);
+        const previewRes = await fetch(`/api/batch/merge_gold?batch=${encodeURIComponent(state.currentBatchId)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            source_batch_id: state.currentBatchId,
+            target_batch_id: cleanTarget,
+            dry_run: true,
+            reviewer: state.reviewer
+          })
+        });
+        const preview = await previewRes.json().catch(() => ({}));
+        if (!previewRes.ok || preview.status === 'error') {
+          alert('Kunde inte förhandsgranska sammanslagning: ' + (preview.message || 'Okänt fel'));
+          return;
+        }
+        const plan = preview.plan || [];
+        const unmatched = preview.unmatched || [];
+        if (plan.length === 0) {
+          alert(`Inga matchande produkter med 1:1 Sajt-urval hittades mellan "${state.currentBatchId}" och "${cleanTarget}".\nOmatchade: ${unmatched.length}`);
+          return;
+        }
+        const planSummary = plan.slice(0, 15).map(p => `• ${p.source} → ${p.target} (${p.files.length} 1:1-bilder)`).join('\n')
+          + (plan.length > 15 ? `\n... samt ${plan.length - 15} till` : '');
+        const unmSummary = unmatched.length > 0 ? `\n\nOmatchade produkter (${unmatched.length}): ${unmatched.slice(0, 8).join(', ')}${unmatched.length > 8 ? '...' : ''}` : '';
+        if (!confirm(`Förhandsgranskning av Sajt-sammanslagning till "${cleanTarget}":\n\nMatchade produkter (${plan.length}):\n${planSummary}${unmSummary}\n\nVill du genomföra sammanslagningen nu?`)) {
+          return;
+        }
+
+        showToast('🚀 Kopierar & skalar Sajt-urvalet till produktmappen...', 5000);
+        const res = await fetch(`/api/batch/merge_gold?batch=${encodeURIComponent(state.currentBatchId)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            source_batch_id: state.currentBatchId,
+            target_batch_id: cleanTarget,
+            dry_run: false,
+            reviewer: state.reviewer
+          })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || data.status === 'error') {
+          alert('Kunde inte slå ihop: ' + (data.message || 'Okänt fel'));
+          return;
+        }
+        showToast(`✓ Klart! Kopierade ${data.copied_files} Sajt-bilder för ${data.matched_products} produkter till ${cleanTarget}.`, 6000);
+      } catch (e) {
+        alert('Fel vid sammanslagning: ' + e.message);
+      } finally {
+        state.pendingOps = Math.max(0, (state.pendingOps || 1) - 1);
+      }
+    }
+
+    window.addEventListener('beforeunload', (e) => {
+      const c1 = document.getElementById('newCommentInput')?.value?.trim();
+      const c2 = document.getElementById('lbCommentInput')?.value?.trim();
+      const hasSel = state.selectedShots && state.selectedShots.size > 0;
+      const hasPending = (state.pendingOps || 0) > 0;
+      if (c1 || c2 || hasSel || hasPending) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    });
 
     async function onReviewerChanged() {
       await fetchRatings();
@@ -3352,7 +3801,7 @@
       if (document.getElementById('lightboxModal')?.classList.contains('active')) {
         const prod = state.products[lbCurrentProductIndex];
         if (prod) {
-          const shots = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
+          const shots = getDisplayShots(prod);
           const activeShot = shots[lbCurrentShotIndex] || shots[0];
           const lbStars = document.getElementById('lbRatingStarsContainer');
           if (lbStars && activeShot && activeShot.filename) {
@@ -3418,13 +3867,13 @@
       updateUndoButton();
     }
 
-    async function reloadBatchProducts(preserveProductId = null, preloadedData = null) {
+    async function reloadBatchProducts(preserveProductId = null, preloadedData = null, preserveScroll = false) {
       const batchId = state.currentBatchId;
       if (!batchId) return;
       try {
         let data = preloadedData;
         if (!data) {
-          const res = await fetch(`/api/products?batch=${encodeURIComponent(batchId)}&reviewer=${encodeURIComponent(state.reviewer || '')}`);
+          const res = await fetch(`/api/products?batch=${encodeURIComponent(batchId)}&reviewer=${encodeURIComponent(state.reviewer || '')}&uiv=4`, { cache: 'no-store' });
           if (!res.ok) return;
           data = await res.json();
         }
@@ -3437,7 +3886,7 @@
         const isLbActive = lbModal && lbModal.classList.contains('active');
         const prevLbProd = isLbActive ? (state.products[lbCurrentProductIndex] || null) : null;
         const prevLbProdId = prevLbProd ? prevLbProd.id : null;
-        const prevLbShots = prevLbProd ? (prevLbProd.variants[state.currentSource] || Object.values(prevLbProd.variants)[0] || []) : [];
+        const prevLbShots = prevLbProd ? getDisplayShots(prevLbProd) : [];
         const prevLbShot = prevLbShots[lbCurrentShotIndex] || null;
         const prevLbFilename = prevLbShot ? prevLbShot.filename : null;
         const prevLbProdIndex = lbCurrentProductIndex;
@@ -3464,7 +3913,7 @@
         }
 
         renderProductSidebar();
-        selectProductByIndex(targetIdx);
+        selectProductByIndex(targetIdx, preserveScroll ? 'preserve' : 'top');
         updateQAStats();
         if (state.currentMode === 'angle') renderAngleGrid();
         renderReportTable();
@@ -3490,7 +3939,7 @@
 
             if (targetLbProdIdx >= 0 && targetLbProdIdx < state.products.length) {
               const lbProd = state.products[targetLbProdIdx];
-              const lbShots = lbProd.variants[state.currentSource] || Object.values(lbProd.variants)[0] || [];
+              const lbShots = getDisplayShots(lbProd);
               if (lbShots.length === 0) {
                 closeLightbox();
               } else {
@@ -4027,12 +4476,17 @@
       }
     }
 
+    const HUB_UI_BUILD = 'v4';
     async function pollReviewsFromServer() {
       if (document.hidden || !state.currentBatchId) return;
       try {
-        const res = await fetch(`/api/products?batch=${encodeURIComponent(state.currentBatchId)}&reviewer=${encodeURIComponent(state.reviewer || '')}`);
+        const res = await fetch(`/api/products?batch=${encodeURIComponent(state.currentBatchId)}&reviewer=${encodeURIComponent(state.reviewer || '')}&uiv=4`, { cache: 'no-store' });
         if (!res.ok) return;
         const data = await res.json();
+        if (data && data.ui_build && data.ui_build !== HUB_UI_BUILD) {
+          window.location.reload();
+          return;
+        }
         if (!data || !Array.isArray(data.products)) return;
 
         const newProducts = data.products;
@@ -4226,7 +4680,17 @@
           <button class="btn btn-sm ${state.guidePanelOpen ? 'btn-primary' : ''}" onclick="toggleGuideAdjustPanel()" title="Öppna justeringspanel för stödlinjer">
             📐 Justera ▾
           </button>
-          <div class="tool-item" style="margin-left: auto;">
+          <div class="tool-item" style="gap: 8px;">
+            <label class="toggle-switch" title="Visa Sajt-urvalet (Guldset / Stjärnval med variationskontroll) överst">
+              <input type="checkbox" id="chkGoldFirst" ${state.sortGoldFirst === true ? 'checked' : ''} onchange="toggleGoldSort(this.checked)">
+              <span class="slider-toggle"></span>
+            </label>
+            <span style="font-weight: 600; color: #fde68a;">🏆 Sajt-urval först</span>
+          </div>
+          <div class="tool-item" style="margin-left: auto; gap: 6px;">
+            <button class="btn btn-sm btn-outline" onclick="downloadBatchZip('gold_product')" title="Ladda ner Sajt-urvalet (Guldset + studiobilder) för denna produkt som .zip">
+              📦 Sajt-ZIP (produkt)
+            </button>
             <button class="btn btn-sm btn-outline" onclick="copyProductShareLink()" title="Kopiera permanent direktlänk till denna specifika produkt (modell) för Teams">
               🔗 Dela denna produkt
             </button>
@@ -4242,6 +4706,7 @@
         container.innerHTML = ``;
       }
       updateUndoButton();
+      updateZipMenuBadge();
     }
 
     function setGridCols(cols) {
@@ -4775,7 +5240,7 @@
       grid.innerHTML = '';
 
       state.products.forEach((prod, idx) => {
-        const shots = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
+        const shots = getDisplayShots(prod);
         const shot01 = shots.find(s => s.shot === '01') || shots[0] || {};
         const review = state.reviews[prod.id] || {};
         const effectiveStatus = getEffectiveStatus(prod.id);
@@ -4784,6 +5249,8 @@
         const comments = review.comments || [];
         const commentBadge = comments.length > 0 ? `<span class="comment-counter-badge">💬 ${comments.length}</span>` : '';
         const versionBadge = prod.has_new_version ? `<span class="version-pill" title="Ny version upptäckt: ${prod.version_tag}">🔄 ${prod.version_tag || 'Ny'}</span>` : '';
+        const prodTitle = prod.display_name || prod.model;
+        const safePid = escapeJsString(prod.id);
 
         const card = document.createElement('div');
         card.className = `cap-card ${statusClass}`;
@@ -4792,10 +5259,10 @@
           <div class="cap-card-header">
             <div class="cap-info">
               <div style="display: flex; align-items: center; gap: 6px;">
-                <div class="cap-model-name">${prod.model}</div>
+                <div class="cap-model-name">${escapeHtml(prodTitle)}</div>
                 ${versionBadge}
               </div>
-              <div class="cap-color-name">${prod.color}</div>
+              <div class="cap-color-name">${escapeHtml(prod.color || '')}</div>
             </div>
             <div style="display: flex; align-items: center; gap: 6px;">
               ${commentBadge}
@@ -4806,8 +5273,12 @@
             </div>
           </div>
 
-          <div class="cap-card-body" onclick="openLightbox('${shot01.url || ''}', '${prod.model} (${prod.color}) - Bild 01', '${prod.id}', 0)">
-            <img class="cap-card-img" src="${sizedUrl(shot01.url, 600)}" alt="${prod.model}" loading="lazy" onerror="handleImageError(this)">
+          <div class="cap-card-body" onclick="openLightbox('${escapeJsString(shot01.url || '')}', '${escapeJsString(prodTitle + ' (' + (prod.color || '') + ') - Bild 01')}', '${safePid}', 0)">
+            ${isVideoShot(shot01)
+              ? `<video class="cap-card-img" src="${shot01.url || ''}" poster="${sizedUrl(shot01.url, 600)}" controls loop muted playsinline preload="metadata" style="background:#000;" onclick="handleCardVideoClick(event, this, '${escapeJsString(shot01.url || '')}', '${escapeJsString(prodTitle + ' (' + (prod.color || '') + ') - Bild 01')}', '${safePid}', 0)"></video>
+                 <button type="button" onclick="event.stopPropagation(); openLightbox('${escapeJsString(shot01.url || '')}', '${escapeJsString(prodTitle + ' (' + (prod.color || '') + ') - Bild 01')}', '${safePid}', 0)" style="position: absolute; top: 8px; left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.88); color: #f8fafc; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.22); cursor: pointer; z-index: 30; pointer-events: auto; white-space: nowrap;">🎬 Helskärm & granskning</button>`
+              : `<img class="cap-card-img" src="${sizedUrl(shot01.url, 600)}" alt="${escapeHtml(prodTitle)}" loading="lazy" onerror="handleImageError(this)">`
+            }
 
             ${getGuidesOverlayHtml()}
 
@@ -4816,17 +5287,17 @@
 
           <div class="cap-card-footer">
             <div class="qa-button-group">
-              <button class="qa-btn ${effectiveStatus === 'approved' ? 'active-ok' : ''}" onclick="quickSetStatus('${prod.id}', 'approved')" title="Godkänd som standard">
+              <button class="qa-btn ${effectiveStatus === 'approved' ? 'active-ok' : ''}" onclick="quickSetStatus('${safePid}', 'approved')" title="Godkänd som standard">
                 ✓ OK
               </button>
-              <button class="qa-btn ${effectiveStatus === 'angle_issue' ? 'active-warn' : ''}" onclick="quickSetStatus('${prod.id}', 'angle_issue')" title="Markera vinkelfel">
+              <button class="qa-btn ${effectiveStatus === 'angle_issue' ? 'active-warn' : ''}" onclick="quickSetStatus('${safePid}', 'angle_issue')" title="Markera vinkelfel">
                 ⚠ Vinkel
               </button>
-              <button class="qa-btn ${effectiveStatus === 'redo' ? 'active-redo' : ''}" onclick="quickSetStatus('${prod.id}', 'redo')" title="Kräver omredigering">
+              <button class="qa-btn ${effectiveStatus === 'redo' ? 'active-redo' : ''}" onclick="quickSetStatus('${safePid}', 'redo')" title="Kräver omredigering">
                 ✕ Gör om
               </button>
             </div>
-            <button class="btn btn-sm" onclick="setAsCompareReference('${prod.id}')" title="Sätt som referens i Onion-Skin">
+            <button class="btn btn-sm" onclick="setAsCompareReference('${safePid}')" title="Sätt som referens i Onion-Skin">
               👥 Jämför
             </button>
           </div>
@@ -4872,17 +5343,18 @@
         const commentCount = (review.comments || []).length;
         const commentTag = commentCount > 0 ? ` <span style="font-size:10px; color:#38bdf8;">💬${commentCount}</span>` : '';
         const vTag = prod.has_new_version ? ` <span style="font-size:10px; color:#38bdf8;" title="Ny version">🔄</span>` : '';
+        const prodTitle = prod.display_name || prod.model;
 
         const item = document.createElement('div');
         item.className = `sidebar-item ${idx === state.currentProductIndex ? 'active' : ''}`;
         item.onclick = () => selectProductByIndex(idx);
         item.innerHTML = `
-          <img class="sidebar-thumb" src="${shot01.thumb_url || shot01.url || ''}" loading="lazy" alt="${prod.model}" onerror="handleImageError(this)">
+          <img class="sidebar-thumb" src="${shot01.thumb_url || shot01.url || ''}" loading="lazy" alt="${escapeHtml(prodTitle)}" onerror="handleImageError(this)">
           <div style="flex: 1; overflow: hidden;">
             <div style="font-weight: 700; font-size: 13px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-              ${prod.model}${vTag}${commentTag}
+              ${escapeHtml(prodTitle)}${vTag}${commentTag}
             </div>
-            <div style="font-size: 11px; color: var(--text-muted);">${prod.color}</div>
+            <div style="font-size: 11px; color: var(--text-muted);">${escapeHtml(prod.color || '')}</div>
           </div>
           <span style="font-size: 14px;">${statusBadge}</span>
         `;
@@ -4932,6 +5404,8 @@
     function selectProductByIndex(idx, scrollMode = 'top') {
       state.currentProductIndex = idx;
       updateSidebarActive(idx);
+      const stage = document.getElementById('shotsStageContainer');
+      const prevScroll = stage ? stage.scrollTop : 0;
       renderProductView();
       renderSubToolbar();
       preloadAdjacentProducts(idx);
@@ -4948,9 +5422,10 @@
       } catch (e) {}
 
       // Scroll immediately without async delay to eliminate jump/jank
-      const stage = document.getElementById('shotsStageContainer');
       if (stage) {
-        if (scrollMode === 'bottom') {
+        if (scrollMode === 'preserve') {
+          stage.scrollTop = prevScroll;
+        } else if (scrollMode === 'bottom') {
           stage.scrollTop = stage.scrollHeight;
         } else {
           stage.scrollTop = 0;
@@ -4980,32 +5455,74 @@
         return;
       }
 
+      const prodTitle = prod.display_name || prod.model;
       const vHeadTag = prod.has_new_version ? `<span class="version-pill" style="margin-left: 8px;">🔄 Ny version (${prod.version_tag || '-n'})</span>` : '';
-      const shareBtn = `<button class="btn btn-sm btn-outline" onclick="copyProductShareLink()" title="Kopiera permanent direktlänk till ${prod.model} för Teams" style="margin-left: 10px; font-size: 11px; padding: 2px 8px; vertical-align: middle; display: inline-flex; align-items: center; gap: 4px;"><span>🔗</span> Dela produkt</button>`;
-      document.getElementById('currentProductTitle').innerHTML = `${prod.model}${vHeadTag} ${shareBtn}`;
+      const shareBtn = `<button class="btn btn-sm btn-outline" onclick="copyProductShareLink()" title="Kopiera permanent direktlänk till ${escapeHtml(prodTitle)} för Teams" style="margin-left: 10px; font-size: 11px; padding: 2px 8px; vertical-align: middle; display: inline-flex; align-items: center; gap: 4px;"><span>🔗</span> Dela produkt</button>`;
+      document.getElementById('currentProductTitle').innerHTML = `${escapeHtml(prodTitle)}${vHeadTag} ${shareBtn}`;
       document.getElementById('currentProductSubtitle').innerText = `${prod.brand} • ${prod.color} • ${prod.folder_name}`;
 
       const grid = document.getElementById('shotsGrid');
       grid.innerHTML = '';
       grid.classList.toggle('shots-size-stor', state.shotSize === 'stor');
 
-      const shots = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
+      if ((prod.ai_shot_count || 0) > 0 && (prod.site_candidates || 0) === 0) {
+        const warnBanner = document.createElement('div');
+        warnBanner.style.cssText = 'grid-column: 1 / -1; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.4); color: #fcd34d; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;';
+        warnBanner.innerHTML = `📐 0 Sajt-kandidater i 1:1 (${prod.ai_shot_count} AI-bilder har annat bildförhållande och visas endast för annonser/SoMe)`;
+        grid.appendChild(warnBanner);
+      }
 
-      shots.forEach((shot, idx) => {
+      const rawShots = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
+      const sortedItems = sortShotsForDisplay(prod, rawShots);
+
+      sortedItems.forEach(({ shot, origIdx }, dispIdx) => {
         let versionBadge = '';
         if (shot.is_new_version) {
           versionBadge = `<span class="version-pill" style="font-size: 10px; padding: 1px 6px;">🔄 ${shot.version_tag || 'Ny'}</span>`;
-        } else if (shot.is_primary === false) {
+        } else if (shot.has_newer_version === true) {
           versionBadge = `<span style="font-size: 10px; color: var(--text-dim); background: #1e293b; padding: 1px 6px; border-radius: 10px; border: 1px solid #334155;">⏳ Tidigare</span>`;
         }
 
-        const titleTag = shot.label ? `Bild ${shot.label}` : `Bild ${shot.shot || (idx+1)}`;
+        let goldBadge = '';
+        if (shot.is_studio_packshot) {
+          goldBadge = `<span class="studio-packshot-badge" title="Original studiobild (skyddad mot oavsiktlig radering)">🔒 Studio</span>`;
+        } else if (shot.in_gold_set) {
+          const isStarred = (shot.stars_count || 0) > 0;
+          const bIcon = isStarred ? '⭐' : '🏆';
+          const bText = isStarred ? `Sajt #${shot.gold_rank} (${shot.stars_avg}★)` : `Sajt #${shot.gold_rank}`;
+          goldBadge = `<span class="gold-set-badge ${isStarred ? 'starred' : ''}" title="${escapeHtml(shot.gold_reason || 'Vald till sajt-guldset')}">${bIcon} ${bText}</span>`;
+        }
+
+        let fmtBadge = '';
+        if (isVideoShot(shot)) {
+          const al = (shot.aspect_label || '9:16').replace(/^🎬\s*/, '');
+          fmtBadge = `<span class="fmt-badge" style="background: rgba(59, 130, 246, 0.18); border-color: rgba(96, 165, 250, 0.45); color: #93c5fd;" title="AI-genererad produktvideo (${escapeHtml(al)}) för annonser/SoMe">🎬 Video ${escapeHtml(al)}</span>`;
+        } else if (!shot.is_studio_packshot && shot.site_eligible === false) {
+          const al = shot.aspect_label || 'Ej 1:1';
+          const dimInfo = (shot.width && shot.height) ? ` (${shot.width}×${shot.height})` : '';
+          fmtBadge = `<span class="fmt-badge" title="Endast 1:1 kan väljas till Sajt${dimInfo}. Denna bild används för annonser/SoMe.">📐 ${escapeHtml(al)} · Ej 1:1</span>`;
+        }
+
+        const selKey = getShotSelectId(prod.id, shot.rel_path, shot.filename);
+        const isChecked = state.selectedShots && state.selectedShots.has(selKey);
+        const safePid = escapeJsString(prod.id);
+        const safeRel = escapeJsString(shot.rel_path || '');
+        const safeFn = escapeJsString(shot.filename || '');
+
+        const canRemoveThisShot = state.canRemove && !shot.is_studio_packshot;
+
+        const titleTag = shot.label ? `Bild ${shot.label}` : `Bild ${shot.shot || (origIdx+1)}`;
         const box = document.createElement('div');
-        box.className = 'shot-box';
+        box.className = 'shot-box' + (shot.in_gold_set ? ' in-gold-set' : '');
         box.innerHTML = `
           <div class="shot-box-header">
-            <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+            <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; flex-wrap: wrap;">
+              <label class="shot-select-label" onclick="event.stopPropagation()" title="Markera bild för nedladdning (.zip)">
+                <input type="checkbox" class="shot-select-chk" ${isChecked ? 'checked' : ''} onchange="toggleShotSelection('${safePid}', '${safeRel}', '${safeFn}', this.checked, event)">
+              </label>
               <span class="shot-tag-title">${titleTag}</span>
+              ${goldBadge}
+              ${fmtBadge}
               ${renderStars(prod.id, shot.filename)}
               ${versionBadge}
             </div>
@@ -5013,12 +5530,19 @@
               <span class="shot-filename" title="${shot.filename}">${shot.filename || ''}</span>
             </div>
           </div>
-          <div class="shot-box-image-wrap" onclick="openLightbox('${shot.url || ''}', '${prod.model} - ${titleTag}', '${prod.id}', ${idx})">
-            <img src="${sizedUrl(shot.url, state.shotSize === 'stor' ? 1600 : 1200)}" alt="${titleTag}" loading="lazy" onerror="handleImageError(this)">
+          <div class="shot-box-image-wrap" onclick="openLightbox('${escapeJsString(shot.url || '')}', '${escapeJsString(prodTitle + ' - ' + titleTag)}', '${safePid}', ${dispIdx})">
+            ${isVideoShot(shot)
+              ? `<video src="${shot.url || ''}" poster="${sizedUrl(shot.url, 600)}" controls loop muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: contain; display: block; background: #000;" onclick="handleCardVideoClick(event, this, '${escapeJsString(shot.url || '')}', '${escapeJsString(prodTitle + ' - ' + titleTag)}', '${safePid}', ${dispIdx})"></video>`
+              : `<img src="${sizedUrl(shot.url, state.shotSize === 'stor' ? 1600 : 1200)}" alt="${titleTag}" loading="lazy" onerror="handleImageError(this)">`
+            }
             ${getGuidesOverlayHtml()}
-            ${shot.url ? `<a href="${downloadUrl(shot.url)}" download class="btn-download-image btn-download-overlay" onclick="event.stopPropagation()" title="Ladda ner originalbild">⬇</a>` : ''}
-            ${state.canRemove ? `<button class="btn-remove-image btn-remove-overlay" onclick="event.stopPropagation(); removeDesktopImage('${escapeJsString(prod.id)}', '${escapeJsString(shot.filename || '')}', event)" title="Flytta ut bild (alla storlekar) ur mappen">🗑 Flytta ut</button>` : ''}
-            <div class="shot-hover-hint">🔍 Klicka för storbild & ritverktyg</div>
+            ${shot.url ? `<a href="${downloadUrl(shot.url)}" download class="btn-download-image btn-download-overlay" onclick="event.stopPropagation()" title="Ladda ner originalfil">⬇</a>` : ''}
+            ${canRemoveThisShot ? `<button class="btn-remove-image btn-remove-overlay" onclick="event.stopPropagation(); removeDesktopImage('${safePid}', '${safeFn}', event)" title="Flytta ut ur mappen">🗑 Flytta ut</button>` : ''}
+            ${isVideoShot(shot)
+              ? `<button type="button" onclick="event.stopPropagation(); openLightbox('${escapeJsString(shot.url || '')}', '${escapeJsString(prodTitle + ' - ' + titleTag)}', '${safePid}', ${dispIdx})" style="position: absolute; top: 8px; left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.88); color: #f8fafc; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.22); cursor: pointer; z-index: 30; pointer-events: auto; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.5);">🎬 Klicka här för helskärm & granskning</button>
+                 <div class="shot-hover-hint" onclick="event.stopPropagation(); openLightbox('${escapeJsString(shot.url || '')}', '${escapeJsString(prodTitle + ' - ' + titleTag)}', '${safePid}', ${dispIdx})" style="bottom: 68px; pointer-events: auto; cursor: pointer; z-index: 30;">🎬 Klicka här för helskärm & granskning</div>`
+              : `<div class="shot-hover-hint">🔍 Klicka för storbild & ritverktyg</div>`
+            }
           </div>
         `;
         grid.appendChild(box);
@@ -5053,7 +5577,6 @@
 
       const stage = document.getElementById('shotsStageContainer');
       if (stage) {
-        stage.scrollTop = 0;
         setTimeout(checkStageScrollHint, 80);
       }
     }
@@ -5088,11 +5611,11 @@
       const prodIdx = state.products.findIndex(p => p.id === prodId);
       if (prodIdx === -1) return;
       const prod = state.products[prodIdx];
-      const shots = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
+      const shots = getDisplayShots(prod);
       
       let targetShotIdx = 0;
       if (shotTag && shotTag !== 'ALL') {
-        const found = shots.findIndex(s => s.shot === shotTag || s.base_shot === shotTag || (s.label && s.label.includes(shotTag)));
+        const found = shots.findIndex(s => s.comment_key === shotTag || s.shot === shotTag || s.base_shot === shotTag || (s.label && s.label.includes(shotTag)));
         if (found !== -1) targetShotIdx = found;
       }
 
@@ -5114,7 +5637,7 @@
         return;
       }
 
-      const shots = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
+      const shots = getDisplayShots(prod);
       if (shots.length === 0) {
         container.innerHTML = '';
         return;
@@ -5142,7 +5665,7 @@
 
       // 2. Individual shot pills
       shots.forEach((s, idx) => {
-        const shotKey = s.base_shot || s.shot || String(idx + 1).padStart(2, '0');
+        const shotKey = s.comment_key || s.base_shot || s.shot || String(idx + 1).padStart(2, '0');
         const isSel = selected.includes(shotKey);
         const pill = document.createElement('span');
         pill.className = `comment-shot-pill ${isSel ? 'active' : ''}`;
@@ -5345,6 +5868,12 @@
     }
 
     function sizedUrl(url, w) { if (!url) return ''; return url + (url.includes('?') ? '&' : '?') + 'w=' + w; }
+    function isVideoShot(shotOrUrl) {
+      if (!shotOrUrl) return false;
+      if (typeof shotOrUrl === 'object' && shotOrUrl.is_video) return true;
+      const s = typeof shotOrUrl === 'string' ? shotOrUrl : ((shotOrUrl.filename || '') + ' ' + (shotOrUrl.url || ''));
+      return /\.(mp4|webm|mov)(\b|\?|$)/i.test(s);
+    }
 
     function escapeHtml(text) {
       const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
@@ -6110,9 +6639,9 @@
     function getShotKey(prodId, shotIdx) {
       const prod = state.products.find(p => p.id === prodId) || state.products[lbCurrentProductIndex];
       if (!prod) return `${prodId || 'p'}_${shotIdx || '0'}`;
-      const shots = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
+      const shots = getDisplayShots(prod);
       const s = shots[shotIdx] || {};
-      const sNum = s.base_shot || s.shot || String(shotIdx + 1).padStart(2, '0');
+      const sNum = s.comment_key || s.base_shot || s.shot || String(shotIdx + 1).padStart(2, '0');
       return `${prod.id}_${sNum}`;
     }
 
@@ -6153,10 +6682,13 @@
     function syncCanvasSize() {
       const canvas = document.getElementById('lbAnnotateCanvas');
       const img = document.getElementById('lightboxImg');
+      const vid = document.getElementById('lightboxVideo');
       const wrap = document.getElementById('lightboxWrap');
-      if (!canvas || !img || !wrap) return;
+      if (!canvas || !wrap) return;
+      const targetEl = (vid && vid.style.display !== 'none') ? vid : img;
+      if (!targetEl) return;
 
-      const rect = img.getBoundingClientRect();
+      const rect = targetEl.getBoundingClientRect();
       const wrapRect = wrap.getBoundingClientRect();
       
       canvas.width = rect.width;
@@ -6272,8 +6804,8 @@
       if (prodIdx === -1) return;
       
       const prod = state.products[prodIdx];
-      const shots = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
-      const sIdx = shots.findIndex(s => s.shot === shotNum || s.base_shot === shotNum);
+      const shots = getDisplayShots(prod);
+      const sIdx = shots.findIndex(s => s.comment_key === shotNum || s.shot === shotNum || s.base_shot === shotNum);
       const targetShotIdx = sIdx !== -1 ? sIdx : 0;
 
       const isLbOpen = document.getElementById('lightboxModal').classList.contains('active');
@@ -6453,6 +6985,33 @@
     let lbCurrentShotIndex = 0;
     let lbShowGuides = false;
 
+    function handleCardVideoClick(event, videoEl, url, title, productId, shotIdx) {
+      if (event) {
+        const rect = videoEl ? videoEl.getBoundingClientRect() : null;
+        if (rect && (rect.bottom - event.clientY) <= 68) {
+          // Click on the bottom 68px native video controls bar: let native controls work without opening Lightbox
+          event.stopPropagation();
+          return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      if (videoEl) {
+        try { videoEl.pause(); } catch (e) {}
+      }
+      openLightbox(url, title, productId, shotIdx);
+    }
+
+    function fullscreenLightboxVideo() {
+      const vid = document.getElementById('lightboxVideo');
+      if (!vid) return;
+      if (vid.requestFullscreen) {
+        vid.requestFullscreen().catch(() => {});
+      } else if (vid.webkitRequestFullscreen) {
+        vid.webkitRequestFullscreen();
+      }
+    }
+
     function openLightbox(url, title, productId = null, shotIdx = 0) {
       if (window._justDraggedGuide || window._isDraggingGuide) return;
       if (productId) {
@@ -6462,7 +7021,7 @@
       } else {
         let found = false;
         state.products.forEach((p, pIdx) => {
-          const shots = p.variants[state.currentSource] || Object.values(p.variants)[0] || [];
+          const shots = getDisplayShots(p);
           shots.forEach((s, sIdx) => {
             if (s.url && url && s.url.split('?')[0] === url.split('?')[0]) {
               lbCurrentProductIndex = pIdx;
@@ -6485,13 +7044,14 @@
       if (state.products.length === 0) return;
       lbCurrentProductIndex = (prodIdx + state.products.length) % state.products.length;
       const prod = state.products[lbCurrentProductIndex];
-      const shots = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
+      const shots = getDisplayShots(prod);
       
       lbCurrentShotIndex = Math.max(0, Math.min(shotIdx, shots.length - 1));
       const activeShot = shots[lbCurrentShotIndex] || shots[0] || {};
+      const prodTitle = prod.display_name || prod.model;
 
       // 1. Header Info
-      document.getElementById('lbProductTitle').innerText = `${prod.model} — ${prod.color}`;
+      document.getElementById('lbProductTitle').innerText = `${prodTitle} — ${prod.color}`;
       document.getElementById('lbProductCategory').innerText = prod.brand || state.currentBatch?.category || 'Produkt';
       document.getElementById('lbImageCounter').innerText = `Produkt ${lbCurrentProductIndex + 1} av ${state.products.length} • Bild ${lbCurrentShotIndex + 1} av ${shots.length}`;
       
@@ -6502,9 +7062,31 @@
         vPill.innerHTML = '';
       }
 
-      // 2. Main Image
+      // 2. Main Image or Video
       const img = document.getElementById('lightboxImg');
-      img.src = activeShot.url || '';
+      const vid = document.getElementById('lightboxVideo');
+      const btnVidFs = document.getElementById('lbBtnVideoFs');
+      if (isVideoShot(activeShot)) {
+        img.style.display = 'none';
+        img.src = '';
+        if (btnVidFs) btnVidFs.style.display = 'inline-flex';
+        if (vid) {
+          vid.style.display = 'block';
+          vid.src = activeShot.url || '';
+          vid.poster = sizedUrl(activeShot.url, 600);
+          vid.play().catch(() => {});
+        }
+      } else {
+        if (btnVidFs) btnVidFs.style.display = 'none';
+        if (vid) {
+          vid.pause();
+          vid.removeAttribute('src');
+          vid.style.display = 'none';
+        }
+        img.style.display = 'block';
+        img.src = activeShot.url || '';
+      }
+      img.dataset.filename = activeShot.filename || '';
       zoomLevel = 1; panX = 0; panY = 0;
       img.style.transform = `scale(1) translate(0px, 0px)`;
 
@@ -6514,7 +7096,7 @@
       shots.forEach((s, idx) => {
         const sBtn = document.createElement('button');
         const isSelected = idx === lbCurrentShotIndex;
-        let vTag = s.is_new_version ? ' 🔄' : (s.is_primary === false ? ' ⏳' : '');
+        let vTag = s.is_new_version ? ' 🔄' : (s.has_newer_version === true ? ' ⏳' : '');
         sBtn.className = `btn btn-sm ${isSelected ? 'btn-primary' : 'btn-outline'}`;
         sBtn.style.cssText = "font-size: 11px; padding: 4px 10px; display: flex; align-items: center; gap: 4px; white-space: nowrap;";
         sBtn.innerHTML = `${s.label || ('Bild ' + (idx + 1))}${vTag}`;
@@ -6539,7 +7121,7 @@
       document.getElementById('lb_chk_shadow').checked = !!flags.shadow;
 
       // 6. Render Comments Feed & Shot Pills
-      const activeShotNum = activeShot.base_shot || activeShot.shot || String(lbCurrentShotIndex + 1).padStart(2, '0');
+      const activeShotNum = activeShot.comment_key || activeShot.base_shot || activeShot.shot || String(lbCurrentShotIndex + 1).padStart(2, '0');
       commentSelectedShots.lb = [activeShotNum];
       renderCommentShotPills('lb', prod.id, 'lbCommentShotPills', activeShotNum);
       renderLightboxCommentsFeed();
@@ -6579,7 +7161,8 @@
 
       const lbRemoveBtn = document.getElementById('lbBtnRemoveImage');
       if (lbRemoveBtn) {
-        if (state.canRemove && activeShot && activeShot.filename) {
+        const canRemoveThis = state.canRemove && activeShot && activeShot.filename && (state.isAdmin || !activeShot.is_studio_packshot);
+        if (canRemoveThis) {
           lbRemoveBtn.style.display = 'inline-flex';
           lbRemoveBtn.onclick = (e) => removeLightboxCurrentImage(e);
         } else {
@@ -6599,7 +7182,7 @@
       if (state.products.length === 0) return;
       const prod = state.products[lbCurrentProductIndex];
       if (!prod) return;
-      const shots = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
+      const shots = getDisplayShots(prod);
       const activeShot = shots[lbCurrentShotIndex] || shots[0];
       if (!activeShot || !activeShot.filename) return;
       removeDesktopImage(prod.id, activeShot.filename, event);
@@ -6757,7 +7340,7 @@
     function lightboxNextShot() {
       if (state.products.length === 0) return;
       const prod = state.products[lbCurrentProductIndex];
-      const shots = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
+      const shots = getDisplayShots(prod);
       
       if (lbCurrentShotIndex < shots.length - 1) {
         showLightboxProduct(lbCurrentProductIndex, lbCurrentShotIndex + 1);
@@ -6773,7 +7356,7 @@
       } else {
         const prevProdIdx = (lbCurrentProductIndex - 1 + state.products.length) % state.products.length;
         const prevProd = state.products[prevProdIdx];
-        const prevShots = prevProd.variants[state.currentSource] || Object.values(prevProd.variants)[0] || [];
+        const prevShots = getDisplayShots(prevProd);
         showLightboxProduct(prevProdIdx, Math.max(0, prevShots.length - 1));
       }
     }
@@ -6797,6 +7380,8 @@
 
     function closeLightbox(e) {
       if (!e || e.target.id === 'lightboxModal' || e.target.classList.contains('lightbox-close-btn') || e.key === 'Escape') {
+        const vid = document.getElementById('lightboxVideo');
+        if (vid) { vid.pause(); vid.removeAttribute('src'); }
         document.getElementById('lightboxModal').classList.remove('active');
         renderAngleGrid();
         renderReportTable();

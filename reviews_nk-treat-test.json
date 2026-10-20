@@ -1,0 +1,205 @@
+{
+  "11-d-runda3-efterbehandlad-light-saturated": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:53:54.028139"
+  },
+  "10-d-runda3-efterbehandlad-dark-muted": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:53:54.757600"
+  },
+  "64-c-runda3-light-neutral": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:53:55.584565"
+  },
+  "60-c-runda3-dark-saturated": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:53:56.385331"
+  },
+  "57-c-runda3-mid-muted": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:53:57.201193"
+  },
+  "45-c-runda3-mid-neutral": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:53:57.849470"
+  },
+  "38-c-runda3-dark-neutral": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:53:58.293878"
+  },
+  "34-c-runda3-mid-saturated": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:53:58.704122"
+  },
+  "33-c-runda3-light-muted": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:53:59.123779"
+  },
+  "11-c-runda3-light-saturated": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:53:59.549909"
+  },
+  "10-c-runda3-dark-muted": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:54:00.134352"
+  },
+  "64-b-runda2-light-neutral": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:54:00.370380"
+  },
+  "60-b-runda2-dark-saturated": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:54:00.780420"
+  },
+  "57-b-runda2-mid-muted": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:54:03.071026"
+  },
+  "45-b-runda2-mid-neutral": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:54:03.486436"
+  },
+  "38-b-runda2-dark-neutral": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:54:03.881913"
+  },
+  "34-b-runda2-mid-saturated": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:54:04.309596"
+  },
+  "33-b-runda2-light-muted": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:54:04.716870"
+  },
+  "11-b-runda2-light-saturated": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:54:05.193686"
+  },
+  "10-b-runda2-dark-muted": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:54:05.577856"
+  },
+  "64-a-original-light-neutral": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:54:06.028653"
+  },
+  "60-a-original-dark-saturated": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:54:06.458874"
+  },
+  "57-a-original-mid-muted": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:54:06.897388"
+  },
+  "45-a-original-mid-neutral": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:54:07.367634"
+  },
+  "38-a-original-dark-neutral": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:54:07.792636"
+  },
+  "34-a-original-mid-saturated": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:54:08.254804"
+  },
+  "33-a-original-light-muted": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:54:08.694399"
+  },
+  "11-a-original-light-saturated": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:54:09.141755"
+  },
+  "10-a-original-dark-muted": {
+    "status": "approved",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Andronik",
+    "updatedAt": "2026-10-04T17:54:13.283554"
+  }
+}

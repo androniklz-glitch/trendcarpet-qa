@@ -905,5 +905,96 @@
     "status": "approved",
     "reviewer": "Anton",
     "updatedAt": "2026-09-03T05:02:43.797Z"
+  },
+  "test_prod": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1791097520945",
+        "author": "SessionReviewer",
+        "text": "hello",
+        "shots": [],
+        "drawings": [],
+        "time": "09:05"
+      },
+      {
+        "id": "c_1791097699179",
+        "author": "SessionReviewer",
+        "text": "hello",
+        "shots": [],
+        "drawings": [],
+        "time": "09:08"
+      },
+      {
+        "id": "c_1791097720204",
+        "author": "SessionReviewer",
+        "text": "hello",
+        "shots": [],
+        "drawings": [],
+        "time": "09:08"
+      },
+      {
+        "id": "c_1791098365165",
+        "author": "SessionReviewer",
+        "text": "hello",
+        "shots": [],
+        "drawings": [],
+        "time": "09:19"
+      },
+      {
+        "id": "c_1791098477786",
+        "author": "SessionReviewer",
+        "text": "hello",
+        "shots": [],
+        "drawings": [],
+        "time": "09:21"
+      },
+      {
+        "id": "c_1791098787107",
+        "author": "SessionReviewer",
+        "text": "hello",
+        "shots": [],
+        "drawings": [],
+        "time": "09:26"
+      },
+      {
+        "id": "c_1791098825930",
+        "author": "SessionReviewer",
+        "text": "hello",
+        "shots": [],
+        "drawings": [],
+        "time": "09:27"
+      },
+      {
+        "id": "c_1791098884198",
+        "author": "SessionReviewer",
+        "text": "hello",
+        "shots": [],
+        "drawings": [],
+        "time": "09:28"
+      },
+      {
+        "id": "c_1791098893921",
+        "author": "SessionReviewer",
+        "text": "hello",
+        "shots": [],
+        "drawings": [],
+        "time": "09:28"
+      }
+    ],
+    "reviewer": "SessionReviewer",
+    "updatedAt": "2026-10-04T09:28:13.921361"
+  },
+  "test_del": {
+    "status": "pending",
+    "flags": {},
+    "comments": [],
+    "reviewer": "Owner",
+    "updatedAt": "2026-10-04T09:28:14.406097"
+  },
+  "prod1": {
+    "status": "ok",
+    "reviewer": "SessUser"
   }
 }

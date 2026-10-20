@@ -24,3 +24,8 @@ reforma-turboflow/
 interior-designer-automation/
 orchestrator/
 ui_images/
+
+# Antigravity job byproducts and night-deploy copies (skyddsnät 2026-10-20)
+_evidence/
+_scratch/
+_staging/

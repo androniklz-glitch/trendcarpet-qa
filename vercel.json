@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://easter-ant-wrapping-sunshine.trycloudflare.com/$1"
+      "destination": "https://bell-focal-knight-pharmacy.trycloudflare.com/$1"
     }
   ]
 }

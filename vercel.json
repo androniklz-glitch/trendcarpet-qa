@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://excess-cookie-participating-interstate.trycloudflare.com/$1"
+      "destination": "https://easter-ant-wrapping-sunshine.trycloudflare.com/$1"
     }
   ]
 }

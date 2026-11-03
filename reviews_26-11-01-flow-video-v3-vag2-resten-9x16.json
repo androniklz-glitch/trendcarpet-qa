@@ -1,0 +1,98 @@
+{
+  "06-KAMPANJ-MERIDA-OLIVGRON": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1793563735888",
+        "author": "Andro",
+        "text": "Ett av klippen accelerera i tempo",
+        "shots": [],
+        "drawings": [],
+        "time": "21:08"
+      }
+    ],
+    "reviewer": "Andro",
+    "updatedAt": "2026-11-01T21:08:55.888316"
+  },
+  "07-KAMPANJ-MERIDA-DEEP-NAVY": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1793563928468",
+        "author": "Andro",
+        "text": "Står wn stor urna på ett bord, lite tveksamt, första klippet ser ut som en AI-bild, billig soffa förstör , inte så bra bilder att utgå från",
+        "shots": [],
+        "drawings": [],
+        "time": "21:12"
+      }
+    ],
+    "reviewer": "Andro",
+    "updatedAt": "2026-11-01T21:12:08.468881"
+  },
+  "08-KAMPANJ-MERIDA-IVORY-CREAM": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1793563987562",
+        "author": "Andro",
+        "text": "Bra förutom den fram och tillbaka effekten",
+        "shots": [],
+        "drawings": [],
+        "time": "21:13"
+      }
+    ],
+    "reviewer": "Andro",
+    "updatedAt": "2026-11-01T21:13:07.562360"
+  },
+  "10-KAMPANJ-MERIDA-SILVERGRA": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1793564199371",
+        "author": "Andro",
+        "text": "Första klippet startar med att stå still? Klipp bort det, sedan är rörelsen inte så snygg i dessa klipp så tror ni kan klippa snyggare",
+        "shots": [],
+        "drawings": [],
+        "time": "21:16"
+      }
+    ],
+    "reviewer": "Andro",
+    "updatedAt": "2026-11-01T21:16:39.371314"
+  },
+  "11-KAMPANJ-KANHA-TIGER-BEIGE": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1793564286075",
+        "author": "Andro",
+        "text": "Bänken rör sig fult att köra fram och tillbakaklippetz klippor eller släng",
+        "shots": [],
+        "drawings": [],
+        "time": "21:18"
+      }
+    ],
+    "reviewer": "Andro",
+    "updatedAt": "2026-11-01T21:18:06.075794"
+  },
+  "13-KAMPANJ-ALMERIA-REKTANGULAR-NAVY": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1793564407990",
+        "author": "Andro",
+        "text": "Hackigt tempo,varierar, svajjigt,dålig struktur på åtofukt, nget ljusspel platt och tråkigt, ser ai ut",
+        "shots": [],
+        "drawings": [],
+        "time": "21:20"
+      }
+    ],
+    "reviewer": "Andro",
+    "updatedAt": "2026-11-01T21:20:07.990361"
+  }
+}

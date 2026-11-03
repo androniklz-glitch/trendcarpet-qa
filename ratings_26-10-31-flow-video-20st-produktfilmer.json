@@ -1,0 +1,76 @@
+{
+  "Andro": {
+    "VIDEO-02|02_Merida_Rosa_6Klipp_Rask_DynamicCrop_16x9.mp4": {
+      "stars": 5,
+      "ts": "2026-10-31T19:18:03.935071"
+    },
+    "VIDEO-03|03_Merida_Gron_3Klipp_Lugn_LumaDissolve_16x9.mp4": {
+      "stars": 5,
+      "ts": "2026-10-31T19:18:24.648386"
+    },
+    "VIDEO-04|04_Merida_Bla_8Klipp_Snabb_FastCutDissolve_16x9.mp4": {
+      "stars": 4,
+      "ts": "2026-10-31T19:31:41.595634"
+    },
+    "VIDEO-05|05_Merida_Creme_4Klipp_Medium_ChampagneFade_16x9.mp4": {
+      "stars": 1,
+      "ts": "2026-10-31T19:31:52.016107"
+    },
+    "VIDEO-06|06_Merida_Lila_6Klipp_Rask_WarmEspresso_16x9.mp4": {
+      "stars": 3,
+      "ts": "2026-10-31T19:32:29.235863"
+    },
+    "VIDEO-07|07_Merida_Gra_8Klipp_Snabb_SeamlessLoop_16x9.mp4": {
+      "stars": 5,
+      "ts": "2026-10-31T19:32:42.934231"
+    },
+    "VIDEO-08|08_Batumi_Creme_Leopard_4Klipp_Medium_WarmEspresso_16x9.mp4": {
+      "stars": 4,
+      "ts": "2026-10-31T19:33:07.473750"
+    },
+    "VIDEO-10|10_Kanha_Beige_Tiger_8Klipp_Snabb_Dynamic_16x9.mp4": {
+      "stars": 4,
+      "ts": "2026-10-31T19:33:41.029628"
+    },
+    "VIDEO-11|11_Batumi_Brun_Leopard_3Klipp_Lugn_WarmEspresso_16x9.mp4": {
+      "stars": 4,
+      "ts": "2026-10-31T19:34:02.815014"
+    },
+    "VIDEO-12|12_Reels_9x16_Merida_Gron_6Klipp_Rask.mp4": {
+      "stars": 4,
+      "ts": "2026-10-31T19:37:16.968174"
+    },
+    "VIDEO-13|13_Reels_9x16_Merida_Rosa_8Klipp_Snabb.mp4": {
+      "stars": 3,
+      "ts": "2026-10-31T19:37:57.482536"
+    },
+    "VIDEO-14|14_Reels_9x16_Almeria_Halvmane_Cream_3Klipp_Lugn.mp4": {
+      "stars": 2,
+      "ts": "2026-10-31T19:38:24.599761"
+    },
+    "VIDEO-15|15_Reels_9x16_Almeria_Rektangular_Navy_5Klipp_Rask.mp4": {
+      "stars": 2,
+      "ts": "2026-10-31T19:40:25.167414"
+    },
+    "VIDEO-16|16_Reels_9x16_Batumi_Creme_Leopard_6Klipp_Rask.mp4": {
+      "stars": 4,
+      "ts": "2026-10-31T19:41:02.995737"
+    },
+    "VIDEO-17|17_Square_1x1_Merida_Brun_6Klipp_Rask_Loop.mp4": {
+      "stars": 1,
+      "ts": "2026-10-31T19:41:25.360994"
+    },
+    "VIDEO-18|18_Square_1x1_Kanha_Creme_Tiger_4Klipp_Medium.mp4": {
+      "stars": 5,
+      "ts": "2026-10-31T19:41:57.342624"
+    },
+    "VIDEO-19|19_HyperFrames_16x9_Merida_Bla_5Klipp_EditorialType.mp4": {
+      "stars": 4,
+      "ts": "2026-10-31T19:42:43.842059"
+    },
+    "VIDEO-20|20_HyperFrames_9x16_Merida_Creme_7Klipp_Snabb_EditorialReel.mp4": {
+      "stars": 4,
+      "ts": "2026-10-31T19:43:20.932554"
+    }
+  }
+}

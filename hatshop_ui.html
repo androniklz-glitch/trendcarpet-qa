@@ -2995,12 +2995,34 @@
       }
     };
 
+    function withCacheBust(url, mtime) {
+      if (!url) return '';
+      if (/[?&]v=/.test(url)) return url;
+      const v = Math.floor(mtime || 2);
+      return url + (url.includes('?') ? '&' : '?') + 'v=' + v;
+    }
+
+    function ensureProductsCacheBust(products) {
+      if (!Array.isArray(products)) return [];
+      products.forEach(p => {
+        if (!p || !p.variants) return;
+        Object.values(p.variants).forEach(shots => {
+          if (!Array.isArray(shots)) return;
+          shots.forEach(s => {
+            if (s && s.url) s.url = withCacheBust(s.url, s.mtime);
+            if (s && s.thumb_url) s.thumb_url = withCacheBust(s.thumb_url, s.mtime);
+          });
+        });
+      });
+      return products;
+    }
+
     let lastProductsFingerprint = '';
     function getProductsFingerprint(products) {
       if (!Array.isArray(products)) return '';
       return products.map(p => {
         const shots = (p.variants && (p.variants[state.currentSource] || Object.values(p.variants)[0])) || [];
-        return `${p.id}:${shots.map(s => `${s.filename || ''}#${s.in_gold_set ? (s.gold_rank || 1) : 0}#${s.is_studio_packshot ? 1 : 0}`).join(',')}`;
+        return `${p.id}:${shots.map(s => `${s.filename || ''}#${Math.floor(s.mtime || 0)}#${s.in_gold_set ? (s.gold_rank || 1) : 0}#${s.is_studio_packshot ? 1 : 0}`).join(',')}`;
       }).join('|');
     }
 
@@ -3205,7 +3227,7 @@
     function applyRoleAndOrgVisibility() {
       const isCama = (!state.userOrg || state.userOrg === 'cama');
       const quickWrap = document.getElementById('camaQuickReviewersWrap');
-      if (quickWrap) quickWrap.style.display = isCama ? 'block' : 'none';
+      if (quickWrap) quickWrap.style.display = 'block';
       const nameLbl = document.getElementById('initialNameLabel');
       if (nameLbl) nameLbl.innerText = isCama ? 'Eller skriv ditt förnamn:' : 'Skriv ditt namn:';
 
@@ -3299,7 +3321,18 @@
           if (nameModal) nameModal.classList.remove('active');
         }
 
-        const res = await fetch(`/api/batches?reviewer=${encodeURIComponent(state.reviewer || '')}`);
+        const paramBatch = urlParams.get('batch') || state.currentBatchId || '';
+        const urlCeo = urlParams.get('ceo') || urlParams.get('all');
+        if (urlCeo === '1' || urlCeo === 'true') {
+          sessionStorage.setItem('qa_ceo', '1');
+        } else if (urlCeo === '0' || urlCeo === 'false') {
+          sessionStorage.removeItem('qa_ceo');
+        }
+        const isCeoMode = sessionStorage.getItem('qa_ceo') === '1';
+        const batchQuery = paramBatch ? `&batch=${encodeURIComponent(paramBatch)}` : '';
+        const ceoQuery = isCeoMode ? '&ceo=1' : '';
+
+        const res = await fetch(`/api/batches?reviewer=${encodeURIComponent(state.reviewer || '')}${batchQuery}${ceoQuery}`);
         const data = await res.json();
         state.batches = data.batches || [];
         state.isAdmin = data.is_admin || false;
@@ -3307,11 +3340,14 @@
         state.userOrg = data.user_org || 'cama';
         state.serverUserName = data.user_name || '';
 
-        const camaQuickNames = ['Andro', 'Jesper', 'Amalia', 'Anton'];
-        if (state.serverUserName && (!state.reviewer || (state.userOrg !== 'cama' && camaQuickNames.includes(state.reviewer)))) {
+        const camaQuickNames = ['Andro', 'Andronik', 'Jesper', 'Amalia', 'Anton'];
+        const isCamaRev = state.reviewer && camaQuickNames.some(n => n.toLowerCase() === state.reviewer.trim().toLowerCase());
+        if (isCamaRev) {
+          state.userOrg = 'cama';
+        } else if (state.serverUserName && !state.reviewer) {
           state.reviewer = state.serverUserName;
           localStorage.setItem('hatshop_reviewer', state.reviewer);
-        } else if (state.userOrg === 'reforma' && (!state.reviewer || camaQuickNames.includes(state.reviewer))) {
+        } else if (state.userOrg === 'reforma' && !state.reviewer) {
           state.reviewer = 'Reforma';
           localStorage.setItem('hatshop_reviewer', state.reviewer);
         }
@@ -3324,13 +3360,12 @@
         state.batches.forEach(b => {
           const icon = b.category === 'kepsar' ? '🧢' : (b.category === 'mattor_inredning' ? '🧶' : '📁');
           const isDraft = b.published === false;
-          const draftPrefix = (state.isAdmin && isDraft) ? '🔒 [Utkast] ' : '';
+          const draftPrefix = isDraft ? '🔒 [Utkast] ' : '';
           const opt = new Option(`${draftPrefix}${icon} ${b.name}`, b.id);
           bSelect.add(opt);
         });
 
         // 1. Check if URL has a ?batch= parameter
-        const paramBatch = urlParams.get('batch');
         const targetBatch = (paramBatch && state.batches.some(b => b.id === paramBatch))
           ? paramBatch
           : (state.batches[0]?.id || '');
@@ -3430,7 +3465,7 @@
         }
         const data = await res.json();
         state.currentBatch = data.batch;
-        state.products = data.products || [];
+        state.products = ensureProductsCacheBust(data.products || []);
         state.reviews = data.reviews || {};
         state.currentProductIndex = 0;
         lastProductsFingerprint = getProductsFingerprint(state.products);
@@ -3893,7 +3928,7 @@
         const prevLbShotIndex = lbCurrentShotIndex;
 
         state.currentBatch = data.batch || state.currentBatch;
-        state.products = data.products || [];
+        state.products = ensureProductsCacheBust(data.products || []);
         state.reviews = data.reviews || {};
         lastProductsFingerprint = getProductsFingerprint(state.products);
 
@@ -4476,36 +4511,49 @@
       }
     }
 
+    function isAnyVideoPlaying() {
+      return Array.from(document.querySelectorAll('video')).some(v => !v.paused);
+    }
+
     const HUB_UI_BUILD = 'v4';
     async function pollReviewsFromServer() {
-      if (document.hidden || !state.currentBatchId) return;
+      if (document.hidden || !state.currentBatchId || isAnyVideoPlaying()) return;
       try {
         const res = await fetch(`/api/products?batch=${encodeURIComponent(state.currentBatchId)}&reviewer=${encodeURIComponent(state.reviewer || '')}&uiv=4`, { cache: 'no-store' });
-        if (!res.ok) return;
+        if (!res.ok || isAnyVideoPlaying()) return;
         const data = await res.json();
+        if (isAnyVideoPlaying()) return;
         if (data && data.ui_build && data.ui_build !== HUB_UI_BUILD) {
           window.location.reload();
           return;
         }
         if (!data || !Array.isArray(data.products)) return;
 
-        const newProducts = data.products;
+        const newProducts = ensureProductsCacheBust(data.products);
         const newFingerprint = getProductsFingerprint(newProducts);
         const productsChanged = lastProductsFingerprint && (newFingerprint !== lastProductsFingerprint);
 
         if (productsChanged) {
+          if (isAnyVideoPlaying()) return;
           const currentProd = state.products[state.currentProductIndex];
           const currentProdId = currentProd ? currentProd.id : null;
           await reloadBatchProducts(currentProdId, data);
         } else if (data.reviews && JSON.stringify(data.reviews) !== JSON.stringify(state.reviews)) {
           // Do NOT re-render when only reviews changed; keep today's behaviour for reviews.
+          const prevReviews = state.reviews || {};
+          const currentProd = state.products[state.currentProductIndex];
+          const currentProdId = currentProd ? currentProd.id : null;
+          const currentProdReviewChanged = currentProdId
+            ? JSON.stringify(prevReviews[currentProdId] || {}) !== JSON.stringify(data.reviews[currentProdId] || {})
+            : false;
           state.reviews = data.reviews;
+          lastSyncDesktopReviewsStr = JSON.stringify(data.reviews);
           updateQAStats();
           if (state.currentMode === 'report') renderReportTable();
-          if (state.currentMode === 'angle') renderAngleGrid();
+          if (state.currentMode === 'angle' && currentProdReviewChanged && !isAnyVideoPlaying()) renderAngleGrid();
           if (state.currentMode === 'product') {
             renderProductSidebar();
-            renderCommentsFeed();
+            if (currentProdReviewChanged) renderCommentsFeed();
           }
           if (state.currentProtoProductId) {
             renderProtoCommentsFeed();
@@ -4731,7 +4779,7 @@
           const imgElements = grid.querySelectorAll('.shot-box-image-wrap img');
           imgElements.forEach((img, idx) => {
             if (shots[idx] && shots[idx].url) {
-              img.src = sizedUrl(shots[idx].url, state.shotSize === 'stor' ? 1600 : 1200);
+              img.src = sizedUrl(shots[idx].url, state.shotSize === 'stor' ? 1600 : 1200, shots[idx].mtime);
             }
           });
         }
@@ -5275,9 +5323,9 @@
 
           <div class="cap-card-body" onclick="openLightbox('${escapeJsString(shot01.url || '')}', '${escapeJsString(prodTitle + ' (' + (prod.color || '') + ') - Bild 01')}', '${safePid}', 0)">
             ${isVideoShot(shot01)
-              ? `<video class="cap-card-img" src="${shot01.url || ''}" poster="${sizedUrl(shot01.url, 600)}" controls loop muted playsinline preload="metadata" style="background:#000;" onclick="handleCardVideoClick(event, this, '${escapeJsString(shot01.url || '')}', '${escapeJsString(prodTitle + ' (' + (prod.color || '') + ') - Bild 01')}', '${safePid}', 0)"></video>
+              ? `<video class="cap-card-img" src="${shot01.url || ''}" poster="${sizedUrl(shot01.url, 600, shot01.mtime)}" controls loop muted playsinline preload="metadata" style="background:#000;" onclick="handleCardVideoClick(event, this, '${escapeJsString(shot01.url || '')}', '${escapeJsString(prodTitle + ' (' + (prod.color || '') + ') - Bild 01')}', '${safePid}', 0)"></video>
                  <button type="button" onclick="event.stopPropagation(); openLightbox('${escapeJsString(shot01.url || '')}', '${escapeJsString(prodTitle + ' (' + (prod.color || '') + ') - Bild 01')}', '${safePid}', 0)" style="position: absolute; top: 8px; left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.88); color: #f8fafc; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.22); cursor: pointer; z-index: 30; pointer-events: auto; white-space: nowrap;">🎬 Helskärm & granskning</button>`
-              : `<img class="cap-card-img" src="${sizedUrl(shot01.url, 600)}" alt="${escapeHtml(prodTitle)}" loading="lazy" onerror="handleImageError(this)">`
+              : `<img class="cap-card-img" src="${sizedUrl(shot01.url, 600, shot01.mtime)}" alt="${escapeHtml(prodTitle)}" loading="lazy" onerror="handleImageError(this)">`
             }
 
             ${getGuidesOverlayHtml()}
@@ -5349,7 +5397,7 @@
         item.className = `sidebar-item ${idx === state.currentProductIndex ? 'active' : ''}`;
         item.onclick = () => selectProductByIndex(idx);
         item.innerHTML = `
-          <img class="sidebar-thumb" src="${shot01.thumb_url || shot01.url || ''}" loading="lazy" alt="${escapeHtml(prodTitle)}" onerror="handleImageError(this)">
+          <img class="sidebar-thumb" src="${withCacheBust(shot01.thumb_url || shot01.url || '', shot01.mtime)}" loading="lazy" alt="${escapeHtml(prodTitle)}" onerror="handleImageError(this)">
           <div style="flex: 1; overflow: hidden;">
             <div style="font-weight: 700; font-size: 13px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
               ${escapeHtml(prodTitle)}${vTag}${commentTag}
@@ -5532,8 +5580,8 @@
           </div>
           <div class="shot-box-image-wrap" onclick="openLightbox('${escapeJsString(shot.url || '')}', '${escapeJsString(prodTitle + ' - ' + titleTag)}', '${safePid}', ${dispIdx})">
             ${isVideoShot(shot)
-              ? `<video src="${shot.url || ''}" poster="${sizedUrl(shot.url, 600)}" controls loop muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: contain; display: block; background: #000;" onclick="handleCardVideoClick(event, this, '${escapeJsString(shot.url || '')}', '${escapeJsString(prodTitle + ' - ' + titleTag)}', '${safePid}', ${dispIdx})"></video>`
-              : `<img src="${sizedUrl(shot.url, state.shotSize === 'stor' ? 1600 : 1200)}" alt="${titleTag}" loading="lazy" onerror="handleImageError(this)">`
+              ? `<video src="${shot.url || ''}" poster="${sizedUrl(shot.url, 600, shot.mtime)}" controls loop muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: contain; display: block; background: #000;" onclick="handleCardVideoClick(event, this, '${escapeJsString(shot.url || '')}', '${escapeJsString(prodTitle + ' - ' + titleTag)}', '${safePid}', ${dispIdx})"></video>`
+              : `<img src="${sizedUrl(shot.url, state.shotSize === 'stor' ? 1600 : 1200, shot.mtime)}" alt="${titleTag}" loading="lazy" onerror="handleImageError(this)">`
             }
             ${getGuidesOverlayHtml()}
             ${shot.url ? `<a href="${downloadUrl(shot.url)}" download class="btn-download-image btn-download-overlay" onclick="event.stopPropagation()" title="Ladda ner originalfil">⬇</a>` : ''}
@@ -5867,7 +5915,11 @@
       }
     }
 
-    function sizedUrl(url, w) { if (!url) return ''; return url + (url.includes('?') ? '&' : '?') + 'w=' + w; }
+    function sizedUrl(url, w, mtime) {
+      if (!url) return '';
+      const base = withCacheBust(url, mtime);
+      return base + (base.includes('?') ? '&' : '?') + 'w=' + w;
+    }
     function isVideoShot(shotOrUrl) {
       if (!shotOrUrl) return false;
       if (typeof shotOrUrl === 'object' && shotOrUrl.is_video) return true;
@@ -6065,7 +6117,7 @@
         const sBtn = document.createElement('div');
         const isSelected = idx === targetShotIdx;
         sBtn.style.cssText = `width: 50px; height: 50px; border-radius: 6px; border: 2px solid ${isSelected ? 'var(--accent-blue)' : 'var(--border-color)'}; background: #fff; cursor: pointer; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: border-color 0.15s;`;
-        sBtn.innerHTML = `<img src="${sizedUrl(s.url, 160)}" style="width: 100%; height: 100%; object-fit: contain;">`;
+        sBtn.innerHTML = `<img src="${sizedUrl(s.url, 160, s.mtime)}" style="width: 100%; height: 100%; object-fit: contain;">`;
         sBtn.onclick = () => {
           state.currentProtoShotIdx = idx;
           document.getElementById('protoModalImg').src = s.url;
@@ -6239,9 +6291,10 @@
               shotBadges = c.shots.map(sNum => {
                 const sObj = shots.find(s => s.shot === sNum || s.base_shot === sNum || (s.label && s.label.includes(sNum))) || shots[0];
                 const sUrl = sObj ? sObj.url : '';
+                const sMtime = sObj ? sObj.mtime : null;
                 return `
                   <span class="protocol-comment-thumb-wrap" onclick="event.stopPropagation(); jumpToShot('${prod.id}', '${sNum}')" title="Klicka för att se Bild ${sNum} i fullskärm">
-                    ${sUrl ? `<img src="${sizedUrl(sUrl, 160)}" class="protocol-comment-thumb" alt="${sNum}" loading="lazy">` : ''}
+                    ${sUrl ? `<img src="${sizedUrl(sUrl, 160, sMtime)}" class="protocol-comment-thumb" alt="${sNum}" loading="lazy">` : ''}
                     <span class="comment-shot-badge" style="font-size:10px; padding:1px 5px;">📸 ${sNum} ↗</span>
                   </span>
                 `;
@@ -6278,7 +6331,7 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td style="cursor: pointer;" onclick="openProtocolDetailModal('${prod.id}')" title="Klicka för att se stort och kommentera">
-            <img src="${shot01.thumb_url || shot01.url || ''}" loading="lazy" onerror="handleImageError(this)" style="width: 44px; height: 44px; object-fit: contain; background: #fff; border-radius: 6px; border: 1px solid var(--border-color); transition: transform 0.15s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">
+            <img src="${withCacheBust(shot01.thumb_url || shot01.url || '', shot01.mtime)}" loading="lazy" onerror="handleImageError(this)" style="width: 44px; height: 44px; object-fit: contain; background: #fff; border-radius: 6px; border: 1px solid var(--border-color); transition: transform 0.15s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">
           </td>
           <td style="font-weight: 700; color: #fff; cursor: pointer;" onclick="openProtocolDetailModal('${prod.id}')">${prod.model}${vReportTag}</td>
           <td style="cursor: pointer;" onclick="openProtocolDetailModal('${prod.id}')">${prod.color}</td>
@@ -7072,8 +7125,8 @@
         if (btnVidFs) btnVidFs.style.display = 'inline-flex';
         if (vid) {
           vid.style.display = 'block';
-          vid.src = activeShot.url || '';
-          vid.poster = sizedUrl(activeShot.url, 600);
+          vid.src = withCacheBust(activeShot.url || '', activeShot.mtime);
+          vid.poster = sizedUrl(activeShot.url, 600, activeShot.mtime);
           vid.play().catch(() => {});
         }
       } else {
@@ -7084,7 +7137,7 @@
           vid.style.display = 'none';
         }
         img.style.display = 'block';
-        img.src = activeShot.url || '';
+        img.src = withCacheBust(activeShot.url || '', activeShot.mtime);
       }
       img.dataset.filename = activeShot.filename || '';
       zoomLevel = 1; panX = 0; panY = 0;
@@ -7615,21 +7668,28 @@
     // --- REAL-TIME BACKGROUND SYNC WITH MOBILE ---
     let lastSyncDesktopReviewsStr = '';
     setInterval(async () => {
-      if (document.hidden || !state.currentBatchId) return;
+      if (document.hidden || !state.currentBatchId || isAnyVideoPlaying()) return;
       try {
         const res = await fetch(`/api/reviews?batch=${encodeURIComponent(state.currentBatchId)}`);
         const data = await res.json();
+        if (isAnyVideoPlaying()) return;
         if (data && data.reviews) {
           const newStr = JSON.stringify(data.reviews);
-          if (lastSyncDesktopReviewsStr && newStr !== lastSyncDesktopReviewsStr) {
+          if (lastSyncDesktopReviewsStr && newStr !== lastSyncDesktopReviewsStr && newStr !== JSON.stringify(state.reviews)) {
+            const prevReviews = state.reviews || {};
+            const currentProd = state.products[state.currentProductIndex];
+            const currentProdId = currentProd ? currentProd.id : null;
+            const currentProdReviewChanged = currentProdId
+              ? JSON.stringify(prevReviews[currentProdId] || {}) !== JSON.stringify(data.reviews[currentProdId] || {})
+              : false;
             state.reviews = data.reviews;
             updateQAStats();
             renderReportTable();
             renderProductSidebar();
-            if (state.currentMode === 'angle') renderAngleGrid();
+            if (state.currentMode === 'angle' && currentProdReviewChanged && !isAnyVideoPlaying()) renderAngleGrid();
             if (state.currentMode === 'product') {
               renderProductSidebar();
-              renderCommentsFeed();
+              if (currentProdReviewChanged) renderCommentsFeed();
             }
           }
           lastSyncDesktopReviewsStr = newStr;

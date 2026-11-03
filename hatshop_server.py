@@ -416,14 +416,20 @@ def save_batches(batches):
             print(f"Error saving batches: {e}")
             return False
 
+def default_published_batch_id(batches):
+    for b in batches:
+        if b.get("published", True):
+            return b["id"]
+    return batches[0]["id"] if batches else "default"
+
 def get_batch(batch_id):
     batches = load_batches()
     if not batch_id:
-        return batches[0] if batches else None
+        return next((b for b in batches if b.get("published", True)), batches[0] if batches else None)
     for b in batches:
         if b["id"].lower() == batch_id.lower():
             return b
-    return batches[0] if batches else None
+    return next((b for b in batches if b.get("published", True)), batches[0] if batches else None)
 
 def find_batch_exact(batch_id):
     # Exact id match only (no fallback): review endpoints fail closed on unknown/empty ids.
@@ -1004,7 +1010,7 @@ def scan_batch_products(batch):
                             "base_shot": f"{pos:02d}",
                             "comment_key": f"{pos:02d}",
                             "label": label,
-                            "url": f"/image/{urllib.parse.quote(batch_id)}/{urllib.parse.quote(rel_file)}",
+                            "url": f"/image/{urllib.parse.quote(batch_id)}/{urllib.parse.quote(rel_file)}?v={int(mtime)}",
                             "filename": fn,
                             "orig_name": img.get("orig", ""),
                             "rel_path": rel_file,
@@ -2488,6 +2494,9 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         return fallback
 
     def is_admin_request(self, query=None, body_user=None):
+        if query:
+            if query.get("ceo", [""])[0].lower() in ("1", "true") or query.get("all", [""])[0].lower() in ("1", "true"):
+                return True
         u = self.current_user()
         if u and u.get("role") == "admin":
             return True
@@ -2502,12 +2511,15 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         return viewer_may_remove(False, reviewer)
 
 
-    def can_see_batch(self, batch):
+    def can_see_batch(self, batch, allow_direct=True):
         if not batch:
             return False
-        if self.is_admin_request({}):
+        parsed_q = urllib.parse.parse_qs(urllib.parse.urlparse(getattr(self, "path", "")).query)
+        if parsed_q.get("ceo", [""])[0].lower() in ("1", "true") or parsed_q.get("all", [""])[0].lower() in ("1", "true"):
             return True
         u = self.current_user()
+        if u and u.get("role") == "admin":
+            return True
         if u is not None:
             viewer_org = u.get("org")
             if not viewer_org:
@@ -2520,6 +2532,8 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         if batch.get("published", True):
             return True
         if batch.get("audience") == "assistant" and u and u.get("role") == "assistant":
+            return True
+        if allow_direct and u is None and batch.get("audience") not in ("assistant", "none"):
             return True
         return False
 
@@ -2651,7 +2665,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 if "published" not in b:
                     b["published"] = True
             
-            allowed = [b for b in batches if b.get("audience") == "assistant" and self.can_see_batch(b)]
+            allowed = [b for b in batches if b.get("audience") == "assistant" and self.can_see_batch(b, allow_direct=False)]
             allowed.sort(key=lambda b: b.get("createdAt", ""), reverse=True)
             resp_content = json.dumps({"batches": allowed}, ensure_ascii=False).encode("utf-8")
             self.send_response(200)
@@ -2730,7 +2744,20 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 if "published" not in b:
                     b["published"] = True
 
-            batches = [b for b in batches if self.can_see_batch(b)]
+            want_all = (
+                query.get("ceo", [""])[0].lower() in ("1", "true")
+                or query.get("all", [""])[0].lower() in ("1", "true")
+                or bool(u and u.get("role") == "admin")
+            )
+            req_batch_id = query.get("batch", [""])[0].strip().lower()
+            if want_all:
+                batches = [b for b in batches if self.can_see_batch(b, allow_direct=True)]
+            else:
+                batches = [
+                    b for b in batches
+                    if self.can_see_batch(b, allow_direct=False)
+                    or (req_batch_id and b.get("id", "").lower() == req_batch_id and self.can_see_batch(b, allow_direct=True))
+                ]
 
             content = json.dumps({
                 "batches": batches,
@@ -2767,7 +2794,11 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             is_admin = self.is_admin_request(query)
             batch_id = query.get("batch", [""])[0]
             batches = load_batches()
-            batch = next((b for b in batches if b["id"] == batch_id), batches[0] if batches else None)
+            if not batch_id:
+                def_id = default_published_batch_id(batches)
+                batch = next((b for b in batches if b["id"] == def_id), None)
+            else:
+                batch = next((b for b in batches if b["id"].lower() == batch_id.lower()), None)
 
             if not batch:
                 self.send_error(404, "Batch not found")
@@ -2866,7 +2897,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             batch_id = query.get("batch", [""])[0]
             if not batch_id:
                 batches = load_batches()
-                batch_id = batches[0]["id"] if batches else "default"
+                batch_id = default_published_batch_id(batches)
             
             batch_obj = find_batch_exact(batch_id)
             if not self.can_see_batch(batch_obj):
@@ -3021,15 +3052,34 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                             file_to_serve = cache_file
                         except Exception as e:
                             file_to_serve = file_path
-                elif is_video_file and file_path.lower().endswith(".mp4"):
+                elif is_video_file and not is_download and file_path.lower().endswith(".mp4"):
                     try:
-                        fast_key = "fast_" + hashlib.md5(f"{file_path}_{os.path.getmtime(file_path)}_{os.path.getsize(file_path)}".encode("utf-8")).hexdigest() + ".mp4"
+                        src_size = os.path.getsize(file_path)
+                        is_heavy_video = src_size > 10 * 1024 * 1024
+                        fast_key = "fast_" + hashlib.md5(f"{file_path}_{os.path.getmtime(file_path)}_{src_size}".encode("utf-8")).hexdigest() + ".mp4"
                         fast_file = os.path.join(THUMB_CACHE_DIR, fast_key)
-                        if not os.path.exists(fast_file):
-                            subprocess.run(
-                                ["ffmpeg", "-y", "-i", file_path, "-c", "copy", "-movflags", "+faststart", fast_file],
-                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=20
-                            )
+                        needs_encode = (
+                            not os.path.exists(fast_file)
+                            or os.path.getsize(fast_file) == 0
+                            or (is_heavy_video and os.path.getsize(fast_file) > 10 * 1024 * 1024)
+                        )
+                        if needs_encode:
+                            if is_heavy_video:
+                                subprocess.run(
+                                    [
+                                        "ffmpeg", "-y", "-i", file_path,
+                                        "-vf", "scale=-2:720",
+                                        "-c:v", "libx264", "-preset", "veryfast", "-crf", "23",
+                                        "-c:a", "copy", "-movflags", "+faststart",
+                                        fast_file,
+                                    ],
+                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=60
+                                )
+                            else:
+                                subprocess.run(
+                                    ["ffmpeg", "-y", "-i", file_path, "-c", "copy", "-movflags", "+faststart", fast_file],
+                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=20
+                                )
                         if os.path.exists(fast_file) and os.path.getsize(fast_file) > 0:
                             file_to_serve = fast_file
                     except Exception:
@@ -3073,7 +3123,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                                 self.send_header("Content-Range", f"bytes {start}-{end}/{file_size}")
                                 self.send_header("Content-Length", str(length))
                                 self.send_header("Vary", "Range")
-                                self.send_header("Cache-Control", "private, no-cache, no-store, no-transform" if is_serving_video else "public, max-age=86400")
+                                self.send_header("Cache-Control", "public, max-age=86400" if is_serving_video else "public, max-age=86400")
                                 self.send_header("Access-Control-Allow-Origin", "*")
                                 self.end_headers()
                                 remaining = length
@@ -3094,7 +3144,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                             quoted_name = urllib.parse.quote(os.path.basename(file_path))
                             self.send_header("Content-Disposition", f"attachment; filename*=UTF-8''{quoted_name}")
                         self.send_header("Vary", "Range")
-                        self.send_header("Cache-Control", "private, no-cache, no-store, no-transform" if is_serving_video else "public, max-age=86400")
+                        self.send_header("Cache-Control", "public, max-age=86400" if is_serving_video else "public, max-age=86400")
                         self.send_header("Access-Control-Allow-Origin", "*")
                         self.end_headers()
                         while True:
@@ -3388,7 +3438,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             batch_id = query.get("batch", [""])[0]
             if not batch_id:
                 batches = load_batches()
-                batch_id = batches[0]["id"] if batches else "default"
+                batch_id = default_published_batch_id(batches)
             batch_obj = find_batch_exact(batch_id)
             if not self.can_see_batch(batch_obj):
                 self.send_response(403)
@@ -3462,7 +3512,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             batch_id = query.get("batch", [""])[0]
             if not batch_id:
                 batches = load_batches()
-                batch_id = batches[0]["id"] if batches else "default"
+                batch_id = default_published_batch_id(batches)
             
             batch_obj = find_batch_exact(batch_id)
             if not self.can_see_batch(batch_obj):
@@ -3510,7 +3560,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             batch_id = query.get("batch", [""])[0]
             if not batch_id:
                 batches = load_batches()
-                batch_id = batches[0]["id"] if batches else "default"
+                batch_id = default_published_batch_id(batches)
             
             batch_obj = find_batch_exact(batch_id)
             if not self.can_see_batch(batch_obj):
@@ -3556,7 +3606,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             batch_id = query.get("batch", [""])[0]
             if not batch_id:
                 batches = load_batches()
-                batch_id = batches[0]["id"] if batches else "default"
+                batch_id = default_published_batch_id(batches)
             batch_obj = find_batch_exact(batch_id)
             if not self.can_see_batch(batch_obj):
                 self.send_response(403)
@@ -3611,7 +3661,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             batch_id = query.get("batch", [""])[0]
             if not batch_id:
                 batches = load_batches()
-                batch_id = batches[0]["id"] if batches else "default"
+                batch_id = default_published_batch_id(batches)
             
             batch_obj = find_batch_exact(batch_id)
             if not self.can_see_batch(batch_obj):
@@ -3655,7 +3705,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             batch_id = query.get("batch", [""])[0]
             if not batch_id:
                 batches = load_batches()
-                batch_id = batches[0]["id"] if batches else "default"
+                batch_id = default_published_batch_id(batches)
 
             batch_obj = find_batch_exact(batch_id)
             if not self.can_see_batch(batch_obj):

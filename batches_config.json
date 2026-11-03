@@ -1,26 +1,45 @@
 [
   {
-    "id": "reforma-vag4-6st-ceo-preview-x",
-    "name": "🔒 [PRIVAT FÖRHANDSVISNING] 2026-11-03 Reforma Våg 4 — 3 Rum / 6 Interiörbilder i 2K (Alba, Elverum/Ransäter, Alta)",
-    "path": "C:\\Users\\AndronikLindgren\\scratch\\Projects\\Reforma_Flow_Gratis_Vag4\\ceo_preview_6st_2k",
+    "id": "reforma-video-1080p-100x-ceo-preview-x",
+    "name": "2026-11-03 PRIVAT FÖRHANDSGRANSKNING – Reforma Möbelvideor 1080p (1.00x)-x",
+    "path": "C:\\Users\\AndronikLindgren\\scratch\\Projects\\Reforma_Flow_Video_v1\\ceo_preview_1080p_100x",
     "category": "mattor_inredning",
-    "org": "reforma",
+    "org": "cama",
+    "published": true,
+    "createdAt": "2026-11-03T21:15:00.000000"
+  },
+  {
+    "id": "tc-pillow-narbilder-fix-ceo-preview-x",
+    "name": "2026-11-03 PRIVAT FÖRHANDSGRANSKNING – TC-Pillow Närbilder (Mer kontrast & kontur)-x",
+    "path": "C:\\Users\\AndronikLindgren\\scratch\\Projects\\TC_Pillow_Narbilder_Fix\\ceo_preview_x",
+    "category": "mattor_inredning",
+    "org": "cama",
     "onedrive_url": "",
-    "published": false,
-    "ceo_only": true,
-    "content_kind": "ai",
-    "createdAt": "2026-11-03T17:26:00.000000"
+    "published": true,
+    "content_kind": "studio",
+    "createdAt": "2026-11-03T19:30:00.000000"
   },
   {
     "id": "tc-video-1080p-100x-ceo-preview-x",
-    "name": "🔒 [PRIVAT FÖRHANDSVISNING] 2026-11-03 Trendcarpet 9 st 1080p 1.00x-videor (Merida 4, Kanha 2, Batumi 2, Almeria 1)",
+    "name": "2026-11-03 PRIVAT FÖRHANDSGRANSKNING – 9 st 1080p Videor (1.00x)-x",
     "path": "C:\\Users\\AndronikLindgren\\scratch\\Projects\\TC_Clean_100x_Videos\\ceo_preview_9st_1080p",
     "category": "mattor_inredning",
     "org": "cama",
     "onedrive_url": "",
-    "published": false,
-    "ceo_only": true,
-    "createdAt": "2026-11-03T16:55:00.000000"
+    "published": true,
+    "content_kind": "ai",
+    "createdAt": "2026-11-03T18:10:00.000000"
+  },
+  {
+    "id": "reforma-vag4-6st-ceo-preview-x",
+    "name": "2026-11-03 PRIVAT FÖRHANDSGRANSKNING – Reforma Våg 4 Interiör (6 bilder)-x",
+    "path": "C:\\Users\\AndronikLindgren\\scratch\\Projects\\Reforma_Flow_Gratis_Vag4\\ceo_preview_6st_2k",
+    "category": "mattor_inredning",
+    "org": "cama",
+    "onedrive_url": "",
+    "published": true,
+    "content_kind": "ai",
+    "createdAt": "2026-11-03T18:09:00.000000"
   },
   {
     "id": "26-10-29-merida-ik100102114-komplett",
@@ -78,7 +97,7 @@
     "name": "Reforma – Antigravity Flow Interiörer (11 rum, 48 formatbilder + möbelref)",
     "path": "C:\\Users\\AndronikLindgren\\flow-vibes\\26-10-19-ag-reforma-interiors",
     "category": "mattor_inredning",
-    "org": "reforma",
+    "org": "cama",
     "published": true,
     "createdAt": "2026-10-19T12:30:00Z",
     "content_kind": "ai",
@@ -225,9 +244,9 @@
     "name": "Flow-vibbar Rum (godkända, 86 bilder)",
     "path": "C:\\Users\\AndronikLindgren\\flow-vibes\\rum",
     "category": "mattor_inredning",
-    "published": false,
+    "published": true,
     "createdAt": "2026-10-04T16:59:51.731107+00:00",
-    "org": "reforma",
+    "org": "cama",
     "onedrive_url": "https://trendcarpet-my.sharepoint.com/personal/andronik_lindgren_trendcarpet_se/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fandronik_lindgren_trendcarpet_se%2FDocuments%2FPictures%2FFlow_Vibes%2Frum",
     "content_kind": "ai"
   },

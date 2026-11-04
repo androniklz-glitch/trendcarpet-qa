@@ -12,9 +12,157 @@
         ],
         "drawings": [],
         "time": "14:52"
+      },
+      {
+        "id": "c_1793786514850",
+        "author": "Amalia",
+        "text": "Känns väldigt AI! Tycker denna ska bort :)",
+        "shots": [
+          "02"
+        ],
+        "drawings": [],
+        "time": "11:01"
+      },
+      {
+        "id": "c_1793786553846",
+        "author": "Amalia",
+        "text": "Är inte mattan väldigt oklar i storlek/form här?",
+        "shots": [
+          "10"
+        ],
+        "drawings": [],
+        "time": "11:02"
       }
     ],
-    "reviewer": "Anton",
-    "updatedAt": "2026-11-03T14:52:19.351635"
+    "reviewer": "Amalia",
+    "updatedAt": "2026-11-04T11:02:33.846702"
+  },
+  "Ryamattor-Merida-Soft-Shaggy-Brun": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1793786597950",
+        "author": "Amalia",
+        "text": "Väldigt AI, tycker inte denna ska vara med :)",
+        "shots": [
+          "10"
+        ],
+        "drawings": [],
+        "time": "11:03"
+      }
+    ],
+    "reviewer": "Amalia",
+    "updatedAt": "2026-11-04T11:03:17.950258"
+  },
+  "Ryamattor-Merida-Soft-Shaggy-Creme": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1793786652639",
+        "author": "Amalia",
+        "text": "Känns lite AI med inredning som vaser och saker på bord.",
+        "shots": [
+          "10"
+        ],
+        "drawings": [],
+        "time": "11:04"
+      }
+    ],
+    "reviewer": "Amalia",
+    "updatedAt": "2026-11-04T11:04:12.639417"
+  },
+  "Ryamattor-Merida-Soft-Shaggy-Gra": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1793786701465",
+        "author": "Amalia",
+        "text": "Soffan är väldigt tråkig här om vi ska använda den. Annars bra!!",
+        "shots": [
+          "02"
+        ],
+        "drawings": [],
+        "time": "11:05"
+      },
+      {
+        "id": "c_1793786732623",
+        "author": "Amalia",
+        "text": "Oklart med lamporna men annars bra",
+        "shots": [
+          "10"
+        ],
+        "drawings": [],
+        "time": "11:05"
+      }
+    ],
+    "reviewer": "Amalia",
+    "updatedAt": "2026-11-04T11:05:32.623056"
+  },
+  "Ryamattor-Merida-Soft-Shaggy-Lila": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1793786769332",
+        "author": "Amalia",
+        "text": "Fotöljerna försvinner i mattan här, en bra miljö för en ljusare matta?",
+        "shots": [
+          "04"
+        ],
+        "drawings": [],
+        "time": "11:06"
+      },
+      {
+        "id": "c_1793786839077",
+        "author": "Amalia",
+        "text": "Finns mattan i fyrkantig? annars kika mattans mått. Hade tagit bort lykta och pall",
+        "shots": [
+          "09"
+        ],
+        "drawings": [],
+        "time": "11:07"
+      }
+    ],
+    "reviewer": "Amalia",
+    "updatedAt": "2026-11-04T11:07:19.077100"
+  },
+  "Ryamattor-Merida-Soft-Shaggy-Olivgron": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1793786861416",
+        "author": "Amalia",
+        "text": "Stolen som täcker hörnet borde tas bort?",
+        "shots": [
+          "02"
+        ],
+        "drawings": [],
+        "time": "11:07"
+      }
+    ],
+    "reviewer": "Amalia",
+    "updatedAt": "2026-11-04T11:07:41.416987"
+  },
+  "Ryamattor-Merida-Soft-Shaggy-Rod": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1793786910510",
+        "author": "Amalia",
+        "text": "Gillar inte uppsättningen av möbler här! Trångt och lite skumt placerat",
+        "shots": [
+          "04"
+        ],
+        "drawings": [],
+        "time": "11:08"
+      }
+    ],
+    "reviewer": "Amalia",
+    "updatedAt": "2026-11-04T11:08:30.510881"
   }
 }

@@ -1,0 +1,124 @@
+{
+  "IK100102160": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1793792922286",
+        "author": "Amalia",
+        "text": "Tycker det borde vara att man inte ser mattan under sängen att den går ner.",
+        "shots": [
+          "04"
+        ],
+        "drawings": [],
+        "time": "12:48"
+      },
+      {
+        "id": "c_1793792960962",
+        "author": "Amalia",
+        "text": "Storleken på mattan är den ok'?",
+        "shots": [
+          "09"
+        ],
+        "drawings": [],
+        "time": "12:49"
+      },
+      {
+        "id": "c_1793792985213",
+        "author": "Amalia",
+        "text": "Kändes nästan pixlig och för stor mattan för miljön",
+        "shots": [
+          "10"
+        ],
+        "drawings": [],
+        "time": "12:49"
+      }
+    ],
+    "reviewer": "Amalia",
+    "updatedAt": "2026-11-04T12:49:45.213609"
+  },
+  "IK100102161": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1793793036427",
+        "author": "Amalia",
+        "text": "Stämmer storleken på mattan?",
+        "shots": [
+          "04"
+        ],
+        "drawings": [],
+        "time": "12:50"
+      }
+    ],
+    "reviewer": "Amalia",
+    "updatedAt": "2026-11-04T12:50:36.427095"
+  },
+  "IK100102162": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1793793110882",
+        "author": "Amalia",
+        "text": "Tycker denna jämfört med alla andra är lite för clean",
+        "shots": [
+          "02"
+        ],
+        "drawings": [],
+        "time": "12:51"
+      },
+      {
+        "id": "c_1793793162568",
+        "author": "Amalia",
+        "text": "Tycker denna ska bort eller göras mer hemtrevlig! :) Just nu väldigt skum placering av bord och inga detaljer",
+        "shots": [
+          "04"
+        ],
+        "drawings": [],
+        "time": "12:52"
+      },
+      {
+        "id": "c_1793793227944",
+        "author": "Amalia",
+        "text": "Denna tycker jag inte ska vara med. Whisky och skum placering på stol och bord",
+        "shots": [
+          "09"
+        ],
+        "drawings": [],
+        "time": "12:53"
+      },
+      {
+        "id": "c_1793793249905",
+        "author": "Amalia",
+        "text": "Bättre men också mer en studiobild",
+        "shots": [
+          "10"
+        ],
+        "drawings": [],
+        "time": "12:54"
+      }
+    ],
+    "reviewer": "Amalia",
+    "updatedAt": "2026-11-04T12:54:09.905652"
+  },
+  "IK100102163": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1793793280565",
+        "author": "Amalia",
+        "text": "Om man tar bort bänken kalas studiobild",
+        "shots": [
+          "02"
+        ],
+        "drawings": [],
+        "time": "12:54"
+      }
+    ],
+    "reviewer": "Amalia",
+    "updatedAt": "2026-11-04T12:54:40.565692"
+  }
+}

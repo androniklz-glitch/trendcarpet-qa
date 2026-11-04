@@ -1,0 +1,42 @@
+{
+  "01-KAMPANJ-REFORMA-MONTE-100X": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1793739941859",
+        "author": "Andro",
+        "text": "Nej detta är inte deras stil, det är för arty och minimalistiskt, för kryddigt, det ska mer vara vackra hem",
+        "shots": [],
+        "drawings": [],
+        "time": "22:05"
+      },
+      {
+        "id": "c_1793739956675",
+        "author": "Andro",
+        "text": "Dessutom står bordet helt snett",
+        "shots": [],
+        "drawings": [],
+        "time": "22:05"
+      }
+    ],
+    "reviewer": "Andro",
+    "updatedAt": "2026-11-03T22:05:56.675676"
+  },
+  "02-KAMPANJ-REFORMA-MYSHULT-100X": {
+    "status": "pending",
+    "flags": {},
+    "comments": [
+      {
+        "id": "c_1793740008124",
+        "author": "Andro",
+        "text": "För minmalistiskt men ganska snyggt ändå",
+        "shots": [],
+        "drawings": [],
+        "time": "22:06"
+      }
+    ],
+    "reviewer": "Andro",
+    "updatedAt": "2026-11-03T22:06:48.124432"
+  }
+}

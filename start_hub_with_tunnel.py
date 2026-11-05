@@ -110,7 +110,7 @@ socket.getaddrinfo = _patched_getaddrinfo
 def run_server():
     hatshop_server.start_server(PORT)
 
-def update_vercel_config(new_tunnel_url):
+def update_vercel_config(new_tunnel_url, force_deploy=False):
     try:
         current_dest = None
         if os.path.exists(VERCEL_JSON):
@@ -121,7 +121,7 @@ def update_vercel_config(new_tunnel_url):
                     current_dest = redirects[0].get("destination", "")
 
         expected_dest = f"{new_tunnel_url}/$1"
-        if current_dest == expected_dest:
+        if current_dest == expected_dest and not force_deploy:
             print("[*] Vercel-bryggan pekar redan pa ratt tunneladress.")
             return
 
@@ -142,6 +142,18 @@ def update_vercel_config(new_tunnel_url):
         def push_git():
             try:
                 flags = get_win32_subprocess_flags()
+                v_res = subprocess.run(
+                    ["npx.cmd", "vercel", "--prod", "--yes"],
+                    cwd=WORKSPACE_DIR,
+                    capture_output=True,
+                    text=True,
+                    **flags
+                )
+                if v_res.returncode == 0:
+                    print("[✓] Vercel-bryggan synkad direkt via npx.cmd vercel --prod --yes.")
+                else:
+                    print("[!] Direkt Vercel-deploy gav varning:", (v_res.stderr or v_res.stdout).strip())
+
                 git_env = os.environ.copy()
                 git_env.pop("GITHUB_TOKEN", None)
                 subprocess.run(["git", "add", "vercel.json"], cwd=WORKSPACE_DIR, capture_output=True, env=git_env, **flags)
@@ -153,7 +165,7 @@ def update_vercel_config(new_tunnel_url):
                 else:
                     print("[!] Kunde inte pusha till GitHub:", res.stderr.strip())
             except Exception as e:
-                print("[!] Fel vid git-synk:", e)
+                print("[!] Fel vid Vercel/git-synk:", e)
 
         threading.Thread(target=push_git, daemon=True).start()
     except Exception as e:
@@ -172,19 +184,18 @@ def wait_for_internet(timeout=60):
     return False
 
 def main():
-    if is_already_running(PORT):
-        print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] [*] Trendcarpet QA Hub kors redan pa port {PORT}. Avbryter start av dubblett.")
-        sys.exit(0)
-
     print("==================================================================")
     print(" QA FOTO- & RETUSCH-HUBB (PERMANENT VERCEL-LANK)")
     print("==================================================================")
 
-    server_thread = threading.Thread(target=run_server, daemon=True)
-    server_thread.start()
-    time.sleep(1)
-    print(f"[*] Lokal server kors pa: http://localhost:{PORT}")
-    print(f"[*] Kontorsnatverk (Wi-Fi): http://192.168.2.33:{PORT}")
+    if is_already_running(PORT):
+        print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] [*] Lokal server kors redan pa port {PORT}. Hoppar over server_thread.start() och fortsatter med Cloudflare-tunnel...")
+    else:
+        server_thread = threading.Thread(target=run_server, daemon=True)
+        server_thread.start()
+        time.sleep(1)
+        print(f"[*] Lokal server kors pa: http://localhost:{PORT}")
+        print(f"[*] Kontorsnatverk (Wi-Fi): http://192.168.2.33:{PORT}")
 
     with open(LINK_FILE, "w", encoding="utf-8") as f:
         f.write(PERMANENT_VERCEL_URL)

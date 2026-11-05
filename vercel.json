@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://shortly-pig-bathrooms-guy.trycloudflare.com/$1"
+      "destination": "https://focuses-soviet-tier-patient.trycloudflare.com/$1"
     }
   ]
 }

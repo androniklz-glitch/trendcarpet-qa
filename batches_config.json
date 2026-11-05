@@ -1,25 +1,36 @@
 [
   {
-    "id": "26-11-04-reforma-vackra-hem-new-interiors",
-    "name": "✨ 2026-11-04 Reforma Sthlm — Vackra hem nya miljöbilder (3:4 & 9:16 2K) — 7 möbelserier (27 miljöbilder)",
-    "path": "C:\\Users\\AndronikLindgren\\scratch\\Projects\\26-11-04-reforma-vackra-hem-new-interiors",
+    "id": "26-10-30-tc-pillow-v6-fardig-leverans-v2-X",
+    "name": "✨ 26-10-30-tc-pillow-v6-fardig-leverans-v2-X (11 modeller — Nya Sweetspot Studio + Interiörer, 60 bilder)",
+    "path": "C:\\Users\\AndronikLindgren\\scratch\\Projects\\26-10-30-tc-pillow-v6-fardig-leverans-v2-X",
     "category": "mattor_inredning",
-    "org": "reforma",
+    "org": "cama",
     "onedrive_url": "",
     "published": true,
-    "content_kind": "ai",
-    "createdAt": "2026-11-04T22:30:00.000000"
+    "content_kind": "studio",
+    "createdAt": "2026-11-05T11:55:00.000000"
   },
   {
     "id": "26-10-09-charrone-new-interiors",
-    "name": "26-10-09-charrone-new-interiors (Charonne Creme CIE LAB Jämnt Ljus: Variant A + Variant B Rugvista-ton + Före/Efter)",
+    "name": "26-10-09-charrone-new-interiors (Charonne Creme: Jämnt Ljus med 100 % Bevarad Original Creme-Ullton + Före/Efter)",
     "path": "C:\\Users\\AndronikLindgren\\scratch\\Projects\\26-10-09-charrone-new-interiors",
     "category": "mattor_inredning",
     "org": "cama",
     "onedrive_url": "",
     "published": true,
     "content_kind": "studio",
-    "createdAt": "2026-11-04T15:35:00.000000"
+    "createdAt": "2026-11-05T11:45:00.000000"
+  },
+  {
+    "id": "26-11-04-reforma-vackra-hem-new-interiors",
+    "name": "✨ 2026-11-04 Reforma Sthlm — Vackra hem nya miljöbilder (3:4 & 9:16 2K) — 7 möbelserier (27 miljöbilder)",
+    "path": "C:\\Users\\AndronikLindgren\\scratch\\Projects\\26-11-04-reforma-vackra-hem-new-interiors",
+    "category": "mattor_inredning",
+    "org": "reforma",
+    "onedrive_url": "",
+    "published": false,
+    "content_kind": "ai",
+    "createdAt": "2026-11-04T22:30:00.000000"
   },
   {
     "id": "26-10-30-kanha-batumi-new-interiors",
@@ -49,19 +60,8 @@
     "path": "C:\\Users\\AndronikLindgren\\scratch\\Projects\\Reforma_Flow_Video_v1\\ceo_preview_1080p_100x",
     "category": "mattor_inredning",
     "org": "cama",
-    "published": true,
+    "published": false,
     "createdAt": "2026-11-03T21:15:00.000000"
-  },
-  {
-    "id": "tc-pillow-narbilder-fix-ceo-preview-x",
-    "name": "2026-11-03 PRIVAT FÖRHANDSGRANSKNING – TC-Pillow Närbilder (Mer kontrast & kontur)-x",
-    "path": "C:\\Users\\AndronikLindgren\\scratch\\Projects\\TC_Pillow_Narbilder_Fix\\ceo_preview_x",
-    "category": "mattor_inredning",
-    "org": "cama",
-    "onedrive_url": "",
-    "published": true,
-    "content_kind": "studio",
-    "createdAt": "2026-11-03T19:30:00.000000"
   },
   {
     "id": "tc-video-1080p-100x-ceo-preview-x",
@@ -70,7 +70,7 @@
     "category": "mattor_inredning",
     "org": "cama",
     "onedrive_url": "",
-    "published": true,
+    "published": false,
     "content_kind": "ai",
     "createdAt": "2026-11-03T18:10:00.000000"
   },
@@ -81,7 +81,7 @@
     "category": "mattor_inredning",
     "org": "cama",
     "onedrive_url": "",
-    "published": true,
+    "published": false,
     "content_kind": "ai",
     "createdAt": "2026-11-03T18:09:00.000000"
   },
@@ -114,16 +114,6 @@
     "published": true,
     "createdAt": "2026-11-03T12:50:00.000000",
     "org": "cama"
-  },
-  {
-    "id": "26-10-30-tc-pillow-v6-fardig-leverans",
-    "name": "2026-11-03 TC-Pillow Kuddfodral (Selena, Avafors, Talvia) – Komplett Leverans + Video (11 modeller)",
-    "path": "C:\\Users\\AndronikLindgren\\OneDrive - CaMa Gruppen AB\\Pictures\\26-10-30-tc-pillow-v6-fardig-leverans-x",
-    "category": "mattor_inredning",
-    "org": "cama",
-    "onedrive_url": "https://trendcarpet-my.sharepoint.com/personal/andronik_lindgren_trendcarpet_se/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fandronik_lindgren_trendcarpet_se%2FDocuments%2FPictures%2F26-10-30-tc-pillow-v6-fardig-leverans-x",
-    "published": true,
-    "createdAt": "2026-11-03T08:35:00.000000"
   },
   {
     "id": "26-10-19-garda-ranger-morkgra",

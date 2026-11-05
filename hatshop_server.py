@@ -450,32 +450,78 @@ def find_batch_by_path(batches, path):
             return b
     return None
 
+QA_DECISIONS_FILE = os.path.join(WORKSPACE_DIR, "qa_decisions.json")
+
+def sync_qa_decisions(batch_id=None, batch_reviews=None):
+    try:
+        data = {}
+        if os.path.exists(QA_DECISIONS_FILE):
+            try:
+                with open(QA_DECISIONS_FILE, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+            except Exception:
+                data = {}
+        if batch_id and batch_reviews is not None:
+            data[batch_id] = batch_reviews
+        else:
+            for fn in os.listdir(REVIEWS_DIR):
+                if fn.startswith("reviews_") and fn.endswith(".json"):
+                    b_id = fn[len("reviews_"):-len(".json")]
+                    try:
+                        with open(os.path.join(REVIEWS_DIR, fn), "r", encoding="utf-8") as rf:
+                            data[b_id] = json.load(rf)
+                    except Exception:
+                        pass
+        with open(QA_DECISIONS_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        return True
+    except Exception as e:
+        print(f"Error syncing qa_decisions.json: {e}")
+        return False
+
 def get_review_file(batch_id):
     safe_id = re.sub(r'[^a-zA-Z0-9_\-]', '_', batch_id)
     return os.path.join(REVIEWS_DIR, f"reviews_{safe_id}.json")
 
 def load_reviews(batch_id):
     rf = get_review_file(batch_id)
+    reviews_data = {}
     if os.path.exists(rf):
         try:
             with open(rf, "r", encoding="utf-8") as f:
-                return json.load(f)
+                reviews_data = json.load(f)
         except Exception:
-            return {}
-    legacy = os.path.join(REVIEWS_DIR, "hatshop_review_status.json")
-    if batch_id == "26-08-28-hatshop-black-river" and os.path.exists(legacy):
-        try:
-            with open(legacy, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            return {}
-    return {}
+            reviews_data = {}
+    else:
+        legacy = os.path.join(REVIEWS_DIR, "hatshop_review_status.json")
+        if batch_id == "26-08-28-hatshop-black-river" and os.path.exists(legacy):
+            try:
+                with open(legacy, "r", encoding="utf-8") as f:
+                    reviews_data = json.load(f)
+            except Exception:
+                reviews_data = {}
+
+    safe_bid = str(batch_id or "").lower()
+    auto_resolved_batches = [
+        "26-10-30-kanha-batumi",
+        "26-10-29-merida-ik100102114",
+        "26-10-09-charrone"
+    ]
+    if any(ab in safe_bid for ab in auto_resolved_batches) and ("-new-interiors" not in safe_bid) and reviews_data:
+        for pdata in reviews_data.values():
+            if isinstance(pdata, dict) and "comments" in pdata:
+                for c in pdata["comments"]:
+                    if "resolved" not in c:
+                        c["resolved"] = True
+
+    return reviews_data
 
 def save_reviews(batch_id, data):
     rf = get_review_file(batch_id)
     try:
         with open(rf, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
+        sync_qa_decisions(batch_id, data)
         return True
     except Exception as e:
         print(f"Error saving reviews: {e}")
@@ -3490,7 +3536,8 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                     "text": text,
                     "shots": shots,
                     "drawings": drawings,
-                    "time": datetime.datetime.now().strftime("%H:%M")
+                    "time": datetime.datetime.now().strftime("%H:%M"),
+                    "resolved": False
                 }
                 current_reviews[pid]["comments"].append(new_comment)
                 current_reviews[pid]["reviewer"] = author
@@ -3600,6 +3647,59 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 return
             except Exception as e:
                 self.send_error(400, f"React error: {e}")
+                return
+
+        elif path in ["/api/comment/resolve", "/api/comment/toggle_resolve"]:
+            batch_id = query.get("batch", [""])[0]
+            if not batch_id:
+                batches = load_batches()
+                batch_id = default_published_batch_id(batches)
+            
+            batch_obj = find_batch_exact(batch_id)
+            if not self.can_see_batch(batch_obj):
+                self.send_error(404, "Batch not found")
+                return
+
+            content_length = int(self.headers.get("Content-Length", 0))
+            post_data = self.rfile.read(content_length)
+            try:
+                body = json.loads(post_data.decode("utf-8"))
+                pid = body.get("product_id")
+                comment_id = body.get("comment_id")
+                has_resolved_arg = "resolved" in body
+                target_resolved = bool(body.get("resolved")) if has_resolved_arg else None
+
+                current_reviews = load_reviews(batch_id)
+                new_state = True
+                if pid in current_reviews:
+                    if comment_id == "legacy":
+                        if has_resolved_arg:
+                            new_state = target_resolved
+                        else:
+                            new_state = not bool(current_reviews[pid].get("notes_resolved", False))
+                        current_reviews[pid]["notes_resolved"] = new_state
+                    elif "comments" in current_reviews[pid]:
+                        for c in current_reviews[pid]["comments"]:
+                            if c.get("id") == comment_id:
+                                if has_resolved_arg:
+                                    new_state = target_resolved
+                                else:
+                                    new_state = not bool(c.get("resolved", False))
+                                c["resolved"] = new_state
+                                new_state = c["resolved"]
+                                break
+                    current_reviews[pid]["updatedAt"] = datetime.datetime.now().isoformat()
+                    save_reviews(batch_id, current_reviews)
+
+                resp = json.dumps({"status": "ok", "resolved": new_state, "reviews": current_reviews}).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(resp)
+                return
+            except Exception as e:
+                self.send_error(400, f"Resolve comment error: {e}")
                 return
 
         elif path == "/api/review":

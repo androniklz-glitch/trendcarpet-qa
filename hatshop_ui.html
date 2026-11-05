@@ -1458,6 +1458,54 @@
       word-break: break-word;
       font-size: 12px;
     }
+    .comment-text.resolved {
+      text-decoration: line-through;
+      text-decoration-color: #e11d48;
+      text-decoration-thickness: 2px;
+      opacity: 0.75;
+    }
+    .comment-resolved-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(225, 29, 72, 0.16);
+      color: #fb7185;
+      border: 1px solid rgba(225, 29, 72, 0.5);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      padding: 1px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      margin-left: 5px;
+      vertical-align: middle;
+    }
+    .comment-resolve-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #94a3b8;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      line-height: 1.2;
+    }
+    .comment-resolve-btn:hover {
+      background: rgba(225, 29, 72, 0.16);
+      border-color: rgba(225, 29, 72, 0.45);
+      color: #fb7185;
+    }
+    .comment-resolve-btn.is-resolved {
+      background: rgba(225, 29, 72, 0.22);
+      border-color: #e11d48;
+      color: #fda4af;
+      font-weight: 700;
+    }
     .comment-footer {
       display: flex;
       align-items: center;
@@ -2943,27 +2991,32 @@
 
   <script>
     let isHubOffline = false;
-    function setHubReachability(online) {
-      const banner = document.getElementById('hubOfflineBanner');
-      if (!online) {
-        if (!isHubOffline) {
-          isHubOffline = true;
-          if (banner) banner.style.display = 'block';
-        }
-      } else {
-        if (isHubOffline) {
-          isHubOffline = false;
-          if (banner) banner.style.display = 'none';
-          // Reload the current batch's products once when back online
-          setTimeout(() => {
-            if (state.currentBatchId) {
-              const currentProdId = state.products[state.currentProductIndex]?.id || null;
-              reloadBatchProducts(currentProdId);
-            } else {
-              initBatches();
-            }
-          }, 0);
-        }
+    let consecutiveApiFailures = 0;
+    const OFFLINE_FAILURE_THRESHOLD = 3;
+
+    function recordApiSuccess() {
+      consecutiveApiFailures = 0;
+      if (isHubOffline) {
+        isHubOffline = false;
+        const banner = document.getElementById('hubOfflineBanner');
+        if (banner) banner.style.display = 'none';
+        setTimeout(() => {
+          if (state.currentBatchId) {
+            const currentProdId = state.products[state.currentProductIndex]?.id || null;
+            reloadBatchProducts(currentProdId);
+          } else {
+            initBatches();
+          }
+        }, 150);
+      }
+    }
+
+    function recordApiFailure() {
+      consecutiveApiFailures++;
+      if (consecutiveApiFailures >= OFFLINE_FAILURE_THRESHOLD && !isHubOffline) {
+        isHubOffline = true;
+        const banner = document.getElementById('hubOfflineBanner');
+        if (banner) banner.style.display = 'block';
       }
     }
 
@@ -2981,15 +3034,15 @@
         const res = await _origFetch.call(this, url, options);
         if (isApiCall) {
           if ([502, 503, 504, 530].includes(res.status)) {
-            setHubReachability(false);
-          } else {
-            setHubReachability(true);
+            recordApiFailure();
+          } else if (res.ok || (res.status >= 200 && res.status < 400)) {
+            recordApiSuccess();
           }
         }
         return res;
       } catch (err) {
-        if (isApiCall) {
-          setHubReachability(false);
+        if (isApiCall && err && err.name !== 'AbortError') {
+          recordApiFailure();
         }
         throw err;
       }
@@ -3408,6 +3461,7 @@
           const res = await fetch('/api/batches?reviewer=' + encodeURIComponent(state.reviewer || ''), { cache: 'no-store' });
           const latency = Math.round(performance.now() - t0);
           if (res.ok) {
+            window._hbFailures = 0;
             dot.style.background = '#10b981';
             dot.style.boxShadow = '0 0 6px #10b981';
             txt.innerText = `Online (${latency}ms)`;
@@ -3418,12 +3472,16 @@
             throw new Error('Status ' + res.status);
           }
         } catch (e) {
-          dot.style.background = '#ef4444';
-          dot.style.boxShadow = '0 0 6px #ef4444';
-          txt.innerText = 'Nerkopplad...';
-          badge.style.borderColor = 'rgba(239, 68, 68, 0.4)';
-          badge.style.background = 'rgba(239, 68, 68, 0.15)';
-          badge.style.color = '#ef4444';
+          hubHeartbeatFailures = (window._hbFailures || 0) + 1;
+          window._hbFailures = hubHeartbeatFailures;
+          if (hubHeartbeatFailures >= 2) {
+            dot.style.background = '#ef4444';
+            dot.style.boxShadow = '0 0 6px #ef4444';
+            txt.innerText = 'Nerkopplad...';
+            badge.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+            badge.style.background = 'rgba(239, 68, 68, 0.15)';
+            badge.style.color = '#ef4444';
+          }
 
           // If currently stranded on an old trycloudflare or ngrok URL, redirect to permanent Vercel domain!
           if (window.location.hostname.includes('trycloudflare.com') || window.location.hostname.includes('ngrok')) {
@@ -5732,6 +5790,118 @@
       });
     }
 
+    function isCommentResolved(prod, c, batchId) {
+      if (!c) return false;
+      if (c.resolved === true) return true;
+      if (c.resolved === false) return false;
+
+      if (c.id === 'legacy' && prod) {
+        const r = (state.reviews && state.reviews[prod.id]) || {};
+        if (r.notes_resolved === true) return true;
+        if (r.notes_resolved === false) return false;
+      }
+
+      const bId = (batchId || state.currentBatchId || '').toLowerCase();
+      const autoResolvedBatches = [
+        '26-10-30-kanha-batumi',
+        '26-10-29-merida-ik100102114',
+        '26-10-09-charrone',
+        'charonne'
+      ];
+      if (autoResolvedBatches.some(ab => bId.includes(ab) && !bId.includes('-new-interiors'))) {
+        return true;
+      }
+
+      if (c.shots && c.shots.length > 0 && prod) {
+        const availableKeys = new Set();
+        if (prod.variants) {
+          Object.values(prod.variants).forEach(list => {
+            if (Array.isArray(list)) {
+              list.forEach(s => {
+                if (s.shot !== undefined && s.shot !== null) {
+                  const sVal = String(s.shot).toLowerCase().trim();
+                  availableKeys.add(sVal);
+                  const n = parseInt(sVal, 10);
+                  if (!isNaN(n)) {
+                    availableKeys.add(String(n));
+                    availableKeys.add(String(n).padStart(2, '0'));
+                  }
+                }
+                if (s.comment_key) {
+                  const sVal = String(s.comment_key).toLowerCase().trim();
+                  availableKeys.add(sVal);
+                  const n = parseInt(sVal, 10);
+                  if (!isNaN(n)) {
+                    availableKeys.add(String(n));
+                    availableKeys.add(String(n).padStart(2, '0'));
+                  }
+                }
+                if (s.base) {
+                  availableKeys.add(String(s.base).toLowerCase().trim());
+                }
+              });
+            }
+          });
+        }
+        if (availableKeys.size > 0) {
+          const anyShotStillPresent = c.shots.some(s => {
+            const sVal = String(s).toLowerCase().trim();
+            const n = parseInt(sVal, 10);
+            return availableKeys.has(sVal) || (!isNaN(n) && (availableKeys.has(String(n)) || availableKeys.has(String(n).padStart(2, '0'))));
+          });
+          if (!anyShotStillPresent) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    }
+
+    async function toggleCommentResolved(productId, commentId, targetState) {
+      try {
+        const prodReviews = state.reviews[productId];
+        if (prodReviews) {
+          if (commentId === 'legacy') {
+            prodReviews.notes_resolved = targetState;
+          } else if (prodReviews.comments) {
+            const targetComment = prodReviews.comments.find(c => c.id === commentId);
+            if (targetComment) targetComment.resolved = targetState;
+          }
+        }
+        renderCommentsFeed();
+        if (state.currentProtoProductId === productId) {
+          renderProtoCommentsFeed();
+        }
+        if (typeof renderLbCommentsFeed === 'function') {
+          renderLbCommentsFeed();
+        }
+
+        const res = await fetch(`/api/comment/resolve?batch=${encodeURIComponent(state.currentBatchId)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            product_id: productId,
+            comment_id: commentId,
+            resolved: targetState
+          })
+        });
+        const data = await res.json();
+        if (data && data.status === 'ok' && data.reviews) {
+          state.reviews = data.reviews;
+          renderCommentsFeed();
+          if (state.currentProtoProductId === productId) {
+            renderProtoCommentsFeed();
+          }
+          if (typeof renderLbCommentsFeed === 'function') {
+            renderLbCommentsFeed();
+          }
+        }
+      } catch (err) {
+        console.error('Error toggling comment resolved:', err);
+      }
+    }
+
     function buildCommentBubbleHtml(prodId, c) {
       const reactions = c.reactions || {};
       const currentAuthor = state.reviewer || '';
@@ -5784,19 +5954,26 @@
         </div>
       `;
 
+      const prod = (state.products || []).find(p => p.id === prodId) || (state.products && state.products[state.currentProductIndex]);
+      const resolved = isCommentResolved(prod, c, state.currentBatchId);
+      const resolvedBadge = resolved ? `<span class="comment-resolved-badge">ÅTGÄRDAD</span>` : '';
+      const resolveBtn = `<button class="comment-resolve-btn ${resolved ? 'is-resolved' : ''}" onclick="event.stopPropagation(); toggleCommentResolved('${prodId}', '${c.id}', ${!resolved})" title="${resolved ? 'Återställ (markera som ej åtgärdad)' : 'Markera som åtgärdad'}">✓ Åtgärdad</button>`;
+
       return `
         <div class="comment-header">
           <div class="comment-author-wrap">
             <span style="font-size: 11px;">👤</span>
             <span class="comment-author">${escapeHtml(c.author)}</span>
+            ${resolvedBadge}
           </div>
           <div class="comment-header-right">
             <span class="comment-time">${c.time || ''}</span>
+            ${resolveBtn}
             ${deleteBtn}
           </div>
         </div>
         ${badgesRow}
-        <div class="comment-text">${escapeHtml(c.text)}</div>
+        <div class="comment-text ${resolved ? 'resolved' : ''}">${escapeHtml(c.text)}</div>
         <div class="comment-footer">
           <div class="comment-reactions">${reactionsHtml}</div>
           ${emojiBar}

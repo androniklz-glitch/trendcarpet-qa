@@ -194,7 +194,7 @@ def main():
     print(f" >>> {PERMANENT_VERCEL_URL} <<<")
     print("="*66 + "\n")
 
-    proc_container = {"proc": None}
+    proc_container = {"proc": None, "tunnel_url": None}
 
     def start_tunnel():
         if not os.path.exists(CLOUDFLARED_EXE):
@@ -211,6 +211,12 @@ def main():
                     old_proc.kill()
                 except Exception:
                     pass
+        else:
+            try:
+                if sys.platform == "win32":
+                    subprocess.run(["taskkill", "/F", "/IM", "cloudflared.exe"], capture_output=True)
+            except Exception:
+                pass
 
         print("[*] Startar Cloudflare-tunnel (obegransad gratis bandbredd)...")
         flags = get_win32_subprocess_flags()
@@ -236,6 +242,7 @@ def main():
                     if "api.trycloudflare.com" in tunnel_url or "pkg.trycloudflare.com" in tunnel_url:
                         continue
                     tunnel_found = True
+                    proc_container["tunnel_url"] = tunnel_url
                     print(f"\n[✓] Cloudflare aktiv: {tunnel_url}")
                     update_vercel_config(tunnel_url)
                     print(f"[✓] Alla kollegor anvander alltid den fasta lanken: {PERMANENT_VERCEL_URL}\n", flush=True)
@@ -269,10 +276,38 @@ def main():
                 print(f"[{time.strftime('%H:%M:%S')}] [!] Watchdog: Ping misslyckades: {e} (fel {failures}/5)", flush=True)
 
             if failures >= 5:
-                print(f"[{time.strftime('%H:%M:%S')}] [⚠️] WATCHDOG: Sajten har inte svarat pa 5 forsok (~2.5 min). Startar om tunnel...", flush=True)
-                start_tunnel()
-                failures = 0
-                time.sleep(40)
+                current_tun = proc_container.get("tunnel_url")
+                if not current_tun and os.path.exists(VERCEL_JSON):
+                    try:
+                        with open(VERCEL_JSON, "r", encoding="utf-8") as vf:
+                            vdata = json.load(vf)
+                            dest = (vdata.get("rewrites") or vdata.get("redirects", [{}]))[0].get("destination", "")
+                            m = re.match(r"^(https?://[^/]+)", dest)
+                            if m:
+                                current_tun = m.group(1)
+                    except Exception:
+                        pass
+
+                tunnel_alive = False
+                if current_tun:
+                    try:
+                        tun_req = urllib.request.Request(f"{current_tun}/api/batches", headers={"User-Agent": "Trendcarpet-Watchdog/1.0"})
+                        with urllib.request.urlopen(tun_req, timeout=12) as tun_res:
+                            if tun_res.status == 200:
+                                tunnel_alive = True
+                    except Exception:
+                        pass
+
+                if tunnel_alive:
+                    print(f"[{time.strftime('%H:%M:%S')}] [*] Watchdog: Tunneln {current_tun} svarar 200 OK! Dodar INTE cloudflared. Synkar om Vercel vid behov.", flush=True)
+                    update_vercel_config(current_tun)
+                    failures = 0
+                    time.sleep(60)
+                else:
+                    print(f"[{time.strftime('%H:%M:%S')}] [⚠️] WATCHDOG: Varken Vercel eller tunneln har svarat pa 5 forsok. Startar om tunnel...", flush=True)
+                    start_tunnel()
+                    failures = 0
+                    time.sleep(40)
 
     watchdog_thread = threading.Thread(target=watchdog_loop, daemon=True)
     watchdog_thread.start()

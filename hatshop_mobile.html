@@ -663,6 +663,54 @@
     .m-bubble-author { font-weight: 700; color: #93C5FD; }
     .m-bubble-time { color: var(--text-dim); }
     .m-bubble-text { font-size: 13px; line-height: 1.4; color: #F3F4F6; }
+    .m-bubble-text.resolved,
+    .m-popup-comment-text.resolved {
+      text-decoration: line-through;
+      text-decoration-color: #e11d48;
+      text-decoration-thickness: 2px;
+      opacity: 0.75;
+    }
+    .m-comment-resolved-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(225, 29, 72, 0.16);
+      color: #fb7185;
+      border: 1px solid rgba(225, 29, 72, 0.5);
+      font-size: 9.5px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      padding: 1px 5px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+    .m-comment-resolve-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #94a3b8;
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      cursor: pointer;
+      line-height: 1.2;
+    }
+    .m-comment-resolve-btn:hover {
+      background: rgba(225, 29, 72, 0.16);
+      border-color: rgba(225, 29, 72, 0.45);
+      color: #fb7185;
+    }
+    .m-comment-resolve-btn.is-resolved {
+      background: rgba(225, 29, 72, 0.22);
+      border-color: #e11d48;
+      color: #fda4af;
+      font-weight: 700;
+    }
 
     /* Composer in Sheet */
     .m-composer-wrap {
@@ -1929,30 +1977,40 @@
 
   <script>
     let isHubOnline = true;
+    let consecutiveMobileFailures = 0;
+    const MOBILE_OFFLINE_THRESHOLD = 3;
+
     function setHubOnline(online) {
-      if (isHubOnline === online) return;
-      isHubOnline = online;
-      const banner = document.getElementById('offlineBanner');
-      if (banner) {
-        banner.style.display = online ? 'none' : 'block';
-      }
-      const dot = document.getElementById('mHubStatusDot');
-      if (dot) {
-        if (online) {
-          dot.style.background = '#10b981';
-          dot.style.boxShadow = '0 0 5px #10b981';
-          dot.title = 'Online';
-        } else {
-          dot.style.background = '#ef4444';
-          dot.style.boxShadow = '0 0 5px #ef4444';
-          dot.title = 'Offline';
-        }
-      }
       if (online) {
-        if (state.currentBatchId) {
-          loadBatch(state.currentBatchId);
-        } else {
-          initBatches();
+        consecutiveMobileFailures = 0;
+        if (!isHubOnline) {
+          isHubOnline = true;
+          const banner = document.getElementById('offlineBanner');
+          if (banner) banner.style.display = 'none';
+          const dot = document.getElementById('mHubStatusDot');
+          if (dot) {
+            dot.style.background = '#10b981';
+            dot.style.boxShadow = '0 0 5px #10b981';
+            dot.title = 'Online';
+          }
+          if (state.currentBatchId) {
+            loadBatch(state.currentBatchId);
+          } else {
+            initBatches();
+          }
+        }
+      } else {
+        consecutiveMobileFailures++;
+        if (consecutiveMobileFailures >= MOBILE_OFFLINE_THRESHOLD && isHubOnline) {
+          isHubOnline = false;
+          const banner = document.getElementById('offlineBanner');
+          if (banner) banner.style.display = 'block';
+          const dot = document.getElementById('mHubStatusDot');
+          if (dot) {
+            dot.style.background = '#ef4444';
+            dot.style.boxShadow = '0 0 5px #ef4444';
+            dot.title = 'Offline';
+          }
         }
       }
     }
@@ -1970,7 +2028,7 @@
       try {
         const res = await _origFetch.call(this, url, options);
         if (isApi) {
-          if (res.ok) {
+          if (res.ok || (res.status >= 200 && res.status < 400)) {
             setHubOnline(true);
           } else if ([502, 503, 504, 530].includes(res.status)) {
             setHubOnline(false);
@@ -1978,7 +2036,7 @@
         }
         return res;
       } catch (err) {
-        if (isApi) {
+        if (isApi && err && err.name !== 'AbortError') {
           setHubOnline(false);
         }
         throw err;
@@ -3321,6 +3379,104 @@
       if (btn) btn.classList.add('active');
     }
 
+    function isCommentResolved(prod, c, batchId) {
+      if (!c) return false;
+      if (c.resolved === true) return true;
+      if (c.resolved === false) return false;
+
+      if (c.id === 'legacy' && prod) {
+        const r = (state.reviews && state.reviews[prod.id]) || {};
+        if (r.notes_resolved === true) return true;
+        if (r.notes_resolved === false) return false;
+      }
+
+      const bId = (batchId || state.currentBatchId || '').toLowerCase();
+      const autoResolvedBatches = [
+        '26-10-30-kanha-batumi',
+        '26-10-29-merida-ik100102114',
+        '26-10-09-charrone',
+        'charonne'
+      ];
+      if (autoResolvedBatches.some(ab => bId.includes(ab) && !bId.includes('-new-interiors'))) {
+        return true;
+      }
+
+      if (c.shots && c.shots.length > 0 && prod) {
+        const availableKeys = new Set();
+        if (prod.variants) {
+          Object.values(prod.variants).forEach(list => {
+            if (Array.isArray(list)) {
+              list.forEach(s => {
+                if (s.shot !== undefined && s.shot !== null) {
+                  const sVal = String(s.shot).toLowerCase().trim();
+                  availableKeys.add(sVal);
+                  const n = parseInt(sVal, 10);
+                  if (!isNaN(n)) {
+                    availableKeys.add(String(n));
+                    availableKeys.add(String(n).padStart(2, '0'));
+                  }
+                }
+                if (s.comment_key) {
+                  const sVal = String(s.comment_key).toLowerCase().trim();
+                  availableKeys.add(sVal);
+                  const n = parseInt(sVal, 10);
+                  if (!isNaN(n)) {
+                    availableKeys.add(String(n));
+                    availableKeys.add(String(n).padStart(2, '0'));
+                  }
+                }
+                if (s.base) {
+                  availableKeys.add(String(s.base).toLowerCase().trim());
+                }
+              });
+            }
+          });
+        }
+        if (availableKeys.size > 0) {
+          const anyShotStillPresent = c.shots.some(s => {
+            const sVal = String(s).toLowerCase().trim();
+            const n = parseInt(sVal, 10);
+            return availableKeys.has(sVal) || (!isNaN(n) && (availableKeys.has(String(n)) || availableKeys.has(String(n).padStart(2, '0'))));
+          });
+          if (!anyShotStillPresent) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    }
+
+    async function toggleMobileCommentResolved(productId, commentId, targetState) {
+      try {
+        const prodReviews = state.reviews[productId];
+        if (prodReviews && prodReviews.comments) {
+          const targetComment = prodReviews.comments.find(c => c.id === commentId);
+          if (targetComment) targetComment.resolved = targetState;
+        }
+        renderMobileComments();
+        renderPopupCommentsList(productId);
+
+        const res = await fetch(`/api/comment/resolve?batch=${encodeURIComponent(state.currentBatchId)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            product_id: productId,
+            comment_id: commentId,
+            resolved: targetState
+          })
+        });
+        const data = await res.json();
+        if (data && data.status === 'ok' && data.reviews) {
+          state.reviews = data.reviews;
+          renderMobileComments();
+          renderPopupCommentsList(productId);
+        }
+      } catch (err) {
+        console.error('Error toggling mobile comment resolved:', err);
+      }
+    }
+
     function renderMobileComments() {
       const prod = state.products[state.currentProductIndex];
       if (!prod) return;
@@ -3337,16 +3493,24 @@
       comments.forEach(c => {
         const div = document.createElement('div');
         div.className = 'm-comment-bubble';
+        const resolved = isCommentResolved(prod, c, state.currentBatchId);
+        const resolvedBadge = resolved ? `<span class="m-comment-resolved-badge">ÅTGÄRDAD</span>` : '';
+        const resolveBtn = `<button class="m-comment-resolve-btn ${resolved ? 'is-resolved' : ''}" onclick="event.stopPropagation(); toggleMobileCommentResolved('${prod.id}', '${c.id}', ${!resolved})" title="${resolved ? 'Återställ' : 'Markera som åtgärdad'}">✓ Åtgärdad</button>`;
         const shotTag = (c.shots && c.shots.length > 0) ? `<span style="font-size: 10px; background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 1px 5px; border-radius: 4px; margin-left: 6px;">📸 Bild ${c.shots.join(', ')}</span>` : '';
         div.innerHTML = `
           <div class="m-bubble-header">
-            <div><span class="m-bubble-author">${escapeHtml(c.author)}</span> ${shotTag}</div>
+            <div style="display: flex; align-items: center; gap: 4px; flex-wrap: wrap;">
+              <span class="m-bubble-author">${escapeHtml(c.author)}</span>
+              ${resolvedBadge}
+              ${shotTag}
+            </div>
             <div style="display: flex; align-items: center; gap: 6px;">
               <span class="m-bubble-time">${c.time || ''}</span>
+              ${resolveBtn}
               <button class="m-popup-comment-del" onclick="deleteMobileComment('${prod.id}', '${c.id}')" title="Ta bort kommentar">🗑</button>
             </div>
           </div>
-          <div class="m-bubble-text">${escapeHtml(c.text)}</div>
+          <div class="m-bubble-text ${resolved ? 'resolved' : ''}">${escapeHtml(c.text)}</div>
         `;
         container.appendChild(div);
       });
@@ -3819,20 +3983,28 @@
       if (countBadge) countBadge.innerText = `${comments.length} st`;
       container.innerHTML = '';
 
+      const prod = (state.products || []).find(p => p.id === prodId) || (state.products && state.products[state.currentProductIndex]);
       comments.forEach(c => {
         const item = document.createElement('div');
         item.className = 'm-popup-comment-item';
+        const resolved = isCommentResolved(prod, c, state.currentBatchId);
+        const resolvedBadge = resolved ? `<span class="m-comment-resolved-badge">ÅTGÄRDAD</span>` : '';
+        const resolveBtn = `<button class="m-comment-resolve-btn ${resolved ? 'is-resolved' : ''}" onclick="event.stopPropagation(); toggleMobileCommentResolved('${prodId}', '${c.id}', ${!resolved})" title="${resolved ? 'Återställ' : 'Markera som åtgärdad'}">✓ Åtgärdad</button>`;
         const shotTag = (c.shots && c.shots.length > 0) ? `<span style="font-size: 10px; background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 1px 5px; border-radius: 4px; margin-left: 4px;">📸 ${c.shots.join(', ')}</span>` : '';
         item.innerHTML = `
           <div class="m-popup-comment-head">
-            <div class="m-popup-comment-author">
+            <div class="m-popup-comment-author" style="display: flex; align-items: center; gap: 4px; flex-wrap: wrap;">
               <span>👤 ${escapeHtml(c.author)}</span>
+              ${resolvedBadge}
               ${shotTag}
               <span style="font-size: 10.5px; color: var(--text-dim); font-weight: 400; margin-left: 6px;">${c.time || ''}</span>
             </div>
-            <button class="m-popup-comment-del" onclick="deleteMobileComment('${prodId}', '${c.id}')" title="Ta bort kommentar">🗑 Ta bort</button>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              ${resolveBtn}
+              <button class="m-popup-comment-del" onclick="deleteMobileComment('${prodId}', '${c.id}')" title="Ta bort kommentar">🗑 Ta bort</button>
+            </div>
           </div>
-          <div style="font-size: 12.5px; line-height: 1.4; color: #F1F5F9; word-break: break-word;">${escapeHtml(c.text)}</div>
+          <div class="m-popup-comment-text ${resolved ? 'resolved' : ''}" style="font-size: 12.5px; line-height: 1.4; color: #F1F5F9; word-break: break-word;">${escapeHtml(c.text)}</div>
         `;
         container.appendChild(item);
       });

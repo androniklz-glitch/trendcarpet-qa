@@ -5615,7 +5615,7 @@
         const safeRel = escapeJsString(shot.rel_path || '');
         const safeFn = escapeJsString(shot.filename || '');
 
-        const canRemoveThisShot = state.canRemove && !shot.is_studio_packshot;
+        const canRemoveThisShot = state.canRemove;
 
         const titleTag = shot.label ? `Bild ${shot.label}` : `Bild ${shot.shot || (origIdx+1)}`;
         const box = document.createElement('div');
@@ -7391,7 +7391,7 @@
 
       const lbRemoveBtn = document.getElementById('lbBtnRemoveImage');
       if (lbRemoveBtn) {
-        const canRemoveThis = state.canRemove && activeShot && activeShot.filename && (state.isAdmin || !activeShot.is_studio_packshot);
+        const canRemoveThis = state.canRemove && activeShot && activeShot.filename;
         if (canRemoveThis) {
           lbRemoveBtn.style.display = 'inline-flex';
           lbRemoveBtn.onclick = (e) => removeLightboxCurrentImage(e);

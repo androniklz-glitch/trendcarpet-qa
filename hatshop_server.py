@@ -3901,11 +3901,19 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
             try:
                 set_rating(batch_obj, reviewer.strip(), product_id, filename, stars)
+                # CEO 2026-11-05: 1-2 stars always moves the image out of the folder (soft, undoable)
+                auto_removed = False
+                try:
+                    if 1 <= int(stars) <= 2:
+                        remove_shot(batch_obj, product_id, filename, reviewer.strip(), protect_studio=False)
+                        auto_removed = True
+                except Exception as e:
+                    print(f"[auto-remove] {batch_id} {product_id} {filename}: {e}", flush=True)
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
                 self.send_header("Access-Control-Allow-Origin", "*")
                 self.end_headers()
-                self.wfile.write(json.dumps({"status": "ok"}, ensure_ascii=False).encode("utf-8"))
+                self.wfile.write(json.dumps({"status": "ok", "auto_removed": auto_removed}, ensure_ascii=False).encode("utf-8"))
                 return
             except ValueError as e:
                 self.send_response(400)
@@ -3979,7 +3987,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                     filename,
                     reviewer,
                     count_user=None if is_admin else reviewer,
-                    protect_studio=not is_admin
+                    protect_studio=False  # CEO 2026-11-05: everyone may move out any image (soft, undoable)
                 )
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json; charset=utf-8")

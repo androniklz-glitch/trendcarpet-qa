@@ -1842,8 +1842,12 @@ def annotate_product_gold_set(batch, products):
                     s["in_gold_set"] = False
                     s["gold_rank"] = None
                     s["gold_reason"] = ""
-            # CEO 2026-11-06: rated images first, highest average on top; unrated keep their original order below (stable sort)
-            vshots.sort(key=lambda s: -(s.get("stars_avg") or 0))
+            # CEO 2026-11-06: studio/main images (slots -01..-08) keep their fixed original order first; only interiors
+            # after them are sorted by rating, highest on top (stable sort). An interior never becomes image 1.
+            def _fixed_slot(s):
+                sk = (s.get("scene_key") or "").lower()
+                return bool(s.get("is_studio_packshot") or s.get("is_primary") or sk.startswith(("studio_", "hero_")))
+            vshots.sort(key=lambda s: (0, 0) if _fixed_slot(s) else (1, -(s.get("stars_avg") or 0)))
 
         prod["gold_count"] = len(gold_by_stem)
         prod["site_candidates"] = len(cand_indices)

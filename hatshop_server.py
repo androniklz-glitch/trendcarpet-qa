@@ -1842,6 +1842,8 @@ def annotate_product_gold_set(batch, products):
                     s["in_gold_set"] = False
                     s["gold_rank"] = None
                     s["gold_reason"] = ""
+            # CEO 2026-11-06: rated images first, highest average on top; unrated keep their original order below (stable sort)
+            vshots.sort(key=lambda s: -(s.get("stars_avg") or 0))
 
         prod["gold_count"] = len(gold_by_stem)
         prod["site_candidates"] = len(cand_indices)

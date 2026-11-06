@@ -3075,7 +3075,7 @@
       if (!Array.isArray(products)) return '';
       return products.map(p => {
         const shots = (p.variants && (p.variants[state.currentSource] || Object.values(p.variants)[0])) || [];
-        return `${p.id}:${shots.map(s => `${s.filename || ''}#${Math.floor(s.mtime || 0)}#${s.in_gold_set ? (s.gold_rank || 1) : 0}#${s.is_studio_packshot ? 1 : 0}`).join(',')}`;
+        return `${p.id}:${shots.map(s => `${s.filename || ''}#${Math.floor(s.mtime || 0)}#${s.in_gold_set ? (s.gold_rank || 1) : 0}#${s.is_studio_packshot ? 1 : 0}#${s.stars_avg || 0}`).join(',')}`;
       }).join('|');
     }
 

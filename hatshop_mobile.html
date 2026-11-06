@@ -2543,7 +2543,7 @@
       if (!Array.isArray(products)) return '';
       return products.map(p => {
         const shots = getProductShots(p);
-        return `${p.id}:${shots.map(s => `${s.filename || ''}:${Math.floor(s.mtime || 0)}:${s.in_gold_set ? (s.gold_rank || 1) : 0}:${s.is_studio_packshot ? 1 : 0}:${s.site_eligible ? 1 : 0}`).join(',')}`;
+        return `${p.id}:${shots.map(s => `${s.filename || ''}:${Math.floor(s.mtime || 0)}:${s.in_gold_set ? (s.gold_rank || 1) : 0}:${s.is_studio_packshot ? 1 : 0}:${s.site_eligible ? 1 : 0}:${s.stars_avg || 0}`).join(',')}`;
       }).join('|');
     }
 

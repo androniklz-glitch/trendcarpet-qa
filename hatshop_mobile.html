@@ -1646,6 +1646,21 @@
         </div>
         <a href="/?desktop=1" onclick="sessionStorage.setItem('prefer_desktop', '1')" class="desktop-link-btn" title="Gå till full desktopvy">💻</a>
       </div>
+      <div style="flex-basis: 100%; display: flex; align-items: center; gap: 8px; font-size: 11px; color: #94a3b8; min-width: 0;" title="Kontot som den här webbläsaren är inloggad med">
+        <span id="mAccountLine" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1;">Konto: …</span>
+        <select id="mOrgSwitch" onchange="switchOrgView(this.value)" style="display: none; flex-shrink: 0; background: #1e293b; border: 1px solid #475569; border-radius: 6px; color: #e2e8f0; font: inherit; padding: 2px 4px;" title="Byt företag">
+          <option value="all">Alla</option>
+          <option value="cama">Trendcarpet/CaMa</option>
+          <option value="reforma">Reforma</option>
+        </select>
+        <button type="button" id="mBtnViewerPreview" onclick="toggleViewerPreview()" style="display: none; flex-shrink: 0; background: none; border: 1px solid #475569; border-radius: 6px; color: #cbd5e1; font: inherit; padding: 2px 8px; cursor: pointer;" title="Se exakt vad företagets tittare ser">👁</button>
+        <div style="position: relative; flex-shrink: 0;">
+          <button type="button" onclick="toggleAccountMenu(event)" style="background: none; border: 1px solid #475569; border-radius: 6px; color: #cbd5e1; font: inherit; padding: 2px 8px; cursor: pointer;" title="Konto" aria-haspopup="true">⋯</button>
+          <div id="mAccountMenu" style="display: none; position: absolute; right: 0; top: calc(100% + 4px); z-index: 1000; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 4px; white-space: nowrap; box-shadow: 0 8px 24px rgba(0,0,0,.35);">
+            <button type="button" id="mBtnLogout" onclick="logoutAccount()" style="background: none; border: 0; color: #e2e8f0; font-size: 13px; padding: 8px 10px; cursor: pointer;">🚪 Byt konto / Logga ut</button>
+          </div>
+        </div>
+      </div>
     </header>
 
     <!-- View Switcher Tabs -->
@@ -2126,6 +2141,49 @@
       if (odBtn) odBtn.style.display = (isCama || state.isAdmin) ? 'flex' : 'none';
     }
 
+    const ORG_NAMES = { cama: 'Trendcarpet/CaMa', reforma: 'Reforma' };
+
+    function updateAccountDisplay(data) {
+      const org = (data.user_org || 'cama') === 'reforma' ? 'Reforma' : 'CaMa / Trendcarpet';
+      const who = data.user_name ? `${data.user_name}${data.is_admin ? ' (admin)' : ''}` : (data.is_admin ? 'Lokal (admin)' : 'Ej inloggad');
+      const el = document.getElementById('mAccountLine');
+      if (el) el.innerText = data.view_as_viewer ? `👁 Som ${ORG_NAMES[data.view_org] || data.view_org}-tittare` : `Konto: ${who} · ${org}`;
+      if (el) el.style.color = data.view_as_viewer ? '#f59e0b' : '';
+      state.viewOrg = data.view_org || 'all';
+      state.viewAsViewer = !!data.view_as_viewer;
+      const sw = document.getElementById('mOrgSwitch');
+      if (sw) { sw.style.display = data.real_admin && !state.viewAsViewer ? '' : 'none'; sw.value = state.viewOrg; }
+      const pv = document.getElementById('mBtnViewerPreview');
+      if (pv) {
+        pv.style.display = data.real_admin && (state.viewAsViewer || state.viewOrg !== 'all') ? '' : 'none';
+        pv.innerText = state.viewAsViewer ? '✕ Avsluta' : '👁';
+      }
+    }
+
+    function switchOrgView(org) {
+      window.location.href = `/view?org=${encodeURIComponent(org)}&next=${encodeURIComponent('/mobile')}`;
+    }
+
+    function toggleViewerPreview() {
+      const org = state.viewOrg && state.viewOrg !== 'all' ? state.viewOrg : 'cama';
+      window.location.href = `/view?org=${encodeURIComponent(org)}${state.viewAsViewer ? '' : '&as_viewer=1'}&next=${encodeURIComponent('/mobile')}`;
+    }
+
+    function toggleAccountMenu(ev) {
+      ev.stopPropagation();
+      const m = document.getElementById('mAccountMenu');
+      if (!m) return;
+      const open = m.style.display === 'none';
+      m.style.display = open ? 'block' : 'none';
+      if (open) document.addEventListener('click', () => { m.style.display = 'none'; }, { once: true });
+    }
+
+    function logoutAccount() {
+      if (!confirm('Logga ut från det här kontot?\n\nDu behöver din personliga länk för att logga in igen (eller en annan persons länk för att byta konto).')) return;
+      try { sessionStorage.removeItem('qa_ceo'); } catch (e) {}
+      window.location.href = '/logout';
+    }
+
     function openNameModal() {
       applyMobileRoleAndOrgVisibility();
       document.getElementById('mNameInput').value = state.reviewer || '';
@@ -2194,9 +2252,12 @@
         state.canRemove = data.can_remove || state.isAdmin;
         state.userOrg = data.user_org || 'cama';
         state.serverUserName = data.user_name || '';
+        updateAccountDisplay(data);
 
         const camaQuickNames = ['Andro', 'Jesper', 'Amalia', 'Anton'];
-        if (state.serverUserName && (!state.reviewer || (state.userOrg !== 'cama' && camaQuickNames.includes(state.reviewer)))) {
+        if (data.view_as_viewer) {
+          // admin viewer preview: keep the admin's own reviewer name
+        } else if (state.serverUserName && (!state.reviewer || (state.userOrg !== 'cama' && camaQuickNames.includes(state.reviewer)))) {
           state.reviewer = state.serverUserName;
           localStorage.setItem('hatshop_reviewer', state.reviewer);
         } else if (state.userOrg === 'reforma' && (!state.reviewer || camaQuickNames.includes(state.reviewer))) {

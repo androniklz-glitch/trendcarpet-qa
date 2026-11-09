@@ -2202,6 +2202,24 @@
         <input type="hidden" id="reviewerName" value="">
       </div>
 
+      <!-- Logged-in account, admin company switch + "Visa som tittare"; "Byt konto / Logga ut" in the ⋯ menu (2026-11-09 design v2) -->
+      <div class="control-group" id="accountGroup" title="Kontot som den här webbläsaren är inloggad med (personlig länk)">
+        <span class="control-label">Konto:</span>
+        <span id="accountDisplay" style="font-weight: 700; font-size: 13px; color: #fff; white-space: nowrap;">…</span>
+        <select id="orgSwitch" class="custom-select" style="display: none; min-width: 0; width: auto; border: 1px solid var(--border-color); border-radius: 6px;" onchange="switchOrgView(this.value)" title="Byt företag: visar bara det företagets mappar (utkast med 🔒 syns fortfarande för dig)">
+          <option value="all">Alla företag</option>
+          <option value="cama">Trendcarpet/CaMa</option>
+          <option value="reforma">Reforma</option>
+        </select>
+        <button type="button" id="btnViewerPreview" class="btn btn-sm btn-outline" style="display: none; white-space: nowrap;" onclick="toggleViewerPreview()" title="Se exakt vad det valda företagets tittare ser: bara publicerade mappar, inga adminknappar">👁 Visa som tittare</button>
+        <div style="position: relative;">
+          <button type="button" class="btn btn-sm btn-outline" onclick="toggleAccountMenu(event)" title="Konto" aria-haspopup="true">⋯</button>
+          <div id="accountMenu" style="display: none; position: absolute; right: 0; top: calc(100% + 4px); z-index: 1000; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 4px; min-width: 180px; box-shadow: 0 8px 24px rgba(0,0,0,.35);">
+            <button type="button" class="btn btn-sm" style="width: 100%; justify-content: flex-start;" onclick="logoutAccount()" title="Logga ut från det här kontot. Öppna sedan en personlig länk för att logga in igen eller byta konto.">🚪 Byt konto / Logga ut</button>
+          </div>
+        </div>
+      </div>
+
       <div class="control-group" id="variantControlGroup">
         <span class="control-label">Variant:</span>
         <select id="sourceSelect" class="custom-select" onchange="changeSource(this.value)" title="Välj bildvariant/upplösning (original, 1500px iphone etc.)"></select>
@@ -3277,6 +3295,68 @@
       if (inp) inp.value = state.reviewer || '';
     }
 
+    function accountLabel(data) {
+      const org = (data.user_org || 'cama') === 'reforma' ? 'Reforma' : 'CaMa / Trendcarpet';
+      if (!data.user_name) return data.is_admin ? `Lokal (admin) · ${org}` : `Ej inloggad · ${org}`;
+      return `${data.user_name}${data.is_admin ? ' (admin)' : ''} · ${org}`;
+    }
+
+    const ORG_NAMES = { cama: 'Trendcarpet/CaMa', reforma: 'Reforma' };
+
+    function updateAccountDisplay(data) {
+      const el = document.getElementById('accountDisplay');
+      if (el) el.innerText = data.view_as_viewer
+        ? `${data.user_name || 'Lokal'} (admin) · som tittare`
+        : data.real_admin ? `${data.user_name || 'Lokal'} (admin)` : accountLabel(data);  // admin: the company shows in the switch
+      state.viewOrg = data.view_org || 'all';
+      state.viewAsViewer = !!data.view_as_viewer;
+      const sw = document.getElementById('orgSwitch');
+      if (sw) { sw.style.display = data.real_admin ? '' : 'none'; sw.value = state.viewOrg; sw.disabled = state.viewAsViewer; }
+      const pv = document.getElementById('btnViewerPreview');
+      if (pv) {
+        pv.style.display = data.real_admin ? '' : 'none';
+        pv.disabled = !state.viewAsViewer && state.viewOrg === 'all';
+        pv.title = pv.disabled ? 'Välj ett företag först' : 'Se exakt vad det valda företagets tittare ser: bara publicerade mappar, inga adminknappar';
+        pv.innerText = state.viewAsViewer ? '✕ Avsluta tittarvy' : '👁 Visa som tittare';
+      }
+      let banner = document.getElementById('viewerPreviewBanner');
+      if (state.viewAsViewer && !banner) {
+        banner = document.createElement('div');
+        banner.id = 'viewerPreviewBanner';
+        banner.style.cssText = 'position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:9999;background:#f59e0b;color:#111;font-weight:700;font-size:13px;padding:8px 14px;border-radius:999px;box-shadow:0 6px 20px rgba(0,0,0,.35);display:flex;gap:10px;align-items:center;max-width:calc(100vw - 32px);';
+        banner.innerHTML = '<span></span><button type="button" onclick="toggleViewerPreview()" style="background:#111;color:#fff;border:0;border-radius:999px;padding:4px 10px;font:inherit;cursor:pointer;">Avsluta</button>';
+        document.body.appendChild(banner);
+      }
+      if (banner) {
+        banner.style.display = state.viewAsViewer ? 'flex' : 'none';
+        banner.firstChild.innerText = `👁 Du ser hubben som ${ORG_NAMES[state.viewOrg] || state.viewOrg}-tittaren: bara publicerat, inga adminknappar`;
+      }
+    }
+
+    function switchOrgView(org) {
+      window.location.href = `/view?org=${encodeURIComponent(org)}&next=${encodeURIComponent('/?desktop=1')}`;
+    }
+
+    function toggleViewerPreview() {
+      const org = state.viewOrg && state.viewOrg !== 'all' ? state.viewOrg : 'cama';
+      window.location.href = `/view?org=${encodeURIComponent(org)}${state.viewAsViewer ? '' : '&as_viewer=1'}&next=${encodeURIComponent('/?desktop=1')}`;
+    }
+
+    function toggleAccountMenu(ev) {
+      ev.stopPropagation();
+      const m = document.getElementById('accountMenu');
+      if (!m) return;
+      const open = m.style.display === 'none';
+      m.style.display = open ? 'block' : 'none';
+      if (open) document.addEventListener('click', () => { m.style.display = 'none'; }, { once: true });
+    }
+
+    function logoutAccount() {
+      if (!confirm('Logga ut från det här kontot?\n\nDu behöver din personliga länk för att logga in igen (eller en annan persons länk för att byta konto).')) return;
+      try { sessionStorage.removeItem('qa_ceo'); } catch (e) {}
+      window.location.href = '/logout';
+    }
+
     function applyRoleAndOrgVisibility() {
       const isCama = (!state.userOrg || state.userOrg === 'cama');
       const quickWrap = document.getElementById('camaQuickReviewersWrap');
@@ -3392,6 +3472,7 @@
         state.canRemove = data.can_remove || state.isAdmin;
         state.userOrg = data.user_org || 'cama';
         state.serverUserName = data.user_name || '';
+        updateAccountDisplay(data);
 
         const camaQuickNames = ['Andro', 'Andronik', 'Jesper', 'Amalia', 'Anton'];
         const isCamaRev = state.reviewer && camaQuickNames.some(n => n.toLowerCase() === state.reviewer.trim().toLowerCase());
@@ -3400,10 +3481,11 @@
         } else if (state.serverUserName && !state.reviewer) {
           state.reviewer = state.serverUserName;
           localStorage.setItem('hatshop_reviewer', state.reviewer);
-        } else if (state.userOrg === 'reforma' && !state.reviewer) {
+        } else if (state.userOrg === 'reforma' && !state.reviewer && !data.view_as_viewer) {
           state.reviewer = 'Reforma';
           localStorage.setItem('hatshop_reviewer', state.reviewer);
         }
+        if (data.view_as_viewer) state.userOrg = data.user_org || state.userOrg;  // viewer preview: that company's tabs, not the admin's name
 
         applyRoleAndOrgVisibility();
         checkReviewerNameOnLoad();

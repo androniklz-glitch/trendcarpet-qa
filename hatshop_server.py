@@ -2545,17 +2545,46 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             return u["name"]
         return fallback
 
+    def is_local_request(self):
+        is_tunnel = bool(self.headers.get("CF-Ray") or self.headers.get("CF-Connecting-IP") or self.headers.get("X-Forwarded-For"))
+        client_ip = self.client_address[0] if hasattr(self, 'client_address') else ''
+        return (not is_tunnel) and (client_ip in ['127.0.0.1', '::1', 'localhost', '192.168.2.33'])
+
+    def wants_all_query(self, query):
+        # ?ceo=1 / ?all=1 only counts on the local machine; via the tunnel admin comes from the cookie alone
+        # (2026-11-09: a Reforma viewer link + ?all=1 listed every CaMa batch and CEO draft and could toggle publish).
+        if not query:
+            return False
+        flag = query.get("ceo", [""])[0].lower() in ("1", "true") or query.get("all", [""])[0].lower() in ("1", "true")
+        return flag and self.is_local_request()
+
+    VIEW_ORGS = ("cama", "reforma")
+    CLEAR_VIEW_COOKIE = "qa_view=; Path=/; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=Lax"
+
+    def is_real_admin(self):
+        u = self.current_user()
+        return bool(u and u.get("role") == "admin") or self.is_local_request()
+
+    def view_mode(self):
+        # Admin company switch + "Visa som tittare" (2026-11-09 design v2): session cookie qa_view = "<org>" or "<org>-viewer",
+        # set by /view or by /login when an admin opens a viewer's link. Ignored for everyone who is not admin.
+        try:
+            cookie = http.cookies.SimpleCookie(self.headers.get("Cookie") or "")
+            raw = cookie["qa_view"].value if "qa_view" in cookie else ""
+        except Exception:
+            raw = ""
+        org, _, flag = raw.partition("-")
+        if org not in self.VIEW_ORGS or not self.is_real_admin():
+            return None, False
+        return org, flag == "viewer"
+
     def is_admin_request(self, query=None, body_user=None):
-        if query:
-            if query.get("ceo", [""])[0].lower() in ("1", "true") or query.get("all", [""])[0].lower() in ("1", "true"):
-                return True
+        if self.view_mode()[1]:
+            return False  # admin previewing a viewer's hub: read-only, no admin buttons
         u = self.current_user()
         if u and u.get("role") == "admin":
             return True
-        is_tunnel = bool(self.headers.get("CF-Ray") or self.headers.get("CF-Connecting-IP") or self.headers.get("X-Forwarded-For"))
-        client_ip = self.client_address[0] if hasattr(self, 'client_address') else ''
-        is_local = (not is_tunnel) and (client_ip in ['127.0.0.1', '::1', 'localhost', '192.168.2.33'])
-        return is_local
+        return self.is_local_request()
 
     def can_remove_request(self, query=None, reviewer=None):
         if self.is_admin_request(query, reviewer):
@@ -2566,8 +2595,13 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def can_see_batch(self, batch, allow_direct=True):
         if not batch:
             return False
+        view_org, as_viewer = self.view_mode()
+        if as_viewer:
+            return batch.get("org") == view_org and batch.get("published", True)
+        if view_org:
+            return True  # only a real admin (cookie or local) can have a company chosen
         parsed_q = urllib.parse.parse_qs(urllib.parse.urlparse(getattr(self, "path", "")).query)
-        if parsed_q.get("ceo", [""])[0].lower() in ("1", "true") or parsed_q.get("all", [""])[0].lower() in ("1", "true"):
+        if self.wants_all_query(parsed_q):
             return True
         u = self.current_user()
         if u and u.get("role") == "admin":
@@ -2618,9 +2652,16 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 redirect_url = "/"
                 if matched_user.get("role") == "assistant":
                     redirect_url = "/assistant"
+                cur = self.current_user()
                 self.send_response(302)
                 self.send_header("Location", redirect_url)
-                self.send_header("Set-Cookie", f"qa_session={token}; Path=/; Max-Age=15552000; HttpOnly; Secure; SameSite=Lax")
+                if cur and cur.get("role") == "admin" and matched_user.get("role") != "admin":
+                    # Design v2: an admin opening a viewer's link keeps the admin cookie and lands in that company's view.
+                    org = matched_user.get("org") if matched_user.get("org") in self.VIEW_ORGS else "cama"
+                    self.send_header("Set-Cookie", f"qa_view={org}; Path=/; HttpOnly; Secure; SameSite=Lax")
+                else:
+                    self.send_header("Set-Cookie", f"qa_session={token}; Path=/; Max-Age=15552000; HttpOnly; Secure; SameSite=Lax")
+                    self.send_header("Set-Cookie", self.CLEAR_VIEW_COOKIE)
                 self.end_headers()
                 return
             else:
@@ -2629,6 +2670,24 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(b"Invalid link. Ask Andronik for your personal link.")
                 return
+
+        if path == "/logout":
+            # "Byt konto / Logga ut" (2026-11-09): opening another person's link overwrote the 180-day cookie with no way back.
+            page = ("<!doctype html><html lang=\"sv\"><head><meta charset=\"utf-8\">"
+                    "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Utloggad – QA-hubben</title>"
+                    "<style>body{font-family:system-ui,sans-serif;background:#f6f3ee;color:#222;display:flex;align-items:center;"
+                    "justify-content:center;min-height:100vh;margin:0;padding:16px;box-sizing:border-box}"
+                    "main{max-width:420px;text-align:center}</style></head><body><main><h1>Du är utloggad</h1>"
+                    "<p>Öppna din personliga länk för att logga in igen, eller en annan persons länk för att byta konto.</p></main>"
+                    "<script>try{sessionStorage.removeItem('qa_ceo')}catch(e){}</script></body></html>")
+            self.send_response(200)
+            self.send_header("Set-Cookie", "qa_session=; Path=/; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=Lax")
+            self.send_header("Set-Cookie", self.CLEAR_VIEW_COOKIE)
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(page.encode("utf-8"))
+            return
 
         users_data = load_users()
         is_tunnel = bool(self.headers.get("CF-Ray") or self.headers.get("CF-Connecting-IP") or self.headers.get("X-Forwarded-For"))
@@ -2648,6 +2707,23 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                         self.wfile.write(b"Login required &mdash; ask Andronik for your personal link.")
                         return
 
+        if path == "/view":
+            # Admin company switch / "Visa som tittare" (design v2). Non-admins only get the redirect; qa_view is ignored for them anyway.
+            org = query.get("org", [""])[0].lower()
+            as_viewer = query.get("as_viewer", [""])[0].lower() in ("1", "true")
+            nxt = query.get("next", ["/"])[0]
+            if nxt not in ("/", "/?desktop=1", "/mobile"):
+                nxt = "/"
+            self.send_response(302)
+            self.send_header("Location", nxt)
+            self.send_header("Cache-Control", "no-store")
+            if self.is_real_admin():
+                if org in self.VIEW_ORGS:
+                    self.send_header("Set-Cookie", f"qa_view={org}{'-viewer' if as_viewer else ''}; Path=/; HttpOnly; Secure; SameSite=Lax")
+                else:
+                    self.send_header("Set-Cookie", self.CLEAR_VIEW_COOKIE)
+            self.end_headers()
+            return
 
         if path in ["/", "/index.html", "/ui", "/hatshop_ui.html"]:
             user_agent = self.headers.get("User-Agent", "").lower()
@@ -2789,18 +2865,15 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         elif path == "/api/batches":
             is_admin = self.is_admin_request(query)
             u = self.current_user()
+            view_org, as_viewer = self.view_mode()
             user_name = u.get("name", "") if u else ""
-            user_org = u.get("org", "cama") if u else "cama"
+            user_org = view_org if as_viewer else (u.get("org", "cama") if u else "cama")
             batches = load_batches()
             for b in batches:
                 if "published" not in b:
                     b["published"] = True
 
-            want_all = (
-                query.get("ceo", [""])[0].lower() in ("1", "true")
-                or query.get("all", [""])[0].lower() in ("1", "true")
-                or bool(u and u.get("role") == "admin")
-            )
+            want_all = not as_viewer and (self.wants_all_query(query) or bool(u and u.get("role") == "admin") or bool(view_org))
             req_batch_id = query.get("batch", [""])[0].strip().lower()
             if want_all:
                 batches = [b for b in batches if self.can_see_batch(b, allow_direct=True)]
@@ -2810,6 +2883,9 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                     if self.can_see_batch(b, allow_direct=False)
                     or (req_batch_id and b.get("id", "").lower() == req_batch_id and self.can_see_batch(b, allow_direct=True))
                 ]
+            if view_org and not as_viewer:
+                # admin company switch: only that company's batches (drafts included); a directly requested batch stays
+                batches = [b for b in batches if b.get("org") == view_org or (req_batch_id and b.get("id", "").lower() == req_batch_id)]
 
             content = json.dumps({
                 "batches": batches,
@@ -2817,6 +2893,9 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 "can_remove": bool(is_admin or REMOVE_FOR_VIEWERS),
                 "user_name": user_name,
                 "user_org": user_org,
+                "real_admin": self.is_real_admin(),
+                "view_org": view_org or "",
+                "view_as_viewer": as_viewer,
             }, ensure_ascii=False).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
@@ -2828,7 +2907,8 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         elif path == "/api/calendar":
             is_admin = self.is_admin_request(query)
             u = self.current_user()
-            user_org = u.get("org", "cama") if u else "cama"
+            view_org, as_viewer = self.view_mode()
+            user_org = view_org if as_viewer else (u.get("org", "cama") if u else "cama")
             if not is_admin and user_org != "cama":
                 projects = []
             else:

@@ -18,10 +18,10 @@
 
   <style>
     :root {
-      --bg-canvas: #090A0C;
-      --bg-surface: #111419;
-      --bg-card: #151921;
-      --bg-input: #1B212D;
+      --bg-canvas: #111315;
+      --bg-surface: #14161A;
+      --bg-card: #181A1F;
+      --bg-input: #1E2128;
       --border-color: rgba(255, 255, 255, 0.08);
       --border-focus: rgba(59, 130, 246, 0.5);
       --text-main: #F3F4F6;
@@ -83,15 +83,15 @@
       min-width: 0;
     }
     .brand-badge {
-      background: linear-gradient(135deg, #1E293B, #0F172A);
-      border: 1px solid rgba(59, 130, 246, 0.4);
-      color: #60A5FA;
+      background: #181A1F;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #F3F4F6;
       font-size: 11px;
       font-weight: 700;
       padding: 3px 8px;
       border-radius: 6px;
       letter-spacing: 0.04em;
-      min-height: 36px;
+      min-height: 34px;
       display: inline-flex;
       align-items: center;
       box-sizing: border-box;
@@ -99,18 +99,47 @@
       flex-shrink: 0;
     }
     .batch-select-mobile {
-      background: #1A202C;
+      background: #181A1F;
       border: 1px solid var(--border-color);
       color: #fff;
       font-size: 12px;
       font-weight: 600;
       padding: 5px 8px;
       border-radius: 6px;
-      max-width: 120px;
+      max-width: 155px;
       text-overflow: ellipsis;
       outline: none;
-      min-height: 36px;
+      min-height: 34px;
       box-sizing: border-box;
+    }
+    .mobile-brand-bar {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 10px;
+      background: #14161A;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      overflow-x: auto;
+      scrollbar-width: none;
+      flex-shrink: 0;
+    }
+    .mobile-brand-bar::-webkit-scrollbar { display: none; }
+    .m-brand-pill {
+      background: transparent;
+      border: 1px solid transparent;
+      color: #94A3B8;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .m-brand-pill.active {
+      background: rgba(255, 255, 255, 0.11);
+      border-color: rgba(255, 255, 255, 0.16);
+      color: #FFFFFF;
     }
     .header-actions {
       display: flex;
@@ -209,7 +238,7 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      background: #000;
+      background: #111315;
       overflow: hidden;
     }
     .mobile-carousel {
@@ -232,7 +261,10 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      background: #FFFFFF;
+      background: #111315;
+    }
+    .carousel-slide.is-studio-shot {
+      background: #F4F4F2;
     }
     .carousel-slide img {
       max-width: 100%;
@@ -1069,12 +1101,15 @@
       position: relative;
       aspect-ratio: 1 / 1;
       width: 100%;
-      background: #FFFFFF;
+      background: #111315;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
+    }
+    .m-card-thumb-wrap.is-studio-shot {
+      background: #F4F4F2;
     }
     .m-card-thumb-wrap img {
       width: 100%;
@@ -1247,7 +1282,7 @@
       height: 100%;
       overflow: hidden;
       position: relative;
-      background: #FFFFFF;
+      background: #111315;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1663,6 +1698,14 @@
       </div>
     </header>
 
+    <!-- Brand Filter Pills Bar -->
+    <div class="mobile-brand-bar" id="mobileBrandBar">
+      <button type="button" class="m-brand-pill active" data-brand="all" onclick="setMobileBrandFilter('all')">Alla</button>
+      <button type="button" class="m-brand-pill" data-brand="trendcarpet" onclick="setMobileBrandFilter('trendcarpet')">Trendcarpet</button>
+      <button type="button" class="m-brand-pill" data-brand="reforma" onclick="setMobileBrandFilter('reforma')">Reforma</button>
+      <button type="button" class="m-brand-pill" data-brand="hatshop" onclick="setMobileBrandFilter('hatshop')">Hatshop</button>
+    </div>
+
     <!-- View Switcher Tabs -->
     <div class="mobile-view-tabs">
       <button class="m-view-tab active" id="tabModeSingle" onclick="switchMobileView('single')">
@@ -1748,8 +1791,8 @@
           </button>
 
           <button class="m-status-btn" id="mBtnRedo" onclick="setMobileStatus('redo')">
-            <span>✕ Gör om</span>
-            <span class="btn-sub">Kräver ny retusch</span>
+            <span>✎ Justera</span>
+            <span class="btn-sub">Till Runda 2</span>
           </button>
         </div>
 
@@ -1796,30 +1839,30 @@
       <!-- Checklist -->
       <div>
         <div class="checklist-section-title">Anmärkningar & Flaggor</div>
-        <div class="mobile-checklist-grid">
+        <div class="mobile-checklist-grid" id="mobileChecklistGrid">
           <label class="m-check-item">
             <input type="checkbox" id="m_chk_angle" onchange="toggleChecklistFlag('angle', this.checked)">
-            <span>📐 Vinkelfel</span>
-          </label>
-          <label class="m-check-item">
-            <input type="checkbox" id="m_chk_crown" onchange="toggleChecklistFlag('crown', this.checked)">
-            <span>👑 Formfel</span>
-          </label>
-          <label class="m-check-item">
-            <input type="checkbox" id="m_chk_edge" onchange="toggleChecklistFlag('edge', this.checked)">
-            <span>✂️ Friläggning</span>
+            <span id="m_lbl_angle">1:1 Produktdetalj</span>
           </label>
           <label class="m-check-item">
             <input type="checkbox" id="m_chk_color" onchange="toggleChecklistFlag('color', this.checked)">
-            <span>🎨 Färgavvikelse</span>
+            <span id="m_lbl_color">Färg/nyans</span>
+          </label>
+          <label class="m-check-item">
+            <input type="checkbox" id="m_chk_crown" onchange="toggleChecklistFlag('crown', this.checked)">
+            <span id="m_lbl_crown">Skala i rummet</span>
+          </label>
+          <label class="m-check-item">
+            <input type="checkbox" id="m_chk_edge" onchange="toggleChecklistFlag('edge', this.checked)">
+            <span id="m_lbl_edge">Rum & komposition</span>
           </label>
           <label class="m-check-item">
             <input type="checkbox" id="m_chk_dust" onchange="toggleChecklistFlag('dust', this.checked)">
-            <span>🧹 Damm/Smuts</span>
+            <span id="m_lbl_dust">Text/böcker</span>
           </label>
           <label class="m-check-item">
             <input type="checkbox" id="m_chk_shadow" onchange="toggleChecklistFlag('shadow', this.checked)">
-            <span>🌓 Skuggning</span>
+            <span id="m_lbl_shadow">Videorörelse</span>
           </label>
         </div>
       </div>
@@ -1908,13 +1951,13 @@
 
       <!-- Quick tags / snabbval -->
       <div class="m-popup-section-label" style="margin-top: 10px;">Snabbval (klicka för att lägga till text):</div>
-      <div class="m-quick-tags-row">
-        <button class="m-tag-chip" onclick="insertCommentTag('Vinkelfel')">📐 Vinkelfel</button>
-        <button class="m-tag-chip" onclick="insertCommentTag('Formfel / Buckla')">🧢 Formfel / Buckla</button>
-        <button class="m-tag-chip" onclick="insertCommentTag('Friläggningskant')">✂️ Friläggningskant</button>
-        <button class="m-tag-chip" onclick="insertCommentTag('Damm / Smuts')">✨ Damm / Smuts</button>
-        <button class="m-tag-chip" onclick="insertCommentTag('Färgavvikelse')">🎨 Färgavvikelse</button>
-        <button class="m-tag-chip" onclick="insertCommentTag('Skuggning')">🌓 Skuggning</button>
+      <div class="m-quick-tags-row" id="mQuickTagsRow">
+        <button class="m-tag-chip" onclick="insertCommentTag('1:1 Produktdetalj')">🔍 1:1 Produktdetalj</button>
+        <button class="m-tag-chip" onclick="insertCommentTag('Färg/nyans')">🎨 Färg/nyans</button>
+        <button class="m-tag-chip" onclick="insertCommentTag('Skala i rummet')">📐 Skala i rummet</button>
+        <button class="m-tag-chip" onclick="insertCommentTag('Rum & komposition')">🛋 Rum & komposition</button>
+        <button class="m-tag-chip" onclick="insertCommentTag('Text/böcker')">📖 Text/böcker</button>
+        <button class="m-tag-chip" onclick="insertCommentTag('Videorörelse')">🎬 Videorörelse</button>
       </div>
 
       <!-- Comment textarea -->
@@ -2239,11 +2282,12 @@
         if (urlCeo === '1' || urlCeo === 'true') {
           sessionStorage.setItem('qa_ceo', '1');
         } else if (urlCeo === '0' || urlCeo === 'false') {
-          sessionStorage.removeItem('qa_ceo');
+          sessionStorage.setItem('qa_ceo', '0');
         }
-        const isCeoMode = sessionStorage.getItem('qa_ceo') === '1';
+        const isLocalHost = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost');
+        const storedCeo = sessionStorage.getItem('qa_ceo');
+        const ceoQuery = (storedCeo === '1' || (isLocalHost && storedCeo !== '0')) ? '&ceo=1' : '';
         const batchQuery = paramBatch ? `&batch=${encodeURIComponent(paramBatch)}` : '';
-        const ceoQuery = isCeoMode ? '&ceo=1' : '';
 
         const res = await fetch(`/api/batches?reviewer=${encodeURIComponent(state.reviewer || '')}${batchQuery}${ceoQuery}`);
         const data = await res.json();
@@ -2273,17 +2317,8 @@
           const nameModal = document.getElementById('nameModal');
           if (nameModal) nameModal.classList.remove('active');
         }
-        const select = document.getElementById('mobileBatchSelect');
-        select.innerHTML = '';
-        state.batches.forEach(b => {
-          const opt = document.createElement('option');
-          opt.value = b.id;
-          const isDraft = b.published === false;
-          const draftPrefix = isDraft ? '🔒 [Utkast] ' : '';
-          const storagePrefix = b.storage_warning ? '⚠️ [Lagring] ' : '';  // admin-only: source outside Pictures / not pinned / cloud-only
-          opt.innerText = `${storagePrefix}${draftPrefix}${b.name}`;
-          select.appendChild(opt);
-        });
+        if (!state.mobileBrandFilter) state.mobileBrandFilter = 'all';
+        populateMobileBatchSelect();
 
         const targetBatch = (paramBatch && state.batches.some(b => b.id === paramBatch))
           ? paramBatch
@@ -2291,7 +2326,8 @@
 
         if (targetBatch) {
           state.currentBatchId = targetBatch;
-          select.value = targetBatch;
+          const select = document.getElementById('mobileBatchSelect');
+          if (select) select.value = targetBatch;
           await loadBatch(targetBatch);
 
           const paramProd = urlParams.get('prod');
@@ -2616,7 +2652,10 @@
         const prevShotIndex = state.currentShotIndex;
         const prevFilename = prevShots[prevShotIndex]?.filename || null;
 
-        const res = await fetch(`/api/products?batch=${encodeURIComponent(batchId)}&reviewer=${encodeURIComponent(state.reviewer || '')}`);
+        const isLocalHost = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost');
+        const storedCeo = sessionStorage.getItem('qa_ceo');
+        const ceoQuery = (storedCeo === '1' || (isLocalHost && storedCeo !== '0')) ? '&ceo=1' : '';
+        const res = await fetch(`/api/products?batch=${encodeURIComponent(batchId)}&reviewer=${encodeURIComponent(state.reviewer || '')}${ceoQuery}`);
         const data = await res.json();
         if (data.status === 'error' && data.error === 'draft_private') {
           showToast('🔒 ' + data.message);
@@ -2653,6 +2692,7 @@
           }
           state.currentShotIndex = 0;
         }
+        syncMobileCategoryTags();
         updateGridLabels();
         updateMobilePublishButton();
         renderMobileProduct(!preservedSameProduct);
@@ -2969,6 +3009,83 @@
       return `<span class="rating-stars" data-rating-key="${escapeHtml(key)}" title="Ditt privata betyg (syns bara för dig)" aria-label="Ditt privata betyg (syns bara för dig)">${getStarsSpansHtml(productId, filename)}</span>`;
     }
 
+    function getMobileBatchCompany(b) {
+      if (!b) return 'trendcarpet';
+      if (b.company) return String(b.company).toLowerCase();
+      const org = String(b.org || '').toLowerCase();
+      const cat = String(b.category || '').toLowerCase();
+      const hay = `${b.id || ''} ${b.name || ''} ${b.path || ''}`.toLowerCase();
+      if (org === 'reforma' || hay.includes('reforma')) return 'reforma';
+      if (cat === 'kepsar' || hay.includes('hatshop') || hay.includes('keps') || hay.includes('hatt')) return 'hatshop';
+      return 'trendcarpet';
+    }
+
+    function populateMobileBatchSelect() {
+      const select = document.getElementById('mobileBatchSelect');
+      if (!select) return;
+      const filter = state.mobileBrandFilter || 'all';
+      select.innerHTML = '';
+      const filtered = (state.batches || []).filter(b => filter === 'all' || getMobileBatchCompany(b) === filter);
+      const listToUse = filtered.length > 0 ? filtered : (state.batches || []);
+      listToUse.forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b.id;
+        const cleanName = b.label || String(b.name || b.id).replace(/^(?:⚠️\s*\[Lagring\]\s*|🔒\s*\[Utkast\]\s*)+/g, '').trim();
+        opt.innerText = (b.published === false ? '🔒 ' : '') + cleanName;
+        select.appendChild(opt);
+      });
+      if (state.currentBatchId && listToUse.some(b => b.id === state.currentBatchId)) {
+        select.value = state.currentBatchId;
+      }
+    }
+
+    function setMobileBrandFilter(brand) {
+      state.mobileBrandFilter = brand || 'all';
+      document.querySelectorAll('#mobileBrandBar .m-brand-pill').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.brand === state.mobileBrandFilter);
+      });
+      populateMobileBatchSelect();
+      if (state.mobileBrandFilter !== 'all') {
+        const cur = (state.batches || []).find(b => b.id === state.currentBatchId);
+        if (!cur || getMobileBatchCompany(cur) !== state.mobileBrandFilter) {
+          const firstMatch = (state.batches || []).find(b => getMobileBatchCompany(b) === state.mobileBrandFilter);
+          if (firstMatch) switchBatch(firstMatch.id);
+        }
+      }
+    }
+
+    function syncMobileCategoryTags() {
+      const curBatch = (state.batches || []).find(b => b.id === state.currentBatchId);
+      const isCaps = curBatch && curBatch.category === 'kepsar';
+      const labels = isCaps
+        ? { angle: '📐 Vinkelfel', color: '🎨 Färgavvikelse', crown: '👑 Formfel', edge: '✂️ Friläggning', dust: '🧹 Damm/Smuts', shadow: '🌓 Skuggning' }
+        : { angle: '1:1 Produktdetalj', color: 'Färg/nyans', crown: 'Skala i rummet', edge: 'Rum & komposition', dust: 'Text/böcker', shadow: 'Videorörelse' };
+      Object.keys(labels).forEach(k => {
+        const el = document.getElementById('m_lbl_' + k);
+        if (el) el.textContent = labels[k];
+      });
+      const qRow = document.getElementById('mQuickTagsRow');
+      if (qRow) {
+        qRow.innerHTML = isCaps
+          ? `
+            <button class="m-tag-chip" onclick="insertCommentTag('Vinkelfel')">📐 Vinkelfel</button>
+            <button class="m-tag-chip" onclick="insertCommentTag('Formfel / Buckla')">🧢 Formfel / Buckla</button>
+            <button class="m-tag-chip" onclick="insertCommentTag('Friläggningskant')">✂️ Friläggningskant</button>
+            <button class="m-tag-chip" onclick="insertCommentTag('Damm / Smuts')">✨ Damm / Smuts</button>
+            <button class="m-tag-chip" onclick="insertCommentTag('Färgavvikelse')">🎨 Färgavvikelse</button>
+            <button class="m-tag-chip" onclick="insertCommentTag('Skuggning')">🌓 Skuggning</button>
+          `
+          : `
+            <button class="m-tag-chip" onclick="insertCommentTag('1:1 Produktdetalj')">🔍 1:1 Produktdetalj</button>
+            <button class="m-tag-chip" onclick="insertCommentTag('Färg/nyans')">🎨 Färg/nyans</button>
+            <button class="m-tag-chip" onclick="insertCommentTag('Skala i rummet')">📐 Skala i rummet</button>
+            <button class="m-tag-chip" onclick="insertCommentTag('Rum & komposition')">🛋 Rum & komposition</button>
+            <button class="m-tag-chip" onclick="insertCommentTag('Text/böcker')">📖 Text/böcker</button>
+            <button class="m-tag-chip" onclick="insertCommentTag('Videorörelse')">🎬 Videorörelse</button>
+          `;
+      }
+    }
+
     async function setRating(productId, filename, stars) {
       if (!state.reviewer || !state.reviewer.trim()) {
         showToast('Skriv ditt namn i hubben först för att kunna sätta betyg.');
@@ -2997,7 +3114,8 @@
             product_id: productId,
             filename: filename,
             stars: stars,
-            reviewer: state.reviewer
+            reviewer: state.reviewer,
+            auto_remove: false
           })
         });
         if (res.status === 403) {
@@ -3040,13 +3158,15 @@
 
     function getEffectiveMobileStatus(productId) {
       const review = state.reviews[productId];
-      if (!review || review.status === undefined || review.status === '') {
-        return 'approved'; // Inverterad logik: Godkänd som standard
+      if (!review || !review.status || review.status === 'pending') {
+        return 'pending';
       }
       if (review.status === 'angle_issue') return 'angle_issue';
       if (review.status === 'redo') return 'redo';
-      if (review.status === 'pending') return 'pending';
-      if (review.status === 'approved') return 'approved';
+      if (review.status === 'approved') {
+        const hasDecision = Boolean(review.reviewed_by || review.reviewed_at || review.reviewer);
+        return hasDecision ? 'approved' : 'pending';
+      }
       return review.status;
     }
 
@@ -3107,7 +3227,7 @@
 
       shots.forEach((s, idx) => {
         const slide = document.createElement('div');
-        slide.className = 'carousel-slide';
+        slide.className = 'carousel-slide' + (s.is_studio_packshot ? ' is-studio-shot' : '');
         const shotKey = s.comment_key || s.base_shot || s.shot || String(idx + 1).padStart(2, '0');
         const imgLabel = s.label || shotKey;
         const canRemoveThis = state.canRemove && !s.is_studio_packshot;
@@ -3763,7 +3883,7 @@
         card.className = `m-grid-card ${statusClass}`;
         card.onclick = () => openProductFromGrid(idx);
         card.innerHTML = `
-          <div class="m-card-thumb-wrap">
+          <div class="m-card-thumb-wrap${shot01.is_studio_packshot ? ' is-studio-shot' : ''}">
             <img src="${sizedUrl(shot01.url, 480, shot01.mtime)}" alt="${escapeHtml(prodTitle)}" loading="lazy" onerror="handleImageError(this)" />
             <a href="${downloadUrl(shot01.url)}" download class="btn-download-image" onclick="event.stopPropagation()" title="Ladda ner originalbild" aria-label="Ladda ner originalbild" style="position: absolute; bottom: 6px; left: 6px; z-index: 5;">⬇</a>
             <div class="m-card-status-badge">${statusBadge}</div>

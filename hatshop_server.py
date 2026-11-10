@@ -359,11 +359,15 @@ def load_batches():
                 "name": "2026-08-28 Hatshop Black River (14 modeller)",
                 "path": r"C:\Users\AndronikLindgren\OneDrive - CaMa Gruppen AB\Pictures\26-08-28-Hatshop-Black-River pt1-x",
                 "category": "kepsar",
+                "org": "cama",
+                "published": True,
                 "onedrive_url": "",
                 "createdAt": "2026-09-02T11:00:00Z"
             }
         ]
-        save_batches(batches)
+        batches_dir = os.path.dirname(BATCHES_FILE)
+        if not batches_dir or os.path.isdir(batches_dir):
+            save_batches(batches)
 
     # Auto-match with calendar_projects in memory if onedrive_url is missing, and upgrade legacy /my?id= links
     try:
@@ -397,10 +401,39 @@ def load_batches():
     return batches
 
 
+def infer_batch_company(b):
+    if not isinstance(b, dict):
+        return "trendcarpet"
+    explicit = str(b.get("company") or "").strip().lower()
+    if explicit in ("trendcarpet", "reforma", "hatshop"):
+        return explicit
+    hay = f"{b.get('id', '')} {b.get('name', '')} {b.get('path', '')}".lower()
+    if str(b.get("org") or "").strip().lower() == "reforma" or "reforma" in hay:
+        return "reforma"
+    cat = str(b.get("category") or "").strip().lower()
+    if cat == "kepsar" or any(tok in hay for tok in ("hatshop", "keps", "hatt", "black-river", "black river", "gårda", "garda", "army-cap")):
+        return "hatshop"
+    return "trendcarpet"
+
+
+def clean_batch_label(b):
+    if not isinstance(b, dict):
+        return ""
+    raw = str(b.get("label") or b.get("name") or b.get("id") or "").strip()
+    # Strip noisy status/storage prefixes injected in legacy labels
+    cleaned = re.sub(r'^(?:(?:🔒|⚠️|🌍)\s*)?(?:\[(?:Utkast|Lagring|Privat)\]\s*)+', '', raw, flags=re.IGNORECASE)
+    cleaned = re.sub(r'(?:🔒|⚠️)\s*\[(?:Utkast|Lagring)\]\s*', '', cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r'\s+', ' ', cleaned).strip(" -·")
+    return cleaned or raw
+
+
 def save_batches(batches):
     if not batches and os.path.exists(BATCHES_FILE):
         return False
     with _BATCHES_LOCK:
+        batches_dir = os.path.dirname(BATCHES_FILE)
+        if batches_dir:
+            os.makedirs(batches_dir, exist_ok=True)
         tmp_file = f"{BATCHES_FILE}.{uuid.uuid4().hex}.tmp"
         try:
             with open(tmp_file, "w", encoding="utf-8") as f:
@@ -641,6 +674,9 @@ def parse_file_details(filename, folder_path):
     if m:
         base_shot_num = m.group(1).zfill(2)
         raw_suffix = m.group(2).strip('-_ ')
+        if re.fullmatch(r'0\d{2}', raw_suffix):
+            base_shot_num = f"{base_shot_num}-{raw_suffix}"
+            raw_suffix = ""
     else:
         m3 = re.search(r'[-_](LS\d{1,3}[a-d]?|0\d{2}[a-d]?|\d{3}[a-d]?)(?=$|[-_ .()])(.*)$', name_no_ext, re.IGNORECASE)
         if m3:
@@ -654,7 +690,7 @@ def parse_file_details(filename, folder_path):
     if base_shot_num is not None:
         clean_suffix = raw_suffix.replace('-', ' ').replace('_', ' ').strip()
         is_interior = bool(re.search(r'int[ei]{1,2}r?i?oi?r|miljo|miljö|detail', raw_suffix, re.IGNORECASE))
-        is_version_suffix = bool(re.match(r'^(n|ny|new|v[0-9]+|[0-9]+|fix\d*|crop|justerad|redigerad)$', raw_suffix, re.IGNORECASE)) and not is_interior
+        is_version_suffix = bool(re.match(r'^(n|ny|new|v[0-9]+|[1-9][0-9]?|fix\d*|crop|justerad|redigerad)$', raw_suffix, re.IGNORECASE)) and not is_interior
         return {
             "filename": filename,
             "base_shot": base_shot_num,
@@ -1003,11 +1039,116 @@ def parse_color_folder(color_folder):
 
     return color_display, brand_name
 
+def _load_product_image_mapping(base_dir):
+    """Load optional product_image_mapping.json from base_dir or parent directory, indexed by subfolder/id/slot."""
+    candidates = [
+        os.path.join(base_dir, "product_image_mapping.json"),
+        os.path.join(os.path.dirname(base_dir), "product_image_mapping.json"),
+    ]
+    map_file = next((f for f in candidates if os.path.isfile(f)), None)
+    if not map_file:
+        return {}
+    try:
+        with open(map_file, "r", encoding="utf-8") as mf:
+            data = json.load(mf)
+        entries = data.get("images", []) if isinstance(data, dict) else (data if isinstance(data, list) else [])
+        lookup = {}
+        for entry in entries:
+            if not isinstance(entry, dict):
+                continue
+            for k in (
+                entry.get("subfolder"),
+                entry.get("id"),
+                os.path.splitext(str(entry.get("image_file") or ""))[0],
+                f"{int(entry['slot']):02d}" if isinstance(entry.get("slot"), int) else None,
+            ):
+                if k:
+                    lookup[str(k).strip().lower()] = entry
+        return lookup
+    except Exception:
+        return {}
+
+
+def _infer_look_from_shots_and_subtitle(prod):
+    """Fallback for Reforma manifest items where @NNNN tags live in shot_kind and clean_name/color."""
+    subtitle = str(prod.get("color") or "")
+    name_by_tag = {}
+    for seg in re.split(r'\s*\+\s*', subtitle):
+        m_seg = re.search(r'^(?:\d+\.\s*)?(.+?)\s*\((@\d+)', seg.strip())
+        if m_seg:
+            name_by_tag[m_seg.group(2)] = m_seg.group(1).strip()
+
+    all_shots = []
+    for vshots in (prod.get("variants") or {}).values():
+        if isinstance(vshots, list):
+            all_shots.extend(vshots)
+
+    hero = None
+    companions = []
+    seen_tags = set()
+    for s in all_shots:
+        sk = str(s.get("shot_kind") or s.get("label") or "")
+        m_tag = re.search(r'(@\d+)', sk)
+        if not m_tag:
+            continue
+        tag = m_tag.group(1)
+        if tag in seen_tags:
+            continue
+        seen_tags.add(tag)
+        num_id = tag.lstrip("@")
+        pname = name_by_tag.get(tag) or tag
+        entry = {
+            "id": num_id,
+            "tag": tag,
+            "name": pname,
+            "url": f"https://www.reformasthlm.se/sv/search?q={urllib.parse.quote(pname if pname != tag else num_id)}",
+        }
+        sk_low = sk.lower()
+        if hero is None and ("stjärn" in sk_low or "hero" in sk_low or not companions):
+            hero = entry
+        else:
+            companions.append(entry)
+    return hero, companions
+
+
+def _apply_product_mapping_enrichment(products, mapping_lookup):
+    for prod in products:
+        if "hero_product" not in prod:
+            prod["hero_product"] = None
+        if "companion_products" not in prod or not isinstance(prod["companion_products"], list):
+            prod["companion_products"] = []
+        if mapping_lookup and not prod.get("hero_product"):
+            pid_low = str(prod.get("id") or "").strip().lower()
+            fn_low = str(prod.get("folder_name") or "").strip().lower()
+            prefix_slot = pid_low.split("_", 1)[0] if "_" in pid_low else ""
+            matched = (
+                mapping_lookup.get(pid_low)
+                or mapping_lookup.get(fn_low)
+                or (mapping_lookup.get(prefix_slot) if prefix_slot.isdigit() else None)
+            )
+            if matched:
+                prod["hero_product"] = matched.get("hero_product")
+                prod["companion_products"] = matched.get("companion_products", []) or []
+        for vshots in (prod.get("variants") or {}).values():
+            if isinstance(vshots, list):
+                for s in vshots:
+                    if "shot_kind" not in s:
+                        s["shot_kind"] = ""
+        if not prod.get("hero_product"):
+            inf_hero, inf_comp = _infer_look_from_shots_and_subtitle(prod)
+            if inf_hero:
+                prod["hero_product"] = inf_hero
+                if not prod["companion_products"]:
+                    prod["companion_products"] = inf_comp
+
+
 def scan_batch_products(batch):
     base_dir = batch.get("path", "")
     batch_id = batch.get("id", "")
     if not os.path.exists(base_dir):
         return []
+
+    mapping_lookup = _load_product_image_mapping(base_dir)
 
     # Check for products_manifest.json in base_dir or parent directory
     manifest_candidates = [
@@ -1037,7 +1178,7 @@ def scan_batch_products(batch):
                             rel_file = fn
                         elif "rel_path" in img and os.path.exists(os.path.join(base_dir, img["rel_path"])):
                             rel_file = img["rel_path"]
-                        elif "rel_path" in img and os.path.exists(os.path.join(os.path.dirname(base_dir), img["rel_path"])):
+                        elif "rel_path" in img and os.path.exists(os.path.dirname(base_dir) and os.path.join(os.path.dirname(base_dir), img["rel_path"])):
                             base_name = os.path.basename(img["rel_path"])
                             rel_file = base_name if os.path.exists(os.path.join(base_dir, base_name)) else fn
                         else:
@@ -1056,6 +1197,7 @@ def scan_batch_products(batch):
                             "base_shot": f"{pos:02d}",
                             "comment_key": f"{pos:02d}",
                             "label": label,
+                            "shot_kind": kind,
                             "url": f"/image/{urllib.parse.quote(batch_id)}/{urllib.parse.quote(rel_file)}?v={int(mtime)}",
                             "filename": fn,
                             "orig_name": img.get("orig", ""),
@@ -1081,6 +1223,8 @@ def scan_batch_products(batch):
                         "display_name": model_str,
                         "color": clean_name,
                         "folder_name": pid,
+                        "hero_product": item.get("hero_product"),
+                        "companion_products": item.get("companion_products", []) or [],
                         "has_new_version": False,
                         "version_tag": "",
                         "latest_mtime": max((s["mtime"] for s in shots), default=0),
@@ -1088,6 +1232,7 @@ def scan_batch_products(batch):
                             v_label: shots
                         }
                     })
+                _apply_product_mapping_enrichment(products, mapping_lookup)
                 annotate_product_gold_set(batch, products)
                 return products
         except Exception as e:
@@ -1781,7 +1926,13 @@ def load_name_mapping(base_dir):
 
 
 def classify_shot(shot, batch=None, orig_name=None):
-    """'studio' | 'ai'. Order: batch content_kind > original name (MAPPING/manifest) > whole filename tokens > batch hints."""
+    """'studio' | 'ai'. Order: explicit shot_kind/label > batch content_kind > original name > whole filename tokens > batch hints."""
+    sk_low = str(shot.get("shot_kind") or shot.get("label") or "").lower()
+    if sk_low:
+        if "studioreferens" in sk_low or "studiobild" in sk_low or "packshot" in sk_low:
+            return "studio"
+        if "genererad" in sk_low or "interiör" in sk_low or "interior" in sk_low or "miljö" in sk_low or "video" in sk_low:
+            return "ai"
     kind = batch.get("content_kind") if isinstance(batch, dict) else None
     if kind in ("studio", "ai"):
         return kind
@@ -1883,6 +2034,8 @@ def annotate_product_gold_set(batch, products):
         return products
     batch_id = batch.get("id", "") if isinstance(batch, dict) else ""
     base_dir = batch.get("path", "") if isinstance(batch, dict) else ""
+    if base_dir:
+        _apply_product_mapping_enrichment(products, _load_product_image_mapping(base_dir))
     all_ratings = load_ratings(batch_id) if batch_id else {}
     name_map = load_name_mapping(base_dir)
 
@@ -2083,6 +2236,8 @@ def remove_shot(batch, product_id, filename, user, count_user=None, undo_user=No
     products = scan_batch_products(batch)
     product = next((p for p in products if str(p.get("id")) == str(product_id) or str(p.get("id")).lower() == str(product_id).lower()), None)
     if not product:
+        if os.path.isfile(os.path.join(base_dir, "products_manifest.json")):
+            raise ValueError("Mappen använder manifest – flytt stöds inte")
         raise ValueError("Produkten hittades inte")
 
     target_stem = os.path.splitext(os.path.basename(filename))[0].lower() if filename else ""
@@ -3098,14 +3253,21 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             if view_org and not as_viewer:
                 # admin company switch: only that company's batches (drafts included); a directly requested batch stays
                 batches = [b for b in batches if b.get("org") == view_org or (req_batch_id and b.get("id", "").lower() == req_batch_id)]
+            out_batches = []
+            storage_snapshot = {}
             if self.is_real_admin() and not as_viewer:
                 with _STORAGE_LOCK:
-                    for b in batches:
-                        if b.get("id") in _STORAGE_WARNINGS:
-                            b["storage_warning"] = dict(_STORAGE_WARNINGS[b["id"]])
+                    storage_snapshot = {k: dict(v) for k, v in _STORAGE_WARNINGS.items()}
+            for b in batches:
+                b_copy = dict(b)
+                b_copy["company"] = infer_batch_company(b_copy)
+                b_copy["label"] = clean_batch_label(b_copy)
+                if b_copy.get("id") in storage_snapshot:
+                    b_copy["storage_warning"] = storage_snapshot[b_copy["id"]]
+                out_batches.append(b_copy)
 
             content = json.dumps({
-                "batches": batches,
+                "batches": out_batches,
                 "is_admin": is_admin,
                 "can_remove": bool(is_admin or REMOVE_FOR_VIEWERS),
                 "user_name": user_name,
@@ -4062,8 +4224,20 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                     new_data = review_data.get("data", {})
                     if pid in current_reviews and "comments" in current_reviews[pid] and "comments" not in new_data:
                         new_data["comments"] = current_reviews[pid]["comments"]
+                    rev_actor = reviewer_override or new_data.get("reviewer") or review_data.get("reviewer") or "Anonym"
                     if reviewer_override:
                         new_data["reviewer"] = reviewer_override
+                    elif "reviewer" not in new_data and review_data.get("reviewer"):
+                        new_data["reviewer"] = review_data["reviewer"]
+                    st_val = str(new_data.get("status") or "").strip()
+                    now_iso = datetime.datetime.now().isoformat()
+                    if st_val and st_val != "pending":
+                        new_data["reviewed_by"] = rev_actor
+                        new_data["reviewed_at"] = new_data.get("reviewed_at") or now_iso
+                        new_data.setdefault("updatedAt", now_iso)
+                    elif st_val == "pending":
+                        new_data.pop("reviewed_by", None)
+                        new_data.pop("reviewed_at", None)
                     current_reviews[pid] = new_data
                 elif "reviews" in review_data:
                     if not self.is_admin_request(query):
@@ -4118,8 +4292,15 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 else:
                     current_reviews[pid]["status"] = status
 
+                now_iso = datetime.datetime.now().isoformat()
                 current_reviews[pid]["reviewer"] = reviewer
-                current_reviews[pid]["updatedAt"] = datetime.datetime.now().isoformat()
+                current_reviews[pid]["updatedAt"] = now_iso
+                if status and status != "pending":
+                    current_reviews[pid]["reviewed_by"] = reviewer
+                    current_reviews[pid]["reviewed_at"] = now_iso
+                else:
+                    current_reviews[pid].pop("reviewed_by", None)
+                    current_reviews[pid].pop("reviewed_at", None)
 
                 save_reviews(batch_id, current_reviews)
                 resp = json.dumps({"status": "ok", "reviews": current_reviews}, ensure_ascii=False).encode("utf-8")
@@ -4233,19 +4414,25 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
             try:
                 set_rating(batch_obj, reviewer.strip(), product_id, filename, stars)
-                # CEO 2026-11-05: 1-2 stars always moves the image out of the folder (soft, undoable)
+                allow_auto_remove = body.get("auto_remove", True)
+                if isinstance(allow_auto_remove, str):
+                    allow_auto_remove = allow_auto_remove.strip().lower() not in ("0", "false", "no")
                 auto_removed = False
-                try:
-                    if 1 <= int(stars) <= 2:
-                        remove_shot(batch_obj, product_id, filename, reviewer.strip(), protect_studio=False)
-                        auto_removed = True
-                except Exception as e:
-                    print(f"[auto-remove] {batch_id} {product_id} {filename}: {e}", flush=True)
+                if allow_auto_remove:
+                    try:
+                        if 1 <= int(stars) <= 2:
+                            remove_shot(batch_obj, product_id, filename, reviewer.strip(), protect_studio=False)
+                            auto_removed = True
+                    except Exception as e:
+                        print(f"[auto-remove] {batch_id} {product_id} {filename}: {e}", flush=True)
+                resp_payload = {"status": "ok"}
+                if auto_removed:
+                    resp_payload["auto_removed"] = True
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
                 self.send_header("Access-Control-Allow-Origin", "*")
                 self.end_headers()
-                self.wfile.write(json.dumps({"status": "ok", "auto_removed": auto_removed}, ensure_ascii=False).encode("utf-8"))
+                self.wfile.write(json.dumps(resp_payload, ensure_ascii=False).encode("utf-8"))
                 return
             except ValueError as e:
                 self.send_response(400)

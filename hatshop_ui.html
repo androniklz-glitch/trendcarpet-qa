@@ -25,10 +25,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #0B0D0F;
-      --bg-card: #13161A;
-      --bg-card-hover: #181C21;
-      --bg-surface: #0E1013;
+      --bg-dark: #111315;
+      --bg-card: #181A1F;
+      --bg-card-hover: #1F2229;
+      --bg-surface: #14161A;
       --border-color: rgba(255, 255, 255, 0.07);
       --border-hover: rgba(255, 255, 255, 0.15);
       --border-light: rgba(255, 255, 255, 0.07);
@@ -50,7 +50,7 @@
       --status-pending: #9CA3AF;
       --status-pending-bg: rgba(255, 255, 255, 0.05);
       
-      --stage-backdrop: #ffffff;
+      --stage-backdrop: #F4F4F2;
       --guide-crown-y: 22%;
       --guide-base-y: 78%;
       --guide-center-y: 52%;
@@ -352,7 +352,8 @@
 
     #view-angle,
     #view-calendar,
-    #view-onion {
+    #view-onion,
+    #view-contactsheet {
       overflow-y: auto;
       overflow-x: hidden;
       height: 100%;
@@ -2071,9 +2072,718 @@
     .lightbox-prev-btn { left: 16px; }
     .lightbox-next-btn { right: 16px; }
     .fmt-badge {
-      display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 700;
-      background: rgba(148, 163, 184, 0.14); border: 1px solid rgba(148, 163, 184, 0.35);
-      color: #cbd5e1; border-radius: 10px; padding: 1px 6px; white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 600;
+      background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #9ca3af; border-radius: 6px; padding: 1px 6px; white-space: nowrap;
+    }
+
+    /* ======================================================================
+       NORDIC EDITORIAL REVIEW REDESIGN (2026-11-10)
+       Calm dark gallery (#111315 / #181A1F), single 56px topbar, true-aspect
+       interiors/videos, collapsible 230px sidebar, contextual drawers,
+       1:1 Reference Split-View, Shop-the-Look & Kontaktkarta.
+       ====================================================================== */
+    header.editorial-topbar {
+      height: 56px;
+      min-height: 56px;
+      max-height: 56px;
+      padding: 0 18px;
+      background: rgba(17, 19, 21, 0.96);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: nowrap;
+      z-index: 200;
+    }
+    .topbar-left, .topbar-center, .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .topbar-left { flex: 0 1 auto; }
+    .topbar-center { flex: 1 1 auto; justify-content: center; }
+    .topbar-right { flex: 0 0 auto; }
+
+    .brand-tabs {
+      display: inline-flex;
+      align-items: center;
+      background: #181A1F;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .brand-tab-btn {
+      background: transparent;
+      border: none;
+      color: #9CA3AF;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 120ms ease;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+    .brand-tab-btn:hover { color: #F3F4F6; background: rgba(255, 255, 255, 0.04); }
+    .brand-tab-btn.active {
+      background: rgba(255, 255, 255, 0.11);
+      color: #FFFFFF;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    /* Searchable Batch Popover */
+    .batch-picker-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      min-width: 0;
+    }
+    .batch-picker-btn {
+      background: #181A1F;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #F3F4F6;
+      border-radius: 8px;
+      height: 36px;
+      padding: 0 12px;
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      max-width: 340px;
+      min-width: 190px;
+      transition: border-color 120ms ease, background 120ms ease;
+      font-family: inherit;
+    }
+    .batch-picker-btn:hover {
+      border-color: rgba(255, 255, 255, 0.22);
+      background: #1F2229;
+    }
+    .batch-picker-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1 1 auto;
+      text-align: left;
+    }
+    .batch-picker-meta {
+      font-size: 11px;
+      color: #9CA3AF;
+      font-weight: 500;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .batch-popover {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      width: 430px;
+      max-width: 92vw;
+      max-height: 480px;
+      background: #181A1F;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.65);
+      z-index: 1200;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .batch-popover.open { display: flex; }
+    .batch-popover-search-wrap {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: #14161A;
+    }
+    .batch-popover-search {
+      width: 100%;
+      background: #111315;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 7px;
+      padding: 7px 10px;
+      color: #F3F4F6;
+      font-size: 12.5px;
+      outline: none;
+      font-family: inherit;
+    }
+    .batch-popover-search:focus { border-color: var(--accent-blue); }
+    .batch-popover-list {
+      overflow-y: auto;
+      max-height: 410px;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .batch-popover-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: #E5E7EB;
+      text-align: left;
+      width: 100%;
+      font-family: inherit;
+      transition: background 100ms ease;
+    }
+    .batch-popover-item:hover { background: rgba(255, 255, 255, 0.06); }
+    .batch-popover-item.active {
+      background: rgba(59, 130, 246, 0.16);
+      color: #FFFFFF;
+    }
+    .batch-popover-item-title {
+      font-size: 12.5px;
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .batch-popover-item-sub {
+      font-size: 11px;
+      color: #9CA3AF;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Honest Status Filter & Counter */
+    .editorial-status-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #181A1F;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 8px;
+      padding: 3px 6px;
+      white-space: nowrap;
+    }
+    .status-filter-pills {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .status-pill-btn {
+      background: transparent;
+      border: none;
+      color: #9CA3AF;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 120ms ease;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .status-pill-btn:hover { color: #F3F4F6; background: rgba(255, 255, 255, 0.05); }
+    .status-pill-btn.active {
+      background: rgba(255, 255, 255, 0.11);
+      color: #FFFFFF;
+    }
+    .editorial-progress-label {
+      font-size: 11.5px;
+      color: #9CA3AF;
+      padding-left: 6px;
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      font-weight: 500;
+    }
+    .editorial-progress-label b { color: #E5E7EB; font-weight: 700; }
+
+    /* Right Primary Buttons */
+    .editorial-top-btn {
+      height: 34px;
+      padding: 0 11px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #181A1F;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #E5E7EB;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 120ms ease;
+      font-family: inherit;
+    }
+    .editorial-top-btn:hover {
+      background: #22262E;
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #FFFFFF;
+    }
+    .editorial-top-btn.active {
+      background: rgba(59, 130, 246, 0.18);
+      border-color: rgba(96, 165, 250, 0.55);
+      color: #93C5FD;
+    }
+    .round2-badge {
+      background: #F59E0B;
+      color: #111315;
+      font-size: 10.5px;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 999px;
+      line-height: 1.3;
+    }
+
+    /* Slide-over Tools Drawer (⚙️ Verktyg) */
+    .tools-drawer-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.52);
+      backdrop-filter: blur(2px);
+      z-index: 1400;
+    }
+    .tools-drawer-backdrop.open { display: block; }
+    .tools-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 400px;
+      max-width: 94vw;
+      background: #181A1F;
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: -16px 0 40px rgba(0, 0, 0, 0.65);
+      z-index: 1500;
+      transform: translateX(102%);
+      transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .tools-drawer.open { transform: translateX(0); }
+    .tools-drawer-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #14161A;
+    }
+    .tools-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 18px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .drawer-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .drawer-section:last-child { border-bottom: none; }
+    .drawer-section-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #6B7280;
+    }
+    .drawer-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Full-width Editorial Product Layout + Collapsible 230px Sidebar + Contextual Feedback Drawer */
+    main { padding: 10px 14px; }
+    .product-view-layout {
+      display: flex !important;
+      gap: 12px;
+      flex: 1;
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
+      position: relative;
+    }
+    .sidebar-panel {
+      width: 230px;
+      min-width: 230px;
+      max-width: 230px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      height: 100%;
+      overflow: hidden;
+      transition: width 150ms ease, min-width 150ms ease, opacity 120ms ease;
+    }
+    .sidebar-panel.collapsed {
+      width: 0 !important;
+      min-width: 0 !important;
+      max-width: 0 !important;
+      opacity: 0;
+      border: none;
+      margin-right: -12px;
+      pointer-events: none;
+    }
+    .sidebar-search-box {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #14161A;
+    }
+    .sidebar-search-input {
+      flex: 1;
+      width: 100%;
+      background: #111315;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 6px;
+      padding: 5px 8px;
+      color: #F3F4F6;
+      font-size: 12px;
+      outline: none;
+      font-family: inherit;
+    }
+    .sidebar-search-input:focus { border-color: var(--accent-blue); }
+    .sidebar-panel .sidebar-list {
+      border: none;
+      border-radius: 0;
+      flex: 1;
+      background: transparent;
+    }
+    .sidebar-thumb {
+      width: 38px;
+      height: 38px;
+      background: #20232A;
+      object-fit: cover;
+    }
+
+    .shots-stage-container {
+      flex: 1 1 auto;
+      min-width: 0;
+      padding: 14px 18px;
+      border-radius: 10px;
+      gap: 12px;
+    }
+    .stage-top-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .stage-quick-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .stage-action-btn {
+      height: 32px;
+      padding: 0 11px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #14161A;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #E5E7EB;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 120ms ease;
+      font-family: inherit;
+    }
+    .stage-action-btn:hover { background: #22262E; border-color: rgba(255, 255, 255, 0.22); }
+    .stage-action-btn.active-ok {
+      background: rgba(16, 185, 129, 0.18);
+      border-color: rgba(52, 211, 153, 0.55);
+      color: #6EE7B7;
+    }
+    .stage-action-btn.active-adjust {
+      background: rgba(245, 158, 11, 0.18);
+      border-color: rgba(251, 191, 36, 0.55);
+      color: #FCD34D;
+    }
+    .stage-action-btn.active-compare {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: rgba(96, 165, 250, 0.6);
+      color: #93C5FD;
+    }
+
+    /* Reforma Shop-the-Look & @-ref Switcher */
+    .shop-the-look-bar {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding: 6px 10px;
+      background: #14161A;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 8px;
+    }
+    .shop-the-look-bar.visible { display: flex; }
+    .stl-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 600;
+      background: #1C1F26;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #E5E7EB;
+      cursor: pointer;
+      transition: all 120ms ease;
+    }
+    .stl-chip:hover { border-color: rgba(255, 255, 255, 0.28); background: #252932; }
+    .stl-chip.hero {
+      background: rgba(245, 158, 11, 0.11);
+      border-color: rgba(251, 191, 36, 0.38);
+      color: #FDE68A;
+    }
+    .stl-chip.active-ref {
+      box-shadow: 0 0 0 1.5px #60A5FA;
+      border-color: #60A5FA;
+    }
+    .stl-ext-link {
+      color: #93C5FD;
+      text-decoration: none;
+      font-size: 11px;
+      padding-left: 3px;
+      opacity: 0.85;
+    }
+    .stl-ext-link:hover { opacity: 1; text-decoration: underline; }
+
+    /* 1:1 Sticky Studio Reference Split-View */
+    .stage-split-body {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      min-width: 0;
+      flex: 1 0 auto;
+    }
+    .ref-split-pane {
+      display: none;
+      position: sticky;
+      top: 0;
+      width: 340px;
+      min-width: 280px;
+      max-width: 38%;
+      background: #14161A;
+      border: 1px solid rgba(96, 165, 250, 0.35);
+      border-radius: 10px;
+      padding: 10px;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
+      z-index: 15;
+    }
+    .ref-split-pane.open { display: flex; }
+    .ref-split-img-box {
+      width: 100%;
+      background: var(--stage-backdrop);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-height: 70vh;
+    }
+    .ref-split-img-box img {
+      width: 100%;
+      height: auto;
+      max-height: 68vh;
+      object-fit: contain;
+      display: block;
+      cursor: zoom-in;
+    }
+    .stage-split-body .shots-grid {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    /* True-Aspect Gallery Cards (No white 1:1 box on interiors/videos!) */
+    #shotsGrid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    #shotsGrid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    #shotsGrid.cols-1, #shotsGrid.shots-size-stor { grid-template-columns: minmax(0, 1fr); }
+
+    .shot-box, .shot-box.in-gold-set {
+      background: #14161A;
+      border: 1px solid rgba(255, 255, 255, 0.06) !important;
+      box-shadow: none !important;
+      border-radius: 10px;
+    }
+    .shot-box:hover, .shot-box.in-gold-set:hover {
+      border-color: rgba(255, 255, 255, 0.18) !important;
+      transform: none;
+    }
+    .shot-box .btn-remove-overlay,
+    .shot-box .btn-download-overlay {
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+    .shot-box:hover .btn-remove-overlay,
+    .shot-box:hover .btn-download-overlay {
+      opacity: 1;
+    }
+    .shot-box-header {
+      padding: 6px 10px;
+      background: #14161A;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    /* Interior & Video cards: true proportions, calm dark stage, zero white letterboxes */
+    .shot-box:not(.is-studio-shot) .shot-box-image-wrap {
+      aspect-ratio: auto !important;
+      background: #111315 !important;
+      min-height: 180px;
+    }
+    .shot-box:not(.is-studio-shot) .shot-box-image-wrap img {
+      width: 100%;
+      height: auto;
+      max-height: 84vh;
+      object-fit: contain;
+      display: block;
+    }
+    .shot-box:not(.is-studio-shot) .shot-box-image-wrap video {
+      width: 100%;
+      height: auto !important;
+      max-height: 84vh;
+      object-fit: contain;
+      display: block;
+      background: #0D0F12 !important;
+    }
+    /* Studio packshots (-01..-08): discreet neutral studio plate */
+    .shot-box.is-studio-shot .shot-box-image-wrap {
+      aspect-ratio: 1 / 1;
+      background: var(--stage-backdrop);
+    }
+
+    /* Contextual Right Feedback/Comment Drawer (hidden until needed!) */
+    .inspector-panel.contextual-drawer {
+      display: none;
+      width: 340px;
+      min-width: 320px;
+      max-width: 360px;
+      flex-shrink: 0;
+      border-radius: 10px;
+      background: #181A1F;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .inspector-panel.contextual-drawer.open {
+      display: flex;
+    }
+
+    /* Hold-Space 1:1 Compare Floating Indicator */
+    .hold-compare-pill {
+      display: none;
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 99999;
+      background: rgba(37, 99, 235, 0.95);
+      color: #FFFFFF;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 7px 16px;
+      border-radius: 999px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(147, 197, 253, 0.6);
+      pointer-events: none;
+    }
+    .hold-compare-pill.active { display: inline-flex; align-items: center; gap: 6px; }
+
+    /* Built-in Kontaktkarta (#view-contactsheet) */
+    .contactsheet-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 4px 4px 60px;
+    }
+    .cs-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+      background: #181A1F;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 10px;
+    }
+    .cs-product-row {
+      background: #181A1F;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .cs-product-row.cs-status-approved { border-color: rgba(52, 211, 153, 0.35); }
+    .cs-product-row.cs-status-adjust { border-color: rgba(251, 191, 36, 0.45); }
+    .cs-row-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .cs-shots-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+      gap: 10px;
+      align-items: start;
+    }
+    .cs-tile {
+      background: #111315;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      transition: border-color 120ms ease;
+    }
+    .cs-tile:hover { border-color: rgba(255, 255, 255, 0.25); }
+    .cs-tile.is-studio { background: var(--stage-backdrop); }
+    .cs-tile img, .cs-tile video {
+      width: 100%;
+      height: auto;
+      max-height: 240px;
+      object-fit: contain;
+      display: block;
+    }
+    .cs-tile-label {
+      position: absolute;
+      bottom: 6px;
+      left: 6px;
+      background: rgba(17, 19, 21, 0.82);
+      color: #E5E7EB;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 5px;
+      backdrop-filter: blur(4px);
     }
   </style>
 </head>
@@ -2084,189 +2794,254 @@
     Hubben är offline just nu (datorn som kör den är avstängd). Sidan uppdateras automatiskt när den är tillbaka.
   </div>
 
-  <!-- Top Navigation Header -->
-  <header>
-    <div class="brand-section">
-      <div class="brand-badge">FOTO QA HUB</div>
-      <div id="hubStatusBadge" style="display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 9999px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); font-size: 11px; font-weight: 600; color: #10b981; margin-left: 6px;" title="Realtidsanslutning mot studion & Vercel">
-        <span id="hubStatusDot" style="width: 7px; height: 7px; border-radius: 50%; background: #10b981; box-shadow: 0 0 6px #10b981;"></span>
-        <span id="hubStatusText">Online</span>
+  <!-- Single Clean 56px Nordic Editorial Topbar -->
+  <header class="editorial-topbar">
+    <!-- 1. Left: Brand Filter Tabs + Searchable Batch Popover -->
+    <div class="topbar-left">
+      <div class="brand-tabs" id="editorialBrandTabs" role="tablist" aria-label="Varumärkesfilter">
+        <button type="button" class="brand-tab-btn" data-brand="trendcarpet" onclick="setBrandFilter('trendcarpet')">Trendcarpet</button>
+        <button type="button" class="brand-tab-btn" data-brand="reforma" onclick="setBrandFilter('reforma')">Reforma</button>
+        <button type="button" class="brand-tab-btn" data-brand="hatshop" onclick="setBrandFilter('hatshop')">Hatshop</button>
+        <button type="button" class="brand-tab-btn active" data-brand="all" onclick="setBrandFilter('all')">Alla</button>
       </div>
-      <button class="btn btn-sm" onclick="copyBatchShareLink()" title="Klicka för att kopiera den permanenta delningslänken för teamet (trendcarpet-qa.vercel.app)" style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); color: #93c5fd; font-weight: 600; padding: 3px 9px; font-size: 11px; border-radius: 9999px; margin-left: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; flex-shrink: 0;">
-        <span>🌐</span> trendcarpet-qa.vercel.app <span style="opacity: 0.7; font-size: 10px;">📋</span>
-      </button>
-      
-      <!-- Batch Selector -->
-      <div class="batch-selector-wrap">
-        <span class="control-label">Mapp:</span>
-        <select id="batchSelect" class="custom-select" onchange="switchBatch(this.value)" title="Välj produktmapp för kvalitetsgranskning">
-          <!-- Loaded dynamically -->
-        </select>
-        <button class="btn btn-sm btn-success" id="btnAddBatchTop" onclick="openAddBatchModal()" title="Skapa en ny mapp för ett fotoprojekt från datorn/OneDrive">
-          + Ny Mapp
-        </button>
-        <!-- Publish Status & Toggle Button for Admin -->
-        <div id="batchPublishWrap" style="display: none; align-items: center; margin: 0 2px;">
-          <button class="btn btn-sm" id="btnPublishBatch" onclick="toggleBatchPublish()">
-            <!-- Dynamically populated -->
-          </button>
-        </div>
-        <button class="btn btn-sm btn-outline" onclick="copyBatchShareLink()" title="Kopiera permanent direktlänk (https://trendcarpet-qa.vercel.app) till denna mapp för kollegor i Teams">
-          🔗 Dela mapp
-        </button>
-        <div class="onedrive-action-group" id="onedriveActionGroup" title="OneDrive / SharePoint-länk">
-          <button class="btn btn-sm" id="btnCopyOneDrive" onclick="copyOneDriveLink()" title="Klicka för att kopiera OneDrive-länken till denna mapp">
-            ☁️ Kopiera OneDrive-länk
-          </button>
-          <button class="btn btn-sm" id="btnOpenOneDrive" onclick="openOneDriveFolder()" title="Öppna mappen i OneDrive / SharePoint (ny flik)" style="padding: 4px 7px;">
-            ↗
-          </button>
-          <button class="btn btn-sm" id="btnEditOneDrive" onclick="editOneDriveLink()" title="Redigera eller klistra in OneDrive-länk" style="padding: 4px 7px;">
-            ✏️
-          </button>
-        </div>
-        <div class="zip-menu-wrap">
-          <button class="btn btn-sm btn-outline" id="btnZipMenu" onclick="toggleZipMenu(event)" title="Ladda ner bilder direkt som .zip (markerade, Sajt-urval eller hela mappen)">
-            📦 Ladda ner (.zip) <span id="selectedZipBadge" style="display: none; background: #3b82f6; color: #fff; border-radius: 999px; padding: 0 6px; font-size: 10px; margin-left: 3px;">0</span> ▾
-          </button>
-          <div class="zip-dropdown-menu" id="zipDropdownMenu" onclick="event.stopPropagation()">
-            <button class="zip-menu-item" id="zipMenuSelectedBtn" onclick="downloadBatchZip('selected')" disabled>
-              <span>☑️ Markerade bilder</span>
-              <span id="zipMenuSelectedCount" style="color: #60a5fa;">0 valda</span>
-            </button>
-            <button class="zip-menu-item" onclick="downloadBatchZip('gold')">
-              <span>🏆 Sajt-urval / Guldset (hela mappen)</span>
-              <span style="color: #fbbf24;">2–4/modell</span>
-            </button>
-            <button class="zip-menu-item" onclick="downloadBatchZip('gold_product')">
-              <span>🏆 Sajt-urval (aktuell produkt)</span>
-              <span style="color: #fbbf24;">Aktuell</span>
-            </button>
-            <button class="zip-menu-item" onclick="downloadBatchZip('product')">
-              <span>📸 Alla bilder för aktuell produkt</span>
-              <span style="color: #94a3b8;">Produkt</span>
-            </button>
-            <button class="zip-menu-item" onclick="downloadBatchZip('all')">
-              <span>📁 Hela mappen (alla bilder)</span>
-              <span style="color: #94a3b8;">Alla</span>
-            </button>
-            <div style="border-top: 1px solid #1e293b; margin: 2px 0; padding-top: 4px; display: flex; justify-content: space-between; gap: 4px;">
-              <button class="btn btn-sm btn-outline" style="flex: 1; font-size: 11px;" onclick="selectAllCurrentProductShots()">☑️ Välj produkt</button>
-              <button class="btn btn-sm btn-outline" style="flex: 1; font-size: 11px;" onclick="clearSelectedShots()">✕ Rensa val</button>
-            </div>
-          </div>
-        </div>
-        <button class="btn btn-sm btn-outline" id="btnMergeGoldBatch" onclick="openMergeGoldPrompt()" style="display: none; border-color: rgba(251, 191, 36, 0.5); color: #fde68a;" title="Kopiera Sajt-urvalet (Guldset / Stjärnval) från denna AI-mapp rakt in i motsvarande produktmapp (Original + 1500px)">
-          🚀 Slå ihop Sajt-urval
-        </button>
-        <button class="btn btn-sm btn-outline" onclick="hardReloadApp()" title="Ladda om sidan helt färskt från servern (motsvarar Ctrl+F5) och rensa webbläsarens cache">
-          🔄 Uppdatera
-        </button>
-      </div>
-    </div>
 
-    <!-- Mode Navigation Tabs -->
-    <div class="mode-tabs">
-      <button class="tab-btn active" onclick="switchMode('product')" title="Granska alla 4 bildvinklar, sätt status, bocka av fel och kommentera (Tangent: 1)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        Produktgranskning
-      </button>
-      <button class="tab-btn" onclick="switchMode('angle')" title="Översiktsgrid av förstabilder (01) med laserguider och vinkellinjer (Tangent: 2)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
-        Vinkel & Linjering (01)
-      </button>
-      <button class="tab-btn" onclick="switchMode('onion')" title="Lägg två produkter ovanpå varandra med genomskinlighet eller flimmer (Tangent: 3)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-        Onion-Skin
-      </button>
-      <button class="tab-btn" onclick="switchMode('report')" title="Samlat kvalitetsgranskningsprotokoll och export till Markdown, CSV eller JSON (Tangent: 4)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-        Protokoll
-      </button>
-      <button class="tab-btn" id="tabBtnCalendar" onclick="switchMode('calendar')" title="Fotograferingskalender och arkiv över tidigare fotograferingar (Tangent: 5)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-        📅 Fotokalender & Arkiv
+      <div class="batch-picker-wrap" id="batchPickerWrap">
+        <button type="button" class="batch-picker-btn" id="batchPickerBtn" onclick="toggleBatchPopover(event)" title="Välj projekt / batch">
+          <span class="batch-picker-title" id="batchPickerTitle">Välj mapp…</span>
+          <span class="batch-picker-meta" id="batchPickerMeta"></span>
+          <span style="font-size: 10px; opacity: 0.65;">▾</span>
+        </button>
+        <div class="batch-popover" id="batchPopover" onclick="event.stopPropagation()">
+          <div class="batch-popover-search-wrap">
+            <input type="text" class="batch-popover-search" id="batchPopoverSearch" placeholder="Sök batch, kollektion eller datum…" oninput="renderBatchPopover()" onkeydown="if(event.key==='Escape') closeBatchPopover()" />
+          </div>
+          <div class="batch-popover-list" id="batchPopoverList"></div>
+        </div>
+      </div>
+
+      <button type="button" class="editorial-top-btn" id="btnCapAngleQuick" style="display: none;" onclick="switchMode(state.currentMode === 'angle' ? 'product' : 'angle')" title="Vinkel & Linjering (01) för kepsar">
+        📐 Vinkel (01)
       </button>
     </div>
 
-    <!-- Header Controls & Status -->
-    <div class="header-controls">
-      <!-- Reviewer Name -->
-      <div class="control-group" onclick="openNameModal()" title="Klicka för att ändra granskarnamn" style="cursor: pointer;">
-        <span class="control-label">Granskare:</span>
-        <div style="background: #1e293b; border: 1px solid #3b82f6; border-radius: 6px; padding: 4px 10px; display: flex; align-items: center; gap: 6px;">
-          <span style="font-size: 13px;">👤</span>
-          <span id="reviewerNameDisplay" style="font-weight: 700; font-size: 13px; color: #fff;">Ange namn</span>
-          <span style="font-size: 11px; color: #60a5fa;">✏️</span>
+    <!-- 2. Center: Honest Status Counter & Quick Filters -->
+    <div class="topbar-center">
+      <div class="editorial-status-bar">
+        <div class="status-filter-pills" id="statusFilterPills">
+          <button type="button" class="status-pill-btn active" data-sfilter="all" onclick="setEditorialStatusFilter('all')">Alla <span id="pillCountAll" style="opacity:0.65;"></span></button>
+          <button type="button" class="status-pill-btn" data-sfilter="pending" onclick="setEditorialStatusFilter('pending')">Att granska <span id="pillCountPending" style="opacity:0.75;"></span></button>
+          <button type="button" class="status-pill-btn" data-sfilter="approved" onclick="setEditorialStatusFilter('approved')">✓ Godkända <span id="pillCountApproved" style="color:#34D399;"></span></button>
+          <button type="button" class="status-pill-btn" data-sfilter="adjust" onclick="setEditorialStatusFilter('adjust')">✎ Justera <span id="pillCountAdjust" style="color:#FBBF24;"></span></button>
         </div>
-        <input type="hidden" id="reviewerName" value="">
+        <span class="editorial-progress-label" id="editorialProgressLabel">0 av 0 granskade · 0 godkända</span>
       </div>
 
-      <!-- Logged-in account, admin company switch + "Visa som tittare"; "Byt konto / Logga ut" in the ⋯ menu (2026-11-09 design v2) -->
-      <div class="control-group" id="accountGroup" title="Kontot som den här webbläsaren är inloggad med (personlig länk)">
-        <span class="control-label">Konto:</span>
-        <span id="accountDisplay" style="font-weight: 700; font-size: 13px; color: #fff; white-space: nowrap;">…</span>
-        <select id="orgSwitch" class="custom-select" style="display: none; min-width: 0; width: auto; border: 1px solid var(--border-color); border-radius: 6px;" onchange="switchOrgView(this.value)" title="Byt företag: visar bara det företagets mappar (utkast med 🔒 syns fortfarande för dig)">
-          <option value="all">Alla företag</option>
-          <option value="cama">Trendcarpet/CaMa</option>
-          <option value="reforma">Reforma</option>
-        </select>
-        <button type="button" id="btnViewerPreview" class="btn btn-sm btn-outline" style="display: none; white-space: nowrap;" onclick="toggleViewerPreview()" title="Se exakt vad det valda företagets tittare ser: bara publicerade mappar, inga adminknappar">👁 Visa som tittare</button>
-        <div style="position: relative;">
-          <button type="button" class="btn btn-sm btn-outline" onclick="toggleAccountMenu(event)" title="Konto" aria-haspopup="true">⋯</button>
-          <div id="accountMenu" style="display: none; position: absolute; right: 0; top: calc(100% + 4px); z-index: 1000; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 4px; min-width: 180px; box-shadow: 0 8px 24px rgba(0,0,0,.35);">
-            <button type="button" class="btn btn-sm" style="width: 100%; justify-content: flex-start;" onclick="logoutAccount()" title="Logga ut från det här kontot. Öppna sedan en personlig länk för att logga in igen eller byta konto.">🚪 Byt konto / Logga ut</button>
-          </div>
-        </div>
+      <div id="subToolbarUndoGroup" style="display: none;">
+        <button class="editorial-top-btn" id="btnSubToolbarUndo" onclick="undoRemoveImage()" style="color: #fca5a5; border-color: rgba(239, 68, 68, 0.45); background: rgba(239, 68, 68, 0.14);" title="Återställ senast borttagna bild">↩ Ångra (0)</button>
       </div>
+    </div>
 
-      <div class="control-group" id="variantControlGroup">
-        <span class="control-label">Variant:</span>
-        <select id="sourceSelect" class="custom-select" onchange="changeSource(this.value)" title="Välj bildvariant/upplösning (original, 1500px iphone etc.)"></select>
-      </div>
-
-      <div class="backdrop-swatches" title="Ändra bakgrundsfärg på bilderna för att upptäcka kontraster och halos">
-        <div class="color-swatch swatch-white active" onclick="setBackdrop('#ffffff', this)" title="Bakgrund: Helvit (#FFFFFF) - Kontrollera produkt mot ren vit webbakgrund"></div>
-        <div class="color-swatch swatch-soft" onclick="setBackdrop('#f3f4f6', this)" title="Bakgrund: Mjukgrå (#F3F4F6) - Skonsam kontrast"></div>
-        <div class="color-swatch swatch-gray" onclick="setBackdrop('#808080', this)" title="Bakgrund: Neutralgrå (#808080) - Industriell standard för färgbedömning"></div>
-        <div class="color-swatch swatch-dark" onclick="setBackdrop('#181b24', this)" title="Bakgrund: Mörk grafit (#181B24) - Upptäck vita halos och fransiga kanter"></div>
-        <div class="color-swatch swatch-magenta" onclick="setBackdrop('#ff007f', this)" title="Bakgrund: Stark Magenta (#FF007F) - Avslöjar minsta friläggningsmiss och semi-transparenta pixlar"></div>
-        <div class="color-swatch swatch-checkered" onclick="setBackdrop('checker', this)" title="Bakgrund: Schackrutig transparens - Kontrollera genomskinlighet"></div>
-      </div>
-
-      <div class="qa-progress-wrap" id="qaProgressWrap" title="Total granskningsframgång för denna mapp">
-        <div class="progress-bar-bg">
-          <div class="progress-bar-fill" id="progressBar"></div>
-        </div>
-        <div class="qa-stats-text">
-          <span class="qa-tag-pill qa-tag-ok" id="statOkCount" title="Antal godkända produkter">0</span>
-          <span class="qa-tag-pill qa-tag-warn" id="statWarnCount" title="Antal produkter med vinkelfel / lutningsavvikelse">0</span>
-          <span class="qa-tag-pill qa-tag-err" id="statRedoCount" title="Antal produkter som kräver ny retusch eller omfotografering">0</span>
-          <span class="qa-tag-pill qa-tag-pend" id="statPendCount" title="Antal kvarvarande ogranskade produkter">0 kvar</span>
-        </div>
-      </div>
-
-      <button class="btn btn-sm" id="btnOpenLocalFolderTop" onclick="openCurrentFolder()" title="Öppna den lokala projektmappen direkt i Windows Utforskaren">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-        Mapp
+    <!-- 3. Right: 3 Primary CEO Buttons (Kontaktkarta, Kopiera Runda 2-order, ⚙️ Verktyg) -->
+    <div class="topbar-right">
+      <button type="button" class="editorial-top-btn" id="btnTopContactSheet" onclick="toggleContactSheetMode()" title="Öppna helhetsvy (Kontaktkarta) över alla produkter och miljöbilder i batchen (Tangent: M)">
+        🖼 Kontaktkarta
       </button>
-
-      <a href="/mobile" onclick="sessionStorage.removeItem('prefer_desktop')" target="_blank" class="btn btn-sm btn-outline" style="text-decoration: none;" title="Öppna mobilanpassad vy för telefoner och surfplattor (/mobile)">
-        📱 Mobil
-      </a>
+      <button type="button" class="editorial-top-btn" id="btnCopyRound2Order" onclick="copyRound2Order()" title="Kopiera färdigformaterad Runda 2-order (alla produkter med Justera / kommentarer / borttagna bilder)">
+        📋 Kopiera Runda 2-order
+        <span class="round2-badge" id="round2OrderBadge" style="display: none;">0</span>
+      </button>
+      <button type="button" class="editorial-top-btn" id="btnOpenToolsDrawer" onclick="toggleToolsDrawer()" title="Öppna verktygslåda, export, admin & specialvyer">
+        ⚙️ Verktyg
+      </button>
     </div>
   </header>
 
-  <!-- Contextual Sub-Toolbar -->
-  <div class="sub-toolbar" id="subToolbar">
-    <div class="tool-group" id="modeSpecificTools"></div>
-    <div class="tool-group" id="subToolbarUndoGroup" style="display: none;">
-      <button class="btn btn-sm btn-outline" id="btnSubToolbarUndo" onclick="undoRemoveImage()" style="font-size: 11.5px; padding: 3px 10px; color: #fca5a5; border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.15); display: inline-flex; align-items: center; gap: 4px;" title="Återställ senast borttagna bild">↩ Ångra (0)</button>
+  <!-- Floating Hold-Space Compare Indicator -->
+  <div class="hold-compare-pill" id="holdComparePill">📌 1:1 Studioreferens (släpp Space för att återgå)</div>
+
+  <!-- Slide-over Drawer: ⚙️ Verktyg (Houses 100% of Admin & Secondary Features — 0 Deleted Features!) -->
+  <div class="tools-drawer-backdrop" id="toolsDrawerBackdrop" onclick="closeToolsDrawer()"></div>
+  <aside class="tools-drawer" id="toolsDrawer" aria-label="Verktyg och administration">
+    <div class="tools-drawer-header">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 14px; font-weight: 700; color: #fff;">⚙️ Verktyg & Admin</span>
+        <div id="hubStatusBadge" style="display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: 9999px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); font-size: 10.5px; font-weight: 600; color: #10b981;" title="Realtidsanslutning">
+          <span id="hubStatusDot" style="width: 6px; height: 6px; border-radius: 50%; background: #10b981; box-shadow: 0 0 6px #10b981;"></span>
+          <span id="hubStatusText">Online</span>
+        </div>
+      </div>
+      <button type="button" class="btn btn-sm" onclick="closeToolsDrawer()">✕ Stäng</button>
     </div>
-    <div class="tool-group">
-      <span style="font-size: 11px; color: var(--text-dim); display: inline-flex; align-items: center; gap: 6px;">Kortkommandon: <span class="keycap" title="Snabbtangenter 1-5 för att byta mellan huvudvyerna">1-5</span> Byt vy <span style="opacity: 0.3;">|</span> <span class="keycap" title="Tangent A: Sätt status Godkänd för publicering">A</span> Godkänn <span style="opacity: 0.3;">|</span> <span class="keycap" title="Tangent W: Sätt status Justera vinkel / lutning">W</span> Vinkelfel <span style="opacity: 0.3;">|</span> <span class="keycap" title="Tangent R: Sätt status Kräver ny retusch / fel">R</span> Gör om <span style="opacity: 0.3;">|</span> <span class="keycap" title="Tangent G: Slå på/av laserguider och stödlinjer">G</span> Stödlinjer</span>
+
+    <div class="tools-drawer-body">
+      <!-- Special Views -->
+      <div class="drawer-section">
+        <div class="drawer-section-label">Vyer & Analysverktyg</div>
+        <div class="drawer-row mode-tabs" style="background: transparent; border: none; padding: 0; flex-wrap: wrap; gap: 6px;">
+          <button class="tab-btn active" onclick="switchMode('product'); closeToolsDrawer();">🖼 Gallerivy</button>
+          <button class="tab-btn" onclick="switchMode('contactsheet'); closeToolsDrawer();">🗂 Kontaktkarta</button>
+          <button class="tab-btn" onclick="switchMode('report'); closeToolsDrawer();">📋 Protokoll & CSV/JSON</button>
+          <button class="tab-btn" onclick="switchMode('onion'); closeToolsDrawer();">🧅 Onion-Skin / 2Hz</button>
+          <button class="tab-btn" onclick="switchMode('angle'); closeToolsDrawer();">📐 Vinkel & Linjering (01)</button>
+          <button class="tab-btn" id="tabBtnCalendar" onclick="switchMode('calendar'); closeToolsDrawer();">📅 Fotokalender & Arkiv</button>
+        </div>
+      </div>
+
+      <!-- Batch Management & Sharing -->
+      <div class="drawer-section">
+        <div class="drawer-section-label">Mapphantering & Delning</div>
+        <div style="display: none;">
+          <select id="batchSelect" class="custom-select" onchange="switchBatch(this.value)"></select>
+        </div>
+        <div class="drawer-row">
+          <button class="btn btn-sm btn-success" id="btnAddBatchTop" onclick="closeToolsDrawer(); openAddBatchModal();">+ Ny mapp</button>
+          <div id="batchPublishWrap" style="display: none; align-items: center;">
+            <button class="btn btn-sm" id="btnPublishBatch" onclick="toggleBatchPublish()"></button>
+          </div>
+          <button class="btn btn-sm btn-outline" onclick="copyBatchShareLink()">🔗 Dela mapp-länk</button>
+          <button class="btn btn-sm" id="btnOpenLocalFolderTop" onclick="openCurrentFolder()">📁 Öppna lokal mapp</button>
+          <button class="btn btn-sm" id="btnOpenSelectedProdFolder" style="display: none;" onclick="openSelectedProductFolder()">📂 Produktmapp</button>
+        </div>
+        <div class="drawer-row">
+          <div class="onedrive-action-group" id="onedriveActionGroup" title="OneDrive / SharePoint-länk">
+            <button class="btn btn-sm" id="btnCopyOneDrive" onclick="copyOneDriveLink()">☁️ Kopiera OneDrive-länk</button>
+            <button class="btn btn-sm" id="btnOpenOneDrive" onclick="openOneDriveFolder()" style="padding: 4px 7px;">↗</button>
+            <button class="btn btn-sm" id="btnEditOneDrive" onclick="editOneDriveLink()" style="padding: 4px 7px;">✏️</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ZIP Downloads & Gold Set Merge -->
+      <div class="drawer-section">
+        <div class="drawer-section-label">Nedladdning (.zip) & Sajt-urval</div>
+        <div class="drawer-row">
+          <div class="zip-menu-wrap">
+            <button class="btn btn-sm btn-outline" id="btnZipMenu" onclick="toggleZipMenu(event)">
+              📦 Ladda ner (.zip) <span id="selectedZipBadge" style="display: none; background: #3b82f6; color: #fff; border-radius: 999px; padding: 0 6px; font-size: 10px; margin-left: 3px;">0</span> ▾
+            </button>
+            <div class="zip-dropdown-menu" id="zipDropdownMenu" onclick="event.stopPropagation()">
+              <button class="zip-menu-item" id="zipMenuSelectedBtn" onclick="downloadBatchZip('selected')" disabled>
+                <span>☑️ Markerade bilder</span>
+                <span id="zipMenuSelectedCount" style="color: #60a5fa;">0 valda</span>
+              </button>
+              <button class="zip-menu-item" onclick="downloadBatchZip('gold')">
+                <span>🏆 Sajt-urval / Guldset (hela mappen)</span>
+                <span style="color: #fbbf24;">2–4/modell</span>
+              </button>
+              <button class="zip-menu-item" onclick="downloadBatchZip('gold_product')">
+                <span>🏆 Sajt-urval (aktuell produkt)</span>
+                <span style="color: #fbbf24;">Aktuell</span>
+              </button>
+              <button class="zip-menu-item" onclick="downloadBatchZip('product')">
+                <span>📸 Alla bilder för aktuell produkt</span>
+                <span style="color: #94a3b8;">Produkt</span>
+              </button>
+              <button class="zip-menu-item" onclick="downloadBatchZip('all')">
+                <span>📁 Hela mappen (alla bilder)</span>
+                <span style="color: #94a3b8;">Alla</span>
+              </button>
+              <div style="border-top: 1px solid #1e293b; margin: 2px 0; padding-top: 4px; display: flex; justify-content: space-between; gap: 4px;">
+                <button class="btn btn-sm btn-outline" style="flex: 1; font-size: 11px;" onclick="selectAllCurrentProductShots()">☑️ Välj produkt</button>
+                <button class="btn btn-sm btn-outline" style="flex: 1; font-size: 11px;" onclick="clearSelectedShots()">✕ Rensa val</button>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-sm btn-outline" id="btnMergeGoldBatch" onclick="closeToolsDrawer(); openMergeGoldPrompt();" style="display: none; border-color: rgba(251, 191, 36, 0.5); color: #fde68a;">
+            🚀 Slå ihop Sajt-urval
+          </button>
+        </div>
+        <div class="drawer-row">
+          <label class="toggle-switch" title="Visa Sajt-urvalet överst">
+            <input type="checkbox" id="chkGoldFirst" onchange="toggleGoldSort(this.checked)">
+            <span class="slider-toggle"></span>
+          </label>
+          <span style="font-size: 12px; font-weight: 600; color: #fde68a;">🏆 Sajt-urval först</span>
+        </div>
+      </div>
+
+      <!-- Studio Backdrop, Variant & Laser Guides -->
+      <div class="drawer-section">
+        <div class="drawer-section-label">Visning, Studioplatta & Stödlinjer</div>
+        <div class="drawer-row">
+          <div class="control-group" id="variantControlGroup">
+            <span class="control-label">Variant:</span>
+            <select id="sourceSelect" class="custom-select" onchange="changeSource(this.value)"></select>
+          </div>
+        </div>
+        <div class="drawer-row">
+          <span class="control-label">Studioplatta (-01..-08):</span>
+          <div class="backdrop-swatches">
+            <div class="color-swatch swatch-soft active" onclick="setBackdrop('#F4F4F2', this)" title="Varm neutral (#F4F4F2)"></div>
+            <div class="color-swatch swatch-white" onclick="setBackdrop('#ffffff', this)" title="Helvit (#FFFFFF)"></div>
+            <div class="color-swatch swatch-gray" onclick="setBackdrop('#808080', this)" title="Neutralgrå (#808080)"></div>
+            <div class="color-swatch swatch-dark" onclick="setBackdrop('#181b24', this)" title="Mörk grafit (#181B24)"></div>
+            <div class="color-swatch swatch-magenta" onclick="setBackdrop('#ff007f', this)" title="Stark Magenta (#FF007F)"></div>
+            <div class="color-swatch swatch-checkered" onclick="setBackdrop('checker', this)" title="Schackrutig transparens"></div>
+          </div>
+        </div>
+        <div class="drawer-row">
+          <label class="toggle-switch">
+            <input type="checkbox" id="chkGuides" onchange="toggleGuides(this.checked)">
+            <span class="slider-toggle"></span>
+          </label>
+          <span style="font-size: 12px; font-weight: 600;">Laser-stödlinjer (G)</span>
+          <button class="btn btn-sm" id="btnOpenGuideAdjust" onclick="closeToolsDrawer(); toggleGuideAdjustPanel();">📐 Justera linjer</button>
+        </div>
+        <div id="modeSpecificTools" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+      </div>
+
+      <!-- Reviewer, Account & Org Switch -->
+      <div class="drawer-section">
+        <div class="drawer-section-label">Granskare & Konto</div>
+        <div class="drawer-row">
+          <div class="control-group" onclick="closeToolsDrawer(); openNameModal();" style="cursor: pointer;">
+            <span class="control-label">Granskare:</span>
+            <div style="background: #14161A; border: 1px solid rgba(255,255,255,0.14); border-radius: 6px; padding: 4px 10px; display: flex; align-items: center; gap: 6px;">
+              <span>👤</span>
+              <span id="reviewerNameDisplay" style="font-weight: 700; font-size: 12.5px; color: #fff;">Ange namn</span>
+              <span style="font-size: 11px; color: #60a5fa;">✏️</span>
+            </div>
+            <input type="hidden" id="reviewerName" value="">
+          </div>
+        </div>
+        <div class="drawer-row" id="accountGroup">
+          <span class="control-label">Konto:</span>
+          <span id="accountDisplay" style="font-weight: 700; font-size: 12.5px; color: #fff;">…</span>
+          <select id="orgSwitch" class="custom-select" style="display: none;" onchange="switchOrgView(this.value)">
+            <option value="all">Alla företag</option>
+            <option value="cama">Trendcarpet/CaMa</option>
+            <option value="reforma">Reforma</option>
+          </select>
+          <button type="button" id="btnViewerPreview" class="btn btn-sm btn-outline" style="display: none;" onclick="toggleViewerPreview()">👁 Visa som tittare</button>
+          <div style="position: relative;">
+            <button type="button" class="btn btn-sm btn-outline" onclick="toggleAccountMenu(event)">⋯</button>
+            <div id="accountMenu" style="display: none; position: absolute; right: 0; top: calc(100% + 4px); z-index: 1600; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 4px; min-width: 180px;">
+              <button type="button" class="btn btn-sm" style="width: 100%; justify-content: flex-start;" onclick="logoutAccount()">🚪 Byt konto / Logga ut</button>
+            </div>
+          </div>
+        </div>
+        <div class="drawer-row">
+          <a href="/mobile" onclick="sessionStorage.removeItem('prefer_desktop')" target="_blank" class="btn btn-sm btn-outline" style="text-decoration: none;">📱 Öppna mobilvy</a>
+          <button class="btn btn-sm btn-outline" onclick="hardReloadApp()">🔄 Uppdatera (rensa cache)</button>
+        </div>
+      </div>
+
+      <!-- Legacy QA Stats Mirror (for internal compatibility) -->
+      <div class="drawer-section">
+        <div class="drawer-section-label">Detaljerad status</div>
+        <div class="qa-progress-wrap" id="qaProgressWrap" style="width: 100%;">
+          <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
+          <div class="qa-stats-text">
+            <span class="qa-tag-pill qa-tag-ok" id="statOkCount">0</span>
+            <span class="qa-tag-pill qa-tag-warn" id="statWarnCount">0</span>
+            <span class="qa-tag-pill qa-tag-err" id="statRedoCount">0</span>
+            <span class="qa-tag-pill qa-tag-pend" id="statPendCount">0 kvar</span>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
+  </aside>
+  <div id="subToolbar" style="display:none;"></div>
 
   <!-- Main Views Container -->
   <main>
@@ -2276,81 +3051,130 @@
       <div class="angle-grid" id="angleGrid"></div>
     </div>
 
-    <!-- VIEW 2: PRODUKTGRANSKNING (ALLA VINKLAR DETALJ) -->
+    <!-- VIEW 2: PRODUKTGRANSKNING (NORDIC EDITORIAL FULL-WIDTH GALLERY) -->
     <div class="view-panel active" id="view-product">
       <div class="product-view-layout">
-        <div class="sidebar-list" id="productSidebar"></div>
+        <!-- Slim Collapsible Left Product List (230px) -->
+        <div class="sidebar-panel" id="sidebarPanel">
+          <div class="sidebar-search-box">
+            <input type="text" id="sidebarSearchInput" class="sidebar-search-input" placeholder="Filtrera produkt…" oninput="renderProductSidebar()" />
+            <button type="button" class="btn btn-sm" style="padding: 3px 6px; font-size: 11px;" onclick="toggleSidebarCollapse()" title="Dölj sidolista ([)">⇤</button>
+          </div>
+          <div class="sidebar-list" id="productSidebar"></div>
+        </div>
 
+        <!-- Full-Width Editorial Image Stage -->
         <div class="shots-stage-container" id="shotsStageContainer">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-              <h2 id="currentProductTitle" style="font-size: 18px; font-weight: 700; color: #fff;">Produkt</h2>
-              <p id="currentProductSubtitle" style="font-size: 13px; color: var(--text-muted);">-</p>
+          <div class="stage-top-header">
+            <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+              <button type="button" class="stage-action-btn" id="btnExpandSidebar" style="display: none; padding: 0 8px;" onclick="toggleSidebarCollapse()" title="Visa produktlista ([)">☰ Lista</button>
+              <div style="min-width: 0;">
+                <h2 id="currentProductTitle" style="font-size: 17px; font-weight: 700; color: #F3F4F6; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">Produkt</h2>
+                <p id="currentProductSubtitle" style="font-size: 12px; color: var(--text-muted); margin-top: 1px;">-</p>
+              </div>
             </div>
-            <div style="display: flex; gap: 8px;">
-              <button class="btn btn-sm" id="btnOpenSelectedProdFolder" onclick="openSelectedProductFolder()">Öppna mapp</button>
+
+            <div class="stage-quick-actions">
+              <button type="button" class="stage-action-btn" id="stageBtnApprove" onclick="setProductStatus('approved')" title="Godkänn produkt aktivt (Tangent: A)">✓ Godkänn <span style="opacity:0.55;font-size:10px;">A</span></button>
+              <button type="button" class="stage-action-btn" id="stageBtnAdjust" onclick="triggerAdjustWithDrawer()" title="Markera Justera & öppna kommentarspanel (Tangent: J)">✎ Justera <span style="opacity:0.55;font-size:10px;">J</span></button>
+              <button type="button" class="stage-action-btn" id="stageBtnComment" onclick="toggleFeedbackDrawer(true)" title="Öppna/stäng kommentarstråd & taggar (Tangent: K)">💬 Kommentar <span id="stageCommentBadge" style="font-size:10.5px; color:#60A5FA;"></span></button>
+              <button type="button" class="stage-action-btn" id="btnToggleRefSplit" onclick="toggleRefSplitView()" title="Lås 1:1 studioreferens (-01 / @-ref) till vänster medan du skrollar (Tangent: C · eller håll Space)">📌 Jämför 1:1 Ref <span style="opacity:0.55;font-size:10px;">C</span></button>
+
+              <div class="brand-tabs" style="padding: 2px;" title="Välj kolumnbredd">
+                <button type="button" class="brand-tab-btn editorial-col-btn active" data-cols="2" style="padding: 3px 8px; font-size: 11px;" onclick="setEditorialCols(2)">2 kol</button>
+                <button type="button" class="brand-tab-btn editorial-col-btn" data-cols="3" style="padding: 3px 8px; font-size: 11px;" onclick="setEditorialCols(3)">3 kol</button>
+                <button type="button" class="brand-tab-btn editorial-col-btn" data-cols="1" style="padding: 3px 8px; font-size: 11px;" onclick="setEditorialCols(1)">Stor 1 kol</button>
+              </div>
             </div>
           </div>
-          <div class="shots-grid" id="shotsGrid"></div>
+
+          <!-- Reforma Shop-the-Look & @-ref Switcher -->
+          <div class="shop-the-look-bar" id="shopTheLookBar"></div>
+
+          <!-- Stage Split Body: Sticky 1:1 Studio Ref Pane + True-Aspect Shots Grid -->
+          <div class="stage-split-body">
+            <aside class="ref-split-pane" id="refSplitPane">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px;">
+                <span style="font-size: 11.5px; font-weight: 700; color: #93C5FD;" id="refSplitTitle">📌 1:1 Studioreferens</span>
+                <button type="button" class="btn btn-sm" style="padding: 2px 6px; font-size: 10.5px;" onclick="toggleRefSplitView(false)">✕</button>
+              </div>
+              <div id="refSplitChips" style="display: flex; gap: 4px; flex-wrap: wrap;"></div>
+              <div class="ref-split-img-box">
+                <img id="refSplitImg" src="" alt="1:1 Studioreferens" onclick="if(this.src) window.open(this.src, '_blank')" />
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
+                <span id="refSplitCaption">-</span>
+                <span style="opacity: 0.7;">Tips: Håll <b>Space</b> för snabbväxling</span>
+              </div>
+            </aside>
+
+            <div class="shots-grid cols-2" id="shotsGrid"></div>
+          </div>
+
           <div id="stageScrollHint" class="stage-scroll-hint" onclick="scrollStageDown()" style="display: none;">
             <span>⬇ Scrolla ned för att se alla bilder</span>
           </div>
         </div>
 
-        <div class="inspector-panel">
-          <div class="panel-section-title">Granskningsstatus</div>
-          <div style="display: flex; flex-direction: column; gap: 8px;">
-            <button class="status-decision-btn" id="btnStatusOk" onclick="setProductStatus('approved')" title="Godkänn denna produkt för publicering (Kortkommando: A)">
+        <!-- Contextual Slide-Out Feedback & Comment Drawer (Closed by default for +50% image stage!) -->
+        <div class="inspector-panel contextual-drawer" id="feedbackDrawer">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+            <span style="font-size: 13px; font-weight: 700; color: #fff;">✎ Feedback & Kommentar</span>
+            <button type="button" class="btn btn-sm" style="padding: 2px 7px;" onclick="toggleFeedbackDrawer(false)">✕</button>
+          </div>
+
+          <div class="panel-section-title" style="margin-top: 4px;">Granskningsstatus</div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <button class="status-decision-btn" id="btnStatusOk" onclick="setProductStatus('approved')" title="Godkänn denna produkt aktivt (A)">
               <span class="decision-icon" style="color: var(--status-ok);">✓</span>
-              <span class="decision-label">Godkänd för publicering</span>
+              <span class="decision-label">Godkänd</span>
               <span class="decision-key">A</span>
             </button>
-            <button class="status-decision-btn" id="btnStatusWarn" onclick="setProductStatus('angle_issue')" title="Markera att vinkeln eller lutningen behöver justeras (Kortkommando: W)">
-              <span class="decision-icon" style="color: var(--status-warn);">⚠</span>
-              <span class="decision-label">Justera vinkel / lutning</span>
-              <span class="decision-key">W</span>
+            <button class="status-decision-btn" id="btnStatusWarn" onclick="setProductStatus('angle_issue')" title="Markera att produkten behöver justeras (J / W)">
+              <span class="decision-icon" style="color: var(--status-warn);">✎</span>
+              <span class="decision-label" id="lblStatusWarn">Justera i Runda 2</span>
+              <span class="decision-key">J</span>
             </button>
-            <button class="status-decision-btn" id="btnStatusRedo" onclick="setProductStatus('redo')" title="Markera att produkten kräver ny retusch eller omfotografering (Kortkommando: R)">
+            <button class="status-decision-btn" id="btnStatusRedo" onclick="setProductStatus('redo')" title="Markera att produkten ska göras om helt (R)">
               <span class="decision-icon" style="color: var(--status-error);">✕</span>
-              <span class="decision-label">Kräver ny retusch / fel</span>
+              <span class="decision-label">Gör om helt</span>
               <span class="decision-key">R</span>
             </button>
           </div>
 
-          <div class="panel-section-title" style="margin-top: 10px;">Checklista / Avvikelser</div>
-          <div class="checklist-group">
-            <label class="checklist-item" title="Kepsens vinkel eller lutning stämmer inte med master-guiden">
+          <div class="panel-section-title" style="margin-top: 8px;" id="checklistSectionTitle">Snabbtaggar (Interiör & Video)</div>
+          <div class="checklist-group" id="checklistContainer">
+            <label class="checklist-item">
               <input type="checkbox" id="chk_angle" onchange="updateChecklist('angle', this.checked)">
-              <span>Vinkel / perspektiv avviker</span>
+              <span id="lbl_chk_angle">1:1 Produktdetalj</span>
             </label>
-            <label class="checklist-item" title="Skärmens böjning, kronans form eller sömmar är asymmetriska eller buckliga">
-              <input type="checkbox" id="chk_crown" onchange="updateChecklist('crown', this.checked)">
-              <span>Form / kurva ojämn</span>
-            </label>
-            <label class="checklist-item" title="Ojämn klippbana, halos, vita kanter eller artefakter mot bakgrunden">
-              <input type="checkbox" id="chk_edge" onchange="updateChecklist('edge', this.checked)">
-              <span>Friläggningskant ojämn / halo</span>
-            </label>
-            <label class="checklist-item" title="Färgtemperaturen, vitbalansen eller mättnaden stämmer inte med verklig produkt">
+            <label class="checklist-item">
               <input type="checkbox" id="chk_color" onchange="updateChecklist('color', this.checked)">
-              <span>Färgton / kontrast avviker</span>
+              <span id="lbl_chk_color">Färg/nyans</span>
             </label>
-            <label class="checklist-item" title="Synligt ludd, dammkorn, trådar eller fingeravtryck kvar på materialet">
+            <label class="checklist-item">
+              <input type="checkbox" id="chk_crown" onchange="updateChecklist('crown', this.checked)">
+              <span id="lbl_chk_crown">Skala i rummet</span>
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" id="chk_edge" onchange="updateChecklist('edge', this.checked)">
+              <span id="lbl_chk_edge">Rum & komposition</span>
+            </label>
+            <label class="checklist-item">
               <input type="checkbox" id="chk_dust" onchange="updateChecklist('dust', this.checked)">
-              <span>Damm / smuts kvar på produkten</span>
+              <span id="lbl_chk_dust">Text/böcker</span>
             </label>
-            <label class="checklist-item" title="Ojämna högdagrar, hård skuggning eller inkonsekvent studioljus">
+            <label class="checklist-item">
               <input type="checkbox" id="chk_shadow" onchange="updateChecklist('shadow', this.checked)">
-              <span>Skuggning / ljussättning ojämn</span>
+              <span id="lbl_chk_shadow">Videorörelse</span>
             </label>
           </div>
 
-          <div class="panel-section-title" style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+          <div class="panel-section-title" style="margin-top: 8px; display: flex; justify-content: space-between; align-items: center;">
             <span>💬 Kommentarstråd</span>
             <span id="commentCountHeader" style="font-size: 11px; color: var(--text-dim);">0 inlägg</span>
           </div>
 
-          <!-- Unified Discussion Card (Best Practice) -->
           <div class="comment-feed-card" id="commentFeedCard">
             <div class="comments-stream" id="commentsStream">
               <div id="emptyCommentsState" class="empty-comments-state" style="display: none;">
@@ -2358,12 +3182,11 @@
               </div>
               <div class="comments-thread-wrap" id="commentsThread"></div>
 
-              <!-- Integrated Stream Composer -->
               <div class="stream-composer">
-                <textarea id="newCommentInput" class="stream-comment-textarea" rows="2" placeholder="Skriv anmärkning här... (Enter skickar, Shift+Enter för ny rad)" onkeydown="handleCommentKeydown(event)" title="Skriv anmärkning eller feedback för denna produkt"></textarea>
+                <textarea id="newCommentInput" class="stream-comment-textarea" rows="2" placeholder="Skriv kommentar till Runda 2… (Enter skickar)" onkeydown="handleCommentKeydown(event)"></textarea>
                 <div class="stream-composer-footer">
                   <div class="composer-shot-selector">
-                    <span class="shot-selector-label" title="Välj vilken bild eller alla bilder som anmärkningen berör">Koppla:</span>
+                    <span class="shot-selector-label">Bild:</span>
                     <div id="stageCommentShotPills" class="comment-shot-pills-bar"></div>
                   </div>
                   <button class="send-comment-btn" onclick="submitComment()" title="Skicka kommentar (Enter)">
@@ -2510,6 +3333,23 @@
           <div style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto;" id="archiveProjectsList"></div>
         </div>
 
+      </div>
+    </div>
+
+    <!-- VIEW 6: INBYGGD KONTAKTKARTA (EDITORIAL OVERVIEW MATRIX) -->
+    <div class="view-panel" id="view-contactsheet">
+      <div class="contactsheet-wrap">
+        <div class="cs-header-bar">
+          <div>
+            <div style="font-size: 16px; font-weight: 700; color: #F3F4F6;" id="csBatchTitle">🖼 Kontaktkarta</div>
+            <div style="font-size: 12px; color: var(--text-muted);" id="csBatchSubtitle">Överblick över seriens alla produkter, studioreferenser och miljöbilder</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button type="button" class="editorial-top-btn" onclick="copyRound2Order()">📋 Kopiera Runda 2-order</button>
+            <button type="button" class="editorial-top-btn" onclick="switchMode('product')">← Tillbaka till galleriet</button>
+          </div>
+        </div>
+        <div id="contactSheetRows" style="display: flex; flex-direction: column; gap: 12px;"></div>
       </div>
     </div>
 
@@ -3441,6 +4281,14 @@
       return true;
     }
 
+    function getCeoQuerySuffix() {
+      const isLocalHost = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost');
+      const stored = sessionStorage.getItem('qa_ceo');
+      if (stored === '0') return '';
+      if (stored === '1' || isLocalHost) return '&ceo=1';
+      return '';
+    }
+
     async function initBatches() {
       try {
         // Check if URL has a ?user= or ?reviewer= parameter
@@ -3459,11 +4307,10 @@
         if (urlCeo === '1' || urlCeo === 'true') {
           sessionStorage.setItem('qa_ceo', '1');
         } else if (urlCeo === '0' || urlCeo === 'false') {
-          sessionStorage.removeItem('qa_ceo');
+          sessionStorage.setItem('qa_ceo', '0');
         }
-        const isCeoMode = sessionStorage.getItem('qa_ceo') === '1';
         const batchQuery = paramBatch ? `&batch=${encodeURIComponent(paramBatch)}` : '';
-        const ceoQuery = isCeoMode ? '&ceo=1' : '';
+        const ceoQuery = getCeoQuerySuffix();
 
         const res = await fetch(`/api/batches?reviewer=${encodeURIComponent(state.reviewer || '')}${batchQuery}${ceoQuery}`);
         const data = await res.json();
@@ -3491,16 +4338,19 @@
         checkReviewerNameOnLoad();
         
         const bSelect = document.getElementById('batchSelect');
-        bSelect.innerHTML = '';
-        state.batches.forEach(b => {
-          const icon = b.category === 'kepsar' ? '🧢' : (b.category === 'mattor_inredning' ? '🧶' : '📁');
-          const isDraft = b.published === false;
-          const draftPrefix = isDraft ? '🔒 [Utkast] ' : '';
-          const storagePrefix = b.storage_warning ? '⚠️ [Lagring] ' : '';  // admin-only: source outside Pictures / not pinned / cloud-only
-          const opt = new Option(`${storagePrefix}${draftPrefix}${icon} ${b.name}`, b.id);
-          if (b.storage_warning) opt.title = b.storage_warning.message;
-          bSelect.add(opt);
-        });
+        if (bSelect) {
+          bSelect.innerHTML = '';
+          state.batches.forEach(b => {
+            const cleanName = b.label || String(b.name || b.id).replace(/^(?:⚠️\s*\[Lagring\]\s*|🔒\s*\[Utkast\]\s*)+/g, '').trim();
+            const opt = new Option(cleanName, b.id);
+            if (b.storage_warning) opt.title = b.storage_warning.message;
+            bSelect.add(opt);
+          });
+        }
+        if (!state.brandFilter) state.brandFilter = 'all';
+        if (!state.editorialStatusFilter) state.editorialStatusFilter = 'all';
+        if (!state.editorialCols) state.editorialCols = 2;
+        renderBatchPopover();
 
         // 1. Check if URL has a ?batch= parameter
         const targetBatch = (paramBatch && state.batches.some(b => b.id === paramBatch))
@@ -3542,7 +4392,7 @@
 
         try {
           const t0 = performance.now();
-          const res = await fetch('/api/batches?reviewer=' + encodeURIComponent(state.reviewer || ''), { cache: 'no-store' });
+          const res = await fetch('/api/batches?reviewer=' + encodeURIComponent(state.reviewer || '') + getCeoQuerySuffix(), { cache: 'no-store' });
           const latency = Math.round(performance.now() - t0);
           if (res.ok) {
             window._hbFailures = 0;
@@ -3579,13 +4429,16 @@
     }
 
     async function switchBatch(batchId) {
+      closeBatchPopover();
       await loadBatch(batchId, true);
     }
 
     async function loadBatch(batchId, updateUrl = true) {
       state.currentBatchId = batchId;
-      document.getElementById('batchSelect').value = batchId;
+      const bSel = document.getElementById('batchSelect');
+      if (bSel) bSel.value = batchId;
       if (state.selectedShots) state.selectedShots.clear();
+      state.compareRefKey = null;
       updateZipMenuBadge();
 
       // Update URL query parameter without page reload
@@ -3599,7 +4452,7 @@
       }
 
       try {
-        const res = await fetch(`/api/products?batch=${encodeURIComponent(batchId)}&reviewer=${encodeURIComponent(state.reviewer || '')}&uiv=4`, { cache: 'no-store' });
+        const res = await fetch(`/api/products?batch=${encodeURIComponent(batchId)}&reviewer=${encodeURIComponent(state.reviewer || '')}&uiv=4${getCeoQuerySuffix()}`, { cache: 'no-store' });
         if (res.status === 403) {
           const errData = await res.json().catch(() => ({}));
           showToast('🔒 ' + (errData.message || 'Denna mapp är ett privat utkast och har inte delats ännu.'), 'error');
@@ -3616,17 +4469,21 @@
 
         state.showGuides = false;
 
+        syncEditorialTopbarBatch();
+        syncEditorialChecklistLabels();
         populateSourceSelector();
         renderAngleGrid();
         renderProductSidebar();
         renderProductView();
+        if (typeof renderContactSheet === 'function') renderContactSheet();
         populateDropdowns();
         renderReportTable();
         renderSubToolbar();
         updateQAStats();
         updateOneDriveButtons();
         updateBatchPublishButton();
-        showToast(`Laddade ${state.currentBatch.name}`);
+        const cleanBatchLabel = state.currentBatch.label || String(state.currentBatch.name || '').replace(/^(?:⚠️\s*\[Lagring\]\s*|🔒\s*\[Utkast\]\s*)+/g, '').trim();
+        showToast(`Laddade ${cleanBatchLabel}`);
         await refreshUndoCount();
       } catch (err) {
         console.error('Error loading batch products:', err);
@@ -3688,7 +4545,7 @@
     function renderStars(productId, filename) {
       if (!productId || !filename) return '';
       const key = `${productId}|${filename}`;
-      return `<span class="rating-stars" data-rating-key="${escapeHtml(key)}" title="Ditt privata betyg (syns bara för dig)">${getStarsSpansHtml(productId, filename)}</span>`;
+      return `<span class="rating-stars" data-rating-key="${escapeHtml(key)}" title="Kvalitets-/favoritmarkering (raderar aldrig filer)">${getStarsSpansHtml(productId, filename)}</span>`;
     }
 
     async function setRating(productId, filename, stars) {
@@ -3721,7 +4578,8 @@
             product_id: productId,
             filename: filename,
             stars: stars,
-            reviewer: state.reviewer
+            reviewer: state.reviewer,
+            auto_remove: false
           })
         });
         if (res.status === 403) {
@@ -4050,7 +4908,7 @@
       try {
         let data = preloadedData;
         if (!data) {
-          const res = await fetch(`/api/products?batch=${encodeURIComponent(batchId)}&reviewer=${encodeURIComponent(state.reviewer || '')}&uiv=4`, { cache: 'no-store' });
+          const res = await fetch(`/api/products?batch=${encodeURIComponent(batchId)}&reviewer=${encodeURIComponent(state.reviewer || '')}&uiv=4${getCeoQuerySuffix()}`, { cache: 'no-store' });
           if (!res.ok) return;
           data = await res.json();
         }
@@ -4662,7 +5520,7 @@
     async function pollReviewsFromServer() {
       if (document.hidden || !state.currentBatchId || isAnyVideoPlaying()) return;
       try {
-        const res = await fetch(`/api/products?batch=${encodeURIComponent(state.currentBatchId)}&reviewer=${encodeURIComponent(state.reviewer || '')}&uiv=4`, { cache: 'no-store' });
+        const res = await fetch(`/api/products?batch=${encodeURIComponent(state.currentBatchId)}&reviewer=${encodeURIComponent(state.reviewer || '')}&uiv=4${getCeoQuerySuffix()}`, { cache: 'no-store' });
         if (!res.ok || isAnyVideoPlaying()) return;
         const data = await res.json();
         if (isAnyVideoPlaying()) return;
@@ -4779,8 +5637,11 @@
     function switchMode(mode) {
       state.currentMode = mode;
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick')?.includes(mode));
+      const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick')?.includes(`'${mode}'`));
       if (activeBtn) activeBtn.classList.add('active');
+
+      const topCsBtn = document.getElementById('btnTopContactSheet');
+      if (topCsBtn) topCsBtn.classList.toggle('active', mode === 'contactsheet');
 
       document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
       const targetPanel = document.getElementById('view-' + mode);
@@ -4791,6 +5652,7 @@
       if (mode === 'onion') updateOnion();
       if (mode === 'report') renderReportTable();
       if (mode === 'calendar') renderCalendarView();
+      if (mode === 'contactsheet' && typeof renderContactSheet === 'function') renderContactSheet();
     }
 
     function changeSource(source) {
@@ -4798,6 +5660,7 @@
       renderAngleGrid();
       renderProductView();
       if (state.currentMode === 'onion') updateOnion();
+      if (state.currentMode === 'contactsheet' && typeof renderContactSheet === 'function') renderContactSheet();
       showToast('Bytte källa till ' + source);
     }
 
@@ -4816,81 +5679,30 @@
 
     function renderSubToolbar() {
       const container = document.getElementById('modeSpecificTools');
+      if (!container) return;
+      const chkG = document.getElementById('chkGuides');
+      if (chkG) chkG.checked = !!state.showGuides;
+      const chkGold = document.getElementById('chkGoldFirst');
+      if (chkGold) chkGold.checked = !!state.sortGoldFirst;
+
       if (state.currentMode === 'angle') {
         container.innerHTML = `
           <div class="tool-item">
-            <span class="control-label">Kolumner:</span>
+            <span class="control-label">Grid-kolumner:</span>
             <select class="custom-select" onchange="setGridCols(this.value)">
               <option value="2" ${state.gridCols == 2 ? 'selected' : ''}>2 Kolumner</option>
               <option value="3" ${state.gridCols == 3 ? 'selected' : ''}>3 Kolumner</option>
-              <option value="4" ${state.gridCols == 4 ? 'selected' : ''}>4 Kolumner (Standard)</option>
+              <option value="4" ${state.gridCols == 4 ? 'selected' : ''}>4 Kolumner</option>
               <option value="5" ${state.gridCols == 5 ? 'selected' : ''}>5 Kolumner</option>
               <option value="6" ${state.gridCols == 6 ? 'selected' : ''}>6 Kolumner</option>
             </select>
           </div>
           <div class="tool-item" style="gap: 8px;">
             <label class="toggle-switch">
-              <input type="checkbox" id="chkGuides" ${state.showGuides ? 'checked' : ''} onchange="toggleGuides(this.checked)">
-              <span class="slider-toggle"></span>
-            </label>
-            <span style="font-weight: 600;">Stödlinjer & Vinklar</span>
-          </div>
-          <div class="tool-item" style="gap: 8px;">
-            <label class="toggle-switch">
               <input type="checkbox" id="chkPixelGrid" ${state.showGrid ? 'checked' : ''} onchange="togglePixelGrid(this.checked)">
               <span class="slider-toggle"></span>
             </label>
-            <span>Rutnät (Grid)</span>
-          </div>
-          <button class="btn btn-sm ${state.guidePanelOpen ? 'btn-primary' : ''}" id="btnOpenGuideAdjust" onclick="toggleGuideAdjustPanel()" title="Öppna justeringspanel för stödlinjer (eller dra linjerna direkt på bilden)">
-            📐 Justera stödlinjer ▾
-          </button>
-        `;
-      } else if (state.currentMode === 'product') {
-        container.innerHTML = `
-          <div class="tool-item">
-            <span class="control-label">Navigera:</span>
-            <button class="btn btn-sm" onclick="prevProduct()">◀ Föregående (←)</button>
-            <span style="font-weight: 700; color: #fff;">${state.currentProductIndex + 1} / ${state.products.length}</span>
-            <button class="btn btn-sm" onclick="nextProduct()">Nästa (→) ▶</button>
-          </div>
-          <div class="tool-item">
-            <span class="control-label">Bildstorlek:</span>
-            <div class="segmented-control">
-              <button class="btn btn-sm ${state.shotSize === 'normal' ? 'btn-primary active' : ''}" onclick="setShotSize('normal')" title="Normalt rutnät">Normal</button>
-              <button class="btn btn-sm ${state.shotSize === 'stor' ? 'btn-primary active' : ''}" onclick="setShotSize('stor')" title="Stor bild (en per rad, som i mobilen)">Stor</button>
-            </div>
-          </div>
-          <div class="tool-item" style="gap: 8px;">
-            <label class="toggle-switch">
-              <input type="checkbox" id="chkGuidesProd" ${state.showGuides ? 'checked' : ''} onchange="toggleGuides(this.checked)">
-              <span class="slider-toggle"></span>
-            </label>
-            <span style="font-weight: 600;">Stödlinjer</span>
-          </div>
-          <button class="btn btn-sm ${state.guidePanelOpen ? 'btn-primary' : ''}" onclick="toggleGuideAdjustPanel()" title="Öppna justeringspanel för stödlinjer">
-            📐 Justera ▾
-          </button>
-          <div class="tool-item" style="gap: 8px;">
-            <label class="toggle-switch" title="Visa Sajt-urvalet (Guldset / Stjärnval med variationskontroll) överst">
-              <input type="checkbox" id="chkGoldFirst" ${state.sortGoldFirst === true ? 'checked' : ''} onchange="toggleGoldSort(this.checked)">
-              <span class="slider-toggle"></span>
-            </label>
-            <span style="font-weight: 600; color: #fde68a;">🏆 Sajt-urval först</span>
-          </div>
-          <div class="tool-item" style="margin-left: auto; gap: 6px;">
-            <button class="btn btn-sm btn-outline" onclick="downloadBatchZip('gold_product')" title="Ladda ner Sajt-urvalet (Guldset + studiobilder) för denna produkt som .zip">
-              📦 Sajt-ZIP (produkt)
-            </button>
-            <button class="btn btn-sm btn-outline" onclick="copyProductShareLink()" title="Kopiera permanent direktlänk till denna specifika produkt (modell) för Teams">
-              🔗 Dela denna produkt
-            </button>
-          </div>
-        `;
-      } else if (state.currentMode === 'calendar') {
-        container.innerHTML = `
-          <div class="tool-item">
-            <span style="color: #60a5fa; font-weight: 700;">📁 Totalt 831 fotoprojekt & mappar från OneDrive / SharePoint</span>
+            <span style="font-size: 12px;">Rutnät (Grid)</span>
           </div>
         `;
       } else {
@@ -5417,12 +6229,37 @@
       document.addEventListener('pointercancel', endDrag);
     }
 
+    function isActivelyReviewed(productId) {
+      const r = state.reviews && state.reviews[productId];
+      if (!r || !r.status || r.status === 'pending') return false;
+      if (r.status === 'angle_issue' || r.status === 'redo') return true;
+      return Boolean(r.reviewed_at || r.reviewed_by || r.updatedAt || r.reviewer);
+    }
+
+    function getEditorialStatus(productId) {
+      const r = state.reviews && state.reviews[productId];
+      if (!r || !r.status || r.status === 'pending') return 'pending';
+      if (r.status === 'angle_issue' || r.status === 'redo') return 'adjust';
+      if (r.status === 'approved') return isActivelyReviewed(productId) ? 'approved' : 'pending';
+      return 'pending';
+    }
+
     function getEffectiveStatus(productId) {
-      const review = state.reviews[productId];
-      if (!review || review.status === undefined || review.status === '') {
-        return 'approved'; // Inverterad logik: Godkänd som standard
+      const review = state.reviews && state.reviews[productId];
+      if (!review || !review.status || review.status === 'pending') {
+        return 'pending';
+      }
+      if (review.status === 'approved' && !isActivelyReviewed(productId)) {
+        return 'pending';
       }
       return review.status;
+    }
+
+    function renderOverviewGrid() {
+      renderAngleGrid();
+      if (typeof renderContactSheet === 'function' && state.currentMode === 'contactsheet') {
+        renderContactSheet();
+      }
     }
 
     function renderAngleGrid() {
@@ -5478,13 +6315,13 @@
 
           <div class="cap-card-footer">
             <div class="qa-button-group">
-              <button class="qa-btn ${effectiveStatus === 'approved' ? 'active-ok' : ''}" onclick="quickSetStatus('${safePid}', 'approved')" title="Godkänd som standard">
-                ✓ OK
+              <button class="qa-btn ${effectiveStatus === 'approved' ? 'active-ok' : ''}" onclick="quickSetStatus('${safePid}', 'approved')" title="Godkänn">
+                ✓ Godkänd
               </button>
-              <button class="qa-btn ${effectiveStatus === 'angle_issue' ? 'active-warn' : ''}" onclick="quickSetStatus('${safePid}', 'angle_issue')" title="Markera vinkelfel">
-                ⚠ Vinkel
+              <button class="qa-btn ${effectiveStatus === 'angle_issue' ? 'active-warn' : ''}" onclick="quickSetStatus('${safePid}', 'angle_issue')" title="Markera Justera">
+                ✎ Justera
               </button>
-              <button class="qa-btn ${effectiveStatus === 'redo' ? 'active-redo' : ''}" onclick="quickSetStatus('${safePid}', 'redo')" title="Kräver omredigering">
+              <button class="qa-btn ${effectiveStatus === 'redo' ? 'active-redo' : ''}" onclick="quickSetStatus('${safePid}', 'redo')" title="Kräver omgenerering">
                 ✕ Gör om
               </button>
             </div>
@@ -5503,11 +6340,14 @@
       const currentEff = getEffectiveStatus(productId);
       let newStatus = status;
       if (currentEff === status) {
-        newStatus = status === 'approved' ? 'pending' : 'approved';
+        newStatus = 'pending';
       }
       current.status = newStatus;
       saveReviewToServer(productId, current);
       renderAngleGrid();
+      if (typeof renderContactSheet === 'function' && state.currentMode === 'contactsheet') {
+        renderContactSheet();
+      }
     }
 
     function setAsCompareReference(productId) {
@@ -5520,37 +6360,52 @@
       if (!sb) return;
       sb.innerHTML = '';
 
+      const qInput = document.getElementById('sidebarSearchInput');
+      const query = (qInput ? qInput.value : '').trim().toLowerCase();
+      const sFilter = state.editorialStatusFilter || 'all';
+
+      let visibleCount = 0;
       state.products.forEach((prod, idx) => {
+        const edStatus = getEditorialStatus(prod.id);
+        if (sFilter !== 'all' && edStatus !== sFilter) return;
+
+        const prodTitle = prod.display_name || prod.model || '';
+        const searchHay = `${prodTitle} ${prod.color || ''} ${prod.brand || ''} ${prod.id || ''}`.toLowerCase();
+        if (query && !searchHay.includes(query)) return;
+
+        visibleCount++;
         const shots = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
         const shot01 = shots.find(s => s.shot === '01') || shots[0] || {};
         const review = state.reviews[prod.id] || {};
-        const effStatus = getEffectiveStatus(prod.id);
-        let statusBadge = '🟢';
-        if (effStatus === 'approved') statusBadge = '🟢';
-        if (effStatus === 'angle_issue') statusBadge = '🟡';
-        if (effStatus === 'redo') statusBadge = '🔴';
-        if (effStatus === 'pending') statusBadge = '⚪';
+
+        let statusBadge = '<span title="Att granska" style="font-size:11px; opacity:0.6;">⚪</span>';
+        if (edStatus === 'approved') statusBadge = '<span title="Aktivt godkänd" style="font-size:11px;">🟢</span>';
+        else if (edStatus === 'adjust') statusBadge = '<span title="Justera" style="font-size:11px;">🟠</span>';
 
         const commentCount = (review.comments || []).length;
-        const commentTag = commentCount > 0 ? ` <span style="font-size:10px; color:#38bdf8;">💬${commentCount}</span>` : '';
+        const commentTag = commentCount > 0 ? ` <span style="font-size:10px; color:#60A5FA;">💬${commentCount}</span>` : '';
         const vTag = prod.has_new_version ? ` <span style="font-size:10px; color:#38bdf8;" title="Ny version">🔄</span>` : '';
-        const prodTitle = prod.display_name || prod.model;
 
         const item = document.createElement('div');
         item.className = `sidebar-item ${idx === state.currentProductIndex ? 'active' : ''}`;
+        item.dataset.prodIdx = String(idx);
         item.onclick = () => selectProductByIndex(idx);
         item.innerHTML = `
-          <img class="sidebar-thumb" src="${withCacheBust(shot01.thumb_url || shot01.url || '', shot01.mtime)}" loading="lazy" alt="${escapeHtml(prodTitle)}" onerror="handleImageError(this)">
-          <div style="flex: 1; overflow: hidden;">
-            <div style="font-weight: 700; font-size: 13px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          <img class="sidebar-thumb" src="${withCacheBust(shot01.thumb_url || shot01.url || '', shot01.mtime)}" loading="lazy" alt="${escapeHtml(prodTitle)}" onerror="handleImageError(this)" style="${shot01.is_studio_packshot ? 'background:#F4F4F2;object-fit:contain;' : 'background:#20232A;object-fit:cover;'}">
+          <div style="flex: 1; overflow: hidden; min-width: 0;">
+            <div style="font-weight: 600; font-size: 12.5px; color: #F3F4F6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
               ${escapeHtml(prodTitle)}${vTag}${commentTag}
             </div>
-            <div style="font-size: 11px; color: var(--text-muted);">${escapeHtml(prod.color || '')}</div>
+            <div style="font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(prod.color || '')}</div>
           </div>
-          <span style="font-size: 14px;">${statusBadge}</span>
+          ${statusBadge}
         `;
         sb.appendChild(item);
       });
+
+      if (visibleCount === 0) {
+        sb.innerHTML = `<div style="padding: 20px 12px; text-align: center; color: var(--text-dim); font-size: 12px;">Inga produkter matchar filtret.</div>`;
+      }
     }
 
     function handleImageError(img) {
@@ -5568,14 +6423,19 @@
 
     function updateSidebarActive(idx) {
       const items = document.querySelectorAll('.sidebar-item');
-      if (items.length === 0 || items.length !== state.products.length) {
+      if (items.length === 0) {
         renderProductSidebar();
         return;
       }
-      items.forEach((item, i) => item.classList.toggle('active', i === idx));
-      const activeItem = items[idx];
-      if (activeItem) {
-        activeItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      let matched = null;
+      items.forEach((item) => {
+        const itemIdx = parseInt(item.dataset.prodIdx || '-1', 10);
+        const isAct = itemIdx === idx;
+        item.classList.toggle('active', isAct);
+        if (isAct) matched = item;
+      });
+      if (matched) {
+        matched.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       }
     }
 
@@ -5594,6 +6454,7 @@
 
     function selectProductByIndex(idx, scrollMode = 'top') {
       state.currentProductIndex = idx;
+      state.compareRefKey = null;
       updateSidebarActive(idx);
       const stage = document.getElementById('shotsStageContainer');
       const prevScroll = stage ? stage.scrollTop : 0;
@@ -5632,6 +6493,142 @@
       if (state.currentProductIndex < state.products.length - 1) selectProductByIndex(state.currentProductIndex + 1, scrollMode);
     }
 
+    function getProductRefCandidates(prod, sortedItems) {
+      const shots = (sortedItems || []).map(x => x.shot);
+      const refs = [];
+      const findRefShot = (tag, id) => {
+        const cleanId = String(id || '').replace(/^@/, '');
+        const cleanTag = tag ? String(tag) : (cleanId ? '@' + cleanId : '');
+        return (
+          shots.find(s => cleanTag && String((s.shot_kind || '') + ' ' + (s.label || '')).includes(cleanTag)) ||
+          shots.find(s => s.is_studio_packshot && cleanId && String(s.filename || '').includes(cleanId)) ||
+          shots.find(s => cleanId && /ref/i.test(String(s.filename || '')) && String(s.filename || '').includes(cleanId)) ||
+          shots.find(s => cleanId && String(s.filename || '').includes(cleanId))
+        );
+      };
+
+      if (prod && prod.hero_product && (prod.hero_product.name || prod.hero_product.tag)) {
+        const h = prod.hero_product;
+        const tag = h.tag || (h.id ? '@' + h.id : '');
+        const refShot = findRefShot(tag, h.id) || shots.find(s => s.is_studio_packshot) || shots[0];
+        refs.push({
+          key: tag || 'hero',
+          role: 'hero',
+          tag: tag,
+          name: h.name || prod.display_name || prod.model,
+          url: h.url || (h.id ? `https://www.reformasthlm.se/sv/search?q=${encodeURIComponent(h.name || h.id)}` : ''),
+          shot: refShot
+        });
+      }
+
+      if (prod && Array.isArray(prod.companion_products)) {
+        prod.companion_products.forEach((c, idx) => {
+          if (!c || (!c.name && !c.tag)) return;
+          const tag = c.tag || (c.id ? '@' + c.id : `comp_${idx}`);
+          const refShot = findRefShot(tag, c.id);
+          refs.push({
+            key: tag,
+            role: 'companion',
+            tag: tag,
+            name: c.name || tag,
+            url: c.url || '',
+            shot: refShot || shots.find(s => s.is_studio_packshot) || shots[0]
+          });
+        });
+      }
+
+      if (refs.length === 0) {
+        const studioShots = shots.filter(s => s.is_studio_packshot);
+        if (studioShots.length > 0) {
+          studioShots.forEach((s, i) => {
+            refs.push({
+              key: s.filename || `studio_${i}`,
+              role: i === 0 ? 'hero' : 'companion',
+              tag: s.shot ? `-${s.shot}` : 'Studio',
+              name: i === 0 ? 'Original Studioreferens (-01)' : `Studiobild ${s.label || (i + 1)}`,
+              url: '',
+              shot: s
+            });
+          });
+        } else if (shots[0]) {
+          refs.push({
+            key: 'shot_0',
+            role: 'hero',
+            tag: '01',
+            name: 'Referensbild 01',
+            url: '',
+            shot: shots[0]
+          });
+        }
+      }
+      return refs;
+    }
+
+    function renderShopTheLookAndRefSplit(prod, sortedItems) {
+      const stlBar = document.getElementById('shopTheLookBar');
+      const splitPane = document.getElementById('refSplitPane');
+      const splitBtn = document.getElementById('btnToggleRefSplit');
+      const refs = getProductRefCandidates(prod, sortedItems);
+      state._currentProdRefs = refs;
+
+      if (!state.compareRefKey || !refs.some(r => r.key === state.compareRefKey)) {
+        state.compareRefKey = refs[0] ? refs[0].key : null;
+      }
+      const activeRef = refs.find(r => r.key === state.compareRefKey) || refs[0] || null;
+
+      // 1. Render Reforma Shop-the-Look bar when hero_product / companion_products exist
+      if (stlBar) {
+        const hasManifestLook = Boolean((prod.hero_product && (prod.hero_product.name || prod.hero_product.tag)) || (prod.companion_products && prod.companion_products.length > 0));
+        if (hasManifestLook) {
+          stlBar.classList.add('visible');
+          const heroRefs = refs.filter(r => r.role === 'hero');
+          const compRefs = refs.filter(r => r.role === 'companion');
+          let html = '';
+          heroRefs.forEach(r => {
+            const isAct = activeRef && activeRef.key === r.key && state.refSplitOpen;
+            const extLink = r.url ? `<a class="stl-ext-link" href="${escapeHtml(r.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Öppna produktsidan på reformasthlm.se">↗</a>` : '';
+            html += `<span class="stl-chip hero ${isAct ? 'active-ref' : ''}" onclick="selectCompareRef('${escapeJsString(r.key)}', true)" title="Klicka för att visa ${escapeHtml(r.tag)} ${escapeHtml(r.name)} i 1:1-jämföraren">★ Stjärnmöbel: <b>${escapeHtml(r.tag)}</b> ${escapeHtml(r.name)}${extLink}</span>`;
+          });
+          if (compRefs.length > 0) {
+            html += `<span style="font-size: 11px; color: var(--text-dim); margin-left: 4px;">Sällskap:</span>`;
+            compRefs.forEach(r => {
+              const isAct = activeRef && activeRef.key === r.key && state.refSplitOpen;
+              const extLink = r.url ? `<a class="stl-ext-link" href="${escapeHtml(r.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Öppna på reformasthlm.se">↗</a>` : '';
+              html += `<span class="stl-chip ${isAct ? 'active-ref' : ''}" onclick="selectCompareRef('${escapeJsString(r.key)}', true)" title="Klicka för att växla 1:1-referens till ${escapeHtml(r.tag)} ${escapeHtml(r.name)}"><b>${escapeHtml(r.tag)}</b> ${escapeHtml(r.name)}${extLink}</span>`;
+            });
+          }
+          stlBar.innerHTML = html;
+        } else {
+          stlBar.classList.remove('visible');
+          stlBar.innerHTML = '';
+        }
+      }
+
+      // 2. Render Sticky 1:1 Split-View Pane
+      if (splitBtn) splitBtn.classList.toggle('active-compare', !!state.refSplitOpen);
+      if (splitPane) {
+        splitPane.classList.toggle('open', !!(state.refSplitOpen && activeRef && activeRef.shot));
+        if (state.refSplitOpen && activeRef && activeRef.shot) {
+          const splitImg = document.getElementById('refSplitImg');
+          const splitCap = document.getElementById('refSplitCaption');
+          const splitChips = document.getElementById('refSplitChips');
+          if (splitImg) splitImg.src = sizedUrl(activeRef.shot.url, 1200, activeRef.shot.mtime);
+          if (splitCap) splitCap.textContent = `${activeRef.tag ? activeRef.tag + ' · ' : ''}${activeRef.name}`;
+          if (splitChips) {
+            if (refs.length > 1) {
+              splitChips.innerHTML = refs.map(r => `
+                <button type="button" class="btn btn-sm ${r.key === activeRef.key ? 'btn-primary' : 'btn-outline'}" style="padding: 2px 7px; font-size: 10.5px;" onclick="selectCompareRef('${escapeJsString(r.key)}', false)">
+                  ${escapeHtml(r.tag || r.name)}
+                </button>
+              `).join('');
+            } else {
+              splitChips.innerHTML = '';
+            }
+          }
+        }
+      }
+    }
+
     function renderProductView() {
       const prod = state.products[state.currentProductIndex];
       if (!prod) {
@@ -5639,59 +6636,59 @@
         if (titleEl) titleEl.innerHTML = '';
         const subtitleEl = document.getElementById('currentProductSubtitle');
         if (subtitleEl) subtitleEl.innerText = '';
+        const stlBar = document.getElementById('shopTheLookBar');
+        if (stlBar) { stlBar.classList.remove('visible'); stlBar.innerHTML = ''; }
         const grid = document.getElementById('shotsGrid');
         if (grid) {
-          grid.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--text-dim); font-size: 16px;">Inga produkter hittades i denna mapp.</div>';
+          grid.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--text-dim); font-size: 15px;">Inga produkter hittades i denna mapp.</div>';
         }
         return;
       }
 
       const prodTitle = prod.display_name || prod.model;
-      const vHeadTag = prod.has_new_version ? `<span class="version-pill" style="margin-left: 8px;">🔄 Ny version (${prod.version_tag || '-n'})</span>` : '';
-      const shareBtn = `<button class="btn btn-sm btn-outline" onclick="copyProductShareLink()" title="Kopiera permanent direktlänk till ${escapeHtml(prodTitle)} för Teams" style="margin-left: 10px; font-size: 11px; padding: 2px 8px; vertical-align: middle; display: inline-flex; align-items: center; gap: 4px;"><span>🔗</span> Dela produkt</button>`;
-      document.getElementById('currentProductTitle').innerHTML = `${escapeHtml(prodTitle)}${vHeadTag} ${shareBtn}`;
-      document.getElementById('currentProductSubtitle').innerText = `${prod.brand} • ${prod.color} • ${prod.folder_name}`;
+      const vHeadTag = prod.has_new_version ? `<span class="version-pill">🔄 Ny version (${escapeHtml(prod.version_tag || '-n')})</span>` : '';
+      const edStatus = getEditorialStatus(prod.id);
+      let statusPill = `<span style="font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: rgba(255,255,255,0.06); color: #9CA3AF;">⚪ Att granska</span>`;
+      if (edStatus === 'approved') statusPill = `<span style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: rgba(16,185,129,0.16); color: #6EE7B7; border: 1px solid rgba(52,211,153,0.35);">✓ Godkänd</span>`;
+      else if (edStatus === 'adjust') statusPill = `<span style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: rgba(245,158,11,0.16); color: #FCD34D; border: 1px solid rgba(251,191,36,0.4);">✎ Justera</span>`;
 
-      const grid = document.getElementById('shotsGrid');
-      grid.innerHTML = '';
-      grid.classList.toggle('shots-size-stor', state.shotSize === 'stor');
-
-      if ((prod.ai_shot_count || 0) > 0 && (prod.site_candidates || 0) === 0) {
-        const warnBanner = document.createElement('div');
-        warnBanner.style.cssText = 'grid-column: 1 / -1; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.4); color: #fcd34d; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;';
-        warnBanner.innerHTML = `📐 0 Sajt-kandidater i 1:1 (${prod.ai_shot_count} AI-bilder har annat bildförhållande och visas endast för annonser/SoMe)`;
-        grid.appendChild(warnBanner);
-      }
+      document.getElementById('currentProductTitle').innerHTML = `<span>${escapeHtml(prodTitle)}</span> ${statusPill} ${vHeadTag}`;
+      const subParts = [prod.brand, prod.color].filter(Boolean);
+      document.getElementById('currentProductSubtitle').innerText = `${subParts.join(' · ')}  (${state.currentProductIndex + 1} av ${state.products.length})`;
 
       const rawShots = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
       const sortedItems = sortShotsForDisplay(prod, rawShots);
 
+      renderShopTheLookAndRefSplit(prod, sortedItems);
+
+      const grid = document.getElementById('shotsGrid');
+      grid.innerHTML = '';
+      const cols = state.editorialCols || (state.shotSize === 'stor' ? 1 : 2);
+      grid.classList.remove('cols-1', 'cols-2', 'cols-3', 'shots-size-stor');
+      grid.classList.add(`cols-${cols}`);
+      if (cols === 1) grid.classList.add('shots-size-stor');
+
       sortedItems.forEach(({ shot, origIdx }, dispIdx) => {
         let versionBadge = '';
         if (shot.is_new_version) {
-          versionBadge = `<span class="version-pill" style="font-size: 10px; padding: 1px 6px;">🔄 ${shot.version_tag || 'Ny'}</span>`;
-        } else if (shot.has_newer_version === true) {
-          versionBadge = `<span style="font-size: 10px; color: var(--text-dim); background: #1e293b; padding: 1px 6px; border-radius: 10px; border: 1px solid #334155;">⏳ Tidigare</span>`;
+          versionBadge = `<span class="version-pill" style="font-size: 10px; padding: 1px 6px;">🔄 ${escapeHtml(shot.version_tag || 'Ny')}</span>`;
         }
 
-        let goldBadge = '';
+        let roleBadge = '';
         if (shot.is_studio_packshot) {
-          goldBadge = `<span class="studio-packshot-badge" title="Original studiobild (skyddad mot oavsiktlig radering)">🔒 Studio</span>`;
-        } else if (shot.in_gold_set) {
-          const isStarred = (shot.stars_count || 0) > 0;
-          const bIcon = isStarred ? '⭐' : '🏆';
-          const bText = isStarred ? `Sajt #${shot.gold_rank} (${shot.stars_avg}★)` : `Sajt #${shot.gold_rank}`;
-          goldBadge = `<span class="gold-set-badge ${isStarred ? 'starred' : ''}" title="${escapeHtml(shot.gold_reason || 'Vald till sajt-guldset')}">${bIcon} ${bText}</span>`;
+          const refTagMatch = String(shot.shot_kind || '').match(/@\d+/);
+          const studioLabel = refTagMatch ? `Studio ${refTagMatch[0]}` : 'Studio Ref';
+          roleBadge = `<span class="studio-packshot-badge" title="${escapeHtml(shot.shot_kind || 'Studioreferens')}">${escapeHtml(studioLabel)}</span>`;
+        } else if (shot.in_gold_set && (shot.stars_count || 0) > 0) {
+          roleBadge = `<span class="gold-set-badge starred">★ Favorit</span>`;
         }
 
         let fmtBadge = '';
         if (isVideoShot(shot)) {
           const al = (shot.aspect_label || '9:16').replace(/^🎬\s*/, '');
-          fmtBadge = `<span class="fmt-badge" style="background: rgba(59, 130, 246, 0.18); border-color: rgba(96, 165, 250, 0.45); color: #93c5fd;" title="AI-genererad produktvideo (${escapeHtml(al)}) för annonser/SoMe">🎬 Video ${escapeHtml(al)}</span>`;
-        } else if (!shot.is_studio_packshot && shot.site_eligible === false) {
-          const al = shot.aspect_label || 'Ej 1:1';
-          const dimInfo = (shot.width && shot.height) ? ` (${shot.width}×${shot.height})` : '';
-          fmtBadge = `<span class="fmt-badge" title="Endast 1:1 kan väljas till Sajt${dimInfo}. Denna bild används för annonser/SoMe.">📐 ${escapeHtml(al)} · Ej 1:1</span>`;
+          fmtBadge = `<span class="fmt-badge" style="color: #93C5FD; border-color: rgba(96,165,250,0.35);">🎬 Video ${escapeHtml(al)}</span>`;
+        } else if (!shot.is_studio_packshot && shot.aspect_label) {
+          fmtBadge = `<span class="fmt-badge">${escapeHtml(shot.aspect_label)}</span>`;
         }
 
         const selKey = getShotSelectId(prod.id, shot.rel_path, shot.filename);
@@ -5699,40 +6696,48 @@
         const safePid = escapeJsString(prod.id);
         const safeRel = escapeJsString(shot.rel_path || '');
         const safeFn = escapeJsString(shot.filename || '');
+        const canRemoveThisShot = state.canRemove && !shot.is_studio_packshot;
 
-        const canRemoveThisShot = state.canRemove;
+        const rawTag = String(shot.shot || String(origIdx + 1).padStart(2, '0'));
+        const fullLabel = String(shot.label || rawTag);
+        const cleanCardTitle = shot.is_studio_packshot ? `Ref ${rawTag}` : `Bild ${rawTag}`;
 
-        const titleTag = shot.label ? `Bild ${shot.label}` : `Bild ${shot.shot || (origIdx+1)}`;
         const box = document.createElement('div');
-        box.className = 'shot-box' + (shot.in_gold_set ? ' in-gold-set' : '');
+        box.className = 'shot-box'
+          + (shot.is_studio_packshot ? ' is-studio-shot' : ' is-interior-shot')
+          + (shot.in_gold_set ? ' in-gold-set' : '');
+        box.dataset.dispIdx = String(dispIdx);
+        box.dataset.isStudio = shot.is_studio_packshot ? '1' : '0';
+        box.onmouseenter = () => { state.hoveredShotBox = box; };
+        box.onmouseleave = () => { if (state.hoveredShotBox === box) state.hoveredShotBox = null; };
+
+        const imgUrl = sizedUrl(shot.url, cols === 1 ? 1800 : 1400, shot.mtime);
         box.innerHTML = `
           <div class="shot-box-header">
-            <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; flex-wrap: wrap;">
-              <label class="shot-select-label" onclick="event.stopPropagation()" title="Markera bild för nedladdning (.zip)">
+            <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
+              <label class="shot-select-label" onclick="event.stopPropagation()" title="Markera för .zip">
                 <input type="checkbox" class="shot-select-chk" ${isChecked ? 'checked' : ''} onchange="toggleShotSelection('${safePid}', '${safeRel}', '${safeFn}', this.checked, event)">
               </label>
-              <span class="shot-tag-title">${titleTag}</span>
-              ${goldBadge}
+              <span style="font-size: 12px; font-weight: 600; color: #E5E7EB; white-space: nowrap;" title="${escapeHtml(fullLabel)}">${escapeHtml(cleanCardTitle)}</span>
+              ${roleBadge}
               ${fmtBadge}
-              ${renderStars(prod.id, shot.filename)}
               ${versionBadge}
             </div>
-            <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1 1 auto; justify-content: flex-end;">
-              <span class="shot-filename" title="${shot.filename}">${shot.filename || ''}</span>
+            <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+              ${renderStars(prod.id, shot.filename)}
             </div>
           </div>
-          <div class="shot-box-image-wrap" onclick="openLightbox('${escapeJsString(shot.url || '')}', '${escapeJsString(prodTitle + ' - ' + titleTag)}', '${safePid}', ${dispIdx})">
+          <div class="shot-box-image-wrap" onclick="openLightbox('${escapeJsString(shot.url || '')}', '${escapeJsString(prodTitle + ' - ' + cleanCardTitle)}', '${safePid}', ${dispIdx})">
             ${isVideoShot(shot)
-              ? `<video src="${shot.url || ''}" poster="${sizedUrl(shot.url, 600, shot.mtime)}" controls loop muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: contain; display: block; background: #000;" onclick="handleCardVideoClick(event, this, '${escapeJsString(shot.url || '')}', '${escapeJsString(prodTitle + ' - ' + titleTag)}', '${safePid}', ${dispIdx})"></video>`
-              : `<img src="${sizedUrl(shot.url, state.shotSize === 'stor' ? 1600 : 1200, shot.mtime)}" alt="${titleTag}" loading="lazy" onerror="handleImageError(this)">`
+              ? `<video src="${shot.url || ''}" poster="${sizedUrl(shot.url, 600, shot.mtime)}" controls loop muted playsinline preload="metadata" onclick="handleCardVideoClick(event, this, '${escapeJsString(shot.url || '')}', '${escapeJsString(prodTitle + ' - ' + cleanCardTitle)}', '${safePid}', ${dispIdx})"></video>`
+              : `<img class="shot-main-img" src="${imgUrl}" data-orig-src="${imgUrl}" alt="${escapeHtml(cleanCardTitle)}" loading="lazy" onerror="handleImageError(this)">`
             }
             ${getGuidesOverlayHtml()}
             ${shot.url ? `<a href="${downloadUrl(shot.url)}" download class="btn-download-image btn-download-overlay" onclick="event.stopPropagation()" title="Ladda ner originalfil">⬇</a>` : ''}
-            ${canRemoveThisShot ? `<button class="btn-remove-image btn-remove-overlay" onclick="event.stopPropagation(); removeDesktopImage('${safePid}', '${safeFn}', event)" title="Flytta ut ur mappen">🗑 Flytta ut</button>` : ''}
+            ${canRemoveThisShot ? `<button class="btn-remove-image btn-remove-overlay" onclick="event.stopPropagation(); removeDesktopImage('${safePid}', '${safeFn}', event)" title="Plocka bort bild ur mappen">🗑 Plocka bort</button>` : ''}
             ${isVideoShot(shot)
-              ? `<button type="button" onclick="event.stopPropagation(); openLightbox('${escapeJsString(shot.url || '')}', '${escapeJsString(prodTitle + ' - ' + titleTag)}', '${safePid}', ${dispIdx})" style="position: absolute; top: 8px; left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.88); color: #f8fafc; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.22); cursor: pointer; z-index: 30; pointer-events: auto; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.5);">🎬 Klicka här för helskärm & granskning</button>
-                 <div class="shot-hover-hint" onclick="event.stopPropagation(); openLightbox('${escapeJsString(shot.url || '')}', '${escapeJsString(prodTitle + ' - ' + titleTag)}', '${safePid}', ${dispIdx})" style="bottom: 68px; pointer-events: auto; cursor: pointer; z-index: 30;">🎬 Klicka här för helskärm & granskning</div>`
-              : `<div class="shot-hover-hint">🔍 Klicka för storbild & ritverktyg</div>`
+              ? `<button type="button" onclick="event.stopPropagation(); openLightbox('${escapeJsString(shot.url || '')}', '${escapeJsString(prodTitle + ' - ' + cleanCardTitle)}', '${safePid}', ${dispIdx})" style="position: absolute; top: 8px; left: 50%; transform: translateX(-50%); background: rgba(17, 19, 21, 0.88); color: #f8fafc; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.18); cursor: pointer; z-index: 30; pointer-events: auto; white-space: nowrap;">🎬 Helskärm</button>`
+              : `<div class="shot-hover-hint">🔍 Fullskärm · Håll Space = 1:1 Ref</div>`
             }
           </div>
         `;
@@ -5744,26 +6749,23 @@
       const btnOk = document.getElementById('btnStatusOk');
       const btnWarn = document.getElementById('btnStatusWarn');
       const btnRedo = document.getElementById('btnStatusRedo');
+      const stageBtnOk = document.getElementById('stageBtnApprove');
+      const stageBtnAdj = document.getElementById('stageBtnAdjust');
+      const stageCommBadge = document.getElementById('stageCommentBadge');
 
-      if (btnOk) {
-        btnOk.className = 'status-decision-btn ' + (effStatus === 'approved' ? 'active-ok' : '');
-        btnOk.style.background = ''; btnOk.style.color = '';
-      }
-      if (btnWarn) {
-        btnWarn.className = 'status-decision-btn ' + (effStatus === 'angle_issue' ? 'active-warn' : '');
-        btnWarn.style.background = ''; btnWarn.style.color = '';
-      }
-      if (btnRedo) {
-        btnRedo.className = 'status-decision-btn ' + (effStatus === 'redo' ? 'active-redo' : '');
-        btnRedo.style.background = ''; btnRedo.style.color = '';
-      }
+      if (btnOk) btnOk.className = 'status-decision-btn ' + (effStatus === 'approved' ? 'active-ok' : '');
+      if (btnWarn) btnWarn.className = 'status-decision-btn ' + (effStatus === 'angle_issue' ? 'active-warn' : '');
+      if (btnRedo) btnRedo.className = 'status-decision-btn ' + (effStatus === 'redo' ? 'active-redo' : '');
+      if (stageBtnOk) stageBtnOk.className = 'stage-action-btn ' + (edStatus === 'approved' ? 'active-ok' : '');
+      if (stageBtnAdj) stageBtnAdj.className = 'stage-action-btn ' + (edStatus === 'adjust' ? 'active-adjust' : '');
+      const cCount = (review.comments || []).length;
+      if (stageCommBadge) stageCommBadge.textContent = cCount > 0 ? `(${cCount})` : '';
 
       const flags = review.flags || {};
-      document.getElementById('chk_angle').checked = !!flags.angle;
-      document.getElementById('chk_crown').checked = !!flags.crown;
-      document.getElementById('chk_edge').checked = !!flags.edge;
-      document.getElementById('chk_color').checked = !!flags.color;
-      document.getElementById('chk_dust').checked = !!flags.dust;
+      ['angle', 'crown', 'edge', 'color', 'dust', 'shadow'].forEach(k => {
+        const el = document.getElementById('chk_' + k);
+        if (el) el.checked = !!flags[k];
+      });
       renderCommentsFeed();
 
       const stage = document.getElementById('shotsStageContainer');
@@ -6609,22 +7611,57 @@
 
     function updateQAStats() {
       let ok = 0, warn = 0, redo = 0, pending = 0;
+      let edApproved = 0, edAdjust = 0, edPending = 0, round2Count = 0;
       state.products.forEach(p => {
         const st = getEffectiveStatus(p.id);
         if (st === 'approved') ok++;
         else if (st === 'angle_issue') warn++;
         else if (st === 'redo') redo++;
         else pending++;
+
+        const ed = getEditorialStatus(p.id);
+        if (ed === 'approved') edApproved++;
+        else if (ed === 'adjust') edAdjust++;
+        else edPending++;
+
+        const rev = state.reviews[p.id] || {};
+        const hasComments = Array.isArray(rev.comments) && rev.comments.length > 0;
+        const hasFlags = rev.flags && Object.values(rev.flags).some(Boolean);
+        if (ed === 'adjust' || hasComments || hasFlags) round2Count++;
       });
       const total = state.products.length;
+      const reviewedCount = edApproved + edAdjust;
 
-      document.getElementById('statOkCount').innerText = `${ok} Godkända`;
-      document.getElementById('statWarnCount').innerText = `${warn} Vinkelfel`;
-      document.getElementById('statRedoCount').innerText = `${redo} Gör om`;
-      document.getElementById('statPendCount').innerText = `${pending} Kvar`;
+      const elOk = document.getElementById('statOkCount');
+      const elWarn = document.getElementById('statWarnCount');
+      const elRedo = document.getElementById('statRedoCount');
+      const elPend = document.getElementById('statPendCount');
+      const elBar = document.getElementById('progressBar');
+      if (elOk) elOk.innerText = `${edApproved} Godkända`;
+      if (elWarn) elWarn.innerText = `${warn} Justera`;
+      if (elRedo) elRedo.innerText = `${redo} Gör om`;
+      if (elPend) elPend.innerText = `${edPending} Att granska`;
+      if (elBar) elBar.style.width = `${total > 0 ? (reviewedCount / total) * 100 : 0}%`;
 
-      const pct = total > 0 ? (ok / total) * 100 : 0;
-      document.getElementById('progressBar').style.width = `${pct}%`;
+      const progLbl = document.getElementById('editorialProgressLabel');
+      if (progLbl) {
+        progLbl.innerHTML = `<b>${reviewedCount}</b> av <b>${total}</b> granskade · <span style="color:#34D399; font-weight:700;">${edApproved} godkända</span>`;
+      }
+      const cAll = document.getElementById('pillCountAll');
+      const cPend = document.getElementById('pillCountPending');
+      const cApp = document.getElementById('pillCountApproved');
+      const cAdj = document.getElementById('pillCountAdjust');
+      if (cAll) cAll.textContent = total ? `(${total})` : '';
+      if (cPend) cPend.textContent = edPending ? `(${edPending})` : '';
+      if (cApp) cApp.textContent = edApproved ? `(${edApproved})` : '';
+      if (cAdj) cAdj.textContent = edAdjust ? `(${edAdjust})` : '';
+
+      const r2Total = round2Count + (state.undoCount || 0);
+      const r2Badge = document.getElementById('round2OrderBadge');
+      if (r2Badge) {
+        r2Badge.style.display = r2Total > 0 ? 'inline-block' : 'none';
+        r2Badge.textContent = String(r2Total);
+      }
     }
 
     function copyMarkdownReport() {
@@ -7731,11 +8768,486 @@
       window.addEventListener('mouseup', () => { isPanning = false; });
     }
 
+    // =========================================================================
+    // NORDIC EDITORIAL CONTROLLERS (Brand Tabs, Searchable Batch Popover,
+    // Drawers, 1:1 Ref Split-View, Space Hold-to-Compare, Kontaktkarta, Runda 2)
+    // =========================================================================
+    function getBatchCompany(b) {
+      if (!b) return 'trendcarpet';
+      if (b.company) return String(b.company).toLowerCase();
+      const org = String(b.org || '').toLowerCase();
+      const cat = String(b.category || '').toLowerCase();
+      const hay = `${b.id || ''} ${b.name || ''} ${b.path || ''}`.toLowerCase();
+      if (org === 'reforma' || hay.includes('reforma')) return 'reforma';
+      if (cat === 'kepsar' || hay.includes('hatshop') || hay.includes('keps') || hay.includes('hatt')) return 'hatshop';
+      return 'trendcarpet';
+    }
+
+    function getCleanBatchLabel(b) {
+      if (!b) return '';
+      if (b.label) return b.label;
+      return String(b.name || b.id || '')
+        .replace(/^(?:⚠️\s*\[Lagring\]\s*|🔒\s*\[Utkast\]\s*)+/g, '')
+        .trim();
+    }
+
+    function getBatchDateDisplay(b) {
+      if (!b) return '';
+      const m = String(b.id || '').match(/^(\d{2}-\d{2}-\d{2}|\d{4}-\d{2}-\d{2})/);
+      if (m) return m[1];
+      if (b.created_at) return String(b.created_at).slice(0, 10);
+      return '';
+    }
+
+    function setBrandFilter(brand) {
+      state.brandFilter = brand || 'all';
+      document.querySelectorAll('#editorialBrandTabs .brand-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.brand === state.brandFilter);
+      });
+      renderBatchPopover();
+
+      if (state.brandFilter !== 'all') {
+        const cur = (state.batches || []).find(b => b.id === state.currentBatchId);
+        if (!cur || getBatchCompany(cur) !== state.brandFilter) {
+          const firstMatch = (state.batches || []).find(b => getBatchCompany(b) === state.brandFilter);
+          if (firstMatch) {
+            switchBatch(firstMatch.id);
+          }
+        }
+      }
+    }
+
+    function toggleBatchPopover(ev) {
+      if (ev) ev.stopPropagation();
+      const pop = document.getElementById('batchPopover');
+      if (!pop) return;
+      const willOpen = !pop.classList.contains('open');
+      pop.classList.toggle('open', willOpen);
+      if (willOpen) {
+        renderBatchPopover();
+        setTimeout(() => document.getElementById('batchPopoverSearch')?.focus(), 20);
+      }
+    }
+
+    function closeBatchPopover() {
+      const pop = document.getElementById('batchPopover');
+      if (pop) pop.classList.remove('open');
+    }
+
+    document.addEventListener('click', (ev) => {
+      const wrap = document.getElementById('batchPickerWrap');
+      if (wrap && !wrap.contains(ev.target)) closeBatchPopover();
+    });
+
+    function renderBatchPopover() {
+      const list = document.getElementById('batchPopoverList');
+      if (!list) return;
+      const q = (document.getElementById('batchPopoverSearch')?.value || '').trim().toLowerCase();
+      const bFilter = state.brandFilter || 'all';
+
+      // Hide brand tabs that have 0 batches for non-admin org-isolated users (e.g. Reforma viewer)
+      const companiesPresent = new Set((state.batches || []).map(getBatchCompany));
+      document.querySelectorAll('#editorialBrandTabs .brand-tab-btn').forEach(btn => {
+        const bKey = btn.dataset.brand;
+        if (bKey === 'all') {
+          btn.style.display = companiesPresent.size > 1 ? '' : 'none';
+        } else {
+          btn.style.display = (state.isAdmin || companiesPresent.has(bKey)) ? '' : 'none';
+        }
+      });
+
+      const matches = (state.batches || []).filter(b => {
+        if (bFilter !== 'all' && getBatchCompany(b) !== bFilter) return false;
+        if (!q) return true;
+        const hay = `${getCleanBatchLabel(b)} ${b.id || ''} ${getBatchCompany(b)}`.toLowerCase();
+        return hay.includes(q);
+      });
+
+      if (matches.length === 0) {
+        list.innerHTML = `<div style="padding: 16px; text-align: center; color: var(--text-dim); font-size: 12px;">Inga batchar matchar sökningen.</div>`;
+        return;
+      }
+
+      list.innerHTML = '';
+      matches.forEach(b => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'batch-popover-item' + (b.id === state.currentBatchId ? ' active' : '');
+        const dateStr = getBatchDateDisplay(b);
+        const draftDot = b.published === false ? `<span title="Privat utkast" style="opacity:0.75;">🔒</span>` : '';
+        const countNum = (b.id === state.currentBatchId && state.products) ? state.products.length : (b.product_count || '');
+        const countStr = countNum ? `${countNum} prod` : '';
+        btn.innerHTML = `
+          <span class="batch-popover-item-title">${escapeHtml(getCleanBatchLabel(b))}</span>
+          <span class="batch-popover-item-sub">${draftDot}${dateStr ? `<span>${escapeHtml(dateStr)}</span>` : ''}${countStr ? `<span>· ${escapeHtml(countStr)}</span>` : ''}</span>
+        `;
+        btn.onclick = () => switchBatch(b.id);
+        list.appendChild(btn);
+      });
+    }
+
+    function syncEditorialTopbarBatch() {
+      const b = state.currentBatch || (state.batches || []).find(x => x.id === state.currentBatchId);
+      const titleEl = document.getElementById('batchPickerTitle');
+      const metaEl = document.getElementById('batchPickerMeta');
+      if (titleEl && b) titleEl.textContent = getCleanBatchLabel(b);
+      if (metaEl) metaEl.textContent = state.products ? `${state.products.length} prod` : '';
+
+      const capBtn = document.getElementById('btnCapAngleQuick');
+      if (capBtn) {
+        capBtn.style.display = (b && b.category === 'kepsar') ? 'inline-flex' : 'none';
+      }
+      renderBatchPopover();
+    }
+
+    function getChecklistLabelMap() {
+      const isCaps = state.currentBatch && state.currentBatch.category === 'kepsar';
+      if (isCaps) {
+        return {
+          title: 'Checklista (Kepsar & Studio)',
+          angle: 'Vinkel / perspektiv avviker',
+          color: 'Färgton / kontrast avviker',
+          crown: 'Form / kurva ojämn',
+          edge: 'Friläggningskant / halo',
+          dust: 'Damm / smuts på produkten',
+          shadow: 'Skuggning / ljussättning'
+        };
+      }
+      return {
+        title: 'Snabbtaggar (Interiör & Video)',
+        angle: '1:1 Produktdetalj',
+        color: 'Färg/nyans',
+        crown: 'Skala i rummet',
+        edge: 'Rum & komposition',
+        dust: 'Text/böcker',
+        shadow: 'Videorörelse'
+      };
+    }
+
+    function syncEditorialChecklistLabels() {
+      const map = getChecklistLabelMap();
+      const secTitle = document.getElementById('checklistSectionTitle');
+      if (secTitle) secTitle.textContent = map.title;
+      ['angle', 'color', 'crown', 'edge', 'dust', 'shadow'].forEach(k => {
+        const span = document.getElementById('lbl_chk_' + k);
+        if (span) span.textContent = map[k];
+        const lbInput = document.getElementById('lb_chk_' + k);
+        if (lbInput && lbInput.parentElement) {
+          Array.from(lbInput.parentElement.childNodes).forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+              node.textContent = ' ' + map[k];
+            }
+          });
+        }
+      });
+    }
+
+    function setEditorialStatusFilter(filterVal) {
+      state.editorialStatusFilter = filterVal || 'all';
+      document.querySelectorAll('#statusFilterPills .status-pill-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.sfilter === state.editorialStatusFilter);
+      });
+      renderProductSidebar();
+      if (state.currentMode === 'contactsheet') renderContactSheet();
+    }
+
+    function setEditorialCols(cols) {
+      const n = Number(cols) || 2;
+      state.editorialCols = n;
+      state.shotSize = (n === 1) ? 'stor' : 'normal';
+      document.querySelectorAll('.editorial-col-btn').forEach(btn => {
+        btn.classList.toggle('active', Number(btn.dataset.cols) === n);
+      });
+      renderProductView();
+    }
+
+    function toggleSidebarCollapse(force) {
+      const panel = document.getElementById('sidebarPanel');
+      const expandBtn = document.getElementById('btnExpandSidebar');
+      if (!panel) return;
+      const collapsed = (typeof force === 'boolean') ? force : !panel.classList.contains('collapsed');
+      panel.classList.toggle('collapsed', collapsed);
+      if (expandBtn) expandBtn.style.display = collapsed ? 'inline-flex' : 'none';
+    }
+
+    function toggleFeedbackDrawer(force) {
+      const drawer = document.getElementById('feedbackDrawer');
+      if (!drawer) return;
+      const open = (typeof force === 'boolean') ? force : !drawer.classList.contains('open');
+      state.feedbackDrawerOpen = open;
+      drawer.classList.toggle('open', open);
+      if (open) {
+        setTimeout(() => document.getElementById('newCommentInput')?.focus(), 40);
+      }
+    }
+
+    function triggerAdjustWithDrawer() {
+      const prod = state.products[state.currentProductIndex];
+      if (!prod) return;
+      const ed = getEditorialStatus(prod.id);
+      if (ed !== 'adjust') {
+        setProductStatus('angle_issue');
+      }
+      toggleFeedbackDrawer(true);
+    }
+
+    function toggleToolsDrawer(force) {
+      const drawer = document.getElementById('toolsDrawer');
+      const backdrop = document.getElementById('toolsDrawerBackdrop');
+      if (!drawer) return;
+      const open = (typeof force === 'boolean') ? force : !drawer.classList.contains('open');
+      drawer.classList.toggle('open', open);
+      if (backdrop) backdrop.classList.toggle('open', open);
+    }
+
+    function closeToolsDrawer() {
+      toggleToolsDrawer(false);
+    }
+
+    function toggleRefSplitView(force) {
+      state.refSplitOpen = (typeof force === 'boolean') ? force : !state.refSplitOpen;
+      const prod = state.products[state.currentProductIndex];
+      if (prod) {
+        const rawShots = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
+        renderShopTheLookAndRefSplit(prod, sortShotsForDisplay(prod, rawShots));
+      }
+    }
+
+    function selectCompareRef(refKey, ensureOpen = true) {
+      state.compareRefKey = refKey;
+      if (ensureOpen) state.refSplitOpen = true;
+      const prod = state.products[state.currentProductIndex];
+      if (prod) {
+        const rawShots = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
+        renderShopTheLookAndRefSplit(prod, sortShotsForDisplay(prod, rawShots));
+      }
+    }
+
+    function getActiveRefShotForProduct(prod) {
+      if (!prod) return null;
+      const rawShots = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
+      const sortedItems = sortShotsForDisplay(prod, rawShots);
+      const refs = getProductRefCandidates(prod, sortedItems);
+      const chosen = refs.find(r => r.key === state.compareRefKey) || refs[0];
+      return chosen ? chosen.shot : null;
+    }
+
+    function startHoldSpaceCompare() {
+      if (state._holdingSpaceCompare) return;
+      const isLb = document.getElementById('lightboxModal')?.classList.contains('active');
+      const prod = isLb ? state.products[lbCurrentProductIndex] : state.products[state.currentProductIndex];
+      const refShot = getActiveRefShotForProduct(prod);
+      if (!refShot || !refShot.url) return;
+
+      state._holdingSpaceCompare = true;
+      const pill = document.getElementById('holdComparePill');
+      if (pill) pill.classList.add('active');
+
+      const refUrl = sizedUrl(refShot.url, 1600, refShot.mtime);
+      if (isLb) {
+        const lbImg = document.getElementById('lightboxImg');
+        const lbVid = document.getElementById('lightboxVideo');
+        if (lbImg) {
+          state._lbPrevState = {
+            src: lbImg.src,
+            imgDisplay: lbImg.style.display,
+            vidDisplay: lbVid ? lbVid.style.display : 'none'
+          };
+          if (lbVid && lbVid.style.display !== 'none') lbVid.style.display = 'none';
+          lbImg.style.display = 'block';
+          lbImg.src = refUrl;
+        }
+      } else {
+        const targetBoxes = (state.hoveredShotBox && state.hoveredShotBox.dataset.isStudio !== '1')
+          ? [state.hoveredShotBox]
+          : Array.from(document.querySelectorAll('#shotsGrid .shot-box.is-interior-shot'));
+        state._swappedImgs = [];
+        targetBoxes.forEach(box => {
+          const img = box.querySelector('img.shot-main-img');
+          if (img && img.src) {
+            state._swappedImgs.push({ img, orig: img.dataset.origSrc || img.src });
+            img.src = refUrl;
+          }
+        });
+      }
+    }
+
+    function stopHoldSpaceCompare() {
+      if (!state._holdingSpaceCompare) return;
+      state._holdingSpaceCompare = false;
+      const pill = document.getElementById('holdComparePill');
+      if (pill) pill.classList.remove('active');
+
+      if (state._lbPrevState) {
+        const lbImg = document.getElementById('lightboxImg');
+        const lbVid = document.getElementById('lightboxVideo');
+        if (lbImg) {
+          lbImg.src = state._lbPrevState.src;
+          lbImg.style.display = state._lbPrevState.imgDisplay;
+        }
+        if (lbVid) lbVid.style.display = state._lbPrevState.vidDisplay;
+        state._lbPrevState = null;
+      }
+      if (Array.isArray(state._swappedImgs)) {
+        state._swappedImgs.forEach(({ img, orig }) => {
+          if (img && orig) img.src = orig;
+        });
+        state._swappedImgs = null;
+      }
+    }
+
+    function toggleContactSheetMode() {
+      if (state.currentMode === 'contactsheet') {
+        switchMode('product');
+      } else {
+        switchMode('contactsheet');
+      }
+    }
+
+    function renderContactSheet() {
+      const container = document.getElementById('contactSheetRows');
+      if (!container) return;
+      const titleEl = document.getElementById('csBatchTitle');
+      if (titleEl && state.currentBatch) {
+        titleEl.textContent = `🖼 Kontaktkarta — ${getCleanBatchLabel(state.currentBatch)}`;
+      }
+      container.innerHTML = '';
+
+      const sFilter = state.editorialStatusFilter || 'all';
+      const list = (state.products || []).map((prod, idx) => ({ prod, idx })).filter(({ prod }) => {
+        if (sFilter === 'all') return true;
+        return getEditorialStatus(prod.id) === sFilter;
+      });
+
+      if (list.length === 0) {
+        container.innerHTML = `<div style="padding: 36px; text-align: center; color: var(--text-dim);">Inga produkter att visa i kontaktkartan för valt filter.</div>`;
+        return;
+      }
+
+      list.forEach(({ prod, idx }) => {
+        const ed = getEditorialStatus(prod.id);
+        const prodTitle = prod.display_name || prod.model;
+        const safePid = escapeJsString(prod.id);
+        const rawShots = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
+        const sortedItems = sortShotsForDisplay(prod, rawShots);
+        const rev = state.reviews[prod.id] || {};
+        const cCount = (rev.comments || []).length;
+
+        const heroBadge = (prod.hero_product && prod.hero_product.tag)
+          ? `<span style="font-size: 11px; color: #FDE68A; background: rgba(245,158,11,0.12); border: 1px solid rgba(251,191,36,0.35); border-radius: 999px; padding: 1px 8px;">★ ${escapeHtml(prod.hero_product.tag)} ${escapeHtml(prod.hero_product.name || '')}</span>`
+          : '';
+
+        const row = document.createElement('div');
+        row.className = `cs-product-row cs-status-${ed}`;
+
+        const tilesHtml = sortedItems.map(({ shot }, dispIdx) => {
+          const label = shot.is_studio_packshot ? `Ref ${shot.label || (dispIdx + 1)}` : `Bild ${shot.label || (dispIdx + 1)}`;
+          const mediaHtml = isVideoShot(shot)
+            ? `<video src="${shot.url || ''}" poster="${sizedUrl(shot.url, 400, shot.mtime)}" muted loop playsinline preload="metadata"></video>`
+            : `<img src="${sizedUrl(shot.url, 480, shot.mtime)}" alt="${escapeHtml(label)}" loading="lazy" onerror="handleImageError(this)">`;
+          return `
+            <div class="cs-tile ${shot.is_studio_packshot ? 'is-studio' : ''}" onclick="openLightbox('${escapeJsString(shot.url || '')}', '${escapeJsString(prodTitle + ' - ' + label)}', '${safePid}', ${dispIdx})">
+              ${mediaHtml}
+              <span class="cs-tile-label">${isVideoShot(shot) ? '🎬 ' : ''}${escapeHtml(label)}</span>
+            </div>
+          `;
+        }).join('');
+
+        row.innerHTML = `
+          <div class="cs-row-head">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span style="font-size: 14px; font-weight: 700; color: #F3F4F6; cursor: pointer;" onclick="selectProductByIndex(${idx}); switchMode('product');">${escapeHtml(prodTitle)}</span>
+              ${prod.color ? `<span style="font-size: 12px; color: var(--text-muted);">${escapeHtml(prod.color)}</span>` : ''}
+              ${heroBadge}
+              ${cCount > 0 ? `<span style="font-size: 11px; color: #60A5FA;">💬 ${cCount}</span>` : ''}
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <button type="button" class="stage-action-btn ${ed === 'approved' ? 'active-ok' : ''}" style="height: 28px; font-size: 11.5px;" onclick="quickSetStatus('${safePid}', 'approved'); renderContactSheet();">✓ Godkänd</button>
+              <button type="button" class="stage-action-btn ${ed === 'adjust' ? 'active-adjust' : ''}" style="height: 28px; font-size: 11.5px;" onclick="quickSetStatus('${safePid}', 'angle_issue'); renderContactSheet();">✎ Justera</button>
+              <button type="button" class="stage-action-btn" style="height: 28px; font-size: 11.5px;" onclick="selectProductByIndex(${idx}); switchMode('product');">Öppna →</button>
+            </div>
+          </div>
+          <div class="cs-shots-strip">${tilesHtml}</div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    async function copyRound2Order() {
+      const labelMap = getChecklistLabelMap();
+      const batchTitle = getCleanBatchLabel(state.currentBatch) || state.currentBatchId || 'QA Batch';
+      const lines = [`# Runda 2-order — ${batchTitle}`, ''];
+      let itemCount = 0;
+
+      (state.products || []).forEach(p => {
+        const rev = state.reviews[p.id] || {};
+        const ed = getEditorialStatus(p.id);
+        const flags = rev.flags || {};
+        const activeTags = Object.keys(flags).filter(k => flags[k]).map(k => labelMap[k] || k);
+        const comments = Array.isArray(rev.comments) ? rev.comments : [];
+        if (ed !== 'adjust' && activeTags.length === 0 && comments.length === 0 && !rev.notes) return;
+
+        itemCount++;
+        const title = p.display_name || p.model || p.id;
+        const statusTag = rev.status === 'redo' ? 'Gör om helt' : 'Justera';
+        lines.push(`## ${itemCount}. ${title}${p.color ? ' (' + p.color + ')' : ''} — [${statusTag}]`);
+        if (p.hero_product && p.hero_product.tag) {
+          lines.push(`- Stjärnprodukt: ${p.hero_product.tag} ${p.hero_product.name || ''}`);
+        }
+        if (activeTags.length > 0) {
+          lines.push(`- Punkter att åtgärda: ${activeTags.join(', ')}`);
+        }
+        comments.forEach(c => {
+          const shotInfo = (c.shots && c.shots.length > 0) ? ` (Bild ${c.shots.join(', ')})` : '';
+          lines.push(`- Kommentar${shotInfo}: ${c.text}`);
+        });
+        if (rev.notes && comments.length === 0) {
+          lines.push(`- Notering: ${rev.notes}`);
+        }
+        lines.push('');
+      });
+
+      if (state.undoCount > 0) {
+        lines.push(`- Bortplockade bilder i mappen: ${state.undoCount} st`);
+        lines.push('');
+      }
+
+      if (itemCount === 0 && !(state.undoCount > 0)) {
+        lines.push('Inga produkter markerade med Justera eller kommentarer ännu.');
+      }
+
+      const text = lines.join('\n').trim();
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+        }
+        showToast(itemCount > 0 ? `📋 Kopierade Runda 2-order (${itemCount} produkter)!` : '📋 Kopierade tom Runda 2-sammanställning');
+      } catch (e) {
+        showToast('Kunde inte kopiera till urklipp', 'error');
+      }
+    }
+
     function setupKeyboardShortcuts() {
+      window.addEventListener('keyup', (e) => {
+        if (e.code === 'Space' || e.key === ' ') {
+          stopHoldSpaceCompare();
+        }
+      });
+      window.addEventListener('blur', stopHoldSpaceCompare);
+
       window.addEventListener('keydown', (e) => {
         // If typing in an input or textarea, handle Escape only
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) {
           if (e.key === 'Escape') {
+            closeBatchPopover();
+            closeToolsDrawer();
             if (document.getElementById('protocolDetailModal').classList.contains('active')) {
               closeProtocolDetailModal();
             }
@@ -7749,27 +9261,42 @@
           return;
         }
 
+        // Hold Space = instant 1:1 Studio Reference Compare!
+        if (e.code === 'Space' || e.key === ' ') {
+          e.preventDefault();
+          startHoldSpaceCompare();
+          return;
+        }
+
+        if (e.key === 'Escape') {
+          closeBatchPopover();
+          if (document.getElementById('toolsDrawer')?.classList.contains('open')) {
+            closeToolsDrawer();
+            return;
+          }
+        }
+
         // 1. If Lightbox is open: dual-axis navigation & fast assessment
         const isLightboxOpen = document.getElementById('lightboxModal').classList.contains('active');
         if (isLightboxOpen) {
           if (e.key === 'ArrowRight') {
             e.preventDefault();
-            lightboxNextShot(); // Nästa bild (01 -> 02 -> 03 -> 04)
+            lightboxNextShot();
             return;
           }
           if (e.key === 'ArrowLeft') {
             e.preventDefault();
-            lightboxPrevShot(); // Föregående bild (04 -> 03 -> 02 -> 01)
+            lightboxPrevShot();
             return;
           }
           if (e.key === 'ArrowDown') {
             e.preventDefault();
-            lightboxNextModel(); // Nästa produkt
+            lightboxNextModel();
             return;
           }
           if (e.key === 'ArrowUp') {
             e.preventDefault();
-            lightboxPrevModel(); // Föregående produkt
+            lightboxPrevModel();
             return;
           }
           if (e.key === 'Escape') {
@@ -7781,7 +9308,7 @@
             setLbStatus('approved');
             return;
           }
-          if (e.key === 'w' || e.key === 'W') {
+          if (e.key === 'w' || e.key === 'W' || e.key === 'j' || e.key === 'J') {
             setLbStatus('angle_issue');
             return;
           }
@@ -7800,7 +9327,7 @@
           }
         }
 
-        // 2. If Protocol Detail Modal is open: navigate with Left/Right or Down/Up
+        // 2. If Protocol Detail Modal is open
         const isProtoModalOpen = document.getElementById('protocolDetailModal').classList.contains('active');
         if (isProtoModalOpen) {
           if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
@@ -7822,20 +9349,46 @@
             setProtoStatus('approved');
             return;
           }
-          if (e.key === 'w' || e.key === 'W') {
+          if (e.key === 'w' || e.key === 'W' || e.key === 'j' || e.key === 'J') {
             setProtoStatus('angle_issue');
             return;
           }
         }
 
-        // 3. Tab switching with number keys
-        if (e.key === '1') switchMode('angle');
-        if (e.key === '2') switchMode('product');
+        // 3. View & Drawer Shortcuts
+        if (e.key === '[') {
+          e.preventDefault();
+          toggleSidebarCollapse();
+          return;
+        }
+        if (e.key === 'c' || e.key === 'C') {
+          e.preventDefault();
+          toggleRefSplitView();
+          return;
+        }
+        if (e.key === 'k' || e.key === 'K') {
+          e.preventDefault();
+          toggleFeedbackDrawer();
+          return;
+        }
+        if (e.key === 'j' || e.key === 'J') {
+          e.preventDefault();
+          triggerAdjustWithDrawer();
+          return;
+        }
+        if (e.key === 'm' || e.key === 'M') {
+          e.preventDefault();
+          toggleContactSheetMode();
+          return;
+        }
+
+        if (e.key === '1') switchMode('product');
+        if (e.key === '2') switchMode('contactsheet');
         if (e.key === '3') switchMode('onion');
         if (e.key === '4') switchMode('report');
         if (e.key === '5') switchMode('calendar');
 
-        // 4. General Product navigation (when in product view or angle view)
+        // 4. General Product navigation
         if (e.key === 'ArrowDown') {
           e.preventDefault();
           if (state.currentMode === 'angle') {

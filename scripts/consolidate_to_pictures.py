@@ -215,6 +215,11 @@ def main():
     args = ap.parse_args()
     batches = load_config()
     if args.cmd == "free":
+        # BESLUT PIN (Koordinator 4.2, 2026-11-10): hub sources stay pinned; +U broke hydration and a leftover free loop
+        # unpinned 27 batches at 09:52. Refused unless explicitly re-enabled.
+        if os.environ.get("QA_HUB_ALLOW_FREE") != "1":
+            print("free is disabled: hub folders must stay pinned (BESLUT PIN 2026-11-10)", file=sys.stderr)
+            return 2
         targets = batches if args.all else pick(batches, args)
         for b in targets:
             print(json.dumps(free_batch(b), ensure_ascii=False))

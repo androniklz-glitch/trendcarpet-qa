@@ -117,6 +117,55 @@ def test_junction_inside_pictures_is_outside_and_never_walked(env):
     assert hatshop_server.storage_issues(str(b))["links"] == 1  # still warned
 
 
+def test_junction_to_pictures_root_is_refused(env):
+    """Blind gate v2 R1: the link check ran after the "reached Pictures" exit, so a junction resolving to the root passed."""
+    pics, outside = env
+    make_batch(pics, "b")
+    junction(pics / "jr", pics)  # inside Pictures -> Pictures root
+    junction(outside / "jp", pics)  # outside Pictures -> Pictures root
+    assert not hatshop_server.in_pictures(str(pics / "jr"))
+    assert not hatshop_server.in_pictures(str(pics / "jr" / "b"))
+    assert not hatshop_server.in_pictures(str(outside / "jp" / "b"))
+    assert hatshop_server.in_pictures(str(pics / "b"))
+
+
+def test_removed_sibling_junction_is_not_walked_or_pinned(env):
+    """Blind gate v2 R2: "<batch> Removed" as a junction to an outside folder got +P on the outside file."""
+    pics, outside = env
+    secret = make_batch(outside, "secret", ("s.jpg",))
+    b = make_batch(pics, "b")
+    junction(pics / "b Removed", secret)
+    issue = hatshop_server.storage_issues(str(b))
+    assert issue["links"] == 1 and "genvägar" in issue["message"]
+    assert hatshop_server.pin_batch_folder(str(b)) == ""
+    assert attrs(b / "P1" / "a.jpg") & PINNED
+    assert not attrs(secret / "s.jpg") & PINNED and not attrs(secret) & PINNED
+    assert hatshop_server.storage_issues(str(b))["links"] == 1
+
+
+def test_sharepoint_free_refusal_by_real_path_and_links(env):
+    """Blind gate v2 R8: sharepoint_sync free compared paths as text; a junction/8.3 alias could reach a hub source."""
+    spec = importlib.util.spec_from_file_location("sharepoint_sync_under_test", os.path.join(HUB_DIR, "scripts", "sharepoint_sync.py"))
+    sync = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(sync)
+    pics, outside = env
+    src = make_batch(pics, "26-11-10-src")
+    lib = outside / "lib"
+    plain = make_batch(lib, "plain")
+    batches = [{"id": "src", "path": str(src)}, {"id": "empty", "path": ""}]
+    assert sync.free_refusal(str(plain), batches) == ""
+    junction(lib / "alias", src)  # the library folder IS a hub source through a junction
+    assert "junction" in sync.free_refusal(str(lib / "alias"), batches)
+    assert "junction" in sync.free_refusal(str(lib), batches)  # contains one: attrib /S could follow it
+    assert "overlaps hub source src" in sync.free_refusal(str(src), batches)
+    assert "overlaps hub source src" in sync.free_refusal(str(pics), batches)  # above a source
+    (pics / "26-11-10-src Removed").mkdir()
+    assert "overlaps hub source src" in sync.free_refusal(str(pics / "26-11-10-src Removed"), batches)
+    buf = ctypes.create_unicode_buffer(1024)
+    if ctypes.windll.kernel32.GetShortPathNameW(os.path.realpath(src), buf, 1024) and buf.value != os.path.realpath(src):
+        assert "overlaps hub source src" in sync.free_refusal(buf.value, batches)  # 8.3 alias of the source
+
+
 def test_storage_issues_outside_and_unpinned_then_pinned(env):
     pics, outside = env
     out = make_batch(outside, "o")

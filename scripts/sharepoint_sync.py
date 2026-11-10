@@ -403,6 +403,31 @@ def folder_synced(path):
     return st.returncode == 0, " | ".join(l for l in st.stdout.splitlines()[:3] if l).strip()
 
 
+def _is_link(p):
+    return os.path.islink(p) or os.path.isjunction(p)
+
+
+def free_refusal(d, batches):
+    """Why `free` (+U) must not touch folder d, or "". BESLUT PIN 2026-11-10: never +U a hub source or its Removed sibling.
+    Compared by REAL path (8.3 names, junctions resolve), and d may neither be nor contain a junction/symlink, since attrib
+    /S could reach a hub source through it (blind gate v2 R8)."""
+    if _is_link(d):
+        return "refused: folder is a junction/symlink"
+    for dirpath, dirs, names in os.walk(d):
+        if any(_is_link(os.path.join(dirpath, n)) for n in dirs + names):
+            return f"refused: contains a junction/symlink ({dirpath})"
+    nd = os.path.normcase(os.path.realpath(d))
+    for b in batches:
+        src = b.get("path") or ""
+        if not src.strip():
+            continue
+        for x in (src, os.path.normpath(src) + " Removed"):
+            rx = os.path.normcase(os.path.realpath(x))
+            if rx == nd or rx.startswith(nd + os.sep) or nd.startswith(rx + os.sep):
+                return f"refused: overlaps hub source {b.get('id')}"
+    return ""
+
+
 def cmd_free(args, roots):
     out = []
     for root in roots:
@@ -413,11 +438,9 @@ def cmd_free(args, roots):
             if not os.path.isdir(d):
                 continue
             ok, info = folder_synced(d)
-            nd = os.path.normcase(os.path.normpath(d))
-            for b in hub.load_batches():  # BESLUT PIN 2026-11-10: never +U a hub source (or its Removed sibling)
-                for src in (os.path.normcase(os.path.normpath(b.get("path") or "")),):
-                    if src and any(x == nd or x.startswith(nd + os.sep) or nd.startswith(x + os.sep) for x in (src, src + " removed")):
-                        ok, info = False, f"refused: overlaps hub source {b.get('id')}"
+            refusal = free_refusal(d, hub.load_batches())
+            if refusal:
+                ok, info = False, refusal
             if ok:
                 subprocess.run(["attrib", "+U", "-P", os.path.join(d, "*"), "/S", "/D"], check=True, capture_output=True)
             out.append({"folder": d, "freed": ok, "status": info})

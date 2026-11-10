@@ -1465,6 +1465,17 @@
       text-decoration-thickness: 2px;
       opacity: 0.75;
     }
+    .comment-resolved-toggle {
+      align-self: flex-start;
+      background: transparent;
+      color: #fb7185;
+      border: 1px dashed rgba(225, 29, 72, 0.5);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      cursor: pointer;
+    }
     .comment-resolved-badge {
       display: inline-flex;
       align-items: center;
@@ -6274,8 +6285,8 @@
         const effectiveStatus = getEffectiveStatus(prod.id);
         const statusClass = effectiveStatus ? `status-${effectiveStatus}` : '';
 
-        const comments = review.comments || [];
-        const commentBadge = comments.length > 0 ? `<span class="comment-counter-badge">💬 ${comments.length}</span>` : '';
+        const openComments = openCommentCount(prod, review.comments);
+        const commentBadge = openComments > 0 ? `<span class="comment-counter-badge">💬 ${openComments}</span>` : '';
         const versionBadge = prod.has_new_version ? `<span class="version-pill" title="Ny version upptäckt: ${prod.version_tag}">🔄 ${prod.version_tag || 'Ny'}</span>` : '';
         const prodTitle = prod.display_name || prod.model;
         const safePid = escapeJsString(prod.id);
@@ -6382,7 +6393,7 @@
         if (edStatus === 'approved') statusBadge = '<span title="Aktivt godkänd" style="font-size:11px;">🟢</span>';
         else if (edStatus === 'adjust') statusBadge = '<span title="Justera" style="font-size:11px;">🟠</span>';
 
-        const commentCount = (review.comments || []).length;
+        const commentCount = openCommentCount(prod, review.comments);
         const commentTag = commentCount > 0 ? ` <span style="font-size:10px; color:#60A5FA;">💬${commentCount}</span>` : '';
         const vTag = prod.has_new_version ? ` <span style="font-size:10px; color:#38bdf8;" title="Ny version">🔄</span>` : '';
 
@@ -6758,7 +6769,7 @@
       if (btnRedo) btnRedo.className = 'status-decision-btn ' + (effStatus === 'redo' ? 'active-redo' : '');
       if (stageBtnOk) stageBtnOk.className = 'stage-action-btn ' + (edStatus === 'approved' ? 'active-ok' : '');
       if (stageBtnAdj) stageBtnAdj.className = 'stage-action-btn ' + (edStatus === 'adjust' ? 'active-adjust' : '');
-      const cCount = (review.comments || []).length;
+      const cCount = openCommentCount(prod, review.comments);
       if (stageCommBadge) stageCommBadge.textContent = cCount > 0 ? `(${cCount})` : '';
 
       const flags = review.flags || {};
@@ -6877,6 +6888,47 @@
       });
     }
 
+    // Åtgärdat: resolved comments are hidden by default; "Visa åtgärdade (n)" shows them again. 💬 counters count open only.
+    let showResolvedComments = false;
+    function prodById(prodId) {
+      return (state.products || []).find(p => p.id === prodId) || null;
+    }
+    function splitComments(prod, comments) {
+      const open = [], done = [];
+      (comments || []).forEach(c => (isCommentResolved(prod, c, state.currentBatchId) ? done : open).push(c));
+      return { open, done, shown: showResolvedComments ? (comments || []) : open };
+    }
+    function openCommentCount(prod, comments) {
+      return splitComments(prod, comments).open.length;
+    }
+    function resolvedToggleEl(n) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'comment-resolved-toggle';
+      btn.textContent = `${showResolvedComments ? 'Dölj' : 'Visa'} åtgärdade (${n})`;
+      btn.onclick = (e) => { e.stopPropagation(); toggleShowResolvedComments(); };
+      return btn;
+    }
+    function rerenderCommentViews() {
+      renderCommentsFeed();
+      renderProtoCommentsFeed();
+      if (state.products[lbCurrentProductIndex]) renderLightboxCommentsFeed();
+      const prod = state.products[state.currentProductIndex];
+      const stageBadge = document.getElementById('stageCommentBadge');
+      if (prod && stageBadge) {
+        const n = openCommentCount(prod, (state.reviews[prod.id] || {}).comments);
+        stageBadge.textContent = n > 0 ? `(${n})` : '';
+      }
+      renderProductSidebar();
+      const grid = document.getElementById('angleGrid');
+      if (grid && grid.offsetParent !== null) renderAngleGrid();
+      renderReportTable();
+    }
+    function toggleShowResolvedComments() {
+      showResolvedComments = !showResolvedComments;
+      rerenderCommentViews();
+    }
+
     function isCommentResolved(prod, c, batchId) {
       if (!c) return false;
       if (c.resolved === true) return true;
@@ -6886,17 +6938,6 @@
         const r = (state.reviews && state.reviews[prod.id]) || {};
         if (r.notes_resolved === true) return true;
         if (r.notes_resolved === false) return false;
-      }
-
-      const bId = (batchId || state.currentBatchId || '').toLowerCase();
-      const autoResolvedBatches = [
-        '26-10-30-kanha-batumi',
-        '26-10-29-merida-ik100102114',
-        '26-10-09-charrone',
-        'charonne'
-      ];
-      if (autoResolvedBatches.some(ab => bId.includes(ab) && !bId.includes('-new-interiors'))) {
-        return true;
       }
 
       if (c.shots && c.shots.length > 0 && prod) {
@@ -6956,13 +6997,7 @@
             if (targetComment) targetComment.resolved = targetState;
           }
         }
-        renderCommentsFeed();
-        if (state.currentProtoProductId === productId) {
-          renderProtoCommentsFeed();
-        }
-        if (typeof renderLbCommentsFeed === 'function') {
-          renderLbCommentsFeed();
-        }
+        rerenderCommentViews();
 
         const res = await fetch(`/api/comment/resolve?batch=${encodeURIComponent(state.currentBatchId)}`, {
           method: 'POST',
@@ -6976,13 +7011,7 @@
         const data = await res.json();
         if (data && data.status === 'ok' && data.reviews) {
           state.reviews = data.reviews;
-          renderCommentsFeed();
-          if (state.currentProtoProductId === productId) {
-            renderProtoCommentsFeed();
-          }
-          if (typeof renderLbCommentsFeed === 'function') {
-            renderLbCommentsFeed();
-          }
+          rerenderCommentViews();
         }
       } catch (err) {
         console.error('Error toggling comment resolved:', err);
@@ -7090,7 +7119,8 @@
         });
       }
 
-      if (headerCount) headerCount.innerText = `${comments.length} inlägg`;
+      const { open, done, shown } = splitComments(prod, comments);
+      if (headerCount) headerCount.innerText = `${open.length} inlägg`;
 
       if (comments.length === 0) {
         thread.innerHTML = '';
@@ -7100,7 +7130,8 @@
         if (emptyState) emptyState.style.display = 'none';
         thread.style.display = 'flex';
         thread.innerHTML = '';
-        comments.forEach(c => {
+        if (done.length) thread.appendChild(resolvedToggleEl(done.length));
+        shown.forEach(c => {
           const bubble = document.createElement('div');
           bubble.className = 'comment-bubble';
           bubble.innerHTML = buildCommentBubbleHtml(prod.id, c);
@@ -7460,7 +7491,8 @@
       renderCommentShotPills('proto', prodId, 'protoCommentShotPills');
 
       const comments = review.comments || [];
-      if (countEl) countEl.innerText = `${comments.length} inlägg`;
+      const { open, done, shown } = splitComments(prodById(prodId), comments);
+      if (countEl) countEl.innerText = `${open.length} inlägg`;
 
       if (comments.length === 0) {
         thread.innerHTML = '';
@@ -7470,7 +7502,8 @@
 
       thread.style.display = 'flex';
       thread.innerHTML = '';
-      comments.forEach(c => {
+      if (done.length) thread.appendChild(resolvedToggleEl(done.length));
+      shown.forEach(c => {
         const bubble = document.createElement('div');
         bubble.className = 'comment-bubble';
         bubble.innerHTML = buildCommentBubbleHtml(prodId, c);
@@ -7538,7 +7571,7 @@
         if (flags.shadow) flagList.push('Skuggning');
         const flagStr = flagList.length > 0 ? flagList.join(', ') : 'Inga';
 
-        const comments = review.comments || [];
+        const comments = splitComments(prod, review.comments).shown;
         let commentFormatted = '';
         if (comments.length > 0) {
           commentFormatted = comments.map(c => {
@@ -7625,7 +7658,7 @@
         else edPending++;
 
         const rev = state.reviews[p.id] || {};
-        const hasComments = Array.isArray(rev.comments) && rev.comments.length > 0;
+        const hasComments = openCommentCount(p, rev.comments) > 0;
         const hasFlags = rev.flags && Object.values(rev.flags).some(Boolean);
         if (ed === 'adjust' || hasComments || hasFlags) round2Count++;
       });
@@ -7676,7 +7709,7 @@
         const flags = rev.flags || {};
         const flagList = Object.keys(flags).filter(k => flags[k]).join(', ') || '-';
         const comments = rev.comments || [];
-        let commentText = comments.map(c => `[${c.author}]: ${c.text}`).join('; ') || rev.notes || '-';
+        let commentText = comments.map(c => `${isCommentResolved(p, c, state.currentBatchId) ? "[ÅTGÄRDAD] " : ""}[${c.author}]: ${c.text}`).join('; ') || rev.notes || '-';
         md += `| **${p.model}** | ${p.color} | ${st} | ${flagList} | ${commentText} |\n`;
       });
 
@@ -7728,7 +7761,7 @@
         const flags = rev.flags || {};
         const flagList = Object.keys(flags).filter(k => flags[k]).join(';') || '';
         const comments = rev.comments || [];
-        let commentText = comments.map(c => `[${c.author}]: ${c.text}`).join(' | ') || rev.notes || '';
+        let commentText = comments.map(c => `${isCommentResolved(p, c, state.currentBatchId) ? "[ÅTGÄRDAD] " : ""}[${c.author}]: ${c.text}`).join(' | ') || rev.notes || '';
         csv += `"${p.model}","${p.color}","${st}","${flagList}","${commentText.replace(/"/g, '""')}"\n`;
       });
       const dataStr = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
@@ -8625,7 +8658,8 @@
       renderCommentShotPills('lb', prod.id, 'lbCommentShotPills');
 
       const comments = review.comments || [];
-      if (countEl) countEl.innerText = `${comments.length} inlägg`;
+      const { open, done, shown } = splitComments(prod, comments);
+      if (countEl) countEl.innerText = `${open.length} inlägg`;
 
       if (comments.length === 0) {
         thread.innerHTML = '';
@@ -8635,7 +8669,8 @@
         if (emptyState) emptyState.style.display = 'none';
         thread.style.display = 'flex';
         thread.innerHTML = '';
-        comments.forEach(c => {
+        if (done.length) thread.appendChild(resolvedToggleEl(done.length));
+        shown.forEach(c => {
           const bubble = document.createElement('div');
           bubble.className = 'comment-bubble';
           bubble.innerHTML = buildCommentBubbleHtml(prod.id, c);
@@ -9131,7 +9166,7 @@
         const rawShots = prod.variants[state.currentSource] || Object.values(prod.variants)[0] || [];
         const sortedItems = sortShotsForDisplay(prod, rawShots);
         const rev = state.reviews[prod.id] || {};
-        const cCount = (rev.comments || []).length;
+        const cCount = openCommentCount(prod, rev.comments);
 
         const heroBadge = (prod.hero_product && prod.hero_product.tag)
           ? `<span style="font-size: 11px; color: #FDE68A; background: rgba(245,158,11,0.12); border: 1px solid rgba(251,191,36,0.35); border-radius: 999px; padding: 1px 8px;">★ ${escapeHtml(prod.hero_product.tag)} ${escapeHtml(prod.hero_product.name || '')}</span>`
@@ -9184,7 +9219,7 @@
         const ed = getEditorialStatus(p.id);
         const flags = rev.flags || {};
         const activeTags = Object.keys(flags).filter(k => flags[k]).map(k => labelMap[k] || k);
-        const comments = Array.isArray(rev.comments) ? rev.comments : [];
+        const comments = splitComments(p, rev.comments).open;
         if (ed !== 'adjust' && activeTags.length === 0 && comments.length === 0 && !rev.notes) return;
 
         itemCount++;

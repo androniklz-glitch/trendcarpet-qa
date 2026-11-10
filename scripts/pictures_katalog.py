@@ -1,0 +1,289 @@
+"""Katalog-PDF:er för Pictures\\QA-hubb Godkända (order 9, QA-hubb 1.15).
+
+Läser den färdiga målmappen (<Varumärke>\\<Kategori>\\<Produkt>\\00_omslag.* + bilder) och skriver en PDF per varumärke
+i målmappens rot: "Katalog Hatshop.pdf", "Katalog Trendcarpet.pdf". En PDF per varumärke (inte en stor) = mindre filer
+som förhandsgranskas snabbt i OneDrive mobil. Sida 1 = omslag med innehåll (kategori, produkter, bilder, sida), sedan
+en sektion per kategori: 3 x 4 produktkort (omslagsbild, produktnamn, antal bilder).
+
+Rör ALDRIG något annat än de två PDF-filerna: läser bilder, skriver via .tmp + os.replace. Samma lås som
+pictures_godkanda.py (sync och katalog kör aldrig samtidigt). Kör efter `pictures_godkanda.py sync`.
+
+  python -I -B -X utf8 scripts/pictures_katalog.py plan                 # dry-run: räkna, inga filer skrivs
+  python -I -B -X utf8 scripts/pictures_katalog.py build [--out DIR]    # skriv PDF:erna (default: målmappens rot)
+"""
+import argparse
+import datetime
+import json
+import math
+import os
+import sys
+
+from PIL import Image, ImageDraw, ImageFont, ImageOps
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import pictures_godkanda as pg  # noqa: E402  (read-only reuse: TARGET_NAME, lp, guard_target, LOCK_FILE, IMAGE_EXTS)
+
+DPI = 150
+PAGE_W, PAGE_H = 1240, 1754  # A4 @ 150 dpi
+MARGIN = 80
+COLS, ROWS = 3, 4
+PER_PAGE = COLS * ROWS
+COVER_STEM = "00_omslag"
+PDF_NAME = "Katalog {brand}.pdf"
+FONT_DIR = os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts")
+INK, MUTED, RULE = (28, 28, 28), (110, 110, 110), (225, 225, 225)
+
+
+def nb(n, one, many):
+    return f"{n} {one if n == 1 else many}"
+
+
+def font(size, bold=False):
+    try:
+        return ImageFont.truetype(os.path.join(FONT_DIR, "segoeuib.ttf" if bold else "segoeui.ttf"), size)
+    except OSError:
+        return ImageFont.load_default(size)
+
+
+def scan(target):
+    """{brand: {category: [{name, cover, count}]}} from the live target tree; count = files except 00_omslag.*."""
+    tree = {}
+    for brand in sorted(os.listdir(pg.lp(target)), key=str.lower):
+        bdir = os.path.join(target, brand)
+        if not os.path.isdir(pg.lp(bdir)):
+            continue
+        for cat in sorted(os.listdir(pg.lp(bdir)), key=str.lower):
+            cdir = os.path.join(bdir, cat)
+            if not os.path.isdir(pg.lp(cdir)):
+                continue
+            for prod in sorted(os.listdir(pg.lp(cdir)), key=str.lower):
+                pdir = os.path.join(cdir, prod)
+                if not os.path.isdir(pg.lp(pdir)):
+                    continue
+                names = [n for n in os.listdir(pg.lp(pdir)) if os.path.isfile(pg.lp(os.path.join(pdir, n)))]
+                covers = [n for n in names if os.path.splitext(n)[0].lower() == COVER_STEM
+                          and os.path.splitext(n)[1].lower() in pg.IMAGE_EXTS]
+                tree.setdefault(brand, {}).setdefault(cat, []).append({
+                    "name": prod, "cover": os.path.join(pdir, covers[0]) if covers else None,
+                    "count": sum(1 for n in names if os.path.splitext(n)[0].lower() != COVER_STEM)})
+    return tree
+
+
+def layout(cats):
+    """[(category, first_page, n_pages)] with page 1 = cover page."""
+    out, page = [], 2
+    for cat in sorted(cats, key=str.lower):
+        n = max(1, math.ceil(len(cats[cat]) / PER_PAGE))
+        out.append((cat, page, n))
+        page += n
+    return out
+
+
+def text_fit(draw, text, fnt, width, lines=2):
+    """Wrap on words into at most `lines` lines; the last one gets an ellipsis if cut."""
+    words, out, cur = text.split(), [], ""
+    for w in words:
+        t = f"{cur} {w}".strip()
+        if draw.textlength(t, font=fnt) <= width:
+            cur = t
+            continue
+        if cur:
+            out.append(cur)
+        cur = w
+        if len(out) == lines:
+            break
+    if len(out) < lines and cur:
+        out.append(cur)
+    out = out[:lines]
+    if " ".join(out) != " ".join(words):
+        last = out[-1] if out else ""
+        while last and draw.textlength(last + "…", font=fnt) > width:
+            last = last[:-1]
+        out[-1:] = [last.rstrip() + "…"]
+    return out
+
+
+def thumb(path, box):
+    """Cover image fitted into box (w, h) on white; None if missing or unreadable."""
+    if not path:
+        return None
+    try:
+        with Image.open(pg.lp(path)) as im:
+            im = ImageOps.exif_transpose(im)
+            im.draft("RGB", (box[0] * 2, box[1] * 2))
+            if im.mode in ("RGBA", "LA", "P"):
+                im = im.convert("RGBA")
+                bg = Image.new("RGBA", im.size, (255, 255, 255, 255))
+                im = Image.alpha_composite(bg, im)
+            im = im.convert("RGB")
+            im.thumbnail(box, Image.LANCZOS)
+            return im.copy()
+    except (OSError, ValueError, Image.DecompressionBombError):
+        return None
+
+
+def footer(draw, brand, label, page, total):
+    f = font(20)
+    draw.line((MARGIN, PAGE_H - 70, PAGE_W - MARGIN, PAGE_H - 70), fill=RULE, width=2)
+    draw.text((MARGIN, PAGE_H - 58), f"{brand} · {label}", font=f, fill=MUTED)
+    s = f"Sida {page} av {total}"
+    draw.text((PAGE_W - MARGIN - draw.textlength(s, font=f), PAGE_H - 58), s, font=f, fill=MUTED)
+
+
+def cover_page(brand, cats, plan, total, now):
+    pg_img = Image.new("RGB", (PAGE_W, PAGE_H), "white")
+    d = ImageDraw.Draw(pg_img)
+    n_prod = sum(len(v) for v in cats.values())
+    n_img = sum(p["count"] for v in cats.values() for p in v)
+    y = 150
+    d.text((MARGIN, y), brand, font=font(96, True), fill=INK)
+    y += 130
+    d.text((MARGIN, y), "Godkända bilder — katalog", font=font(40), fill=INK)
+    y += 70
+    d.text((MARGIN, y), f"{nb(n_prod, 'produkt', 'produkter')} · {nb(n_img, 'bild', 'bilder')} · {now:%Y-%m-%d}", font=font(28), fill=MUTED)
+    y += 90
+    # Mosaic of covers (first product per category, then the rest) to make page 1 look like the brand; one row when
+    # the table of contents is long (Trendcarpet: 14 categories) so everything fits on page 1.
+    picks, seen, n_mosaic = [], set(), 6 if len(plan) <= 6 else 3
+    for rnd in range(PER_PAGE):
+        for cat in sorted(cats, key=str.lower):
+            if len(picks) < n_mosaic and rnd < len(cats[cat]) and cats[cat][rnd]["cover"] and cats[cat][rnd]["name"] not in seen:
+                picks.append(cats[cat][rnd]["cover"])
+                seen.add(cats[cat][rnd]["name"])
+    gap, cw = 16, (PAGE_W - 2 * MARGIN - 2 * 16) // 3
+    for i, p in enumerate(picks):
+        x0, y0 = MARGIN + (i % 3) * (cw + gap), y + (i // 3) * (cw + gap)
+        d.rectangle((x0, y0, x0 + cw, y0 + cw), fill="white", outline=RULE, width=2)
+        t = thumb(p, (cw - 6, cw - 6))  # inset: keep the 2 px frame visible
+        if t:
+            pg_img.paste(t, (x0 + (cw - t.width) // 2, y0 + (cw - t.height) // 2))
+    y += (cw + gap) * math.ceil(len(picks) / 3) + 40 if picks else 0
+    d.text((MARGIN, y), "Innehåll", font=font(34, True), fill=INK)
+    y += 60
+    fr, fb = font(26), font(26, True)
+    for cat, first, _n in plan:
+        es = cats[cat]
+        d.text((MARGIN, y), cat, font=fb, fill=INK)
+        meta = f"{nb(len(es), 'produkt', 'produkter')} · {nb(sum(p['count'] for p in es), 'bild', 'bilder')}"
+        d.text((MARGIN + 420, y), meta, font=fr, fill=MUTED)
+        s = f"sida {first}"
+        d.text((PAGE_W - MARGIN - d.textlength(s, font=fr), y), s, font=fr, fill=MUTED)
+        y += 44
+    y += 20
+    for line in ("Varje kort = en produktmapp i OneDrive: Pictures > QA-hubb Godkända > "
+                 f"{brand} > Kategori > Produkt.", "Bilden är produktens omslag (00_omslag, bäst betygsatt)."):
+        for ln in text_fit(d, line, font(22), PAGE_W - 2 * MARGIN, 3):
+            d.text((MARGIN, y), ln, font=font(22), fill=MUTED)
+            y += 32
+    footer(d, brand, "Innehåll", 1, total)
+    return pg_img
+
+
+def section_pages(brand, cat, products, first, total):
+    pages, fh, fn, fc = [], font(44, True), font(22, True), font(20)
+    gap = 28
+    cw = (PAGE_W - 2 * MARGIN - (COLS - 1) * gap) // COLS
+    top = MARGIN + 110
+    ch = (PAGE_H - 90 - top - (ROWS - 1) * gap) // ROWS
+    img_h = ch - 94  # 2 name lines (28 px) + count (26 px) + gaps
+    n_pages = max(1, math.ceil(len(products) / PER_PAGE))
+    for i in range(n_pages):
+        im = Image.new("RGB", (PAGE_W, PAGE_H), "white")
+        d = ImageDraw.Draw(im)
+        head = cat if i == 0 else f"{cat} (forts.)"
+        d.text((MARGIN, MARGIN), head, font=fh, fill=INK)
+        meta = f"{nb(len(products), 'produkt', 'produkter')} · {nb(sum(p['count'] for p in products), 'bild', 'bilder')}"
+        d.text((PAGE_W - MARGIN - d.textlength(meta, font=fc), MARGIN + 20), meta, font=fc, fill=MUTED)
+        for j, p in enumerate(products[i * PER_PAGE:(i + 1) * PER_PAGE]):
+            x0, y0 = MARGIN + (j % COLS) * (cw + gap), top + (j // COLS) * (ch + gap)
+            d.rectangle((x0, y0, x0 + cw, y0 + img_h), fill="white", outline=RULE, width=2)
+            t = thumb(p["cover"], (cw - 6, img_h - 6))  # inset: keep the 2 px frame visible
+            if t:
+                im.paste(t, (x0 + (cw - t.width) // 2, y0 + (img_h - t.height) // 2))
+            else:
+                s = "ingen omslagsbild"
+                d.text((x0 + (cw - d.textlength(s, font=fc)) // 2, y0 + img_h // 2 - 12), s, font=fc, fill=MUTED)
+            ty = y0 + img_h + 8
+            for ln in text_fit(d, p["name"], fn, cw, 2):
+                d.text((x0, ty), ln, font=fn, fill=INK)
+                ty += 28
+            d.text((x0, ty), nb(p['count'], 'bild', 'bilder'), font=fc, fill=MUTED)
+        footer(d, brand, cat, first + i, total)
+        pages.append(im)
+    return pages
+
+
+def render_brand(brand, cats, out_path, now=None):
+    """Write one PDF via <out>.tmp + os.replace; returns page count."""
+    now = now or datetime.datetime.now()
+    plan = layout(cats)
+    total = 1 + sum(n for _c, _f, n in plan)
+    pages = [cover_page(brand, cats, plan, total, now)]
+    for cat, first, _n in plan:
+        pages += section_pages(brand, cat, cats[cat], first, total)
+    tmp = out_path + ".tmp"
+    pages[0].save(pg.lp(tmp), "PDF", save_all=True, append_images=pages[1:], resolution=DPI, quality=82,
+                  title=f"{brand} — Godkända bilder", author="QA-hubben")
+    os.replace(pg.lp(tmp), pg.lp(out_path))
+    return len(pages)
+
+
+def summary(tree):
+    out = {}
+    for brand, cats in tree.items():
+        plan = layout(cats)
+        out[brand] = {"products": sum(len(v) for v in cats.values()),
+                      "images": sum(p["count"] for v in cats.values() for p in v),
+                      "pages": 1 + sum(n for _c, _f, n in plan),
+                      "categories": {c: {"products": len(cats[c]), "first_page": f, "pages": n} for c, f, n in plan},
+                      "missing_cover": [f"{c}\\{p['name']}" for c in cats for p in cats[c] if not p["cover"]]}
+    return out
+
+
+def main():
+    for stream in (sys.stdout, sys.stderr):
+        stream.reconfigure(errors="backslashreplace")
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("cmd", choices=("plan", "build"))
+    ap.add_argument("--target", help="read this tree instead of Pictures\\QA-hubb Godkända (tests/preview)")
+    ap.add_argument("--out", help="write the PDFs here instead of the target root (preview)")
+    args = ap.parse_args()
+    if args.target:
+        target = os.path.abspath(args.target)
+    else:
+        ss = pg.load_sync()
+        target = os.path.join(ss.DEFAULT_ONEDRIVE, ss.PICTURES_NAME, pg.TARGET_NAME)
+        pg.guard_target(ss, target)
+    if not os.path.isdir(pg.lp(target)):
+        print(json.dumps({"ALARM": f"target missing: {target}"}, ensure_ascii=False))
+        return 3
+    out_dir = os.path.abspath(args.out) if args.out else target
+    tree = scan(target)
+    res = {"target": target, "out_dir": out_dir, "brands": summary(tree),
+           "would_write" if args.cmd == "plan" else "written": [os.path.join(out_dir, PDF_NAME.format(brand=b)) for b in tree]}
+    if args.cmd == "build":
+        lock = None if args.target else pg.LOCK_FILE
+        if lock:
+            try:
+                fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+                os.write(fd, str(os.getpid()).encode())
+                os.close(fd)
+            except FileExistsError:
+                print(f"lock held: {lock}", file=sys.stderr)
+                return 4
+        try:
+            os.makedirs(pg.lp(out_dir), exist_ok=True)
+            for brand, cats in tree.items():
+                p = os.path.join(out_dir, PDF_NAME.format(brand=brand))
+                n = render_brand(brand, cats, p)
+                res["brands"][brand]["pdf_pages"] = n
+                res["brands"][brand]["pdf_bytes"] = os.path.getsize(pg.lp(p))
+        finally:
+            if lock:
+                os.remove(lock)
+    print(json.dumps(res, ensure_ascii=False))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

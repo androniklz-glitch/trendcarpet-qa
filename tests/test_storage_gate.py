@@ -71,6 +71,22 @@ def test_storage_issues_outside_and_unpinned_then_pinned(env):
     assert attrs(b) & PINNED and attrs(b / "P1" / "a.jpg") & PINNED and attrs(pics / "b Removed" / "P1" / "c.jpg") & PINNED
 
 
+def test_long_path_file_without_p_is_flagged_and_pinned(env):
+    """26-10-09-Charrone-x (2026-11-10): attrib.exe skipped >= 260-char paths and exited 0, leaving 36 images 0x420
+    (neither P nor U). The gate must count them as not pinned and pin_batch_folder must pin them."""
+    pics, _outside = env
+    b = pics / "b"
+    deep = "\\\\?\\" + str(b / ("d" * 120) / ("f" * 120 + ".jpg"))
+    os.makedirs(os.path.dirname(deep))
+    with open(deep, "wb") as f:
+        f.write(b"x")
+    assert len(deep) - 4 >= 260 and not attrs(deep) & PINNED and not attrs(deep) & 0x00100000
+    issue = hatshop_server.storage_issues(str(b))
+    assert issue["images"] == 1 and issue["images_unpinned"] == 1 and "1 av 1 bildfiler" in issue["message"]
+    assert hatshop_server.pin_batch_folder(str(b)) == ""
+    assert attrs(deep) & PINNED and hatshop_server.storage_issues(str(b)) is None
+
+
 def test_pin_refuses_outside_and_low_disk(env, monkeypatch):
     pics, outside = env
     assert hatshop_server.pin_batch_folder(str(make_batch(outside, "o"))) == "utanför Pictures"

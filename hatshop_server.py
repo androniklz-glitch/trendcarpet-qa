@@ -1066,6 +1066,11 @@ def scan_batch_products(batch):
                             "mtime": mtime
                         })
 
+                    # CEO 2026-11-10: every file moved out ("🗑 Flytta ut") -> no empty card, like folder batches.
+                    # The manifest entry stays, so "Ångra" brings the product back.
+                    if not shots:
+                        continue
+
                     v_label = "1600x2000 Transparent" if any(img.get("is_transparent") for img in item.get("images", [])) else "Standard"
                     model_str = title if str(pid) == str(title) else f"[{pid}] {title}"
                     products.append({

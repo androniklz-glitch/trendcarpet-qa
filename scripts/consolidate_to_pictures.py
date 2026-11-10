@@ -1,11 +1,14 @@
 """Move a hub batch's SOURCE into the CEO's OneDrive Pictures (the backup) by copying, never moving or deleting.
 
 Per batch whose path is outside Pictures:
-  1. copy <path> -> Pictures\\<same folder name> (plus the "<name> Removed" sibling when it exists)
+  1. copy <path> -> target (plus the "<name> Removed" sibling when it exists). Target: a dated folder name (yy-mm-dd-...)
+     -> Pictures\\<same folder name>; any other name -> Pictures\\QA-hubb-batcher\\<batch-id>
   2. verify file count + sha256 of every file
   3. back up batches_config.json, repoint "path" of every entry with that folder (ratings/reviews are keyed by batch id)
   4. (separate command `free`) attrib +U once OneDrive reports the copy uploaded
-A folder name that already exists in Pictures stops that batch (reported). Originals stay untouched.
+Target already exists (collision): when it already holds EVERY source file (same rel path + sha256, also for "Removed") the
+config is repointed there without copying ("repoint_existing", extra files reported); otherwise the batch is copied to
+Pictures\\QA-hubb-batcher\\<batch-id>. An existing folder is only read, never written. Originals stay untouched.
 
 Usage (hub python = miniconda3):
   python scripts/consolidate_to_pictures.py copy --batch <id> [--batch ...] | --all  [--dry-run]
@@ -17,6 +20,7 @@ import datetime
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -26,6 +30,8 @@ BATCHES_FILE = os.path.join(HUB_DIR, "batches_config.json")
 PICTURES = r"C:\Users\AndronikLindgren\OneDrive - CaMa Gruppen AB\Pictures"
 CONFIG_BACKUP_DIR = r"C:\Users\AndronikLindgren\agent-home\logs\hub-pictures-1110"
 SYNC_STATUS_PS1 = r"C:\Users\AndronikLindgren\agent-home\scripts\onedrive-sync-status.ps1"
+BATCHER_DIR = os.path.join(PICTURES, "QA-hubb-batcher")
+DATED = re.compile(r"^\d{2}-\d{2}-\d{2}-")
 
 
 def norm(p):
@@ -57,6 +63,35 @@ def tree_hashes(root):
             full = os.path.join(dirpath, n)
             out[os.path.relpath(full, root).replace("\\", "/")] = sha256(full)
     return out
+
+
+def target_for(batch, src):
+    name = os.path.basename(src)
+    return os.path.join(PICTURES, name) if DATED.match(name) else os.path.join(BATCHER_DIR, batch["id"])
+
+
+def rel_files(root):
+    out = {}
+    for dirpath, _dirs, names in os.walk(root):
+        for n in names:
+            full = os.path.join(dirpath, n)
+            out[os.path.relpath(full, root).replace("\\", "/").lower()] = full
+    return out
+
+
+def coverage(pairs):
+    """Does every existing target already hold every source file? Sizes first (no OneDrive hydration), sha256 only on a size match."""
+    missing, extra = 0, 0
+    for s, d in pairs:
+        if not os.path.isdir(d):
+            return {"all_present": False, "missing": "target folder absent: " + d}
+        src_files, dst_files = rel_files(s), rel_files(d)
+        for rel, full in src_files.items():
+            other = dst_files.get(rel)
+            if not other or os.path.getsize(other) != os.path.getsize(full) or sha256(other) != sha256(full):
+                missing += 1
+        extra += len(set(dst_files) - set(src_files))
+    return {"all_present": missing == 0, "missing": missing, "extra_in_target": extra}
 
 
 def load_config():
@@ -92,22 +127,35 @@ def copy_batch(batch, dry_run):
     if not os.path.isdir(src):
         rep["status"] = "error_source_missing"
         return rep
-    dst = os.path.join(PICTURES, os.path.basename(src))
-    pairs = [(src, dst)]
-    if os.path.isdir(removed_sibling(src)):
-        pairs.append((removed_sibling(src), removed_sibling(dst)))
-    rep["dst"] = dst
-    for s, d in pairs:
-        if os.path.exists(d):
-            rep["status"] = "collision"
-            rep["collision"] = d
+    def pairs_for(dst):
+        out = [(src, dst)]
+        if os.path.isdir(removed_sibling(src)):
+            out.append((removed_sibling(src), removed_sibling(dst)))
+        return out
+
+    dst = target_for(batch, src)
+    pairs = pairs_for(dst)
+    if any(os.path.exists(d) for _s, d in pairs):
+        cov = coverage(pairs)
+        rep["collision"] = {"existing": dst, **cov}
+        if cov["all_present"]:
+            rep["dst"] = dst
+            rep["status"] = "would_repoint_existing" if dry_run else "repoint_existing"
             return rep
+        dst = os.path.join(BATCHER_DIR, batch["id"])
+        pairs = pairs_for(dst)
+        if any(os.path.exists(d) for _s, d in pairs):
+            rep["status"] = "collision"
+            rep["dst"] = dst
+            return rep
+    rep["dst"] = dst
     if dry_run:
         rep["status"] = "would_copy"
         rep["files"] = sum(len(n) for _p, _d, n in os.walk(src))
         return rep
     counts = {}
     for s, d in pairs:
+        os.makedirs(os.path.dirname(d), exist_ok=True)
         shutil.copytree(s, d, copy_function=shutil.copy2)
         hs, hd = tree_hashes(s), tree_hashes(d)
         if hs != hd:
@@ -122,7 +170,7 @@ def copy_batch(batch, dry_run):
 
 
 def repoint(reports):
-    moved = {norm(r["src"]): r["dst"] for r in reports if r.get("status") == "copied_verified"}
+    moved = {norm(r["src"]): r["dst"] for r in reports if r.get("status") in ("copied_verified", "repoint_existing")}
     if not moved:
         return None, []
     os.makedirs(CONFIG_BACKUP_DIR, exist_ok=True)

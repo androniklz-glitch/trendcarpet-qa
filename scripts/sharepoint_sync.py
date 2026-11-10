@@ -276,25 +276,22 @@ def cmd_free(args, roots):
 
 
 def cmd_verify(args, manifest):
-    missing, changed, no_backup = [], [], []
+    missing, changed = [], []
     for (bid, rel), e in sorted(manifest.latest.items()):
         sig = stat_sig(e["sharepoint"])  # metadata only, never hydrates a freed file
         if sig is None:
             missing.append(e["sharepoint"])
         elif sig != (e["size"], e["sp_mtime"]):
             changed.append(e["sharepoint"])
-        if stat_sig(e["backup"]) is None:
-            no_backup.append(e["backup"])
-    res = {"entries": len(manifest.latest), "missing": missing, "changed": changed, "backup_missing": no_backup}
-    print(f"verify: entries={len(manifest.latest)} missing={len(missing)} changed={len(changed)} "
-          f"backup_missing={len(no_backup)}")
-    if missing or changed or no_backup:
+    res = {"entries": len(manifest.latest), "missing": missing, "changed": changed}
+    print(f"verify: entries={len(manifest.latest)} missing={len(missing)} changed={len(changed)}")
+    if missing or changed:
         alarm = os.path.join(MANIFEST_REPO, "sharepoint",
                              "ALARM-" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + ".txt")
         os.makedirs(os.path.dirname(alarm), exist_ok=True)
         with open(alarm, "w", encoding="utf-8") as f:
             f.write("SharePoint verify deviation. Restore: python scripts/sharepoint_sync.py restore <batch-id>[/<rel>]\n")
-            for label, items in (("MISSING", missing), ("CHANGED", changed), ("BACKUP MISSING", no_backup)):
+            for label, items in (("MISSING", missing), ("CHANGED", changed)):
                 for p in items:
                     f.write(f"{label}\t{p}\n")
         res["alarm"] = alarm

@@ -267,6 +267,8 @@ def local_gate(batch, pictures_root):
         raise SelectionError(f"outside Pictures: {batch.get('path')}")
     bad = []
     for dirpath, _dirs, names in os.walk(batch.get("path")):
+        if not os.stat(dirpath).st_file_attributes & ATTR_PINNED:  # folder pin = files added later inherit it
+            bad.append(os.path.basename(dirpath) + os.sep)
         for n in names:
             if n.lower() in GATE_IGNORE:
                 continue

@@ -1,9 +1,10 @@
-"""Katalog-PDF:er för Pictures\\QA-hubb Godkända (order 9, QA-hubb 1.15).
+"""Katalog-PDF:er för Pictures\\QA-hubb Godkända (order 9, QA-hubb 1.15; v2 links 1.16).
 
 Läser den färdiga målmappen (<Varumärke>\\<Kategori>\\<Produkt>\\00_omslag.* + bilder) och skriver en PDF per varumärke
 i målmappens rot: "Katalog Hatshop.pdf", "Katalog Trendcarpet.pdf". En PDF per varumärke (inte en stor) = mindre filer
 som förhandsgranskas snabbt i OneDrive mobil. Sida 1 = omslag med innehåll (kategori, produkter, bilder, sida), sedan
 en sektion per kategori: 3 x 4 produktkort (omslagsbild, produktnamn, antal bilder).
+Länkar (v2): ett kort öppnar produktmappen i OneDrive webb, en innehållsrad hoppar till kategorins första sida.
 
 Rör ALDRIG något annat än de två PDF-filerna: läser bilder, skriver via .tmp + os.replace. Samma lås som
 pictures_godkanda.py (sync och katalog kör aldrig samtidigt). Kör efter `pictures_godkanda.py sync`.
@@ -13,10 +14,12 @@ pictures_godkanda.py (sync och katalog kör aldrig samtidigt). Kör efter `pictu
 """
 import argparse
 import datetime
+import io
 import json
 import math
 import os
 import sys
+import urllib.parse
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 
@@ -80,9 +83,19 @@ def layout(cats):
 
 
 def text_fit(draw, text, fnt, width, lines=2):
-    """Wrap on words into at most `lines` lines; the last one gets an ellipsis if cut."""
-    words, out, cur = text.split(), [], ""
-    for w in words:
+    """Wrap on words into at most `lines` lines; the last one gets an ellipsis if cut. A word wider than the line is cut
+    on characters."""
+    out, cur = [], ""
+    for w in text.split():
+        while len(w) > 1 and draw.textlength(w, font=fnt) > width:
+            i = len(w) - 1
+            while i > 1 and draw.textlength(w[:i], font=fnt) > width:
+                i -= 1
+            if cur:
+                out.append(cur)
+                cur = ""
+            out.append(w[:i])
+            w = w[i:]
         t = f"{cur} {w}".strip()
         if draw.textlength(t, font=fnt) <= width:
             cur = t
@@ -90,16 +103,14 @@ def text_fit(draw, text, fnt, width, lines=2):
         if cur:
             out.append(cur)
         cur = w
-        if len(out) == lines:
-            break
-    if len(out) < lines and cur:
+    if cur:
         out.append(cur)
-    out = out[:lines]
-    if " ".join(out) != " ".join(words):
-        last = out[-1] if out else ""
+    if len(out) > lines:
+        out = out[:lines]
+        last = out[-1]
         while last and draw.textlength(last + "…", font=fnt) > width:
             last = last[:-1]
-        out[-1:] = [last.rstrip() + "…"]
+        out[-1] = last.rstrip() + "…"
     return out
 
 
@@ -161,8 +172,10 @@ def cover_page(brand, cats, plan, total, now):
     d.text((MARGIN, y), "Innehåll", font=font(34, True), fill=INK)
     y += 60
     fr, fb = font(26), font(26, True)
+    links = []
     for cat, first, _n in plan:
         es = cats[cat]
+        links.append(("goto", (MARGIN, y, PAGE_W - MARGIN, y + 40), first))  # tap a contents row -> its first page
         d.text((MARGIN, y), cat, font=fb, fill=INK)
         meta = f"{nb(len(es), 'produkt', 'produkter')} · {nb(sum(p['count'] for p in es), 'bild', 'bilder')}"
         d.text((MARGIN + 420, y), meta, font=fr, fill=MUTED)
@@ -170,13 +183,19 @@ def cover_page(brand, cats, plan, total, now):
         d.text((PAGE_W - MARGIN - d.textlength(s, font=fr), y), s, font=fr, fill=MUTED)
         y += 44
     y += 20
-    for line in ("Varje kort = en produktmapp i OneDrive: Pictures > QA-hubb Godkända > "
-                 f"{brand} > Kategori > Produkt.", "Bilden är produktens omslag (00_omslag, bäst betygsatt)."):
+    for line in ("Tryck på ett kort för att öppna produktmappen i OneDrive (Pictures > QA-hubb Godkända > "
+                 f"{brand} > Kategori > Produkt). Tryck på en rad ovan för att hoppa till kategorin.",
+                 "Bilden är produktens omslag (00_omslag, bäst betygsatt)."):
         for ln in text_fit(d, line, font(22), PAGE_W - 2 * MARGIN, 3):
             d.text((MARGIN, y), ln, font=font(22), fill=MUTED)
             y += 32
     footer(d, brand, "Innehåll", 1, total)
-    return pg_img
+    return pg_img, links
+
+
+def folder_url(*parts):
+    """OneDrive web URL of a folder under Pictures\\QA-hubb Godkända (same scheme as pictures_godkanda.links_json)."""
+    return f"{pg.ONEDRIVE_WEB}/Pictures/{urllib.parse.quote(pg.TARGET_NAME)}/" + "/".join(urllib.parse.quote(p) for p in parts)
 
 
 def section_pages(brand, cat, products, first, total):
@@ -194,8 +213,10 @@ def section_pages(brand, cat, products, first, total):
         d.text((MARGIN, MARGIN), head, font=fh, fill=INK)
         meta = f"{nb(len(products), 'produkt', 'produkter')} · {nb(sum(p['count'] for p in products), 'bild', 'bilder')}"
         d.text((PAGE_W - MARGIN - d.textlength(meta, font=fc), MARGIN + 20), meta, font=fc, fill=MUTED)
+        links = []
         for j, p in enumerate(products[i * PER_PAGE:(i + 1) * PER_PAGE]):
             x0, y0 = MARGIN + (j % COLS) * (cw + gap), top + (j // COLS) * (ch + gap)
+            links.append(("uri", (x0, y0, x0 + cw, y0 + ch), folder_url(brand, cat, p["name"])))
             d.rectangle((x0, y0, x0 + cw, y0 + img_h), fill="white", outline=RULE, width=2)
             t = thumb(p["cover"], (cw - 6, img_h - 6))  # inset: keep the 2 px frame visible
             if t:
@@ -209,12 +230,61 @@ def section_pages(brand, cat, products, first, total):
                 ty += 28
             d.text((x0, ty), nb(p['count'], 'bild', 'bilder'), font=fc, fill=MUTED)
         footer(d, brand, cat, first + i, total)
-        pages.append(im)
+        pages.append((im, links))
     return pages
 
 
+def pdf_text(s):
+    """PDF text string: UTF-16BE hex with BOM (handles å/ä/ö and any URL-unsafe char)."""
+    return "<FEFF" + s.encode("utf-16-be").hex().upper() + ">"
+
+
+def pdf_lit(s):
+    """PDF literal string body (URIs are 7-bit ASCII): escape backslash and parentheses."""
+    return s.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
+
+
+def write_pdf(path, pages, title):
+    """Minimal PDF 1.4 writer: one JPEG (DCTDecode) per A4 page + link annotations (PIL's PDF writer has no links).
+    pages: [(PIL RGB image, [("uri", (x0, y0, x1, y1) px, url) | ("goto", rect px, page_no 1-based)])]."""
+    pw, ph, k = 595.28, 841.89, 72 / DPI
+    n = len(pages)
+    page_id = [3 + 4 * i for i in range(n)]  # per page: page, content, image, annots array
+    objs = {1: b"<< /Type /Catalog /Pages 2 0 R >>",
+            2: f"<< /Type /Pages /Count {n} /Kids [{' '.join(f'{i} 0 R' for i in page_id)}] >>".encode()}
+    info_id = 3 + 4 * n
+    objs[info_id] = f"<< /Title {pdf_text(title)} /Producer (QA-hubben pictures_katalog) >>".encode()
+    for i, (im, links) in enumerate(pages):
+        pid, cid, iid, aid = page_id[i], page_id[i] + 1, page_id[i] + 2, page_id[i] + 3
+        buf = io.BytesIO()
+        im.save(buf, "JPEG", quality=82, optimize=True)
+        jpg = buf.getvalue()
+        objs[iid] = (f"<< /Type /XObject /Subtype /Image /Width {im.width} /Height {im.height} /ColorSpace /DeviceRGB "
+                     f"/BitsPerComponent 8 /Filter /DCTDecode /Length {len(jpg)} >>\nstream\n").encode() + jpg + b"\nendstream"
+        content = f"q {pw:.2f} 0 0 {ph:.2f} 0 0 cm /Im0 Do Q".encode()
+        objs[cid] = f"<< /Length {len(content)} >>\nstream\n".encode() + content + b"\nendstream"
+        annots = []
+        for kind, (x0, y0, x1, y1), target in links:
+            rect = f"[{x0 * k:.2f} {ph - y1 * k:.2f} {x1 * k:.2f} {ph - y0 * k:.2f}]"
+            act = (f"/A << /S /URI /URI ({pdf_lit(target)}) >>" if kind == "uri" else f"/Dest [{page_id[target - 1]} 0 R /Fit]")
+            annots.append(f"<< /Type /Annot /Subtype /Link /Rect {rect} /Border [0 0 0] {act} >>")
+        objs[aid] = ("[" + " ".join(annots) + "]").encode()
+        objs[pid] = (f"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 {pw:.2f} {ph:.2f}] /Contents {cid} 0 R "
+                     f"/Resources << /XObject << /Im0 {iid} 0 R >> >> /Annots {aid} 0 R >>").encode()
+    out, offs = bytearray(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n"), {}
+    for oid in sorted(objs):
+        offs[oid] = len(out)
+        out += f"{oid} 0 obj\n".encode() + objs[oid] + b"\nendobj\n"
+    xref = len(out)
+    out += f"xref\n0 {info_id + 1}\n0000000000 65535 f \n".encode()
+    out += b"".join(f"{offs[o]:010d} 00000 n \n".encode() for o in range(1, info_id + 1))
+    out += f"trailer\n<< /Size {info_id + 1} /Root 1 0 R /Info {info_id} 0 R >>\nstartxref\n{xref}\n%%EOF\n".encode()
+    with open(pg.lp(path), "wb") as f:
+        f.write(out)
+
+
 def render_brand(brand, cats, out_path, now=None):
-    """Write one PDF via <out>.tmp + os.replace; returns page count."""
+    """Write one PDF via <out>.tmp + os.replace; returns (page count, link count)."""
     now = now or datetime.datetime.now()
     plan = layout(cats)
     total = 1 + sum(n for _c, _f, n in plan)
@@ -222,10 +292,14 @@ def render_brand(brand, cats, out_path, now=None):
     for cat, first, _n in plan:
         pages += section_pages(brand, cat, cats[cat], first, total)
     tmp = out_path + ".tmp"
-    pages[0].save(pg.lp(tmp), "PDF", save_all=True, append_images=pages[1:], resolution=DPI, quality=82,
-                  title=f"{brand} — Godkända bilder", author="QA-hubben")
-    os.replace(pg.lp(tmp), pg.lp(out_path))
-    return len(pages)
+    try:
+        write_pdf(tmp, pages, f"{brand} — Godkända bilder")
+        os.replace(pg.lp(tmp), pg.lp(out_path))
+    except BaseException:
+        if os.path.exists(pg.lp(tmp)):
+            os.remove(pg.lp(tmp))
+        raise
+    return len(pages), sum(len(lk) for _im, lk in pages)
 
 
 def summary(tree):
@@ -275,8 +349,9 @@ def main():
             os.makedirs(pg.lp(out_dir), exist_ok=True)
             for brand, cats in tree.items():
                 p = os.path.join(out_dir, PDF_NAME.format(brand=brand))
-                n = render_brand(brand, cats, p)
+                n, n_links = render_brand(brand, cats, p)
                 res["brands"][brand]["pdf_pages"] = n
+                res["brands"][brand]["pdf_links"] = n_links
                 res["brands"][brand]["pdf_bytes"] = os.path.getsize(pg.lp(p))
         finally:
             if lock:

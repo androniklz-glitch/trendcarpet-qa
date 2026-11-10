@@ -2280,7 +2280,8 @@
           opt.value = b.id;
           const isDraft = b.published === false;
           const draftPrefix = isDraft ? '🔒 [Utkast] ' : '';
-          opt.innerText = `${draftPrefix}${b.name}`;
+          const storagePrefix = b.storage_warning ? '⚠️ [Lagring] ' : '';  // admin-only: source outside Pictures / not pinned / cloud-only
+          opt.innerText = `${storagePrefix}${draftPrefix}${b.name}`;
           select.appendChild(opt);
         });
 

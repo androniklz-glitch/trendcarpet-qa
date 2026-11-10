@@ -1498,6 +1498,213 @@ def _is_cloud_only(full_path):
         return False
 
 
+# C gate (Koordinator 4.2, 2026-11-10): every batch source lives in the CEO's OneDrive Pictures (= the backup) and is
+# pinned ("Always keep on this device"), so the hub never depends on on-demand hydration (it failed while OneDrive was
+# busy uploading, 2026-11-10). New batches outside Pictures are refused; existing ones get an admin warning (the
+# SharePoint sync blocks them on its own). Batches inside Pictures are pinned on add and by the background scan.
+PICTURES_ROOT = os.environ.get("QA_HUB_PICTURES_ROOT", r"C:\Users\AndronikLindgren\OneDrive - CaMa Gruppen AB\Pictures")
+_ATTR_PINNED = 0x00080000
+_STORAGE_IGNORE = {"desktop.ini", "thumbs.db"}
+_STORAGE_SCAN_S = 600
+_STORAGE_MIN_FREE_GB = 20
+_STORAGE_WARNINGS = {}  # batch id -> issue dict (only batches with a problem)
+_STORAGE_LOCK = threading.Lock()
+
+
+_STORAGE_MAX_SCAN_BYTES = 15 * 10 ** 9  # most a scan leaves OneDrive to download (several batches); one bigger batch still goes
+_K32 = ctypes.WinDLL("kernel32", use_last_error=True)
+
+
+def _is_link(p):
+    """Junction or symlink. Not the bare 0x400 attribute: every OneDrive file and folder is a (cloud) reparse point."""
+    return os.path.islink(p) or os.path.isjunction(p)
+
+
+def _storage_log(line, flush=True):
+    """[storage-gate] log line, never fatal: stdout can be cp1252 (qa_watchdog.ps1 redirect, no PYTHONUTF8), so characters
+    it cannot encode are replaced, and any other print error is swallowed (blind gate v3 R5: HTTP 400 after save, scan abort)."""
+    try:
+        enc = getattr(sys.stdout, "encoding", None) or "utf-8"
+        print(line.encode(enc, "replace").decode(enc, "replace"), flush=flush)
+    except Exception:
+        pass
+
+
+def in_pictures(path):
+    """Strict subfolder of Pictures by real path (8.3 names, case, slashes and .. resolve), and no junction/symlink on the
+    way from Pictures to the folder: a link inside Pictures pointing elsewhere must not count as inside (blind gate R1)."""
+    if not path:
+        return False
+    try:
+        pics = os.path.normcase(os.path.realpath(PICTURES_ROOT))
+        cur = os.path.abspath(path)
+        if not os.path.normcase(os.path.realpath(cur)).startswith(pics + os.sep):
+            return False
+        root_text = os.path.normcase(os.path.abspath(PICTURES_ROOT))
+        while True:
+            # link check BEFORE the "reached Pictures" exit: a junction to the Pictures root resolves to it (blind gate v2)
+            if _is_link(cur) and os.path.normcase(cur) != root_text:
+                return False
+            if os.path.normcase(os.path.realpath(cur)) == pics:
+                break
+            parent = os.path.dirname(cur)
+            if parent == cur:
+                return False
+            cur = parent
+    except (OSError, ValueError):
+        return False
+    return True
+
+
+def _long_path(p):
+    """\\\\?\\ prefix: no MAX_PATH limit (attrib.exe silently skipped >= 260-char paths and still exited 0, 2026-11-10)."""
+    return p if p.startswith("\\\\?\\") else "\\\\?\\" + os.path.abspath(p)
+
+
+def _walk_no_links(root, links=None):
+    """os.walk on the long path that never enters a junction/symlink folder (Python 3.13 os.walk follows junctions).
+    Links met (folders and files) are left out and appended to `links`."""
+    for dirpath, dirs, names in os.walk(_long_path(root)):
+        for group in (dirs, names):
+            keep = [n for n in group if not _is_link(os.path.join(dirpath, n))]
+            if links is not None:
+                links.extend(os.path.join(dirpath, n) for n in group if n not in keep)
+            group[:] = keep
+        yield dirpath, dirs, names
+
+
+def _batch_roots(path, links=None):
+    """The batch folder and its "<name> Removed" sibling. A root that is a junction/symlink or not inside Pictures is left
+    out and appended to `links` (blind gate v2: a Removed junction let +P reach a folder outside)."""
+    roots = []
+    for r in (os.path.normpath(path), removed_root_for(path)):
+        if not os.path.lexists(r):
+            continue
+        if _is_link(r) or not in_pictures(r):
+            if links is not None:
+                links.append(_long_path(r))
+        elif os.path.isdir(r):
+            roots.append(r)
+    return roots
+
+
+def _hydration_bytes(path):
+    """Bytes OneDrive still has to download for the batch (+ Removed): cloud-only placeholders report their full size."""
+    total = 0
+    for root in _batch_roots(path):
+        for dirpath, _dirs, names in _walk_no_links(root):
+            for n in names:
+                st = os.stat(os.path.join(dirpath, n))
+                if st.st_file_attributes & _CLOUD_ONLY_ATTRS:
+                    total += st.st_size
+    return total
+
+
+def storage_issues(path):
+    """None when the batch folder (+ "<name> Removed") is inside Pictures and every folder and file is pinned and local.
+    Criterion (Koordinator 4.3): every file HAS P; a file with neither P nor U (0x20) counts, unreadable counts too."""
+    if not in_pictures(path):
+        return {"outside_pictures": True, "cloud_only": 0, "unpinned": 0,
+                "message": "Källmappen ligger utanför OneDrive Pictures, är Pictures-roten eller nås via en genväg "
+                           "(junction/symlänk) (ingen backup, SharePoint-synk stoppad)"}
+    cloud = unpinned = unreadable = images = images_unpinned = 0
+    links = []
+    example = ""
+    for root in _batch_roots(path, links):
+        for dirpath, _dirs, names in _walk_no_links(root, links):
+            entries = [(dirpath, True)] + [(os.path.join(dirpath, n), False) for n in names if n.lower() not in _STORAGE_IGNORE]
+            for full, is_dir in entries:
+                is_image = not is_dir and full.lower().endswith(IMAGE_EXTS)
+                images += is_image
+                try:
+                    a = getattr(os.stat(full), "st_file_attributes", 0)
+                except OSError:
+                    unreadable += 1
+                    example = example or os.path.relpath(full[4:], os.path.dirname(root))
+                    continue
+                if not is_dir and a & _CLOUD_ONLY_ATTRS:
+                    cloud += 1
+                if not a & _ATTR_PINNED:  # every file must HAVE P; 0x20 (neither P nor U) counts (Koordinator 4.3)
+                    unpinned += 1
+                    images_unpinned += is_image
+                if (not is_dir and a & _CLOUD_ONLY_ATTRS) or not a & _ATTR_PINNED:
+                    example = example or os.path.relpath(full[4:], os.path.dirname(root))
+    if not (cloud or unpinned or unreadable or links):
+        return None
+    return {"outside_pictures": False, "cloud_only": cloud, "unpinned": unpinned, "unreadable": unreadable,
+            "links": len(links), "images": images, "images_unpinned": images_unpinned,
+            "example": example or (links[0][4:] if links else ""),
+            "message": f"{cloud} fil(er) bara i molnet, {unpinned} ej fästa på enheten ({images_unpinned} av {images} "
+                       f"bildfiler){f', {unreadable} oläsbara' if unreadable else ''}"
+                       f"{f', {len(links)} genvägar (junction/symlänk) hoppas över' if links else ''} (SharePoint-synk stoppad)"}
+
+
+def pin_batch_folder(path, reserved_bytes=0):
+    """-U +P on the folder tree incl. the folder itself and its "<name> Removed" sibling; never enters a junction/symlink.
+    Pinning makes OneDrive download every cloud-only file, so free - (bytes already queued) - (this batch's cloud-only
+    bytes) must stay >= _STORAGE_MIN_FREE_GB. Returns an error string or ""."""
+    if not in_pictures(path):
+        return "utanför Pictures"
+    need = _hydration_bytes(path)
+    free = shutil.disk_usage(PICTURES_ROOT).free
+    if (free - reserved_bytes - need) / 1e9 < _STORAGE_MIN_FREE_GB:
+        return (f"C: {free / 1e9:.1f} GB ledigt, {need / 1e9:.1f} GB ska laddas ned"
+                f"{f' (+{reserved_bytes / 1e9:.1f} GB redan köat)' if reserved_bytes else ''}: under "
+                f"{_STORAGE_MIN_FREE_GB} GB kvar, fäster inte")
+    settable = 0x1 | 0x2 | 0x4 | 0x20 | 0x100 | 0x2000  # R H S A TEMPORARY NOT_CONTENT_INDEXED, kept as they are
+    for root in _batch_roots(path):
+        for dirpath, _dirs, names in _walk_no_links(root):
+            for full in [dirpath] + [os.path.join(dirpath, n) for n in names if n.lower() not in _STORAGE_IGNORE]:
+                a = os.stat(full).st_file_attributes
+                if a & _ATTR_PINNED and not a & 0x00100000:
+                    continue
+                if not _K32.SetFileAttributesW(full, (a & settable) | _ATTR_PINNED):
+                    return f"SetFileAttributes fel {ctypes.get_last_error()}: {full[4:][-120:]}"
+    return ""
+
+
+def storage_scan_once(pin=True):
+    """Re-check every batch, pin unpinned or cloud-only ones inside Pictures, log a line whenever a batch's state changes.
+    `queued` = cloud-only bytes this scan already left to OneDrive (free space only drops once it has downloaded them)."""
+    queued = 0
+    for b in load_batches():
+        bid, path = b.get("id", ""), b.get("path", "")
+        try:
+            issue = storage_issues(path)
+            if issue and not issue["outside_pictures"] and (issue["unpinned"] or issue["cloud_only"]):
+                need = _hydration_bytes(path)
+                if not pin:
+                    pass
+                elif queued and queued + need > _STORAGE_MAX_SCAN_BYTES:
+                    issue["pin_error"] = f"väntar till nästa skanning (max {_STORAGE_MAX_SCAN_BYTES / 1e9:.0f} GB per skanning)"
+                else:
+                    err = pin_batch_folder(path, reserved_bytes=queued)
+                    if err:
+                        issue["pin_error"] = err
+                    else:
+                        queued += need
+                        issue = storage_issues(path)
+        except Exception as e:
+            issue = {"outside_pictures": False, "cloud_only": 0, "unpinned": 0, "message": f"Kontroll misslyckades: {e}"}
+        with _STORAGE_LOCK:
+            before = _STORAGE_WARNINGS.get(bid)
+            if issue:
+                _STORAGE_WARNINGS[bid] = issue
+            else:
+                _STORAGE_WARNINGS.pop(bid, None)
+        if bool(before) != bool(issue) or (before and issue and before.get("message") != issue.get("message")):
+            _storage_log(f"[storage-gate] {bid}: {issue['message'] + (' / ' + issue['pin_error'] if issue.get('pin_error') else '') if issue else 'OK (Pictures, fäst, lokal)'}", flush=True)
+
+
+def _storage_scan_loop():
+    while True:
+        try:
+            storage_scan_once()
+        except Exception as e:
+            _storage_log(f"[storage-gate] scan failed: {e}", flush=True)
+        threading.Event().wait(_STORAGE_SCAN_S)
+
+
 def _image_dims(full_path):
     """(w, h) in display orientation, or None. PIL's open() is lazy: header only, no pixel decode."""
     if not full_path:
@@ -2886,6 +3093,11 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             if view_org and not as_viewer:
                 # admin company switch: only that company's batches (drafts included); a directly requested batch stays
                 batches = [b for b in batches if b.get("org") == view_org or (req_batch_id and b.get("id", "").lower() == req_batch_id)]
+            if self.is_real_admin() and not as_viewer:
+                with _STORAGE_LOCK:
+                    for b in batches:
+                        if b.get("id") in _STORAGE_WARNINGS:
+                            b["storage_warning"] = dict(_STORAGE_WARNINGS[b["id"]])
 
             content = json.dumps({
                 "batches": batches,
@@ -3434,6 +3646,15 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                     self.wfile.write(json.dumps({"status": "error", "message": f"Sökvägen existerar inte på datorn: {folder_path}"}).encode("utf-8"))
                     return
 
+                if not in_pictures(folder_path):
+                    _storage_log(f"[storage-gate] refused add outside Pictures: {folder_path}", flush=True)
+                    self.send_response(400)
+                    self.send_header("Content-Type", "application/json; charset=utf-8")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    self.wfile.write(json.dumps({"status": "error", "message": f"Mappen måste ligga i OneDrive Pictures ({PICTURES_ROOT}) – där är backupen. Flytta/kopiera den dit och lägg till den igen: {folder_path}"}, ensure_ascii=False).encode("utf-8"))
+                    return
+
                 folder_base = os.path.basename(os.path.normpath(folder_path))
                 if not name:
                     name = folder_base
@@ -3467,6 +3688,26 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 }
                 batches.append(new_batch)
                 save_batches(batches)
+                try:  # the batch is saved: a pin/check failure is a warning on it, never an HTTP error
+                    pin_err = pin_batch_folder(folder_path)
+                except Exception as e:
+                    pin_err = f"fästning misslyckades: {e}"
+                try:
+                    issue = storage_issues(folder_path)
+                except Exception as e:
+                    issue = {"outside_pictures": False, "cloud_only": 0, "unpinned": 0, "message": f"Kontroll misslyckades: {e}"}
+                if pin_err:
+                    issue = issue or {"outside_pictures": False, "cloud_only": 0, "unpinned": 0, "message": "Ej fäst"}
+                    issue["pin_error"] = pin_err
+                with _STORAGE_LOCK:
+                    if issue:
+                        _STORAGE_WARNINGS[batch_id] = issue
+                    else:
+                        _STORAGE_WARNINGS.pop(batch_id, None)
+                _storage_log(f"[storage-gate] added {batch_id}: pinned{' FAILED ' + pin_err if pin_err else ''}"
+                      f"{', ' + issue['message'] if issue else ', OK'}", flush=True)
+                if issue:
+                    new_batch = dict(new_batch, storage_warning=issue)
 
                 resp = json.dumps({"status": "ok", "batch": new_batch, "batches": batches}).encode("utf-8")
                 self.send_response(200)
@@ -4397,6 +4638,8 @@ def start_server(port=PORT):
     print(" QA Photo Review Hub Server")
     print(f" Access URL: http://localhost:{actual_port}")
     print("============================================================", flush=True)
+    if os.environ.get("QA_HUB_STORAGE_SCAN", "1") != "0":
+        threading.Thread(target=_storage_scan_loop, name="storage-gate", daemon=True).start()
     server.serve_forever()
 
 if __name__ == "__main__":

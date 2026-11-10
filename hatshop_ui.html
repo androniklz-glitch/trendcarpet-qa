@@ -3496,7 +3496,9 @@
           const icon = b.category === 'kepsar' ? '🧢' : (b.category === 'mattor_inredning' ? '🧶' : '📁');
           const isDraft = b.published === false;
           const draftPrefix = isDraft ? '🔒 [Utkast] ' : '';
-          const opt = new Option(`${draftPrefix}${icon} ${b.name}`, b.id);
+          const storagePrefix = b.storage_warning ? '⚠️ [Lagring] ' : '';  // admin-only: source outside Pictures / not pinned / cloud-only
+          const opt = new Option(`${storagePrefix}${draftPrefix}${icon} ${b.name}`, b.id);
+          if (b.storage_warning) opt.title = b.storage_warning.message;
           bSelect.add(opt);
         });
 
@@ -4479,7 +4481,8 @@
             if (opt) {
               const icon = batch.category === 'kepsar' ? '🧢' : (batch.category === 'mattor_inredning' ? '🧶' : '📁');
               const draftPrefix = !data.published ? '🔒 [Utkast] ' : '';
-              opt.innerText = `${draftPrefix}${icon} ${batch.name}`;
+              const storagePrefix = batch.storage_warning ? '⚠️ [Lagring] ' : '';
+              opt.innerText = `${storagePrefix}${draftPrefix}${icon} ${batch.name}`;
             }
           }
           showToast(willPublish ? '🚀 Mappen är nu delad med teamet!' : '🔒 Mappen är nu ett privat utkast.');

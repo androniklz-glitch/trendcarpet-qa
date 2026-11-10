@@ -4230,6 +4230,7 @@
           vid.poster = sizedUrl(s.url, 600, s.mtime);
           vid.play().catch(() => {});
         }
+        preloadNextVideoPoster();
       } else {
         if (vid) {
           try { vid.pause(); } catch (e) {}
@@ -4402,6 +4403,49 @@
       }
     }
 
+    // Fullscreen video swipe (CEO 2026-11-10): from a video, swipe left/right steps to the next/previous VIDEO in batch
+    // order across product borders, skipping images; soft stop at the first/last video (no loop).
+    function findVideoShot(dir) {
+      let i = state.currentShotIndex + dir;
+      for (let p = state.currentProductIndex; p >= 0 && p < state.products.length; p += dir) {
+        const shots = getProductShots(state.products[p]);
+        if (p !== state.currentProductIndex) i = dir > 0 ? 0 : shots.length - 1;
+        for (; i >= 0 && i < shots.length; i += dir) {
+          if (isVideoShot(shots[i])) return { p, i, s: shots[i] };
+        }
+      }
+      return null;
+    }
+
+    function zoomStepVideo(dir) {
+      const hit = findVideoShot(dir);
+      if (!hit) {
+        showToast(dir > 0 ? 'Sista videon i mappen' : 'Första videon i mappen');
+        return;
+      }
+      const vid = document.getElementById('zoomVideo');
+      if (vid) {
+        try { vid.pause(); } catch (e) {}
+        vid.removeAttribute('src');
+        vid.load();
+      }
+      const crossed = hit.p !== state.currentProductIndex;
+      state.currentProductIndex = hit.p;
+      state.currentShotIndex = hit.i;
+      resetZoom();
+      if (crossed) {
+        renderMobileProduct(false);
+        if (state.mobileView === 'grid') renderMobileGrid();
+      }
+      updateZoomModalContent();
+    }
+
+    // Preload only the next video's poster, never the video file itself.
+    function preloadNextVideoPoster() {
+      const next = findVideoShot(1);
+      if (next) new Image().src = sizedUrl(next.s.url, 600, next.s.mtime);
+    }
+
     function resetZoom() {
       zoomLevel = 1;
       zoomPanX = 0;
@@ -4433,6 +4477,7 @@
       let touchStartTime = 0;
       let isPinching = false;
       let isPanning = false;
+      let touchStartOnVideoControls = false;
       let wheelCooldown = 0;
 
       vp.addEventListener('touchstart', (e) => {
@@ -4448,6 +4493,10 @@
           touchStartX = e.touches[0].clientX;
           touchStartY = e.touches[0].clientY;
           touchStartTime = Date.now();
+          // A touch starting in the bottom strip of the video is the native scrubber/controls, never a video swipe
+          const zv = document.getElementById('zoomVideo');
+          const zr = zv && zv.style.display !== 'none' ? zv.getBoundingClientRect() : null;
+          touchStartOnVideoControls = !!zr && touchStartY > zr.bottom - 64 && touchStartY <= zr.bottom;
 
           // Double tap detection
           const now = Date.now();
@@ -4513,8 +4562,15 @@
           const absX = Math.abs(deltaX);
           const absY = Math.abs(deltaY);
 
+          const curProd = state.products[state.currentProductIndex];
+          const onVideo = !!curProd && isVideoShot(getProductShots(curProd)[state.currentShotIndex]);
+
+          // On a video: horizontal swipe > 60 px steps between videos (across products), outside the scrubber strip
+          if (onVideo && absX > 35 && absX > absY * 1.1) {
+            if (absX > 60 && !touchStartOnVideoControls) zoomStepVideo(deltaX < 0 ? 1 : -1);
+          }
           // Vertical flick / scroll:
-          if (absY > 35 && absY > absX * 1.1) {
+          else if (absY > 35 && absY > absX * 1.1) {
             if (deltaY < -35) {
               // Pulled up / scroll down -> NEXT PRODUCT!
               zoomNextProduct();

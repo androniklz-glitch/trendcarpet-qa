@@ -5,14 +5,13 @@ Per batch whose path is outside Pictures:
      -> Pictures\\<same folder name>; any other name -> Pictures\\QA-hubb-batcher\\<batch-id>
   2. verify file count + sha256 of every file
   3. back up batches_config.json, repoint "path" of every entry with that folder (ratings/reviews are keyed by batch id)
-  4. (separate command `free`) attrib +U once OneDrive reports the copy uploaded
+  (No `free` step: BESLUT PIN 2026-11-10, hub sources stay pinned; the +U code was removed, Koordinator 4.3.)
 Target already exists (collision): when it already holds EVERY source file (same rel path + sha256, also for "Removed") the
 config is repointed there without copying ("repoint_existing", extra files reported); otherwise the batch is copied to
 Pictures\\QA-hubb-batcher\\<batch-id>. An existing folder is only read, never written. Originals stay untouched.
 
 Usage (hub python = miniconda3):
   python scripts/consolidate_to_pictures.py copy --batch <id> [--batch ...] | --all  [--dry-run]
-  python scripts/consolidate_to_pictures.py free --batch <id> [--batch ...] | --all
 Exit: 0 OK, 1 error/collision, 2 usage.
 """
 import argparse
@@ -22,14 +21,12 @@ import json
 import os
 import re
 import shutil
-import subprocess
 import sys
 
 HUB_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BATCHES_FILE = os.path.join(HUB_DIR, "batches_config.json")
 PICTURES = r"C:\Users\AndronikLindgren\OneDrive - CaMa Gruppen AB\Pictures"
 CONFIG_BACKUP_DIR = r"C:\Users\AndronikLindgren\agent-home\logs\hub-pictures-1110"
-SYNC_STATUS_PS1 = r"C:\Users\AndronikLindgren\agent-home\scripts\onedrive-sync-status.ps1"
 BATCHER_DIR = os.path.join(PICTURES, "QA-hubb-batcher")
 DATED = re.compile(r"^\d{2}-\d{2}-\d{2}-")
 
@@ -187,43 +184,15 @@ def repoint(reports):
     return backup, changed
 
 
-def free_batch(batch):
-    p = os.path.normpath(batch["path"])
-    if not in_pictures(p):
-        return {"batch": batch["id"], "free": "skipped_not_in_pictures"}
-    out = {"batch": batch["id"]}
-    for d in (p, removed_sibling(p)):
-        if not os.path.isdir(d):
-            continue
-        st = subprocess.run(["powershell", "-NoProfile", "-File", SYNC_STATUS_PS1, "-Path", d],
-                            capture_output=True, text=True, encoding="utf-8", errors="replace")
-        if st.returncode == 0:
-            subprocess.run(["attrib", "+U", "-P", os.path.join(d, "*"), "/S", "/D"], check=True, capture_output=True)
-            out[os.path.basename(d)] = "freed"
-        else:
-            out[os.path.basename(d)] = "not_synced: " + " | ".join(st.stdout.splitlines()[:2])
-    return out
-
-
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=("copy", "free"))
+    ap.add_argument("cmd", choices=("copy",))
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--batch", action="append")
-    g.add_argument("--all", action="store_true", help="copy: every batch outside Pictures; free: every batch")
+    g.add_argument("--all", action="store_true", help="every batch outside Pictures")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
     batches = load_config()
-    if args.cmd == "free":
-        # BESLUT PIN (Koordinator 4.2, 2026-11-10): hub sources stay pinned; +U broke hydration and a leftover free loop
-        # unpinned 27 batches at 09:52. Refused unless explicitly re-enabled.
-        if os.environ.get("QA_HUB_ALLOW_FREE") != "1":
-            print("free is disabled: hub folders must stay pinned (BESLUT PIN 2026-11-10)", file=sys.stderr)
-            return 2
-        targets = batches if args.all else pick(batches, args)
-        for b in targets:
-            print(json.dumps(free_batch(b), ensure_ascii=False))
-        return 0
     reports, seen, code = [], set(), 0
     for b in pick(batches, args):
         if norm(b.get("path")) in seen:

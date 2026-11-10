@@ -51,7 +51,10 @@ CATEGORIES = [
     ("Gardiner", ("curtain", "gardiner"), ("gardin", "curtain", "lumia", "lumira")),
     ("Hattar", (), ("hattar", "fedora", "wool-hat")),
     ("Kepsar", ("kepsar", "caps-", "army-h", "black-river", "garda-ranger"), ("keps", "trucker", "army-cap", "legacy")),
-    ("Mattor - Rya & Shaggy", (), ("rya", "shaggy", "merida", "bianca", "amalia", "kanha", "batumi", "aranga", "charonne",
+    ("Mattor - Trasmattor", (), ("trasmatta",)),
+    ("Mattor - Inomhus & Utomhus", (), ("inomhusutomhus", "inomhus-utomhus", "in-out", "recycled-pet", "recycled pet")),
+    ("Mattor - Viskos", (), ("viskos",)),
+    ("Mattor - Rya & Shaggy", (),("rya", "shaggy", "merida", "bianca", "amalia", "kanha", "batumi", "aranga", "charonne",
                                    "charrone", "ullpäls")),
     ("Mattor - Barn", (), ("barnmatta", "basketball")),
     ("Mattor - Wilton & Print", ("print-",), ("wilton", "rund matta", "frome", "auckland", "barcelona", "alexandra", "artena")),
@@ -62,6 +65,8 @@ CATEGORIES = [
 SKU_RE = re.compile(r"(?<![0-9A-Za-z])(IK\d{9}|2\d{5}|26O\d{9})(?![0-9])", re.I)
 NOISE_RE = re.compile(r"[-_ ]?(carpet|teppich|wollteppich|ullteppe|vorhang|curtain)\b", re.I)
 FORBIDDEN = '<>:"/\\|?*'
+GENERIC_NAMES = {"out", "original", "1500px", "1500px iphone", "matta", "alla per format", "alla per format 1x1", "trasmatta",
+                 "bomullsmatta", "jutematta", "ullmatta", "ryamatta", "ryamattor", "wiltonmatta", "rund matta", "kontaktkartor"}
 
 
 class Alarm(Exception):
@@ -74,9 +79,9 @@ def lp(path):
     return p if p.startswith("\\\\?\\") or os.name != "nt" else "\\\\?\\" + p
 
 
-def category_for(batch, product):
+def category_for(batch, product, context=""):
     bid = (batch.get("id") or "").lower()
-    text = " ".join(str(product.get(k) or "") for k in ("id", "display_name", "color")).lower()
+    text = " ".join([str(product.get(k) or "") for k in ("id", "display_name", "color")] + [context]).lower()
     for name, batch_needles, prod_needles in CATEGORIES:
         if any(n in bid for n in batch_needles) or any(n in text for n in prod_needles):
             return name
@@ -97,16 +102,40 @@ def clean_component(s, limit):
     return s[:limit].rstrip(" .-_") or "Produkt"
 
 
-def product_name(product, sku):
+def _slug_words(s):
+    s = NOISE_RE.sub("", str(s or "")).replace("-", " ").replace("_", " ")
+    return re.sub(r"\s+", " ", s).strip()
+
+
+def is_generic(name):
+    n = _slug_words(name).lower()
+    return len(n.split()) <= 1 or n in GENERIC_NAMES
+
+
+def base_name(product, context=""):
+    """Readable product name before SKU/length handling. display_name is often only the model ("Merida", "Matta", "Out")
+    while the id holds type + model + colour, and some old batches expose sub-folders ("1500px", "Original") as products:
+    then fall back to the id, and when that is generic too, prefix the product's top folder in the batch (context)."""
     name = re.sub(r"^\[[^\]]*\]\s*", "", str(product.get("display_name") or product.get("id") or ""))
-    if " " not in name.strip():  # slug id such as Wiltonmatta-Auckland-terrakotta-grön-multi-carpet-teppich
-        name = NOISE_RE.sub("", name).replace("-", " ").replace("_", " ")
+    if not is_generic(name):
+        return name if " " in name.strip() else _slug_words(name)
+    pid = _slug_words(product.get("id"))
+    if pid and not is_generic(pid):
+        return pid
+    ctx = _slug_words(context)
+    return f"{ctx} {pid or _slug_words(name)}".strip() if ctx else (pid or name)
+
+
+def product_name(product, sku, context=""):
+    name = base_name(product, context)
     for sep in (" (", " — ") if len(name) > 50 else ():  # " - " separates type and model ("Ryamattor - Bianca"): keep
         if sep in name[8:]:
             name = name[:8 + name[8:].index(sep)]
     if sku:
         name = re.sub(rf"[\s,(]*{re.escape(sku)}[\s,)]*", " ", name, flags=re.I)
     name = clean_component(name, 60)
+    if name.count("(") > name.count(")"):  # "Alvona (creme, 50 x 80 cm, 218976)" lost its ")" with the SKU
+        name += ")"
     return f"{name} ({sku})" if sku else name
 
 
@@ -135,8 +164,12 @@ def build_plan(records, target):
     products = {}
     for r in sorted(records, key=lambda r: (batch_date(r["batch"]), r["batch"]["id"]), reverse=True):
         p, sku = r["product"], sku_for(r["product"])
+        rel = os.path.relpath(r["shots"][0]["src"], r["batch"]["path"]) if r["shots"] and r["batch"].get("path") else ""
+        ctx = rel.replace("/", os.sep).split(os.sep)[0] if os.sep in rel.replace("/", os.sep) else ""
         key = sku or clean_component(str(p.get("id") or ""), 80).lower()
-        e = products.setdefault(key, {"category": category_for(r["batch"], p), "folder": product_name(p, sku),
+        if not sku and ctx and is_generic(str(p.get("id") or "")):
+            key = clean_component(f"{ctx} {p.get('id')}", 80).lower()  # "1500px" in two product folders = two products
+        e = products.setdefault(key, {"category": category_for(r["batch"], p, ctx), "folder": product_name(p, sku, ctx), "color": p.get("color"),
                                       "files": [], "batches": [], "seen": set()})
         if r["batch"]["id"] not in e["batches"]:
             e["batches"].append(r["batch"]["id"])
@@ -147,8 +180,15 @@ def build_plan(records, target):
             e["files"].append({**s, "batch": r["batch"]["id"], "date": batch_date(r["batch"]),
                                "stars": r["stars"].get(f"{p.get('id')}|{s['filename']}", 0.0)})
     items, used = [], {}
+    name_count = {}
+    for e in products.values():
+        name_count[(e["category"], e["folder"].lower())] = name_count.get((e["category"], e["folder"].lower()), 0) + 1
     for key, e in sorted(products.items()):
-        folder_rel = os.path.join(e["category"], e["folder"])
+        folder = e["folder"]
+        col = clean_component(str(e.get("color") or ""), 30) if e.get("color") else ""
+        if name_count[(e["category"], folder.lower())] > 1 and col and col.lower() not in folder.lower():
+            folder = f"{folder} {col}"  # same name, different colour: "Black River Legacy Trucker Khaki", not "(2)"
+        folder_rel = os.path.join(e["category"], folder)
         # Two product keys with the same display folder (same name, no SKU): suffix the later one.
         n = used.get(folder_rel.lower(), 0)
         used[folder_rel.lower()] = n + 1

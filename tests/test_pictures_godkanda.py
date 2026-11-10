@@ -146,3 +146,51 @@ def test_sync_item_copy_unchanged_overwrite_conflict(tmp_path, monkeypatch):
 def test_dest_outside_target_refused(tmp_path):
     with pytest.raises(pg.Alarm):
         pg.dest_path(str(tmp_path / "T"), os.path.join("..", "evil.jpg"))
+
+
+@pytest.mark.parametrize("pid,dn,ctx,name,cat", [
+    ("Ryamattor-Merida-Soft-Shaggy-Bla", "Merida", "", "Ryamattor Merida Soft Shaggy Bla", "Mattor - Rya & Shaggy"),
+    ("In-Out-5281-Brown-Matta-carpet-teppich", "Out", "", "In Out 5281 Brown Matta", "Mattor - Inomhus & Utomhus"),
+    ("Trasmatta - Happy (gulmulti)", "Trasmatta", "", "Trasmatta Happy (gulmulti)", "Mattor - Trasmattor"),
+    ("Inomhusutomhus-matta-Arco-Recycled-PET-creme", "matta", "", "Inomhusutomhus matta Arco Recycled PET creme",
+     "Mattor - Inomhus & Utomhus"),
+    ("Viskosmatta-Jodhpur-Special-Luxury-Edition-Ljusbeige", "Jodhpur", "", "Viskosmatta Jodhpur Special Luxury Edition Ljusbeige",
+     "Mattor - Viskos"),
+    ("1500px", "1500px", "barnmatta-ice-hockey-bla-carpet-wollteppich-ullteppe fix", "barnmatta ice hockey bla fix 1500px",
+     "Mattor - Barn"),
+])
+def test_generic_display_name_uses_id_or_folder(pid, dn, ctx, name, cat):
+    p = {"id": pid, "display_name": dn}
+    assert pg.product_name(p, "", ctx) == name
+    assert pg.category_for({"id": "x"}, p, ctx) == cat
+
+
+def test_generic_subfolder_products_in_two_folders_stay_apart(tmp_path):
+    b = {"id": "26-10-08-mattor-mix-fix", "path": str(tmp_path / "b"), "org": "cama", "category": "mattor_inredning"}
+    recs = []
+    for folder in ("barnmatta-ice-hockey-bla fix", "wiltonmatta-levin fix"):
+        d = tmp_path / "b" / folder / "1500px"
+        d.mkdir(parents=True)
+        (d / "a.jpg").write_bytes(folder.encode())
+        recs.append({"batch": b, "product": {"id": "1500px", "display_name": "1500px"},
+                     "shots": [{"src": str(d / "a.jpg"), "filename": "a.jpg", "gold": False}], "stars": {}})
+    _items, products = pg.build_plan(recs, str(tmp_path / "t"))
+    folders = sorted(e["folder_rel"] for e in products.values())
+    assert folders == [os.path.join("Mattor - Barn", "barnmatta ice hockey bla fix 1500px"),
+                       os.path.join("Mattor - Wilton & Print", "wiltonmatta levin fix 1500px")]
+
+
+def test_sku_paren_balanced_and_same_name_gets_colour(tmp_path):
+    p = {"id": "218976", "display_name": "[218976] Badrumsmatta - Alvona (creme, 50 x 80 cm, 218976)"}
+    assert pg.product_name(p, "218976") == "Badrumsmatta - Alvona (creme, 50 x 80 cm) (218976)"
+    b = {"id": "26-09-23-hs-black-river-x", "path": str(tmp_path / "b"), "org": "cama", "category": "kepsar"}
+    recs = []
+    for col in ("Khaki", "Svart"):
+        d = tmp_path / "b" / col
+        d.mkdir(parents=True)
+        (d / "a.jpg").write_bytes(col.encode())
+        recs.append({"batch": b, "product": {"id": f"Keps-Black-River-Legacy-Trucker-{col}", "display_name": "Black River Legacy Trucker",
+                                             "color": col}, "shots": [{"src": str(d / "a.jpg"), "filename": "a.jpg", "gold": False}], "stars": {}})
+    _items, products = pg.build_plan(recs, str(tmp_path / "t"))
+    assert sorted(e["folder_rel"] for e in products.values()) == [os.path.join("Kepsar", "Black River Legacy Trucker Khaki"),
+                                                                   os.path.join("Kepsar", "Black River Legacy Trucker Svart")]

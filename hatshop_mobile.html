@@ -4596,6 +4596,7 @@
       let touchStartY = 0;
       let touchStartTime = 0;
       let isPinching = false;
+      let pinchGesture = false; // true from the 2nd finger until every finger has lifted: a pinch never ends as a swipe
       let isPanning = false;
       let touchStartOnVideoControls = false;
       let wheelCooldown = 0;
@@ -4603,6 +4604,7 @@
       vp.addEventListener('touchstart', (e) => {
         if (e.touches.length === 2) {
           isPinching = true;
+          pinchGesture = true;
           isPanning = false;
           pinchStartDist = Math.hypot(
             e.touches[0].clientX - e.touches[1].clientX,
@@ -4664,9 +4666,16 @@
       }, { passive: false });
 
       vp.addEventListener('touchend', (e) => {
-        if (isPinching) {
+        if (isPinching || pinchGesture) {
           if (e.touches.length < 2) isPinching = false;
           if (zoomLevel < 1.05) resetZoom();
+          if (e.touches.length === 0) {
+            // Last finger of the pinch lifted: drop the stale start point so it cannot count as a swipe
+            pinchGesture = false;
+            touchStartX = 0;
+            touchStartY = 0;
+            touchStartOnVideoControls = false;
+          }
           return;
         }
 
@@ -4710,6 +4719,12 @@
             }
           }
         }
+      }, { passive: true });
+
+      vp.addEventListener('touchcancel', () => {
+        isPinching = false;
+        pinchGesture = false;
+        isPanning = false;
       }, { passive: true });
 
       // Mouse wheel support for scrolling down to next product in zoom view

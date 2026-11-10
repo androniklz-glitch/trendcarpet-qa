@@ -1,21 +1,33 @@
 """Distribution copy of approved hub images in the CEO's OneDrive Pictures (CEO 2026-11-10 "ja kör på pictures-mappen"):
-  <OneDrive>\\Pictures\\QA-hubb Godkända\\<Swedish category>\\<Product name (SKU)>\\<yymmdd>_<file>
-plus 00_omslag.<ext> (best image by hub rating) per product and LÄS MIG.txt at the root (category -> product -> count + hub).
+  <OneDrive>\\Pictures\\QA-hubb Godkända\\<Brand>\\<Swedish category>\\<Product name (SKU)>\\<yymmdd>_<file>
+Brand = Hatshop | Trendcarpet from the batch metadata (`category` kepsar | mattor_inredning; CEO "DEN SNYGGA MAPPEN KAN
+FÖRST VARA INDELAD I HATSHOP RESPEKTIVE TRENDCARPET"); unknown metadata or a contradiction with the product category = ALARM,
+the product is never placed. Plus 00_omslag.<ext> (best image by hub rating) per product and LÄS MIG.txt at the root
+(descriptive only: brand -> category -> product -> count).
 Selection (CEO-RÄTTELSE 5): every shot the hub shows in a batch folder; only images in "<batch> Removed" are underkända
-(Removed is never scanned). Reforma is NEVER copied (org filter twice). A product in several batches gets ONE folder (key =
-SKU, else the product id); file names carry the batch date so they never collide.
-The target is a copy, never a hub source: the run refuses (exit 3) if any batches_config path lies inside it, and `free`
-(+U) refuses hub sources (sharepoint_sync.free_refusal). Sources are read only, never freed. Idempotent: unchanged files are
-skipped by stat signature, a changed source overwrites its copy (sha256 checked after copy), a copy edited at the target is
-left alone and reported as conflict. Files that left the selection are never deleted, only listed ("underkänd efter
-publicering" when the source now sits in Removed). Manifest (JSONL) in ~/qa-hub-backup/pictures-godkanda/.
+(Removed is never scanned). Reforma is NEVER copied: org filter twice plus a content filter (batch id/name "reforma", the
+flow-vibes-rum batch, furniture products, product id/SKU/handle in the Reforma shop list REFORMA_PRODUCTS_FILE; an unreadable
+list = ALARM). A product in several batches gets ONE folder (key = SKU, else the product id); file names carry the batch
+date so they never collide.
+The target is a copy, never a hub source: the run refuses (exit 3) if any batches_config path lies inside it or inside
+Pictures\\QA-hubb Borttagna, and `free` (+U) refuses hub sources (sharepoint_sync.free_refusal). Sources are read only,
+never freed. Idempotent: unchanged files are skipped by stat signature, a changed source overwrites its copy (sha256 checked
+after copy), a copy edited at the target is left alone and reported as conflict.
+Mirror (CEO "ja ta bort removed automatiskt och rensa removed till separat mapp"): a copy whose image left the selection
+(Removed, or batch unpublished) is MOVED, never deleted, to Pictures\\QA-hubb Borttagna\\<same relative path> (sha256
+before == after), and moved back when the image returns; product folders that become empty are removed (rmdir only).
+Copies of a live batch that failed its gate are held, never moved. More than max(50, 10 %) moves at once is refused unless
+--allow-mass-move. Every move is logged in moves.jsonl, every copy/move in manifest.jsonl (~/qa-hub-backup/pictures-godkanda/).
 
 Commands (hub python, cwd = hub dir):
-  plan                dry-run: files + GB per category, Removed excluded, ALARM batches, merged products (read-only)
-  sync                copy/overwrite per plan, write LÄS MIG.txt + pictures_godkanda_links.json, append manifest
-  verify              target vs manifest by metadata (no download, +U safe) + C: free >= 20 GB; deviation -> exit 3
+  plan                dry-run: products + files + GB per brand and category, Removed excluded, ALARM batches, Reforma
+                      exclusions, what would move to / back from Borttagna (read-only)
+  sync [--allow-mass-move]   move back, copy/overwrite per plan, move left-selection copies to Borttagna, write LÄS MIG.txt
+                      + pictures_godkanda_links.json, append manifest + moves log
+  verify              target + Borttagna vs manifest by metadata (no download, +U safe) + C: free >= 20 GB; deviation -> exit 3
   restore <dest-prefix> [--dry-run]   copy back from the hub source when its sha256 equals the manifest
   free                +U on product folders OneDrive reports as uploaded (target only)
+  reforma-scan        read-only: every published batch, every Reforma hit (strong = excluded) + weak model-word matches
 Exit: 0 OK, 1 copy error, 2 usage, 3 ALARM, 4 lock held."""
 import argparse
 import ctypes
@@ -32,7 +44,19 @@ import urllib.parse
 
 HUB_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TARGET_NAME = "QA-hubb Godkända"
+BORTTAGNA_NAME = "QA-hubb Borttagna"
 MANIFEST_FILE = os.path.join(os.path.expanduser("~"), "qa-hub-backup", "pictures-godkanda", "manifest.jsonl")
+MOVES_FILE = os.path.join(os.path.expanduser("~"), "qa-hub-backup", "pictures-godkanda", "moves.jsonl")
+MASS_MOVE_MIN, MASS_MOVE_FRACTION = 50, 0.10
+BRANDS = {"kepsar": "Hatshop", "mattor_inredning": "Trendcarpet"}
+HATSHOP_CATEGORIES = {"Kepsar", "Hattar"}
+# Reforma shop list (reformahome.myshopify.com products.json, 2026-11-03; the dump the Reforma threads use, e.g.
+# scripts/reforma/matrixify/diep_skugga_shopify.py). Read only; never copied into the hub.
+REFORMA_PRODUCTS_FILE = os.path.join(os.path.expanduser("~"), "scratch", "Projects", "Reforma_FTP_gamla_sajten", "live_audit",
+                                     "26-11-03-pos1", "products-2026-11-03.json")
+REFORMA_BATCH_NEEDLES = ("reforma", "flow-vibes-rum")  # flow-vibes-rum: CEO 2026-11-10 "det låter som en reforma-mapp?"
+FURNITURE_NEEDLES = ("soffbord", "baddsoffa", "soffa-", "sangbord", "sängbord", "matbord", "byra-", "tv-bank", "skank",
+                     "fåtölj", "fatolj", "hylla", "stol-")  # Trendcarpet/Hatshop sell no furniture: suspected Reforma
 LINKS_FILE = os.path.join(HUB_DIR, "pictures_godkanda_links.json")
 LOCK_FILE = os.path.join(HUB_DIR, ".pictures_godkanda.lock")
 HUB_URL = "https://trendcarpet-qa.vercel.app"
@@ -45,7 +69,6 @@ ATTR_PINNED, ATTR_UNPINNED = 0x80000, 0x100000
 # (category, batch-id needles, product needles); first hit wins. Product text = product id + display name + colour.
 CATEGORIES = [
     ("Mattor - Trappsteg", ("trappsteg",), ("trappsteg", "halvmåne", "halvmane")),
-    ("Rum & Möbler", ("flow-vibes-rum",), ("soffbord", "baddsoffa", "soffa-")),
     ("Mattor - Badrum", ("badrumsmatt",), ("badrumsmatta", "alvona")),
     ("Kuddar", (), ("kuddfodral", "pillow")),
     ("Gardiner", ("curtain", "gardiner"), ("gardin", "curtain", "lumia", "lumira")),
@@ -86,6 +109,70 @@ def category_for(batch, product, context=""):
         if any(n in bid for n in batch_needles) or any(n in text for n in prod_needles):
             return name
     return "Kepsar" if (batch.get("category") or "") == "kepsar" else "Mattor - Övriga"
+
+
+def brand_for(batch, category):
+    """Brand from the batch metadata first, the product category only as a cross-check: doubt = ALARM, never placed."""
+    brand = BRANDS.get(str(batch.get("category") or "").strip().lower())
+    if not brand:
+        raise Alarm(f"batch {batch.get('id')}: batch category {batch.get('category')!r} gives no brand")
+    if (category in HATSHOP_CATEGORIES) != (brand == "Hatshop"):
+        raise Alarm(f"batch {batch.get('id')}: brand {brand} (batch metadata) contradicts category {category}")
+    return brand
+
+
+def load_reforma(path=None):
+    """{'skus': set, 'handles': list} from the Reforma shop dump; missing/unreadable/implausibly small = ALARM (fail closed)."""
+    path = path or REFORMA_PRODUCTS_FILE
+    try:
+        with open(lp(path), encoding="utf-8") as f:
+            prods = json.load(f)["products"]
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        raise Alarm(f"Reforma product list unreadable ({path}): {exc}")
+    if len(prods) < 100:
+        raise Alarm(f"Reforma product list has only {len(prods)} products: {path}")
+    skus = {str(s).strip().lower() for p in prods for s in (p.get("skus") or []) if s and len(str(s).strip()) >= 4}
+    return {"skus": skus, "handles": sorted({str(p.get("handle") or "").lower() for p in prods} - {""}), "file": path}
+
+
+def _product_text(product, context=""):
+    return " ".join([str(product.get(k) or "") for k in ("id", "display_name", "color")] + [context]).lower()
+
+
+def reforma_batch_hit(batch):
+    if (batch.get("org") or "").strip().lower() == "reforma":
+        return "org=reforma"
+    text = f"{batch.get('id') or ''} {batch.get('name') or ''}".lower()
+    hit = next((n for n in REFORMA_BATCH_NEEDLES if n in text), None)
+    return f"batch-namn innehåller '{hit}'" if hit else ""
+
+
+def reforma_product_hit(product, reforma, context=""):
+    """Strong product-level Reforma match (excluded): furniture, exact SKU, or the product id slug equals / prefixes a
+    Reforma handle at a word boundary (>= 3 words, e.g. 'baddsoffa-kap-verde-gul' -> 'baddsoffa-kap-verde-gul-mlm-502850')."""
+    text = _product_text(product, context)
+    hit = next((n for n in FURNITURE_NEEDLES if n in text), None)
+    if hit and category_for({"id": ""}, product, context) == "Mattor - Övriga":  # a rug in a room with an armchair is no furniture
+
+        return f"möbel ('{hit}')"
+    raw = [str(product.get(k) or "") for k in ("id", "display_name")] + [sku_for(product)]
+    cands = {x.strip().lower() for x in raw if x.strip()}
+    cands |= {t for x in raw for t in re.split(r"[\s,+()\[\]/_]+", x.lower()) if len(t) >= 4}
+    sku = next((c for c in sorted(cands) if c in reforma["skus"]), None)
+    if sku:
+        return f"Reforma-SKU '{sku}'"
+    slug = re.sub(r"[\s_]+", "-", str(product.get("id") or "").strip().lower())
+    if slug.count("-") >= 2:
+        h = next((h for h in reforma["handles"] if h == slug or h.startswith(slug + "-")), None)
+        if h:
+            return f"Reforma-handle '{h}'"
+    return ""
+
+
+def reforma_weak_hits(product, reforma, context=""):
+    """Model words (2nd word of a Reforma handle, >= 5 letters) found in the product text: reported, never excluded."""
+    words = reforma.setdefault("_models", {w for h in reforma["handles"] for w in h.split("-")[1:2] if w.isalpha() and len(w) >= 5})
+    return sorted(set(re.findall(r"[a-zåäö]{5,}", _product_text(product, context))) & words)
 
 
 def sku_for(product):
@@ -159,9 +246,10 @@ def stars_by_key(ratings):
 
 
 def build_plan(records, target):
-    """records: dicts {batch, product, shots:[{src, filename, gold}], stars:{key: mean}}. Returns (items, products).
-    items: {src, dest_rel, batch, kind}. One folder per product key; cover = best mean stars, then gold, then newest batch."""
-    products = {}
+    """records: dicts {batch, product, shots:[{src, filename, gold}], stars:{key: mean}}. Returns (items, products,
+    brand_alarms). items: {src, dest_rel, batch, kind}. One folder per product key under <brand>\\<category>; a key whose
+    records give no brand or two brands is excluded and reported. Cover = best mean stars, then gold, then newest batch."""
+    products, brand_alarms = {}, []
     for r in sorted(records, key=lambda r: (batch_date(r["batch"]), r["batch"]["id"]), reverse=True):
         p, sku = r["product"], sku_for(r["product"])
         rel = os.path.relpath(r["shots"][0]["src"], r["batch"]["path"]) if r["shots"] and r["batch"].get("path") else ""
@@ -170,7 +258,11 @@ def build_plan(records, target):
         if not sku and ctx and is_generic(str(p.get("id") or "")):
             key = clean_component(f"{ctx} {p.get('id')}", 80).lower()  # "1500px" in two product folders = two products
         e = products.setdefault(key, {"category": category_for(r["batch"], p, ctx), "folder": product_name(p, sku, ctx), "color": p.get("color"),
-                                      "files": [], "batches": [], "seen": set()})
+                                      "files": [], "batches": [], "seen": set(), "brands": set(), "brand_errors": []})
+        try:
+            e["brands"].add(brand_for(r["batch"], e["category"]))
+        except Alarm as exc:
+            e["brand_errors"].append(str(exc))
         if r["batch"]["id"] not in e["batches"]:
             e["batches"].append(r["batch"]["id"])
         for s in r["shots"]:
@@ -179,16 +271,25 @@ def build_plan(records, target):
             e["seen"].add(s["src"].lower())
             e["files"].append({**s, "batch": r["batch"]["id"], "date": batch_date(r["batch"]),
                                "stars": r["stars"].get(f"{p.get('id')}|{s['filename']}", 0.0)})
+    for key in sorted(products):
+        e = products[key]
+        if e["brand_errors"] or len(e["brands"]) != 1:
+            brand_alarms.append({"product_key": key, "batches": e["batches"],
+                                 "message": "; ".join(e["brand_errors"]) or f"two brands: {sorted(e['brands'])}"})
+            del products[key]
+        else:
+            e["brand"] = next(iter(e["brands"]))
     items, used = [], {}
     name_count = {}
     for e in products.values():
-        name_count[(e["category"], e["folder"].lower())] = name_count.get((e["category"], e["folder"].lower()), 0) + 1
+        nk = (e["brand"], e["category"], e["folder"].lower())
+        name_count[nk] = name_count.get(nk, 0) + 1
     for key, e in sorted(products.items()):
         folder = e["folder"]
         col = clean_component(str(e.get("color") or ""), 30) if e.get("color") else ""
-        if name_count[(e["category"], folder.lower())] > 1 and col and col.lower() not in folder.lower():
+        if name_count[(e["brand"], e["category"], folder.lower())] > 1 and col and col.lower() not in folder.lower():
             folder = f"{folder} {col}"  # same name, different colour: "Black River Legacy Trucker Khaki", not "(2)"
-        folder_rel = os.path.join(e["category"], folder)
+        folder_rel = os.path.join(e["brand"], e["category"], folder)
         # Two product keys with the same display folder (same name, no SKU): suffix the later one.
         n = used.get(folder_rel.lower(), 0)
         used[folder_rel.lower()] = n + 1
@@ -211,7 +312,7 @@ def build_plan(records, target):
             items.append({"src": best["src"], "batch": best["batch"], "kind": "cover",
                           "dest_rel": os.path.join(folder_rel, "00_omslag" + os.path.splitext(best["src"])[1].lower())})
         e["count"] = len(e["files"])
-    return items, products
+    return items, products, brand_alarms
 
 
 def load_sync():
@@ -234,13 +335,21 @@ def guard_target(ss, target):
             raise Alarm(f"hub batch {b.get('id')} overlaps the target {target}: target must never be a hub source")
 
 
-def collect(ss, pictures, target):
+def collect(ss, pictures, target, reforma=None):
+    """Returns (batches, records, alarms, removed, skipped, reforma_hits); reforma_hits = [{batch, product, reason, files,
+    srcs}] (product None = whole batch). Reforma content filter on top of the org filter; the list is loaded fail-closed."""
+    reforma = reforma if reforma is not None else load_reforma()
     args = type("A", (), {"batch": None, "all": True, "include_drafts": False})()
     batches, skipped = ss.select_batches(args)
-    records, alarms, removed = [], [], {}
+    records, alarms, removed, hits = [], [], {}, []
     for b in batches:
         if ss.org_decision(b):  # second, independent org filter: Reforma never leaves the hub
             skipped.append({"batch": b.get("id"), "reason": ss.org_decision(b)})
+            continue
+        why = reforma_batch_hit(b)
+        if why:  # third filter, content based (4.4 order 13)
+            skipped.append({"batch": b.get("id"), "reason": f"reforma: {why}"})
+            hits.append({"batch": b.get("id"), "product": None, "reason": why, "files": None, "srcs": []})
             continue
         try:
             ss.local_gate(b, pictures)
@@ -262,9 +371,16 @@ def collect(ss, pictures, target):
                     seen.add(rel)
                     shots.append({"src": full, "filename": s.get("filename") or os.path.basename(rel),
                                   "gold": bool(vk in gold_keys and (s.get("is_studio_packshot") or s.get("in_gold_set")))})
-            if shots:
-                records.append({"batch": b, "product": prod, "shots": shots, "stars": stars})
-    return batches, records, alarms, removed, skipped
+            if not shots:
+                continue
+            rel0 = os.path.relpath(shots[0]["src"], root).replace("/", os.sep)
+            why = reforma_product_hit(prod, reforma, rel0.split(os.sep)[0] if os.sep in rel0 else "")
+            if why:
+                hits.append({"batch": b["id"], "product": prod.get("id"), "reason": why, "files": len(shots),
+                             "srcs": [s["src"] for s in shots]})
+                continue
+            records.append({"batch": b, "product": prod, "shots": shots, "stars": stars})
+    return batches, records, alarms, removed, skipped, hits
 
 
 def sha256(path):
@@ -303,6 +419,22 @@ def append_manifest(latest, entry):
     latest[entry["dest_rel"].lower()] = entry
 
 
+def append_move(entry):
+    os.makedirs(os.path.dirname(MOVES_FILE), exist_ok=True)
+    with open(MOVES_FILE, "a", encoding="utf-8", newline="\n") as f:
+        f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        f.flush()
+        os.fsync(f.fileno())
+
+
+def now_iso():
+    return datetime.datetime.now().isoformat(timespec="seconds")
+
+
+def is_active(e):
+    return e.get("state", "aktiv") == "aktiv"
+
+
 def dest_path(target, rel):
     full = os.path.normpath(os.path.join(target, rel))
     if not inside(full, target) or os.path.normcase(full) == os.path.normcase(os.path.normpath(target)):
@@ -314,6 +446,8 @@ def sync_item(it, target, latest, dry_run):
     """'unchanged' | 'copied' | 'overwritten' | 'adopted' | 'conflict'; raises OSError on a failed copy."""
     dst = dest_path(target, it["dest_rel"])
     prev, d_sig, s_sig = latest.get(it["dest_rel"].lower()), sig(dst), sig(it["src"])
+    if prev and not is_active(prev):
+        prev = None  # moved to Borttagna and not moved back (source changed): copy afresh from the source
     if prev and d_sig == prev["dst_sig"] and s_sig == prev["src_sig"] and prev["src"].lower() == it["src"].lower():
         return "unchanged"
     if prev and d_sig not in (None, prev["dst_sig"]):
@@ -331,27 +465,147 @@ def sync_item(it, target, latest, dry_run):
         shutil.copy2(lp(it["src"]), lp(dst))
     if sha256(dst) != digest:
         raise OSError(f"hash mismatch after copy: {dst}")
-    append_manifest(latest, {"ts": datetime.datetime.now().isoformat(timespec="seconds"), "dest_rel": it["dest_rel"],
+    append_manifest(latest, {"ts": now_iso(), "dest_rel": it["dest_rel"],
                              "kind": it["kind"], "batch": it["batch"], "src": it["src"], "sha256": digest,
                              "src_sig": s_sig, "dst_sig": sig(dst)})
     return status
 
 
-def readme_text(products, batches, removed):
-    names = {b["id"]: b.get("name") or b["id"] for b in batches}
-    out = [f"{TARGET_NAME} — godkända bilder från QA-hubben (allt utom underkända i \"<batch> Removed\")",
-           f"Uppdaterad: {datetime.datetime.now():%Y-%m-%d %H:%M}", f"QA-hubben: {HUB_URL}",
-           "Varje produktmapp: 00_omslag = bäst betygsatta bilden i hubben; filnamn börjar med batchens datum (ÅÅMMDD).",
-           f"Underkända (Removed) som inte kopierats: {sum(removed.values())} bilder.", ""]
-    by_cat = {}
+def move_back(items, latest, target, borttagna, dry_run):
+    """Planned items whose copy sits in Borttagna: moved back when that file still equals the current source (sha256);
+    otherwise 'recopy' (sync_item copies afresh from the source, the stale Borttagna file stays)."""
+    out = []
+    for it in items:
+        prev = latest.get(it["dest_rel"].lower())
+        if not prev or is_active(prev):
+            continue
+        b_path = dest_path(borttagna, prev["borttagen_rel"])
+        dst = dest_path(target, it["dest_rel"])
+        if not os.path.isfile(lp(b_path)) or os.path.exists(lp(dst)) or sha256(b_path) != sha256(it["src"]):
+            out.append({"dest_rel": it["dest_rel"], "status": "recopy"})
+            continue
+        if dry_run:
+            out.append({"dest_rel": it["dest_rel"], "status": "would_move_back"})
+            continue
+        before = sha256(b_path)
+        os.makedirs(lp(os.path.dirname(dst)), exist_ok=True)
+        shutil.move(lp(b_path), lp(dst))
+        after = sha256(dst)
+        if after != before:
+            raise OSError(f"hash mismatch after move back: {dst}")
+        append_manifest(latest, {"ts": now_iso(), "dest_rel": it["dest_rel"], "kind": it["kind"], "batch": it["batch"],
+                                 "src": it["src"], "sha256": after, "src_sig": sig(it["src"]), "dst_sig": sig(dst)})
+        append_move({"ts": now_iso(), "action": "back", "from": b_path, "to": dst, "sha256_before": before,
+                     "sha256_after": after, "reason": "tillbaka i hubbens urval"})
+        prune_empty_dirs(os.path.dirname(b_path), borttagna)
+        out.append({"dest_rel": it["dest_rel"], "status": "moved_back"})
+    return out
+
+
+def prune_empty_dirs(d, root):
+    """rmdir d and its parents while empty, never root itself and never outside root (files are never deleted)."""
+    d = os.path.normpath(d)
+    while inside(d, root) and os.path.normcase(d) != os.path.normcase(os.path.normpath(root)):
+        try:
+            os.rmdir(lp(d))
+        except OSError:
+            return
+        d = os.path.dirname(d)
+
+
+def in_removed(src):
+    """True when the source left its batch folder and now sits in '<batch folder> Removed' at the same relative path."""
+    if os.path.isfile(lp(src)):
+        return False
+    d = os.path.dirname(os.path.normpath(src))
+    while d and os.path.dirname(d) != d:
+        if os.path.isfile(lp(os.path.join(d + " Removed", os.path.relpath(src, d)))):
+            return True
+        d = os.path.dirname(d)
+    return False
+
+
+def mirror_removed(latest, items, target, borttagna, ok_batch_ids, live_batch_ids, dry_run, allow_mass=False,
+                   reforma_batches=(), reforma_srcs=()):
+    """Active manifest copies no longer planned (covers included) move to Borttagna at the same relative path, when their
+    batch was collected without alarm or is no longer live. A live batch that is alarmed/skipped is HELD. Reforma copies are
+    held and raise an alarm (they must never sit in a shared folder, nor go to Borttagna). Never deletes a file."""
+    planned = {it["dest_rel"].lower() for it in items}
+    ok, live, ref_b = set(ok_batch_ids), set(live_batch_ids), set(reforma_batches)
+    ref_s = {s.lower() for s in reforma_srcs}
+    res = {"moved": [], "would_move": [], "held": [], "alarms": []}
+    active = [e for e in latest.values() if is_active(e)]
+    cands = []
+    for e in sorted(active, key=lambda e: e["dest_rel"].lower()):
+        if e["dest_rel"].lower() in planned:
+            continue
+        row = {"dest_rel": e["dest_rel"], "batch": e["batch"]}
+        if e["batch"] in ref_b or e["src"].lower() in ref_s:
+            res["held"].append({**row, "reason": "reforma"})
+            res["alarms"].append({"batch": e["batch"], "message": f"Reforma copy in {TARGET_NAME}: {e['dest_rel']}"})
+        elif e["batch"] in live and e["batch"] not in ok:
+            res["held"].append({**row, "reason": "batch live men larmad/överhoppad"})
+        else:
+            reason = ("batch avpublicerad" if e["batch"] not in live else
+                      "underkänd (Removed)" if in_removed(e["src"]) else "inte längre i hubbens urval")
+            cands.append((e, {**row, "reason": reason}))
+    limit = max(MASS_MOVE_MIN, MASS_MOVE_FRACTION * len(active))
+    if len(cands) > limit and not allow_mass:
+        res["alarms"].append({"batch": None, "message": f"mass move refused: {len(cands)} of {len(active)} (limit {int(limit)}; "
+                                                         "--allow-mass-move)"})
+        res["would_move"] = [r for _e, r in cands]
+        return res
+    for e, row in cands:
+        if dry_run:
+            res["would_move"].append(row)
+            continue
+        src = dest_path(target, e["dest_rel"])
+        dst = dest_path(borttagna, e["dest_rel"])
+        if os.path.exists(lp(dst)):  # an older removal of the same path: keep both, the old one untouched
+            stem, ext = os.path.splitext(dst)
+            dst = f"{stem}_{datetime.datetime.now():%y%m%d%H%M}{ext}"
+            i = 2
+            while os.path.exists(lp(dst)):
+                dst, i = f"{stem}_{datetime.datetime.now():%y%m%d%H%M}_{i}{ext}", i + 1
+        status, before = "moved", None
+        if os.path.isfile(lp(src)):
+            before = sha256(src)
+            os.makedirs(lp(os.path.dirname(dst)), exist_ok=True)
+            shutil.move(lp(src), lp(dst))
+            after = sha256(dst)
+            if after != before:
+                raise OSError(f"hash mismatch after move to {BORTTAGNA_NAME}: {dst}")
+            append_move({"ts": now_iso(), "action": "to_borttagna", "from": src, "to": dst, "sha256_before": before,
+                         "sha256_after": after, "reason": row["reason"]})
+            prune_empty_dirs(os.path.dirname(src), target)
+        else:
+            status = "missing"
+        append_manifest(latest, {"ts": now_iso(), "dest_rel": e["dest_rel"], "kind": e["kind"], "batch": e["batch"],
+                                 "src": e["src"], "state": "borttagen", "borttagen_rel": os.path.relpath(dst, borttagna),
+                                 "reason": row["reason"], "sha256": before or e.get("sha256"), "status": status})
+        res["moved"].append({**row, "status": status})
+    return res
+
+
+def readme_text(products):
+    out = [f"{TARGET_NAME}",
+           "Här ligger de godkända bilderna från QA-hubben.",
+           "Struktur: Varumärke > Kategori > Produkt (artikelnummer).",
+           "I varje produktmapp är 00_omslag den bäst betygsatta bilden. Filnamnen börjar med batchens datum (ÅÅMMDD).",
+           "Mappen uppdateras automatiskt från QA-hubben. Bilder som senare blir underkända försvinner automatiskt härifrån.",
+           "Frågor om innehållet: Andronik Lindgren.",
+           f"Senast uppdaterad: {datetime.datetime.now():%Y-%m-%d %H:%M}", ""]
+    tree = {}
     for e in products.values():
-        by_cat.setdefault(e["category"], []).append(e)
-    for cat in sorted(by_cat):
-        es = sorted(by_cat[cat], key=lambda e: e["folder_rel"].lower())
-        out.append(f"{cat} — {len(es)} produkter, {sum(e['count'] for e in es)} bilder")
-        for e in es:
-            out.append(f"  {os.path.basename(e['folder_rel'])}: {e['count']} bilder")
-            out += [f"      hubb-batch: {names.get(b, b)}" for b in e["batches"]]
+        tree.setdefault(e["brand"], {}).setdefault(e["category"], []).append(e)
+    for brand in sorted(tree):
+        cats = tree[brand]
+        out.append(f"{brand} — {sum(len(v) for v in cats.values())} produkter, "
+                   f"{sum(e['count'] for v in cats.values() for e in v)} bilder")
+        for cat in sorted(cats):
+            es = sorted(cats[cat], key=lambda e: e["folder_rel"].lower())
+            out.append(f"  {cat} — {len(es)} produkter, {sum(e['count'] for e in es)} bilder")
+            out += [f"    {os.path.basename(e['folder_rel'])}: {e['count']} bilder" for e in es]
         out.append("")
     return "\r\n".join(out) + "\r\n"
 
@@ -375,39 +629,31 @@ def write_if_changed(path, text):
     return False
 
 
-def gone_from_selection(latest, items, target, batches):
-    """Manifest copies no longer planned: never deleted, listed (with 'underkänd' when the source now sits in Removed)."""
-    planned = {it["dest_rel"].lower() for it in items}
-    out = []
-    for k, e in sorted(latest.items()):
-        if k in planned or e["kind"] == "cover":
-            continue
-        roots = [os.path.normpath(b["path"]) for b in batches if b["id"] == e["batch"]]
-        in_removed = not os.path.isfile(lp(e["src"])) and any(
-            inside(e["src"], r) and os.path.isfile(lp(os.path.join(r + " Removed", os.path.relpath(e["src"], r)))) for r in roots)
-        out.append({"dest_rel": e["dest_rel"], "batch": e["batch"],
-                    "reason": "underkänd efter publicering" if in_removed else "inte längre i hubbens urval"})
-    return out
-
-
 def c_free_gb(path):
     return round(shutil.disk_usage(os.path.splitdrive(os.path.abspath(path))[0] + os.sep).free / 1e9, 1)
 
 
-def cmd_plan_or_sync(ss, pictures, target, dry_run):
+def cmd_plan_or_sync(ss, pictures, target, borttagna, dry_run, allow_mass=False):
     guard_target(ss, target)
-    batches, records, alarms, removed, skipped = collect(ss, pictures, target)
-    items, products = build_plan(records, target)
+    guard_target(ss, borttagna)
+    batches, records, alarms, removed, skipped, ref_hits = collect(ss, pictures, target)
+    items, products, brand_alarms = build_plan(records, target)
     latest = load_manifest()
-    cats, status_n, errors = {}, {}, []
-    for it in items:
-        c = cats.setdefault(it["dest_rel"].split(os.sep)[0], {"products": set(), "files": 0, "bytes": 0, "covers": 0})
-        c["products"].add(os.path.dirname(it["dest_rel"]))
-        if it["kind"] == "cover":
-            c["covers"] += 1
-        else:
-            c["files"] += 1
-            c["bytes"] += os.path.getsize(lp(it["src"]))
+    cats, brands, status_n, errors = {}, {}, {}, []
+    try:
+        back = move_back(items, latest, target, borttagna, dry_run)
+    except OSError as exc:
+        back, errors = [], [{"dest_rel": None, "error": f"move back: {str(exc)[:200]}"}]
+    for it in items if not errors else ():
+        parts = it["dest_rel"].split(os.sep)
+        for agg in (cats.setdefault(os.sep.join(parts[:2]), {"products": set(), "files": 0, "bytes": 0, "covers": 0}),
+                    brands.setdefault(parts[0], {"products": set(), "files": 0, "bytes": 0, "covers": 0})):
+            agg["products"].add(os.path.dirname(it["dest_rel"]))
+            if it["kind"] == "cover":
+                agg["covers"] += 1
+            else:
+                agg["files"] += 1
+                agg["bytes"] += os.path.getsize(lp(it["src"]))
         try:
             st = sync_item(it, target, latest, dry_run)
         except (OSError, Alarm) as exc:
@@ -416,35 +662,93 @@ def cmd_plan_or_sync(ss, pictures, target, dry_run):
             if not dry_run:
                 break
         status_n[st] = status_n.get(st, 0) + 1
-    rows = [{"category": k, "products": len(v["products"]), "files": v["files"], "gb": round(v["bytes"] / 1e9, 3),
-             "covers": v["covers"]} for k, v in sorted(cats.items())]
-    for r in rows:
+    mirror = {"moved": [], "would_move": [], "held": [], "alarms": []}
+    if not errors:
+        bad_ids = {a["batch"] for a in alarms} | {s["batch"] for s in skipped}
+        ok_ids = {b["id"] for b in batches} - bad_ids
+        live_ids = {b.get("id") for b in ss.hub.load_batches() if b.get("published", True)}
+        ref_batches = {h["batch"] for h in ref_hits if h["product"] is None} | {
+            s["batch"] for s in skipped if "reforma" in str(s.get("reason"))}
+        try:
+            mirror = mirror_removed(latest, items, target, borttagna, ok_ids, live_ids, dry_run, allow_mass, ref_batches,
+                                    [p for h in ref_hits for p in h["srcs"]])
+        except (OSError, Alarm) as exc:
+            errors.append({"dest_rel": None, "error": f"mirror: {str(exc)[:200]}"})
+    n_gate_alarms = len(alarms)
+    alarms = alarms +[{"batch": a["batches"], "message": a["message"]} for a in brand_alarms] + mirror["alarms"]
+
+    def row(k, v, key):
+        return {key: k, "products": len(v["products"]), "files": v["files"], "gb": round(v["bytes"] / 1e9, 3), "covers": v["covers"]}
+    rows = [row(k, v, "category") for k, v in sorted(cats.items())]
+    for r in rows + [row(k, v, "brand") for k, v in sorted(brands.items())]:
         print(json.dumps(r, ensure_ascii=False))
     merged = [{"folder": e["folder_rel"], "batches": e["batches"]} for e in products.values() if len(e["batches"]) > 1]
-    gone = gone_from_selection(latest, items, target, batches)
-    summary = {"mode": "dry-run" if dry_run else "sync", "target": target, "batches_selected": len(batches),
-               "batches_copied": len(batches) - len(alarms), "products": len(products),
+    n_back = {s: sum(1 for b in back if b["status"] == s) for s in ("moved_back", "would_move_back", "recopy")}
+    summary = {"mode": "dry-run" if dry_run else "sync", "target": target, "borttagna": borttagna,
+               "batches_selected": len(batches), "batches_copied": len(batches) - n_gate_alarms, "products": len(products),
                "files": sum(r["files"] for r in rows), "gb": round(sum(r["gb"] for r in rows), 3),
-               "removed_excluded": sum(removed.values()), "status": status_n, "alarms": alarms, "errors": errors,
-               "merged_products": len(merged), "max_path_len": max((len(os.path.join(target, it["dest_rel"])) for it in items),
-                                                                   default=0),
-               "left_selection": gone, "skipped": skipped, "c_free_gb": c_free_gb(target)}
+               "removed_excluded": sum(removed.values()), "status": status_n, "alarms": alarms[:50], "alarm_n": len(alarms),
+               "errors": errors, "merged_products": len(merged),
+               "max_path_len": max((len(os.path.join(target, it["dest_rel"])) for it in items), default=0),
+               "moved": len(mirror["moved"]), "would_move": len(mirror["would_move"]), "held": len(mirror["held"]),
+               "move_back": n_back, "brand_alarms": len(brand_alarms),
+               "reforma_excluded": {"batches": sorted({h["batch"] for h in ref_hits if h["product"] is None}),
+                                    "products": sum(1 for h in ref_hits if h["product"] is not None),
+                                    "files": sum(h["files"] or 0 for h in ref_hits)},
+               "skipped": skipped, "c_free_gb": c_free_gb(target)}
     for e in sorted(products.values(), key=lambda e: e["folder_rel"].lower()):
         print(json.dumps({"folder": e["folder_rel"], "files": e["count"], "batches": e["batches"]}, ensure_ascii=False))
     print(json.dumps({"merged": merged}, ensure_ascii=False))
     print(json.dumps({"removed_per_batch": removed}, ensure_ascii=False))
+    print(json.dumps({"reforma_hits": [{k: v for k, v in h.items() if k != "srcs"} for h in ref_hits]}, ensure_ascii=False))
+    print(json.dumps({"brand_alarms": brand_alarms[:50]}, ensure_ascii=False))
+    for k in ("moved", "would_move", "held"):
+        print(json.dumps({k: mirror[k][:50]}, ensure_ascii=False))
+    print(json.dumps({"move_back": [b for b in back if b["status"] != "recopy"][:50]}, ensure_ascii=False))
     if not dry_run and not errors:
         os.makedirs(lp(target), exist_ok=True)
-        summary["readme_written"] = write_if_changed(os.path.join(target, "LÄS MIG.txt"), readme_text(products, batches, removed))
+        summary["readme_written"] = write_if_changed(os.path.join(target, "LÄS MIG.txt"), readme_text(products))
         summary["links_written"] = write_if_changed(LINKS_FILE, json.dumps(links_json(products), ensure_ascii=False, indent=1))
     print(json.dumps({"summary": summary}, ensure_ascii=False))
     return 1 if errors else 3 if alarms or status_n.get("conflict") else 0
 
 
-def cmd_verify(ss, target):
+def cmd_reforma_scan(ss, pictures, target):
+    """Read-only list for the coordinator: per published batch org + Reforma hits; weak model-word matches separately."""
+    reforma = load_reforma()
+    print(json.dumps({"reforma_list": reforma["file"], "skus": len(reforma["skus"]), "handles": len(reforma["handles"])},
+                     ensure_ascii=False))
+    _b, records, alarms, _r, skipped, hits = collect(ss, pictures, target, reforma)
+    for b in sorted(ss.hub.load_batches(), key=lambda b: b.get("id") or ""):
+        if not b.get("published", True):
+            continue
+        bid = b.get("id")
+        print(json.dumps({"batch": bid, "org": b.get("org"), "category": b.get("category"),
+                          "strong_hits": sum(1 for h in hits if h["batch"] == bid),
+                          "skipped": next((s["reason"] for s in skipped if s["batch"] == bid), None),
+                          "alarm": any(a["batch"] == bid for a in alarms)}, ensure_ascii=False))
+    for h in hits:
+        print(json.dumps({"strong": {k: v for k, v in h.items() if k != "srcs"}}, ensure_ascii=False))
+    weak = []
+    for r in records:
+        rel0 = os.path.relpath(r["shots"][0]["src"], r["batch"]["path"]).replace("/", os.sep)
+        w = reforma_weak_hits(r["product"], reforma, rel0.split(os.sep)[0] if os.sep in rel0 else "")
+        if w:
+            weak.append({"batch": r["batch"]["id"], "product": r["product"].get("id"), "words": w, "files": len(r["shots"])})
+    for w in weak:
+        print(json.dumps({"weak": w}, ensure_ascii=False))
+    print(json.dumps({"summary": {"strong": len(hits), "weak": len(weak), "alarms": alarms}}, ensure_ascii=False))
+    return 3 if alarms else 0
+
+
+def cmd_verify(ss, target, borttagna):
     guard_target(ss, target)
     latest, bad = load_manifest(), []
     for e in latest.values():
+        if not is_active(e):
+            if e.get("status") != "missing" and not os.path.isfile(lp(dest_path(borttagna, e["borttagen_rel"]))):
+                bad.append({"dest_rel": e["dest_rel"], "problem": f"missing in {BORTTAGNA_NAME}"})
+            continue
         d = sig(dest_path(target, e["dest_rel"]))
         if d != e["dst_sig"]:
             bad.append({"dest_rel": e["dest_rel"], "problem": "missing" if d is None else "changed at target"})
@@ -458,8 +762,8 @@ def cmd_verify(ss, target):
 def cmd_restore(ss, target, prefix, dry_run):
     guard_target(ss, target)
     latest, out, code = load_manifest(), [], 0
-    for e in latest.values():
-        if not e["dest_rel"].lower().startswith(prefix.lower()):
+    for e in list(latest.values()):
+        if not is_active(e) or not e["dest_rel"].lower().startswith(prefix.lower()):
             continue
         dst = dest_path(target, e["dest_rel"])
         if not os.path.isfile(lp(e["src"])) or sha256(e["src"]) != e["sha256"]:
@@ -500,13 +804,15 @@ def cmd_free(ss, target):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=("plan", "sync", "verify", "restore", "free"))
+    ap.add_argument("cmd", choices=("plan", "sync", "verify", "restore", "free", "reforma-scan"))
     ap.add_argument("prefix", nargs="?", default="")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--allow-mass-move", action="store_true", help="allow more than max(50, 10 %%) moves to Borttagna in one sync")
     args = ap.parse_args()
     ss = load_sync()
     pictures = os.path.join(ss.DEFAULT_ONEDRIVE, ss.PICTURES_NAME)
     target = os.path.join(pictures, TARGET_NAME)
+    borttagna = os.path.join(pictures, BORTTAGNA_NAME)
     if args.cmd == "restore" and not args.prefix:
         print("restore needs <dest-prefix>", file=sys.stderr)
         return 2
@@ -520,9 +826,12 @@ def main():
             return 4
     try:
         if args.cmd in ("plan", "sync"):
-            return cmd_plan_or_sync(ss, pictures, target, dry_run=args.cmd == "plan")
+            return cmd_plan_or_sync(ss, pictures, target, borttagna, dry_run=args.cmd == "plan",
+                                    allow_mass=args.allow_mass_move)
+        if args.cmd == "reforma-scan":
+            return cmd_reforma_scan(ss, pictures, target)
         if args.cmd == "verify":
-            return cmd_verify(ss, target)
+            return cmd_verify(ss, target, borttagna)
         if args.cmd == "restore":
             return cmd_restore(ss, target, args.prefix, args.dry_run)
         return cmd_free(ss, target)

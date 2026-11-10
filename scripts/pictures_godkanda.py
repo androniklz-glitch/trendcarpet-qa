@@ -54,7 +54,8 @@ HATSHOP_CATEGORIES = {"Kepsar", "Hattar"}
 # scripts/reforma/matrixify/diep_skugga_shopify.py). Read only; never copied into the hub.
 REFORMA_PRODUCTS_FILE = os.path.join(os.path.expanduser("~"), "scratch", "Projects", "Reforma_FTP_gamla_sajten", "live_audit",
                                      "26-11-03-pos1", "products-2026-11-03.json")
-REFORMA_BATCH_NEEDLES = ("reforma", "flow-vibes-rum")  # flow-vibes-rum: CEO 2026-11-10 "det låter som en reforma-mapp?"
+REFORMA_BATCH_NEEDLES = ("reforma", "flow-vibes-rum", "flow-vibes-mattor")  # flow-vibes-rum: CEO 2026-11-10 "det låter som en
+# reforma-mapp?"; flow-vibes-mattor: Koordinator 4.4 2026-11-10 (whole batch, all 13 product ids are exact Reforma handles)
 FURNITURE_NEEDLES = ("soffbord", "baddsoffa", "soffa-", "sangbord", "sängbord", "matbord", "byra-", "tv-bank", "skank",
                      "fåtölj", "fatolj", "hylla", "stol-")  # Trendcarpet/Hatshop sell no furniture: suspected Reforma
 LINKS_FILE = os.path.join(HUB_DIR, "pictures_godkanda_links.json")
@@ -803,6 +804,8 @@ def cmd_free(ss, target):
 
 
 def main():
+    for stream in (sys.stdout, sys.stderr):  # a cp1252 console must never crash on a product name (gate v5 R5)
+        stream.reconfigure(errors="backslashreplace")
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("cmd", choices=("plan", "sync", "verify", "restore", "free", "reforma-scan"))
     ap.add_argument("prefix", nargs="?", default="")

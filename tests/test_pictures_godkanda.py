@@ -3,6 +3,8 @@ import importlib.util
 import json
 import os
 import re
+import subprocess
+import sys
 
 import pytest
 
@@ -385,7 +387,8 @@ def test_reforma_handle_prefix_without_furniture_word():
 
 
 def test_collect_reforma_content_filter_zero_files(tmp_path):
-    bids = ("26-10-19-ag-reforma-interiors", "26-10-01-flow-vibes-rum", "26-10-02-flow-vibes-mattor")
+    bids = ("26-10-19-ag-reforma-interiors", "26-10-01-flow-vibes-rum", "26-10-02-flow-vibes-mattor",
+            "26-10-03-flow-vibes-gardiner")
     for bid in bids:
         (tmp_path / bid).mkdir()
         for f in ("a.jpg", "b.jpg"):
@@ -393,13 +396,13 @@ def test_collect_reforma_content_filter_zero_files(tmp_path):
     batches = [{"id": b, "path": str(tmp_path / b), "org": "cama", "category": "mattor_inredning"} for b in bids]
     v = lambda f: {"Original": [{"rel_path": f, "filename": f}]}  # noqa: E731
     prods = {b: [{"id": "Wiltonmatta-Auckland", "variants": v("a.jpg")}] for b in bids}
-    prods["26-10-02-flow-vibes-mattor"].append({"id": "soffbord-ek", "variants": v("b.jpg")})
+    prods["26-10-03-flow-vibes-gardiner"].append({"id": "soffbord-ek", "variants": v("b.jpg")})
     _b, records, _a, _r, _s, hits = pg.collect(FakeSS(batches, prods), str(tmp_path), str(tmp_path / "T"), REF)
-    assert [(r["batch"]["id"], r["product"]["id"]) for r in records] == [("26-10-02-flow-vibes-mattor", "Wiltonmatta-Auckland")]
-    assert {h["batch"] for h in hits if h["product"] is None} == set(bids[:2])
+    assert [(r["batch"]["id"], r["product"]["id"]) for r in records] == [("26-10-03-flow-vibes-gardiner", "Wiltonmatta-Auckland")]
+    assert {h["batch"] for h in hits if h["product"] is None} == set(bids[:3])  # flow-vibes-mattor: Reforma whole batch
     assert [h["product"] for h in hits if h["product"]] == ["soffbord-ek"]
     items, _p, _ba = pg.build_plan(records, str(tmp_path / "T"))
-    assert {i["batch"] for i in items} == {"26-10-02-flow-vibes-mattor"} and not any(i["src"].endswith("b.jpg") for i in items)
+    assert {i["batch"] for i in items} == {"26-10-03-flow-vibes-gardiner"} and not any(i["src"].endswith("b.jpg") for i in items)
 
 
 def test_load_reforma_fails_closed(tmp_path):
@@ -409,3 +412,27 @@ def test_load_reforma_fails_closed(tmp_path):
     p.write_text(json.dumps({"products": [{"handle": "a", "skus": ["123456"]}]}), encoding="utf-8")
     with pytest.raises(pg.Alarm):
         pg.load_reforma(str(p))
+
+
+_CP1252_HARNESS = """
+import importlib.util, json, sys, types
+spec = importlib.util.spec_from_file_location("pg", sys.argv[1])
+pg = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(pg)
+pg.load_sync = lambda: types.SimpleNamespace(DEFAULT_ONEDRIVE=".", PICTURES_NAME="Pictures")
+def fake_plan(*_a, **_k):
+    print(json.dumps({"folder": "Trendcarpet - Mattor - Dywan Łódź ł"}, ensure_ascii=False))
+    print("stderr ł", file=sys.stderr)
+    return 0
+pg.cmd_plan_or_sync = fake_plan
+sys.argv = ["pictures_godkanda.py", "plan"]
+sys.exit(pg.main())
+"""
+
+
+def test_main_survives_cp1252_console():
+    env = dict(os.environ, PYTHONIOENCODING="cp1252", PYTHONUTF8="0", PYTHONDONTWRITEBYTECODE="1")
+    r = subprocess.run([sys.executable, "-X", "utf8=0", "-c", _CP1252_HARNESS, os.path.join(HUB, "scripts", "pictures_godkanda.py")],
+                       capture_output=True, env=env)
+    assert r.returncode == 0, r.stderr.decode("cp1252", "replace")
+    assert rb"\u0142" in r.stdout and b"Dywan" in r.stdout  # backslashreplace, not a crash

@@ -413,6 +413,11 @@ def cmd_free(args, roots):
             if not os.path.isdir(d):
                 continue
             ok, info = folder_synced(d)
+            nd = os.path.normcase(os.path.normpath(d))
+            for b in hub.load_batches():  # BESLUT PIN 2026-11-10: never +U a hub source (or its Removed sibling)
+                for src in (os.path.normcase(os.path.normpath(b.get("path") or "")),):
+                    if src and any(x == nd or x.startswith(nd + os.sep) or nd.startswith(x + os.sep) for x in (src, src + " removed")):
+                        ok, info = False, f"refused: overlaps hub source {b.get('id')}"
             if ok:
                 subprocess.run(["attrib", "+U", "-P", os.path.join(d, "*"), "/S", "/D"], check=True, capture_output=True)
             out.append({"folder": d, "freed": ok, "status": info})

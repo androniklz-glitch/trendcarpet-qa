@@ -9,6 +9,7 @@ import collections
 import ctypes
 import hashlib
 import importlib.util
+import io
 import json
 import os
 import subprocess
@@ -321,6 +322,43 @@ def test_add_pin_failure_is_ok_with_warning(server, monkeypatch):
     assert r.status_code == 200 and r.json()["status"] == "ok"
     assert "disk borta" in r.json()["batch"]["storage_warning"]["pin_error"]
     assert str(b) in saved_paths()
+
+
+def cp1252_stdout(monkeypatch):
+    out = io.TextIOWrapper(io.BytesIO(), encoding="cp1252")  # like qa_watchdog.ps1's redirect without PYTHONUTF8
+    monkeypatch.setattr(sys, "stdout", out)
+    return out
+
+
+def test_add_pin_error_outside_cp1252_is_ok_with_warning(server, monkeypatch):
+    """Blind gate v3 R5: the [storage-gate] print after save_batches raised UnicodeEncodeError -> HTTP 400."""
+    pics, _outside = server
+    b = make_batch(pics, "26-11-10-emoji")
+
+    def boom(_p, reserved_bytes=0):
+        raise OSError("disk → borta \U0001F4A5")
+    monkeypatch.setattr(hatshop_server, "pin_batch_folder", boom)
+    out = cp1252_stdout(monkeypatch)
+    r = add(b, "26-11-10-emoji")
+    assert r.status_code == 200 and r.json()["status"] == "ok"
+    assert "\U0001F4A5" in r.json()["batch"]["storage_warning"]["pin_error"]
+    out.flush()
+    assert b"[storage-gate] added" in out.buffer.getvalue()
+
+
+def test_scan_continues_after_unencodable_log_line(env, monkeypatch):
+    pics, _outside = env
+    a, b = make_batch(pics, "a"), make_batch(pics, "b")
+    write_batches(("a", a), ("b", b))
+    calls = []
+    monkeypatch.setattr(hatshop_server, "pin_batch_folder",
+                        lambda p, reserved_bytes=0: calls.append(p) or ("fel → \U0001F4A5" if p == str(a) else ""))
+    out = cp1252_stdout(monkeypatch)
+    hatshop_server.storage_scan_once()
+    assert calls == [str(a), str(b)]  # the first batch's log line did not abort the scan
+    assert "\U0001F4A5" in hatshop_server._STORAGE_WARNINGS["a"]["pin_error"]
+    out.flush()
+    assert b"[storage-gate] a:" in out.buffer.getvalue() and b"[storage-gate] b:" in out.buffer.getvalue()
 
 
 def test_add_inside_pictures_pins_and_warning_is_admin_only(server, tmp_path):

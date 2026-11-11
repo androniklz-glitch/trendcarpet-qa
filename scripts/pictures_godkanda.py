@@ -11,8 +11,8 @@ list = ALARM). A product in several batches gets ONE folder (key = SKU, else the
 date so they never collide.
 The target is a copy, never a hub source: the run refuses (exit 3) if any batches_config path lies inside it or inside
 Pictures\\QA-hubb Borttagna, and `free` (+U) refuses hub sources (sharepoint_sync.free_refusal). Sources are read only,
-never freed. Idempotent: unchanged files are skipped by stat signature, a changed source overwrites its copy (sha256 checked
-after copy), a copy edited at the target is left alone and reported as conflict.
+never freed. Idempotent: unchanged files are skipped by stat signature, a changed source overwrites its copy (temp name + sha256
+check + os.replace; a killed run's *.godk-tmp is removed next sync), a copy edited at the target is left alone and reported as conflict.
 Mirror (CEO "ja ta bort removed automatiskt och rensa removed till separat mapp"): a copy whose image left the selection
 (Removed, or batch unpublished) is MOVED, never deleted, to Pictures\\QA-hubb Borttagna\\<same relative path> (sha256
 before == after), and moved back when the image returns; product folders that become empty are removed (rmdir only).
@@ -70,6 +70,7 @@ MIN_FREE_GB = 20
 ATTR_PINNED, ATTR_UNPINNED = 0x80000, 0x100000
 ATTR_CLOUD_ONLY = 0x1000 | 0x40000 | 0x400000  # OFFLINE | RECALL_ON_OPEN | RECALL_ON_DATA_ACCESS: data not on disk
 PIN_ALARM_RUNS = 3
+TMP_SUFFIX = ".godk-tmp"  # copy_atomic's temp name next to the target file (4.11 N2)
 LOCK_STALE_S = 30 * 60  # a lock older than this (or of a dead pid) is stale (4.10 gate point 1)
 
 # (category, batch-id needles, product needles); first hit wins. Product text = product id + display name + colour.
@@ -503,14 +504,35 @@ def sync_item(it, target, latest, dry_run):
             return "conflict"  # a file we did not write
         status = "adopted"
     else:
-        os.makedirs(lp(os.path.dirname(dst)), exist_ok=True)
-        shutil.copy2(lp(it["src"]), lp(dst))
-    if sha256(dst) != digest:
-        raise OSError(f"hash mismatch after copy: {dst}")
+        copy_atomic(it["src"], dst, digest)
     append_manifest(latest, {"ts": now_iso(), "dest_rel": it["dest_rel"],
                              "kind": it["kind"], "batch": it["batch"], "src": it["src"], "sha256": digest,
                              "src_sig": s_sig, "dst_sig": sig(dst), **pkey(it)})
     return status
+
+
+def copy_atomic(src, dst, digest):
+    """Copy to <dst>.godk-tmp in the same folder, check sha256, then os.replace: a run killed mid-copy never leaves a half
+    file under the real name (4.11 N2: no manifest entry -> 'conflict' on every later run). clean_tmp removes leftovers."""
+    tmp = dst + TMP_SUFFIX
+    os.makedirs(lp(os.path.dirname(dst)), exist_ok=True)
+    shutil.copy2(lp(src), lp(tmp))
+    if sha256(tmp) != digest:
+        os.remove(lp(tmp))
+        raise OSError(f"hash mismatch after copy: {dst}")
+    os.replace(lp(tmp), lp(dst))
+
+
+def clean_tmp(target, dry_run):
+    """Our own *.godk-tmp leftovers of a killed run under target (names only, no file is read); removed unless dry_run."""
+    found = []
+    for dirpath, _dirs, names in os.walk(lp(target)) if os.path.isdir(lp(target)) else ():
+        for n in names:
+            if n.lower().endswith(TMP_SUFFIX):
+                found.append(os.path.join(dirpath, n))
+                if not dry_run:
+                    os.remove(os.path.join(dirpath, n))
+    return found
 
 
 def pkey(it):
@@ -519,7 +541,8 @@ def pkey(it):
 
 def move_back(items, latest, target, borttagna, dry_run):
     """Planned items whose copy sits in Borttagna: moved back when that file still equals the current source (sha256);
-    otherwise 'recopy' (sync_item copies afresh from the source, the stale Borttagna file stays)."""
+    otherwise 'recopy' (sync_item copies afresh from the source, the stale Borttagna file stays). A freed/cloud-only file
+    is never read (4.11 N1: reading hydrates it, or Errno 22 stops the whole sync, also in plan): 'recopy'."""
     out = []
     for it in items:
         prev = latest.get(it["dest_rel"].lower())
@@ -527,7 +550,8 @@ def move_back(items, latest, target, borttagna, dry_run):
             continue
         b_path = dest_path(borttagna, prev["borttagen_rel"])
         dst = dest_path(target, it["dest_rel"])
-        if not os.path.isfile(lp(b_path)) or os.path.exists(lp(dst)) or sha256(b_path) != sha256(it["src"]):
+        if (not os.path.isfile(lp(b_path)) or os.path.exists(lp(dst)) or is_cloud(b_path) or is_cloud(it["src"])
+                or sha256(b_path) != sha256(it["src"])):
             out.append({"dest_rel": it["dest_rel"], "status": "recopy"})
             continue
         if dry_run:
@@ -611,8 +635,7 @@ def mirror_removed(latest, items, target, borttagna, ok_batch_ids, live_batch_id
             continue
         src = dest_path(target, e["dest_rel"])
         dst = dest_path(borttagna, e["dest_rel"])
-        a = file_attrs(src)
-        if a is not None and a & (ATTR_UNPINNED | ATTR_CLOUD_ONLY):
+        if is_cloud(src):
             # Freed (+U) or cloud-only copy: reading it for the sha check fails (Errno 22, INCIDENT 1.6). Pin it (-U +P,
             # stays local) and move it on a later run once hydrated; alarm only after PIN_ALARM_RUNS runs in a row (4.10 A).
             k = e["dest_rel"].lower()
@@ -682,6 +705,12 @@ def file_attrs(path):
     return None if a == 0xFFFFFFFF else a
 
 
+def is_cloud(path):
+    """Freed (+U) or cloud-only: reading it hydrates the file or fails with Errno 22 (INCIDENT 1.6)."""
+    a = file_attrs(path)
+    return a is not None and bool(a & (ATTR_UNPINNED | ATTR_CLOUD_ONLY))
+
+
 def pin_local(path):
     """attrib -U +P: OneDrive downloads the file and keeps it local (the inverse of `free`)."""
     subprocess.run(["attrib", "-U", "+P", path], check=True, capture_output=True)
@@ -740,6 +769,7 @@ def cmd_plan_or_sync(ss, pictures, target, borttagna, dry_run, allow_mass=False)
     latest = load_manifest()
     items, products, brand_alarms = build_plan(records, target, known_folders(latest))
     cats, brands, status_n, errors = {}, {}, {}, []
+    tmp_left = clean_tmp(target, dry_run)
     try:
         back = move_back(items, latest, target, borttagna, dry_run)
     except OSError as exc:
@@ -792,6 +822,7 @@ def cmd_plan_or_sync(ss, pictures, target, borttagna, dry_run, allow_mass=False)
                "max_path_len": max((len(os.path.join(target, it["dest_rel"])) for it in items), default=0),
                "moved": len(mirror["moved"]), "would_move": len(mirror["would_move"]), "held": len(mirror["held"]),
                "pinned": len(mirror["pinned"]), "move_back": n_back, "brand_alarms": len(brand_alarms),
+               ("tmp_found" if dry_run else "tmp_removed"): len(tmp_left),
                "reforma_excluded": {"batches": sorted({h["batch"] for h in ref_hits if h["product"] is None}),
                                     "products": sum(1 for h in ref_hits if h["product"] is not None),
                                     "files": sum(h["files"] or 0 for h in ref_hits)},
@@ -862,6 +893,7 @@ def cmd_verify(ss, target, borttagna):
 def cmd_restore(ss, target, prefix, dry_run):
     guard_target(ss, target)
     latest, out, code = load_manifest(), [], 0
+    clean_tmp(target, dry_run)
     for e in list(latest.values()):
         if not is_active(e) or not e["dest_rel"].lower().startswith(prefix.lower()):
             continue
@@ -871,10 +903,7 @@ def cmd_restore(ss, target, prefix, dry_run):
             code = 3
             continue
         if not dry_run:
-            os.makedirs(lp(os.path.dirname(dst)), exist_ok=True)
-            shutil.copy2(lp(e["src"]), lp(dst))
-            if sha256(dst) != e["sha256"]:
-                raise OSError(f"hash mismatch after restore: {dst}")
+            copy_atomic(e["src"], dst, e["sha256"])
             append_manifest(latest, {**e, "ts": datetime.datetime.now().isoformat(timespec="seconds"), "dst_sig": sig(dst)})
         out.append({"dest_rel": e["dest_rel"], "status": "would_restore" if dry_run else "restored"})
     print(json.dumps({"restore": out}, ensure_ascii=False))

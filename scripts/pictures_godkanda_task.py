@@ -1,7 +1,7 @@
 """Scheduled run of pictures_godkanda.py (Koordinator 4.9, 2026-11-11: "QA-hubb Godkända" must follow the hub without a manual
 sync): `sync` (mass-move guard kept, never --allow-mass-move), then `verify` after every sync that ran (also exit 1/3/124); only
 exit 4 (lock held = another run) skips verify and is not a failure. Registered as Windows task AgentHome-QaHubGodkanda (agent-home
-scripts/startup/register-qa-hub-godkanda.ps1), every 30 min, limit 25 min, cwd = hub dir.
+scripts/startup/register-qa-hub-godkanda.ps1) via pictures_godkanda_launch.py, every 30 min, limit 25 min, cwd = hub dir.
 Log dir ~/qa-hub-backup/pictures-godkanda/task/: runs.log (one line per run), last-sync.json / last-verify.json (stdout+stderr
 of the last run that ran; a skip never overwrites them), alarm.log + ALARM.json while failing, skip-since.txt while skipping.
 ALARM also when skips last > SKIP_ALARM_S in a row, or on any exception in this wrapper (pythonw shows nothing otherwise).
@@ -93,19 +93,17 @@ def main():
 
 
 def guarded_main():
-    """Any exception -> ALARM.json + alarm.log + exit 1 (4.10 gate point 2)."""
+    """Any exception -> ALARM.json + alarm.log + exit 1 (4.10 gate point 2). When LOG_DIR itself is unwritable the error
+    propagates to pictures_godkanda_launch.py, which writes its fallback alarm (4.11 N4)."""
     started = now()
     try:
         return main()
     except Exception as exc:  # noqa: BLE001 - the task must never fail silently under pythonw
-        try:
-            os.makedirs(LOG_DIR, exist_ok=True)
-            tb = traceback.format_exc()[-2000:]
-            log("runs.log", f"{started} ERROR wrapper {type(exc).__name__}: {str(exc)[:300]}")
-            raise_alarm(started, {"wrapper_error": f"{type(exc).__name__}: {exc}", "traceback": tb},
-                        f"wrapper error {type(exc).__name__}: {str(exc)[:300]}")
-        except Exception:  # noqa: BLE001
-            pass
+        os.makedirs(LOG_DIR, exist_ok=True)
+        tb = traceback.format_exc()[-2000:]
+        log("runs.log", f"{started} ERROR wrapper {type(exc).__name__}: {str(exc)[:300]}")
+        raise_alarm(started, {"wrapper_error": f"{type(exc).__name__}: {exc}", "traceback": tb},
+                    f"wrapper error {type(exc).__name__}: {str(exc)[:300]}")
         return 1
 
 if __name__ == "__main__":

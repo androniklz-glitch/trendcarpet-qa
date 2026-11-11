@@ -16,8 +16,10 @@ after copy), a copy edited at the target is left alone and reported as conflict.
 Mirror (CEO "ja ta bort removed automatiskt och rensa removed till separat mapp"): a copy whose image left the selection
 (Removed, or batch unpublished) is MOVED, never deleted, to Pictures\\QA-hubb Borttagna\\<same relative path> (sha256
 before == after), and moved back when the image returns; product folders that become empty are removed (rmdir only).
-Copies of a live batch that failed its gate are held, never moved. More than max(50, 10 %) moves at once is refused unless
---allow-mass-move. Every move is logged in moves.jsonl, every copy/move in manifest.jsonl (~/qa-hub-backup/pictures-godkanda/).
+Copies of a live batch that failed its gate are held, never moved. A freed (+U) or cloud-only copy is pinned (attrib -U +P)
+and moved on a later run once local; ALARM only after 3 runs in a row (pin_holds.json). A product already in the target
+keeps its folder when a newer batch titles it differently (manifest product_key / '(SKU)'). More than max(50, 10 %) moves at
+once is refused unless --allow-mass-move. Every move is logged in moves.jsonl, every copy/move in manifest.jsonl (~/qa-hub-backup/pictures-godkanda/).
 
 Commands (hub python, cwd = hub dir):
   plan                dry-run: products + files + GB per brand and category, Removed excluded, ALARM batches, Reforma
@@ -28,7 +30,7 @@ Commands (hub python, cwd = hub dir):
   restore <dest-prefix> [--dry-run]   copy back from the hub source when its sha256 equals the manifest
   free                +U on product folders OneDrive reports as uploaded (target only)
   reforma-scan        read-only: every published batch, every Reforma hit (strong = excluded) + weak model-word matches
-Exit: 0 OK, 1 copy error, 2 usage, 3 ALARM, 4 lock held."""
+Exit: 0 OK, 1 copy error, 2 usage, 3 ALARM, 4 lock held (a dead pid's or > 30 min old lock is removed, logged)."""
 import argparse
 import ctypes
 import datetime
@@ -66,6 +68,9 @@ IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".tif", ".tiff", ".gif", ".avif"
 MAX_PATH = 255
 MIN_FREE_GB = 20
 ATTR_PINNED, ATTR_UNPINNED = 0x80000, 0x100000
+ATTR_CLOUD_ONLY = 0x1000 | 0x40000 | 0x400000  # OFFLINE | RECALL_ON_OPEN | RECALL_ON_DATA_ACCESS: data not on disk
+PIN_ALARM_RUNS = 3
+LOCK_STALE_S = 30 * 60  # a lock older than this (or of a dead pid) is stale (4.10 gate point 1)
 
 # (category, batch-id needles, product needles); first hit wins. Product text = product id + display name + colour.
 CATEGORIES = [
@@ -246,10 +251,34 @@ def stars_by_key(ratings):
     return {k: sum(v) / len(v) for k, v in acc.items()}
 
 
-def build_plan(records, target):
+FOLDER_SKU_RE = re.compile(r"\((IK\d{9}|2\d{5}|26O\d{9})\)", re.I)
+
+
+def known_folders(latest):
+    """{'by_key': {product key: folder_rel}, 'by_src': {source path lower: folder_rel}} from the ACTIVE manifest copies
+    (covers excluded). Key = the stored product_key, else the '(SKU)' in the folder name; several folders for one key ->
+    the one with most copies. Lets a known product keep its folder when a newer batch titles it differently (4.10 B)."""
+    count, by_src = {}, {}
+    for e in latest.values():
+        if not is_active(e) or e.get("kind") == "cover":
+            continue
+        folder = os.path.dirname(e["dest_rel"])
+        skus = FOLDER_SKU_RE.findall(os.path.basename(folder))
+        key = e.get("product_key") or (skus[-1].upper() if skus else "")
+        if key:
+            c = count.setdefault(key, {})
+            c[folder] = c.get(folder, 0) + 1
+        by_src[e["src"].lower()] = folder
+    by_key = {k: max(sorted(c), key=lambda f: c[f]) for k, c in count.items()}
+    return {"by_key": by_key, "by_src": by_src}
+
+
+def build_plan(records, target, known=None):
     """records: dicts {batch, product, shots:[{src, filename, gold}], stars:{key: mean}}. Returns (items, products,
-    brand_alarms). items: {src, dest_rel, batch, kind}. One folder per product key under <brand>\\<category>; a key whose
-    records give no brand or two brands is excluded and reported. Cover = best mean stars, then gold, then newest batch."""
+    brand_alarms). items: {src, dest_rel, batch, kind, product_key}. One folder per product key under <brand>\\<category>; a
+    key whose records give no brand or two brands is excluded and reported. Cover = best mean stars, then gold, then newest
+    batch. known (known_folders): a product already in the target keeps its folder (same brand + category) instead of the
+    newest batch's title, so a re-titled batch (even case only) never renames it into Borttagna (4.10 order B)."""
     products, brand_alarms = {}, []
     for r in sorted(records, key=lambda r: (batch_date(r["batch"]), r["batch"]["id"]), reverse=True):
         p, sku = r["product"], sku_for(r["product"])
@@ -280,23 +309,34 @@ def build_plan(records, target):
             del products[key]
         else:
             e["brand"] = next(iter(e["brands"]))
-    items, used = [], {}
+    items, used = [], set()
+    for key, e in sorted(products.items()) if known else ():
+        kf = known["by_key"].get(key)
+        if not kf:
+            hits = [known["by_src"][f["src"].lower()] for f in e["files"] if f["src"].lower() in known["by_src"]]
+            kf = max(sorted(set(hits)), key=hits.count) if hits else None
+        if kf and os.path.dirname(kf).lower() == os.path.join(e["brand"], e["category"]).lower() and kf.lower() not in used:
+            e["folder_rel"] = kf
+            used.add(kf.lower())
     name_count = {}
     for e in products.values():
         nk = (e["brand"], e["category"], e["folder"].lower())
         name_count[nk] = name_count.get(nk, 0) + 1
     for key, e in sorted(products.items()):
-        folder = e["folder"]
-        col = clean_component(str(e.get("color") or ""), 30) if e.get("color") else ""
-        if name_count[(e["brand"], e["category"], folder.lower())] > 1 and col and col.lower() not in folder.lower():
-            folder = f"{folder} {col}"  # same name, different colour: "Black River Legacy Trucker Khaki", not "(2)"
-        folder_rel = os.path.join(e["brand"], e["category"], folder)
-        # Two product keys with the same display folder (same name, no SKU): suffix the later one.
-        n = used.get(folder_rel.lower(), 0)
-        used[folder_rel.lower()] = n + 1
-        if n:
-            folder_rel = f"{folder_rel} ({n + 1})"
-        e["folder_rel"] = folder_rel
+        if "folder_rel" not in e:
+            folder = e["folder"]
+            col = clean_component(str(e.get("color") or ""), 30) if e.get("color") else ""
+            if name_count[(e["brand"], e["category"], folder.lower())] > 1 and col and col.lower() not in folder.lower():
+                folder = f"{folder} {col}"  # same name, different colour: "Black River Legacy Trucker Khaki", not "(2)"
+            base = folder_rel = os.path.join(e["brand"], e["category"], folder)
+            # Two product keys with the same display folder (same name, no SKU), or a name a known product holds: suffix.
+            n = 1
+            while folder_rel.lower() in used:
+                n += 1
+                folder_rel = f"{base} ({n})"
+            used.add(folder_rel.lower())
+            e["folder_rel"] = folder_rel
+        folder_rel = e["folder_rel"]
         names = set()
         room = MAX_PATH - len(os.path.join(target, folder_rel)) - 1
         for f in e["files"]:
@@ -306,11 +346,12 @@ def build_plan(records, target):
             while name.lower() in names:
                 name, i = f"{base}_{i}{ext.lower()}", i + 1
             names.add(name.lower())
-            items.append({"src": f["src"], "dest_rel": os.path.join(folder_rel, name), "batch": f["batch"], "kind": "image"})
+            items.append({"src": f["src"], "dest_rel": os.path.join(folder_rel, name), "batch": f["batch"], "kind": "image",
+                          "product_key": key})
         imgs = [f for f in e["files"] if os.path.splitext(f["src"])[1].lower() in IMAGE_EXTS]
         if imgs:
             best = max(imgs, key=lambda f: (f["stars"], f.get("gold", False), f["date"]))
-            items.append({"src": best["src"], "batch": best["batch"], "kind": "cover",
+            items.append({"src": best["src"], "batch": best["batch"], "kind": "cover", "product_key": key,
                           "dest_rel": os.path.join(folder_rel, "00_omslag" + os.path.splitext(best["src"])[1].lower())})
         e["count"] = len(e["files"])
     return items, products, brand_alarms
@@ -468,8 +509,12 @@ def sync_item(it, target, latest, dry_run):
         raise OSError(f"hash mismatch after copy: {dst}")
     append_manifest(latest, {"ts": now_iso(), "dest_rel": it["dest_rel"],
                              "kind": it["kind"], "batch": it["batch"], "src": it["src"], "sha256": digest,
-                             "src_sig": s_sig, "dst_sig": sig(dst)})
+                             "src_sig": s_sig, "dst_sig": sig(dst), **pkey(it)})
     return status
+
+
+def pkey(it):
+    return {"product_key": it["product_key"]} if it.get("product_key") else {}
 
 
 def move_back(items, latest, target, borttagna, dry_run):
@@ -495,7 +540,8 @@ def move_back(items, latest, target, borttagna, dry_run):
         if after != before:
             raise OSError(f"hash mismatch after move back: {dst}")
         append_manifest(latest, {"ts": now_iso(), "dest_rel": it["dest_rel"], "kind": it["kind"], "batch": it["batch"],
-                                 "src": it["src"], "sha256": after, "src_sig": sig(it["src"]), "dst_sig": sig(dst)})
+                                 "src": it["src"], "sha256": after, "src_sig": sig(it["src"]), "dst_sig": sig(dst),
+                                 **pkey(it)})
         append_move({"ts": now_iso(), "action": "back", "from": b_path, "to": dst, "sha256_before": before,
                      "sha256_after": after, "reason": "tillbaka i hubbens urval"})
         prune_empty_dirs(os.path.dirname(b_path), borttagna)
@@ -530,11 +576,12 @@ def mirror_removed(latest, items, target, borttagna, ok_batch_ids, live_batch_id
                    reforma_batches=(), reforma_srcs=()):
     """Active manifest copies no longer planned (covers included) move to Borttagna at the same relative path, when their
     batch was collected without alarm or is no longer live. A live batch that is alarmed/skipped is HELD. Reforma copies are
-    held and raise an alarm (they must never sit in a shared folder, nor go to Borttagna). Never deletes a file."""
+    held and raise an alarm (they must never sit in a shared folder, nor go to Borttagna). A freed/cloud-only candidate is
+    pinned and held to a later run ("pinned"). Never deletes a file."""
     planned = {it["dest_rel"].lower() for it in items}
     ok, live, ref_b = set(ok_batch_ids), set(live_batch_ids), set(reforma_batches)
     ref_s = {s.lower() for s in reforma_srcs}
-    res = {"moved": [], "would_move": [], "held": [], "alarms": []}
+    res = {"moved": [], "would_move": [], "held": [], "pinned": [], "alarms": []}
     active = [e for e in latest.values() if is_active(e)]
     cands = []
     for e in sorted(active, key=lambda e: e["dest_rel"].lower()):
@@ -556,12 +603,30 @@ def mirror_removed(latest, items, target, borttagna, ok_batch_ids, live_batch_id
                                                          "--allow-mass-move)"})
         res["would_move"] = [r for _e, r in cands]
         return res
+    holds = {} if dry_run else load_pin_holds()
+    new_holds = {}
     for e, row in cands:
         if dry_run:
             res["would_move"].append(row)
             continue
         src = dest_path(target, e["dest_rel"])
         dst = dest_path(borttagna, e["dest_rel"])
+        a = file_attrs(src)
+        if a is not None and a & (ATTR_UNPINNED | ATTR_CLOUD_ONLY):
+            # Freed (+U) or cloud-only copy: reading it for the sha check fails (Errno 22, INCIDENT 1.6). Pin it (-U +P,
+            # stays local) and move it on a later run once hydrated; alarm only after PIN_ALARM_RUNS runs in a row (4.10 A).
+            k = e["dest_rel"].lower()
+            n = new_holds[k] = holds.get(k, 0) + 1
+            try:
+                pin_local(src)
+                pin = "pinned"
+            except (OSError, subprocess.CalledProcessError) as exc:
+                pin = f"pin failed: {str(exc)[:120]}"
+            res["pinned"].append({**row, "runs": n, "pin": pin})
+            if n >= PIN_ALARM_RUNS:
+                res["alarms"].append({"batch": e["batch"], "message": f"still cloud-only after {n} runs in a row, not moved to "
+                                                                      f"{BORTTAGNA_NAME}: {e['dest_rel']} ({pin})"})
+            continue
         if os.path.exists(lp(dst)):  # an older removal of the same path: keep both, the old one untouched
             stem, ext = os.path.splitext(dst)
             dst = f"{stem}_{datetime.datetime.now():%y%m%d%H%M}{ext}"
@@ -585,7 +650,41 @@ def mirror_removed(latest, items, target, borttagna, ok_batch_ids, live_batch_id
                                  "src": e["src"], "state": "borttagen", "borttagen_rel": os.path.relpath(dst, borttagna),
                                  "reason": row["reason"], "sha256": before or e.get("sha256"), "status": status})
         res["moved"].append({**row, "status": status})
+    if not dry_run and new_holds != holds:
+        save_pin_holds(new_holds)
     return res
+
+
+def pin_holds_file():
+    return os.path.join(os.path.dirname(MANIFEST_FILE), "pin_holds.json")
+
+
+def load_pin_holds():
+    """{dest_rel lower: consecutive runs held as cloud-only}; a copy not held in a run drops out (counter resets)."""
+    try:
+        with open(pin_holds_file(), encoding="utf-8") as f:
+            return {str(k): int(v) for k, v in json.load(f).items()}
+    except (OSError, ValueError, AttributeError):
+        return {}
+
+
+def save_pin_holds(holds):
+    os.makedirs(os.path.dirname(pin_holds_file()), exist_ok=True)
+    with open(pin_holds_file(), "w", encoding="utf-8", newline="\n") as f:
+        json.dump(holds, f, ensure_ascii=False, indent=1)
+
+
+def file_attrs(path):
+    """Win32 attributes without opening the file (no hydration); None when missing or not on Windows."""
+    if os.name != "nt":
+        return None
+    a = ctypes.WinDLL("kernel32", use_last_error=True).GetFileAttributesW(lp(path))
+    return None if a == 0xFFFFFFFF else a
+
+
+def pin_local(path):
+    """attrib -U +P: OneDrive downloads the file and keeps it local (the inverse of `free`)."""
+    subprocess.run(["attrib", "-U", "+P", path], check=True, capture_output=True)
 
 
 def readme_text(products):
@@ -638,8 +737,8 @@ def cmd_plan_or_sync(ss, pictures, target, borttagna, dry_run, allow_mass=False)
     guard_target(ss, target)
     guard_target(ss, borttagna)
     batches, records, alarms, removed, skipped, ref_hits = collect(ss, pictures, target)
-    items, products, brand_alarms = build_plan(records, target)
     latest = load_manifest()
+    items, products, brand_alarms = build_plan(records, target, known_folders(latest))
     cats, brands, status_n, errors = {}, {}, {}, []
     try:
         back = move_back(items, latest, target, borttagna, dry_run)
@@ -663,7 +762,7 @@ def cmd_plan_or_sync(ss, pictures, target, borttagna, dry_run, allow_mass=False)
             if not dry_run:
                 break
         status_n[st] = status_n.get(st, 0) + 1
-    mirror = {"moved": [], "would_move": [], "held": [], "alarms": []}
+    mirror = {"moved": [], "would_move": [], "held": [], "pinned": [], "alarms": []}
     if not errors:
         bad_ids = {a["batch"] for a in alarms} | {s["batch"] for s in skipped}
         ok_ids = {b["id"] for b in batches} - bad_ids
@@ -692,7 +791,7 @@ def cmd_plan_or_sync(ss, pictures, target, borttagna, dry_run, allow_mass=False)
                "errors": errors, "merged_products": len(merged),
                "max_path_len": max((len(os.path.join(target, it["dest_rel"])) for it in items), default=0),
                "moved": len(mirror["moved"]), "would_move": len(mirror["would_move"]), "held": len(mirror["held"]),
-               "move_back": n_back, "brand_alarms": len(brand_alarms),
+               "pinned": len(mirror["pinned"]), "move_back": n_back, "brand_alarms": len(brand_alarms),
                "reforma_excluded": {"batches": sorted({h["batch"] for h in ref_hits if h["product"] is None}),
                                     "products": sum(1 for h in ref_hits if h["product"] is not None),
                                     "files": sum(h["files"] or 0 for h in ref_hits)},
@@ -703,7 +802,7 @@ def cmd_plan_or_sync(ss, pictures, target, borttagna, dry_run, allow_mass=False)
     print(json.dumps({"removed_per_batch": removed}, ensure_ascii=False))
     print(json.dumps({"reforma_hits": [{k: v for k, v in h.items() if k != "srcs"} for h in ref_hits]}, ensure_ascii=False))
     print(json.dumps({"brand_alarms": brand_alarms[:50]}, ensure_ascii=False))
-    for k in ("moved", "would_move", "held"):
+    for k in ("moved", "would_move", "held", "pinned"):
         print(json.dumps({k: mirror[k][:50]}, ensure_ascii=False))
     print(json.dumps({"move_back": [b for b in back if b["status"] != "recopy"][:50]}, ensure_ascii=False))
     if not dry_run and not errors:
@@ -803,6 +902,75 @@ def cmd_free(ss, target):
     return 0
 
 
+def pid_alive(pid):
+    """True while a process with this pid runs (Windows: OpenProcess + GetExitCodeProcess == STILL_ACTIVE)."""
+    if os.name != "nt":
+        try:
+            os.kill(pid, 0)
+            return True
+        except OSError:
+            return False
+    k32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    h = k32.OpenProcess(0x1000, False, pid)  # PROCESS_QUERY_LIMITED_INFORMATION
+    if not h:
+        return False
+    try:
+        code = ctypes.c_ulong()
+        return bool(k32.GetExitCodeProcess(h, ctypes.byref(code))) and code.value == 259
+    finally:
+        k32.CloseHandle(h)
+
+
+def read_lock():
+    """{pid, started, ts} of the lock file (old format = bare pid, age from mtime); None when unreadable."""
+    try:
+        with open(LOCK_FILE, encoding="utf-8") as f:
+            raw = f.read().strip()
+        mtime = os.path.getmtime(LOCK_FILE)
+    except OSError:
+        return None
+    try:
+        d = json.loads(raw)
+        d = d if isinstance(d, dict) else {"pid": int(d)}
+    except ValueError:
+        d = {"pid": int(raw)} if raw.isdigit() else {}
+    d.setdefault("ts", mtime)
+    return d
+
+
+def acquire_lock():
+    """O_EXCL lock with pid + start time. A lock left by a killed run (pid dead, or older than LOCK_STALE_S) is removed
+    and logged ("stale lock removed" on stderr) so a timeout/kill/reboot never turns every later run into a skip."""
+    for attempt in (1, 2):
+        try:
+            fd = os.open(LOCK_FILE, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
+            d = read_lock()
+            if attempt == 2 or d is None:
+                return False
+            age = datetime.datetime.now().timestamp() - float(d.get("ts") or 0)
+            if pid_alive(int(d.get("pid") or 0)) and age <= LOCK_STALE_S:
+                return False
+            try:
+                os.remove(LOCK_FILE)
+            except OSError:
+                return False
+            print(json.dumps({"stale_lock_removed": {**d, "age_s": int(age)}}, ensure_ascii=False), file=sys.stderr)
+            continue
+        os.write(fd, json.dumps({"pid": os.getpid(), "started": now_iso(),
+                                 "ts": datetime.datetime.now().timestamp()}).encode())
+        os.close(fd)
+        return True
+    return False
+
+
+def release_lock():
+    """Removes the lock only while it is still ours (a stale-lock removal by a later run must not be undone)."""
+    d = read_lock()
+    if d is not None and int(d.get("pid") or 0) == os.getpid():
+        os.remove(LOCK_FILE)
+
+
 def main():
     for stream in (sys.stdout, sys.stderr):  # a cp1252 console must never crash on a product name (gate v5 R5)
         stream.reconfigure(errors="backslashreplace")
@@ -812,22 +980,18 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--allow-mass-move", action="store_true", help="allow more than max(50, 10 %%) moves to Borttagna in one sync")
     args = ap.parse_args()
-    ss = load_sync()
-    pictures = os.path.join(ss.DEFAULT_ONEDRIVE, ss.PICTURES_NAME)
-    target = os.path.join(pictures, TARGET_NAME)
-    borttagna = os.path.join(pictures, BORTTAGNA_NAME)
     if args.cmd == "restore" and not args.prefix:
         print("restore needs <dest-prefix>", file=sys.stderr)
         return 2
-    if args.cmd in ("sync", "restore", "free"):
-        try:
-            fd = os.open(LOCK_FILE, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-            os.write(fd, str(os.getpid()).encode())
-            os.close(fd)
-        except FileExistsError:
-            print(f"lock held: {LOCK_FILE}", file=sys.stderr)
-            return 4
+    locking = args.cmd in ("sync", "restore", "free")
+    if locking and not acquire_lock():
+        print(f"lock held: {LOCK_FILE}", file=sys.stderr)
+        return 4
     try:
+        ss = load_sync()
+        pictures = os.path.join(ss.DEFAULT_ONEDRIVE, ss.PICTURES_NAME)
+        target = os.path.join(pictures, TARGET_NAME)
+        borttagna = os.path.join(pictures, BORTTAGNA_NAME)
         if args.cmd in ("plan", "sync"):
             return cmd_plan_or_sync(ss, pictures, target, borttagna, dry_run=args.cmd == "plan",
                                     allow_mass=args.allow_mass_move)
@@ -842,9 +1006,8 @@ def main():
         print(json.dumps({"ALARM": str(exc)}, ensure_ascii=False))
         return 3
     finally:
-        if args.cmd in ("sync", "restore", "free"):
-            os.remove(LOCK_FILE)
-
+        if locking:
+            release_lock()
 
 if __name__ == "__main__":
     sys.exit(main())

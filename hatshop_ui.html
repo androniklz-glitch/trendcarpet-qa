@@ -2098,25 +2098,26 @@
       height: 56px;
       min-height: 56px;
       max-height: 56px;
-      padding: 0 18px;
+      padding: 0 12px;
       background: rgba(17, 19, 21, 0.96);
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 8px;
       flex-wrap: nowrap;
       z-index: 200;
     }
     .topbar-left, .topbar-center, .topbar-right {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 6px;
       min-width: 0;
     }
-    .topbar-left { flex: 0 1 auto; }
-    .topbar-center { flex: 1 1 auto; justify-content: center; }
+    .topbar-left { flex: 0 1 auto; min-width: 0; }
+    .topbar-center { flex: 1 0 auto; justify-content: flex-start; /* min-width: 0; overflow: hidden; */ }
     .topbar-right { flex: 0 0 auto; }
+    #subToolbarUndoGroup { flex: 0 0 auto; }
 
     .brand-tabs {
       display: inline-flex;
@@ -2132,9 +2133,9 @@
       background: transparent;
       border: none;
       color: #9CA3AF;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 600;
-      padding: 5px 10px;
+      padding: 4px 8px;
       border-radius: 6px;
       cursor: pointer;
       transition: all 120ms ease;
@@ -2154,6 +2155,7 @@
       display: inline-flex;
       align-items: center;
       min-width: 0;
+      flex-shrink: 1;
     }
     .batch-picker-btn {
       background: #181A1F;
@@ -2161,17 +2163,21 @@
       color: #F3F4F6;
       border-radius: 8px;
       height: 36px;
-      padding: 0 12px;
-      font-size: 13px;
+      padding: 0 9px;
+      font-size: 12px;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       cursor: pointer;
-      max-width: 340px;
-      min-width: 190px;
+      max-width: 260px;
+      min-width: 110px;
       transition: border-color 120ms ease, background 120ms ease;
       font-family: inherit;
+      flex-shrink: 1;
+    }
+    @media (max-width: 1420px) {
+      .batch-picker-btn { max-width: 195px; }
     }
     .batch-picker-btn:hover {
       border-color: rgba(255, 255, 255, 0.22);
@@ -2275,30 +2281,33 @@
     .editorial-status-bar {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       background: #181A1F;
       border: 1px solid rgba(255, 255, 255, 0.07);
       border-radius: 8px;
       padding: 3px 6px;
       white-space: nowrap;
+      flex-shrink: 0;
     }
     .status-filter-pills {
       display: inline-flex;
       align-items: center;
       gap: 2px;
+      flex-shrink: 0;
     }
     .status-pill-btn {
       background: transparent;
       border: none;
       color: #9CA3AF;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 600;
-      padding: 4px 8px;
+      padding: 3px 6px;
       border-radius: 6px;
       cursor: pointer;
       transition: all 120ms ease;
       font-family: inherit;
       white-space: nowrap;
+      flex-shrink: 0;
     }
     .status-pill-btn:hover { color: #F3F4F6; background: rgba(255, 255, 255, 0.05); }
     .status-pill-btn.active {
@@ -2306,31 +2315,40 @@
       color: #FFFFFF;
     }
     .editorial-progress-label {
-      font-size: 11.5px;
+      font-size: 11px;
       color: #9CA3AF;
       padding-left: 6px;
       border-left: 1px solid rgba(255, 255, 255, 0.08);
       font-weight: 500;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
     .editorial-progress-label b { color: #E5E7EB; font-weight: 700; }
+
+    @media (max-width: 1499px) {
+      .editorial-progress-label {
+        display: none;
+      }
+    }
 
     /* Right Primary Buttons */
     .editorial-top-btn {
       height: 34px;
-      padding: 0 11px;
+      padding: 0 9px;
       border-radius: 8px;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 600;
       background: #181A1F;
       border: 1px solid rgba(255, 255, 255, 0.1);
       color: #E5E7EB;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       cursor: pointer;
       white-space: nowrap;
       transition: all 120ms ease;
       font-family: inherit;
+      flex-shrink: 0;
     }
     .editorial-top-btn:hover {
       background: #22262E;
@@ -4514,6 +4532,13 @@
     }
 
     async function loadBatch(batchId, updateUrl = true) {
+      const lbModal = document.getElementById('lightboxModal');
+      if (lbModal && lbModal.classList.contains('active')) {
+        closeLightbox();
+      }
+      const prevProd = state.products && state.products[state.currentProductIndex];
+      if (prevProd) saveCurrentCommentDraft(prevProd.id);
+
       state.currentBatchId = batchId;
       const bSel = document.getElementById('batchSelect');
       if (bSel) bSel.value = batchId;
@@ -4555,6 +4580,9 @@
         renderAngleGrid();
         renderProductSidebar();
         renderProductView();
+        const targetProd = state.products && state.products[0];
+        // Restore commentDrafts for batch initial product
+        restoreCommentDraft(targetProd ? targetProd.id : null);
         if (typeof renderContactSheet === 'function') renderContactSheet();
         populateDropdowns();
         renderReportTable();
@@ -4568,6 +4596,8 @@
       } catch (err) {
         console.error('Error loading batch products:', err);
         showToast('⚠️ Kunde inte ladda mappen: ' + (err.message || 'Serverfel'), 'error');
+      } finally {
+        lbDraftPid = null;
       }
     }
 
@@ -4575,6 +4605,30 @@
       if (!pathStr) return '';
       const parts = String(pathStr).replace(/[\\\/]+$/, '').split(/[\\\/]/);
       return parts.pop() || '';
+    }
+
+    async function handleLoginRequired(res, rollbackFn) {
+      if (!res) return false;
+      if (res.status === 401) {
+        try {
+          const clone = typeof res.clone === 'function' ? res.clone() : res;
+          const data = await clone.json().catch(() => ({}));
+          if (data && data.login === true) {
+            showToast('Logga in via din personliga länk för att ändra.', 4000);
+            try {
+              if (typeof rollbackFn === 'function') {
+                await rollbackFn();
+              } else if (typeof reloadBatchProducts === 'function') {
+                await reloadBatchProducts();
+              }
+            } catch (rbErr) {
+              console.error('Error during 401 rollback:', rbErr);
+            }
+            return true;
+          }
+        } catch (e) {}
+      }
+      return false;
     }
 
     function escapeJsString(str) {
@@ -4635,6 +4689,7 @@
         return;
       }
       const key = `${productId}|${filename}`;
+      const prevRating = state.ratings[key];
       if (stars > 0) {
         state.ratings[key] = stars;
       } else {
@@ -4658,10 +4713,18 @@
             product_id: productId,
             filename: filename,
             stars: stars,
-            reviewer: state.reviewer,
-            auto_remove: false
+            reviewer: state.reviewer
           })
         });
+        if (await handleLoginRequired(res, async () => {
+          if (prevRating !== undefined) {
+            state.ratings[key] = prevRating;
+          } else {
+            delete state.ratings[key];
+          }
+          await fetchRatings();
+          updateAllRatingStars();
+        })) return;
         if (res.status === 403) {
           showToast('Skriv ditt namn i hubben först för att kunna sätta betyg.');
           return;
@@ -4782,6 +4845,7 @@
               items: Array.from(state.selectedShots)
             })
           });
+          if (await handleLoginRequired(res)) return;
           if (!res.ok) {
             const err = await res.json().catch(() => ({}));
             showToast('⚠️ ' + (err.message || 'Kunde inte skapa ZIP'));
@@ -4863,6 +4927,7 @@
             reviewer: state.reviewer
           })
         });
+        if (await handleLoginRequired(previewRes)) return;
         const preview = await previewRes.json().catch(() => ({}));
         if (!previewRes.ok || preview.status === 'error') {
           alert('Kunde inte förhandsgranska sammanslagning: ' + (preview.message || 'Okänt fel'));
@@ -4892,6 +4957,7 @@
             reviewer: state.reviewer
           })
         });
+        if (await handleLoginRequired(res)) return;
         const data = await res.json().catch(() => ({}));
         if (!res.ok || data.status === 'error') {
           alert('Kunde inte slå ihop: ' + (data.message || 'Okänt fel'));
@@ -5126,6 +5192,7 @@
             reviewer: state.reviewer || ''
           })
         });
+        if (await handleLoginRequired(res)) return;
         const data = await res.json().catch(() => ({}));
         if (!res.ok || data.status === 'error') {
           const msg = data.message || 'Kunde inte spara orsak';
@@ -5180,6 +5247,9 @@
             reviewer: state.reviewer || ''
           })
         });
+        if (await handleLoginRequired(res, async () => {
+          await reloadBatchProducts(productId);
+        })) return;
         const data = await res.json().catch(() => ({}));
         if (!res.ok || data.status === 'error') {
           showToast('⚠️ ' + (data.message || 'Kunde inte flytta ut bild'));
@@ -5229,6 +5299,9 @@
             reviewer: state.reviewer || ''
           })
         });
+        if (await handleLoginRequired(res, async () => {
+          await reloadBatchProducts();
+        })) return;
         const data = await res.json().catch(() => ({}));
         if (!res.ok || data.status === 'error') {
           showToast('⚠️ ' + (data.message || 'Kunde inte ångra'));
@@ -5323,6 +5396,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ batch_id: batch.id, onedrive_url: trimmed })
         });
+        if (await handleLoginRequired(res)) return;
         const data = await res.json();
         if (data.status === 'ok') {
           batch.onedrive_url = trimmed;
@@ -5420,6 +5494,9 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ batch_id: batch.id, published: willPublish, reviewer: state.reviewer })
         });
+        if (await handleLoginRequired(res, async () => {
+          await reloadBatchProducts();
+        })) return;
         const data = await res.json();
         if (data.status === 'ok') {
           batch.published = data.published;
@@ -5563,6 +5640,7 @@
             reviewer: state.reviewer
           })
         });
+        if (await handleLoginRequired(res)) return;
 
         let data;
         const cType = res.headers.get('content-type') || '';
@@ -5666,20 +5744,87 @@
       if (!ensureReviewerName()) return;
       data.reviewer = state.reviewer;
       data.updatedAt = new Date().toISOString();
+      const prevReview = state.reviews[productId] ? JSON.parse(JSON.stringify(state.reviews[productId])) : null;
       state.reviews[productId] = data;
       updateQAStats();
       renderReportTable();
 
       try {
-        await fetch(`/api/review?batch=${encodeURIComponent(state.currentBatchId)}`, {
+        const res = await fetch(`/api/review?batch=${encodeURIComponent(state.currentBatchId)}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ product_id: productId, data })
         });
+        if (await handleLoginRequired(res, async () => {
+          if (prevReview) {
+            state.reviews[productId] = prevReview;
+          } else {
+            delete state.reviews[productId];
+          }
+          await reloadBatchProducts(productId);
+        })) return;
         showToast('Sparat och synkat!');
       } catch (err) {
         console.error('Save to server error:', err);
       }
+    }
+
+    const commentDrafts = {};
+    let lbDraftPid = null;
+
+    function saveMainCommentDraft(pid) {
+      const targetPid = pid || (state.products && state.products[state.currentProductIndex]?.id);
+      if (!targetPid) return;
+      const inp = document.getElementById('newCommentInput');
+      const text = (inp && inp.value) || '';
+      if (text.trim()) {
+        commentDrafts[targetPid] = text;
+      } else {
+        delete commentDrafts[targetPid];
+      }
+    }
+
+    function restoreMainCommentDraft(pid) {
+      const targetPid = pid || (state.products && state.products[state.currentProductIndex]?.id);
+      const text = (targetPid && commentDrafts[targetPid]) || '';
+      const inp = document.getElementById('newCommentInput');
+      if (inp) inp.value = text;
+    }
+
+    function saveLightboxCommentDraft() {
+      if (!lbDraftPid) return;
+      const inp = document.getElementById('lbCommentInput');
+      const text = (inp && inp.value) || '';
+      if (text.trim()) {
+        commentDrafts[lbDraftPid] = text;
+      } else {
+        delete commentDrafts[lbDraftPid];
+      }
+    }
+
+    function restoreLightboxCommentDraft(pid) {
+      const text = (pid && commentDrafts[pid]) || '';
+      const inp = document.getElementById('lbCommentInput');
+      if (inp) inp.value = text;
+      lbDraftPid = pid || null;
+    }
+
+    function saveCurrentCommentDraft(pid) {
+      const mainProd = state.products && state.products[state.currentProductIndex];
+      const targetMainPid = pid || (mainProd ? mainProd.id : null);
+      if (targetMainPid) {
+        saveMainCommentDraft(targetMainPid);
+      } else {
+        saveMainCommentDraft();
+      }
+      const lbModal = document.getElementById('lightboxModal');
+      if (lbModal && lbModal.classList.contains('active')) {
+        saveLightboxCommentDraft();
+      }
+    }
+
+    function restoreCommentDraft(pid) {
+      restoreMainCommentDraft(pid);
     }
 
     function handleCommentKeydown(e) {
@@ -5700,6 +5845,9 @@
 
       const shotsToSend = commentSelectedShots.stage || [];
       inp.value = '';
+      delete commentDrafts[prod.id];
+      const lbInp = document.getElementById('lbCommentInput');
+      if (lbInp) lbInp.value = '';
 
       try {
         const res = await fetch(`/api/comment/add?batch=${encodeURIComponent(state.currentBatchId)}`, {
@@ -5712,6 +5860,11 @@
             shots: shotsToSend
           })
         });
+        if (await handleLoginRequired(res, () => {
+          inp.value = text;
+          commentDrafts[prod.id] = text;
+          if (lbInp) lbInp.value = text;
+        })) return;
         const data = await res.json();
         if (data.status === 'ok') {
           state.reviews = data.reviews;
@@ -6548,6 +6701,9 @@
     }
 
     function selectProductByIndex(idx, scrollMode = 'top') {
+      const prevProd = state.products && state.products[state.currentProductIndex];
+      if (prevProd) saveCurrentCommentDraft(prevProd.id);
+
       state.currentProductIndex = idx;
       state.compareRefKey = null;
       updateSidebarActive(idx);
@@ -6556,6 +6712,10 @@
       renderProductView();
       renderSubToolbar();
       preloadAdjacentProducts(idx);
+
+      const targetProd = state.products && state.products[idx];
+      // Restore commentDrafts for selected product
+      restoreCommentDraft(targetProd ? targetProd.id : null);
 
       // Update URL query parameter so sharing URL shares exact product
       try {
@@ -7092,6 +7252,9 @@
             resolved: targetState
           })
         });
+        if (await handleLoginRequired(res, async () => {
+          await reloadBatchProducts(productId);
+        })) return;
         const data = await res.json();
         if (data && data.status === 'ok' && data.reviews) {
           state.reviews = data.reviews;
@@ -7241,6 +7404,9 @@
             author: state.reviewer
           })
         });
+        if (await handleLoginRequired(res, async () => {
+          await reloadBatchProducts(productId);
+        })) return;
         const data = await res.json();
         if (data.status === 'ok') {
           state.reviews = data.reviews;
@@ -7268,6 +7434,9 @@
             reviewer: state.reviewer
           })
         });
+        if (await handleLoginRequired(res, async () => {
+          await reloadBatchProducts(productId);
+        })) return;
         if (res.status === 403) {
           const errData = await res.json().catch(() => ({}));
           showToast(errData.error || errData.message || 'Du kan bara ta bort dina egna kommentarer.');
@@ -7616,6 +7785,9 @@
             shots: shotsToSend
           })
         });
+        if (await handleLoginRequired(res, () => {
+          inp.value = text;
+        })) return;
         const data = await res.json();
         if (data.status === 'ok') {
           state.reviews = data.reviews;
@@ -7816,15 +7988,21 @@
       const file = event.target.files[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = async function(e) {
         try {
           const imported = JSON.parse(e.target.result);
-          Object.keys(imported).forEach(k => { state.reviews[k] = imported[k]; });
-          fetch(`/api/review?batch=${encodeURIComponent(state.currentBatchId)}`, {
+          const payloadReviews = Object.assign({}, state.reviews, imported);
+          const res = await fetch(`/api/review?batch=${encodeURIComponent(state.currentBatchId)}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ reviews: state.reviews })
+            body: JSON.stringify({ reviews: payloadReviews })
           });
+          if (await handleLoginRequired(res, async () => {
+            await reloadBatchProducts();
+          })) {
+            return;
+          }
+          Object.keys(imported).forEach(k => { state.reviews[k] = imported[k]; });
           updateQAStats();
           renderReportTable();
           renderAngleGrid();
@@ -8483,6 +8661,7 @@
 
     function openLightbox(url, title, productId = null, shotIdx = 0) {
       if (window._justDraggedGuide || window._isDraggingGuide) return;
+
       if (productId) {
         const pIdx = state.products.findIndex(p => p.id === productId);
         lbCurrentProductIndex = pIdx !== -1 ? pIdx : 0;
@@ -8511,8 +8690,15 @@
 
     function showLightboxProduct(prodIdx, shotIdx = 0) {
       if (state.products.length === 0) return;
+      if (lbDraftPid === null) {
+        saveMainCommentDraft();
+        const lbInp = document.getElementById('lbCommentInput');
+        if (lbInp) lbInp.value = '';
+      }
+      saveLightboxCommentDraft();
       lbCurrentProductIndex = (prodIdx + state.products.length) % state.products.length;
       const prod = state.products[lbCurrentProductIndex];
+      restoreLightboxCommentDraft(prod ? prod.id : null);
       const shots = getDisplayShots(prod);
       
       lbCurrentShotIndex = Math.max(0, Math.min(shotIdx, shots.length - 1));
@@ -8777,6 +8963,9 @@
       const shotKey = getShotKey(prod.id, lbCurrentShotIndex);
       const drawingsToSend = drawState.drawingsByProduct[shotKey] || [];
       inp.value = '';
+      if (prod && prod.id) delete commentDrafts[prod.id];
+      const stageInp = document.getElementById('newCommentInput');
+      if (stageInp) stageInp.value = '';
 
       try {
         const res = await fetch(`/api/comment/add?batch=${encodeURIComponent(state.currentBatchId)}`, {
@@ -8790,6 +8979,11 @@
             drawings: drawingsToSend
           })
         });
+        if (await handleLoginRequired(res, () => {
+          inp.value = text;
+          if (prod && prod.id) commentDrafts[prod.id] = text;
+          if (stageInp) stageInp.value = text;
+        })) return;
         const data = await res.json();
         if (data.status === 'ok') {
           state.reviews = data.reviews;
@@ -8851,9 +9045,14 @@
 
     function closeLightbox(e) {
       if (!e || e.target.id === 'lightboxModal' || e.target.classList.contains('lightbox-close-btn') || e.key === 'Escape') {
+        saveLightboxCommentDraft();
+        const lbInp = document.getElementById('lbCommentInput');
+        if (lbInp) lbInp.value = '';
+        lbDraftPid = null;
         const vid = document.getElementById('lightboxVideo');
         if (vid) { vid.pause(); vid.removeAttribute('src'); }
         document.getElementById('lightboxModal').classList.remove('active');
+        restoreMainCommentDraft();
         renderAngleGrid();
         renderReportTable();
       }
@@ -8963,6 +9162,13 @@
     function setBrandFilter(brand) {
       const allowedBrands = getAllowedBrands();
       if (brand && brand !== 'all' && !allowedBrands.has(brand)) return;
+      const lbModal = document.getElementById('lightboxModal');
+      if (lbModal && lbModal.classList.contains('active')) {
+        closeLightbox();
+      }
+      const prevProd = state.products && state.products[state.currentProductIndex];
+      if (prevProd) saveCurrentCommentDraft(prevProd.id);
+
       state.brandFilter = brand || 'all';
       renderBatchPopover();
 
@@ -8971,10 +9177,16 @@
         if (!cur || getBatchCompany(cur) !== state.brandFilter) {
           const firstMatch = (state.batches || []).find(b => getBatchCompany(b) === state.brandFilter);
           if (firstMatch) {
+            lbDraftPid = null;
             switchBatch(firstMatch.id);
+            return;
           }
         }
       }
+      const curProd = state.products && state.products[state.currentProductIndex];
+      // Restore commentDrafts for current brand filtered product
+      restoreCommentDraft(curProd ? curProd.id : null);
+      lbDraftPid = null;
     }
 
     function toggleBatchPopover(ev) {
@@ -9396,6 +9608,7 @@
       window.addEventListener('blur', stopHoldSpaceCompare);
 
       window.addEventListener('keydown', (e) => {
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
         // If typing in an input or textarea, handle Escape only
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) {
           if (e.key === 'Escape') {
@@ -9478,6 +9691,7 @@
             removeLightboxCurrentImage(e);
             return;
           }
+          return;
         }
 
         // 2. If Protocol Detail Modal is open
@@ -9506,6 +9720,7 @@
             setProtoStatus('angle_issue');
             return;
           }
+          return;
         }
 
         // 3. View & Drawer Shortcuts

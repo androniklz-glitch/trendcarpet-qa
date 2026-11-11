@@ -135,6 +135,7 @@
       white-space: nowrap;
       cursor: pointer;
       font-family: inherit;
+      min-height: 40px;
     }
     .m-brand-pill.active {
       background: rgba(255, 255, 255, 0.11);
@@ -1179,6 +1180,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      min-height: 40px;
     }
     .m-mini-btn:last-child { border-right: none; }
     .m-mini-btn.active-ok { background: rgba(16, 185, 129, 0.25); color: #34D399; }
@@ -1380,6 +1382,7 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      flex: 0 0 32px;
     }
     .m-popup-body {
       padding: 14px 18px;
@@ -1413,6 +1416,7 @@
       align-items: center;
       gap: 4px;
       transition: background 0.15s ease;
+      min-height: 40px;
     }
     .m-tag-chip:active {
       background: rgba(59, 130, 246, 0.3);
@@ -1978,7 +1982,7 @@
       <!-- Optional status toggle -->
       <label class="m-popup-status-checkbox">
         <input type="checkbox" id="mPopupMarkRedo">
-        <span>Markera samtidigt som: <b>Gör om (🔴)</b></span>
+        <span>Markera samtidigt som: <b>Justera (🔴)</b></span>
       </label>
     </div>
 
@@ -2036,7 +2040,7 @@
       <div class="zoom-action-buttons">
         <button class="zoom-act-btn ok" id="zoomBtnOk" onclick="setMobileStatus('approved')">✓ Godkänd</button>
         <button class="zoom-act-btn comment" id="zoomBtnComment" onclick="openCommentPopup()">💬 Kommentera</button>
-        <button class="zoom-act-btn redo" id="zoomBtnRedo" onclick="setMobileStatus('redo')">✕ Gör om</button>
+        <button class="zoom-act-btn redo" id="zoomBtnRedo" onclick="setMobileStatus('redo')">✕ Justera</button>
       </div>
     </div>
   </div>
@@ -2131,6 +2135,29 @@
         throw err;
       }
     };
+
+    async function checkMobileLoginRequired(res) {
+      if (res && res.status === 401) {
+        try {
+          const clone = typeof res.clone === 'function' ? res.clone() : res;
+          const data = await (typeof clone.json === 'function' ? Promise.resolve(clone.json()).catch(() => ({})) : Promise.resolve(clone.json || {}));
+          if (data && data.login === true) {
+            try {
+              showToast('Logga in via din personliga länk för att ändra.');
+            } catch (toastErr) {}
+            if (state.currentBatchId) {
+              const curProd = state.products && state.products[state.currentProductIndex];
+              const curProdId = curProd ? curProd.id : null;
+              try {
+                await loadBatch(state.currentBatchId, curProdId);
+              } catch (rollbackErr) {}
+            }
+            return true;
+          }
+        } catch (e) {}
+      }
+      return false;
+    }
 
     function withCacheBust(url, mtime) {
       if (!url) return '';
@@ -2502,6 +2529,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ batch_id: batch.id, published: willPublish, reviewer: state.reviewer })
         });
+        if (await checkMobileLoginRequired(res)) return;
         const data = await res.json();
         if (data.status === 'ok') {
           batch.published = data.published;
@@ -2606,6 +2634,7 @@
               items: Array.from(state.selectedShots)
             })
           });
+          if (await checkMobileLoginRequired(res)) return;
           if (!res.ok) {
             const err = await res.json().catch(() => ({}));
             showToast('⚠️ ' + (err.message || 'Kunde inte skapa ZIP'));
@@ -2677,6 +2706,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ batch_id: state.currentBatchId, onedrive_url: trimmed, reviewer: state.reviewer })
         }).then(async (r) => {
+          if (await checkMobileLoginRequired(r)) return;
           const d = await r.json().catch(() => ({}));
           if (!r.ok || d.status === 'error') {
             showToast('⚠️ ' + (d.message || 'Ogiltig OneDrive-länk'));
@@ -2855,11 +2885,14 @@
 
     async function submitRemoveReason(opId, reasonKey) {
       if (!state.currentBatchId || !opId) return;
-      activeRemoveReasonSelection = reasonKey || '';
-
+      const prevActiveSelection = activeRemoveReasonSelection;
       const inputEl = document.getElementById('removeReasonNoteInput');
       const note = inputEl ? inputEl.value : '';
       const statusEl = document.getElementById('removeReasonStatus');
+      const prevStatusText = statusEl ? statusEl.textContent : '';
+      const prevStatusColor = statusEl ? statusEl.style.color : '';
+
+      activeRemoveReasonSelection = reasonKey || '';
 
       document.querySelectorAll('.btn-reason-chip').forEach(btn => {
         if (btn.getAttribute('data-key') === reasonKey) {
@@ -2882,6 +2915,22 @@
             reviewer: state.reviewer || ''
           })
         });
+        if (await checkMobileLoginRequired(res)) {
+          activeRemoveReasonSelection = prevActiveSelection;
+          document.querySelectorAll('.btn-reason-chip').forEach(btn => {
+            btn.classList.remove('active');
+            btn.classList.remove('btn-primary');
+            if (prevActiveSelection && btn.getAttribute('data-key') === prevActiveSelection) {
+              btn.classList.add('active');
+              btn.classList.add('btn-primary');
+            }
+          });
+          if (statusEl) {
+            statusEl.textContent = prevStatusText;
+            statusEl.style.color = prevStatusColor;
+          }
+          return;
+        }
         const data = await res.json().catch(() => ({}));
         if (!res.ok || data.status === 'error') {
           const msg = data.message || 'Kunde inte spara orsak';
@@ -2938,6 +2987,7 @@
             reviewer: state.reviewer || ''
           })
         });
+        if (await checkMobileLoginRequired(res)) return;
         const data = await res.json().catch(() => ({}));
         if (!res.ok || data.status === 'error') {
           showToast('⚠️ ' + (data.message || 'Kunde inte flytta ut bild'));
@@ -2997,6 +3047,7 @@
             reviewer: state.reviewer || ''
           })
         });
+        if (await checkMobileLoginRequired(res)) return;
         const data = await res.json().catch(() => ({}));
         if (!res.ok || data.status === 'error') {
           showToast('⚠️ ' + (data.message || 'Kunde inte ångra'));
@@ -3155,7 +3206,8 @@
         const opt = document.createElement('option');
         opt.value = b.id;
         const cleanName = b.label || String(b.name || b.id).replace(/^(?:⚠️\s*\[Lagring\]\s*|🔒\s*\[Utkast\]\s*)+/g, '').trim();
-        opt.innerText = (b.published === false ? '🔒 ' : '') + cleanName;
+        const prefix = (b.storage_warning && state.isAdmin ? '⚠️ ' : '') + (b.published === false ? '🔒 ' : '');
+        opt.innerText = prefix + cleanName;
         select.appendChild(opt);
       });
       if (state.currentBatchId && listToUse.some(b => b.id === state.currentBatchId)) {
@@ -3237,10 +3289,10 @@
             product_id: productId,
             filename: filename,
             stars: stars,
-            reviewer: state.reviewer,
-            auto_remove: false
+            reviewer: state.reviewer
           })
         });
+        if (await checkMobileLoginRequired(res)) return;
         if (res.status === 403) {
           showToast('Skriv ditt namn i hubben först för att kunna sätta betyg.');
           return;
@@ -3465,7 +3517,7 @@
           resetText.innerHTML = `Status: <b style="color:#F59E0B;">🟡 Vinkelfel</b>${review.reviewer ? ' av ' + escapeHtml(review.reviewer) : ''}`;
         } else if (effStatus === 'redo') {
           resetBar.style.display = 'flex';
-          resetText.innerHTML = `Status: <b style="color:#F87171;">🔴 Gör om</b>${review.reviewer ? ' av ' + escapeHtml(review.reviewer) : (comments.length > 0 ? ' (Anmärkning finns)' : '')}`;
+          resetText.innerHTML = `Status: <b style="color:#F87171;">🔴 Justera</b>${review.reviewer ? ' av ' + escapeHtml(review.reviewer) : (comments.length > 0 ? ' (Anmärkning finns)' : '')}`;
         } else {
           resetBar.style.display = 'none';
         }
@@ -3579,6 +3631,7 @@
             reviewer: state.reviewer
           })
         });
+        if (await checkMobileLoginRequired(res)) return;
         const data = await res.json();
         if (data.status === 'ok') {
           state.reviews = data.reviews;
@@ -3587,7 +3640,7 @@
           if (document.getElementById('mobileZoomModal')?.classList.contains('active')) {
             updateZoomModalContent();
           }
-          showToast(`Status: ${newStatus === 'approved' ? '✓ Godkänd' : newStatus === 'redo' ? '✕ Gör om' : 'Återställd'}`);
+          showToast(`Status: ${newStatus === 'approved' ? '✓ Godkänd' : newStatus === 'redo' ? '✕ Justera' : 'Återställd'}`);
 
           if (newStatus === 'redo') {
             setTimeout(() => openCommentPopup(prod.id, 'redo'), 250);
@@ -3622,6 +3675,7 @@
             reviewer: state.reviewer
           })
         });
+        if (await checkMobileLoginRequired(res)) return;
         const data = await res.json();
         if (data && data.reviews) {
           state.reviews = data.reviews;
@@ -3803,6 +3857,7 @@
             resolved: targetState
           })
         });
+        if (await checkMobileLoginRequired(res)) return;
         const data = await res.json();
         if (data && data.status === 'ok' && data.reviews) {
           state.reviews = data.reviews;
@@ -3878,6 +3933,7 @@
             shots: shotsToSend
           })
         });
+        if (await checkMobileLoginRequired(res)) return;
         const data = await res.json();
         if (data.status === 'ok') {
           state.reviews = data.reviews;
@@ -4057,7 +4113,7 @@
           <div class="m-card-actions" onclick="event.stopPropagation()">
             <button class="m-mini-btn ${effStatus === 'approved' ? 'active-ok' : ''}" onclick="quickSetMobileStatus('${escapeJsString(prod.id)}', 'approved')" title="Godkänn">✓</button>
             <button class="m-mini-btn ${commentsCount > 0 ? 'active-comment' : ''}" onclick="openCommentPopup('${escapeJsString(prod.id)}')" title="Kommentera">💬 ${commentsCount > 0 ? commentsCount : ''}</button>
-            <button class="m-mini-btn ${effStatus === 'redo' ? 'active-redo' : ''}" onclick="quickSetMobileStatus('${escapeJsString(prod.id)}', 'redo')" title="Gör om">✕</button>
+            <button class="m-mini-btn ${effStatus === 'redo' ? 'active-redo' : ''}" onclick="quickSetMobileStatus('${escapeJsString(prod.id)}', 'redo')" title="Justera">✕</button>
           </div>
         `;
         container.appendChild(card);
@@ -4100,11 +4156,12 @@
             reviewer: state.reviewer
           })
         });
+        if (await checkMobileLoginRequired(res)) return;
         const data = await res.json();
         if (data.status === 'ok') {
           state.reviews = data.reviews;
           renderMobileGrid();
-          showToast(`Status: ${newStatus === 'approved' ? '✓ Godkänd' : newStatus === 'redo' ? '✕ Gör om' : 'Återställd'}`);
+          showToast(`Status: ${newStatus === 'approved' ? '✓ Godkänd' : newStatus === 'redo' ? '✕ Justera' : 'Återställd'}`);
 
           if (newStatus === 'redo') {
             setTimeout(() => openCommentPopup(productId, 'redo'), 250);
@@ -4136,7 +4193,7 @@
       const titleEl = document.getElementById('mCommentPopupTitle');
       const subEl = document.getElementById('mCommentPopupSub');
       if (titleEl) {
-        titleEl.innerText = context === 'redo' ? '🔴 Vad behöver göras om?' : '💬 Lämna anmärkning';
+        titleEl.innerText = context === 'redo' ? '🔴 Vad behöver justeras?' : '💬 Lämna anmärkning';
       }
       if (subEl) {
         subEl.innerText = `${prod.display_name || prod.model} (${prod.color || ''})`;
@@ -4249,12 +4306,13 @@
             shots: shotsToSend
           })
         });
+        if (await checkMobileLoginRequired(res)) return;
         const data = await res.json();
         if (data.status === 'ok') {
           state.reviews = data.reviews;
 
           if (markRedo && state.reviews[prodId]?.status !== 'redo') {
-            await fetch(`/api/status/set?batch=${encodeURIComponent(state.currentBatchId)}`, {
+            const redoRes = await fetch(`/api/status/set?batch=${encodeURIComponent(state.currentBatchId)}`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -4263,6 +4321,15 @@
                 reviewer: state.reviewer
               })
             });
+            if (await checkMobileLoginRequired(redoRes)) {
+              closeCommentPopup(true);
+              renderMobileProduct(false);
+              if (state.mobileView === 'grid') renderMobileGrid();
+              if (document.getElementById('mobileZoomModal')?.classList.contains('active')) {
+                updateZoomModalContent();
+              }
+              return;
+            }
             state.reviews[prodId].status = 'redo';
           }
 
@@ -4300,7 +4367,7 @@
           statusTag.innerHTML = `Status: <span style="color: #F59E0B; font-weight: 700;">🟡 Vinkelfel</span> ${review.reviewer ? '(' + escapeHtml(review.reviewer) + ')' : ''}`;
         } else if (effStatus === 'redo') {
           statusBar.style.display = 'flex';
-          statusTag.innerHTML = `Status: <span style="color: #F87171; font-weight: 700;">🔴 Gör om</span> ${review.reviewer ? '(' + escapeHtml(review.reviewer) + ')' : ''}`;
+          statusTag.innerHTML = `Status: <span style="color: #F87171; font-weight: 700;">🔴 Justera</span> ${review.reviewer ? '(' + escapeHtml(review.reviewer) + ')' : ''}`;
         } else {
           statusBar.style.display = 'none';
         }
@@ -4361,6 +4428,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ product_id: productId, comment_id: commentId, reviewer: state.reviewer })
         });
+        if (await checkMobileLoginRequired(res)) return;
         const data = await res.json().catch(() => ({}));
         if (res.ok && data.status === 'ok') {
           state.reviews = data.reviews;
@@ -4410,6 +4478,7 @@
             reviewer: state.reviewer
           })
         });
+        if (await checkMobileLoginRequired(res)) return;
         const data = await res.json();
         if (data.status === 'ok') {
           state.reviews = data.reviews;

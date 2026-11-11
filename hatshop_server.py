@@ -25,6 +25,7 @@ from PIL import Image
 _BATCHES_LOCK = threading.Lock()
 _RATINGS_LOCK = threading.Lock()
 _MERGE_LOCK = threading.Lock()
+_REVIEWS_LOCK = threading.RLock()
 
 PORT = 8092
 WORKSPACE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -486,31 +487,44 @@ def find_batch_by_path(batches, path):
 QA_DECISIONS_FILE = os.path.join(WORKSPACE_DIR, "qa_decisions.json")
 
 def sync_qa_decisions(batch_id=None, batch_reviews=None):
-    try:
-        data = {}
-        if os.path.exists(QA_DECISIONS_FILE):
+    with _REVIEWS_LOCK:
+        try:
+            data = {}
+            if os.path.exists(QA_DECISIONS_FILE):
+                try:
+                    with open(QA_DECISIONS_FILE, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                except Exception:
+                    data = {}
+            if batch_id and batch_reviews is not None:
+                data[batch_id] = batch_reviews
+            else:
+                for fn in os.listdir(REVIEWS_DIR):
+                    if fn.startswith("reviews_") and fn.endswith(".json"):
+                        b_id = fn[len("reviews_"):-len(".json")]
+                        try:
+                            with open(os.path.join(REVIEWS_DIR, fn), "r", encoding="utf-8") as rf:
+                                data[b_id] = json.load(rf)
+                        except Exception:
+                            # keep that batch's previous entries in data
+                            pass
+            tmp_file = QA_DECISIONS_FILE + ".tmp"
             try:
-                with open(QA_DECISIONS_FILE, "r", encoding="utf-8") as f:
-                    data = json.load(f)
+                os.makedirs(os.path.dirname(QA_DECISIONS_FILE), exist_ok=True)
+                with open(tmp_file, "w", encoding="utf-8") as f:
+                    json.dump(data, f, indent=2, ensure_ascii=False)
+                os.replace(tmp_file, QA_DECISIONS_FILE)
             except Exception:
-                data = {}
-        if batch_id and batch_reviews is not None:
-            data[batch_id] = batch_reviews
-        else:
-            for fn in os.listdir(REVIEWS_DIR):
-                if fn.startswith("reviews_") and fn.endswith(".json"):
-                    b_id = fn[len("reviews_"):-len(".json")]
+                if os.path.exists(tmp_file):
                     try:
-                        with open(os.path.join(REVIEWS_DIR, fn), "r", encoding="utf-8") as rf:
-                            data[b_id] = json.load(rf)
-                    except Exception:
+                        os.remove(tmp_file)
+                    except OSError:
                         pass
-        with open(QA_DECISIONS_FILE, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-        return True
-    except Exception as e:
-        print(f"Error syncing qa_decisions.json: {e}")
-        return False
+                raise
+            return True
+        except Exception as e:
+            print(f"Error syncing qa_decisions.json: {e}")
+            return False
 
 def get_review_file(batch_id):
     safe_id = re.sub(r'[^a-zA-Z0-9_\-]', '_', batch_id)
@@ -520,19 +534,13 @@ def load_reviews(batch_id):
     rf = get_review_file(batch_id)
     reviews_data = {}
     if os.path.exists(rf):
-        try:
-            with open(rf, "r", encoding="utf-8") as f:
-                reviews_data = json.load(f)
-        except Exception:
-            reviews_data = {}
+        with open(rf, "r", encoding="utf-8") as f:
+            reviews_data = json.load(f)
     else:
         legacy = os.path.join(REVIEWS_DIR, "hatshop_review_status.json")
         if batch_id == "26-08-28-hatshop-black-river" and os.path.exists(legacy):
-            try:
-                with open(legacy, "r", encoding="utf-8") as f:
-                    reviews_data = json.load(f)
-            except Exception:
-                reviews_data = {}
+            with open(legacy, "r", encoding="utf-8") as f:
+                reviews_data = json.load(f)
 
     safe_bid = str(batch_id or "").lower()
     auto_resolved_batches = [
@@ -551,13 +559,21 @@ def load_reviews(batch_id):
 
 def save_reviews(batch_id, data):
     rf = get_review_file(batch_id)
+    tmp_file = rf + ".tmp"
     try:
-        with open(rf, "w", encoding="utf-8") as f:
+        os.makedirs(os.path.dirname(rf), exist_ok=True)
+        with open(tmp_file, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
+        os.replace(tmp_file, rf)
         sync_qa_decisions(batch_id, data)
         return True
     except Exception as e:
         print(f"Error saving reviews: {e}")
+        if os.path.exists(tmp_file):
+            try:
+                os.remove(tmp_file)
+            except OSError:
+                pass
         return False
 
 def _extract_batch_id(batch_or_id):
@@ -2995,9 +3011,19 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             return True
         if batch.get("audience") == "assistant" and u and u.get("role") == "assistant":
             return True
-        if allow_direct and u is None and batch.get("audience") not in ("assistant", "none"):
+        if allow_direct and (u is not None or not load_users().get("enforce", False)) and batch.get("audience") not in ("assistant", "none"):
             return True
         return False
+
+    def send_reviews_corrupt_error(self):
+        self.send_response(500)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.end_headers()
+        self.wfile.write(json.dumps({
+            "status": "error",
+            "message": "Granskningsfilen kunde inte läsas, försök igen."
+        }, ensure_ascii=False).encode("utf-8"))
 
     def log_message(self, format, *args):
         msg = format % args
@@ -3201,7 +3227,11 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 
                 images = [f for f in os.listdir(base_dir) if os.path.isfile(os.path.join(base_dir, f)) and f.lower().endswith((".png", ".jpg", ".jpeg", ".webp"))]
                 images.sort()
-                reviews = load_reviews(batch_id)
+                try:
+                    reviews = load_reviews(batch_id)
+                except Exception:
+                    self.send_reviews_corrupt_error()
+                    return
 
                 for img in images:
                     name_stem = os.path.splitext(img)[0]
@@ -3354,7 +3384,11 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 for v_shots in (p0.get("variants") or {}).values():
                     for s in (v_shots or []):
                         s["is_studio_packshot"] = not bool(s.get("is_studio_packshot"))
-            reviews = load_reviews(batch["id"])
+            try:
+                reviews = load_reviews(batch["id"])
+            except Exception:
+                self.send_reviews_corrupt_error()
+                return
             payload = {
                 "ui_build": "v4",
                 "batch": batch,
@@ -3424,7 +3458,11 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_error(404, "Batch not found")
                 return
 
-            reviews = load_reviews(batch_id)
+            try:
+                reviews = load_reviews(batch_id)
+            except Exception:
+                self.send_reviews_corrupt_error()
+                return
             resp = json.dumps({"status": "ok", "reviews": reviews}, ensure_ascii=False).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
@@ -4024,29 +4062,35 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                                 norm_shots.add(mu.zfill(2))
                         shots = sorted(list(norm_shots))
 
-                current_reviews = load_reviews(batch_id)
-                if pid not in current_reviews:
-                    current_reviews[pid] = { "status": "pending", "flags": {}, "comments": [] }
+                with _REVIEWS_LOCK:
+                    try:
+                        current_reviews = load_reviews(batch_id)
+                    except Exception:
+                        self.send_reviews_corrupt_error()
+                        return
 
-                if "comments" not in current_reviews[pid]:
-                    current_reviews[pid]["comments"] = []
+                    if pid not in current_reviews:
+                        current_reviews[pid] = { "status": "pending", "flags": {}, "comments": [] }
 
-                drawings = body.get("drawings", [])
+                    if "comments" not in current_reviews[pid]:
+                        current_reviews[pid]["comments"] = []
 
-                new_comment = {
-                    "id": f"c_{int(datetime.datetime.now().timestamp()*1000)}",
-                    "author": author,
-                    "text": text,
-                    "shots": shots,
-                    "drawings": drawings,
-                    "time": datetime.datetime.now().strftime("%H:%M"),
-                    "resolved": False
-                }
-                current_reviews[pid]["comments"].append(new_comment)
-                current_reviews[pid]["reviewer"] = author
-                current_reviews[pid]["updatedAt"] = datetime.datetime.now().isoformat()
+                    drawings = body.get("drawings", [])
 
-                save_reviews(batch_id, current_reviews)
+                    new_comment = {
+                        "id": f"c_{int(datetime.datetime.now().timestamp()*1000)}",
+                        "author": author,
+                        "text": text,
+                        "shots": shots,
+                        "drawings": drawings,
+                        "time": datetime.datetime.now().strftime("%H:%M"),
+                        "resolved": False
+                    }
+                    current_reviews[pid]["comments"].append(new_comment)
+                    current_reviews[pid]["reviewer"] = author
+                    current_reviews[pid]["updatedAt"] = datetime.datetime.now().isoformat()
+
+                    save_reviews(batch_id, current_reviews)
                 resp = json.dumps({"status": "ok", "comment": new_comment, "reviews": current_reviews}).encode("utf-8")
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
@@ -4077,23 +4121,29 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 comment_id = body.get("comment_id")
                 reviewer = body.get("reviewer")
 
-                current_reviews = load_reviews(batch_id)
-                if pid in current_reviews and "comments" in current_reviews[pid]:
-                    c_to_del = next((c for c in current_reviews[pid]["comments"] if c.get("id") == comment_id), None)
-                    if c_to_del:
-                        u = self.current_user()
-                        if not can_delete_comment(self.is_admin_request(query, reviewer), u, reviewer, c_to_del.get("author")):
-                            self.send_response(403)
-                            self.send_header("Content-Type", "application/json; charset=utf-8")
-                            self.send_header("Access-Control-Allow-Origin", "*")
-                            self.end_headers()
-                            self.wfile.write(json.dumps({"error": "Du kan bara ta bort dina egna kommentarer."}, ensure_ascii=False).encode("utf-8"))
-                            return
+                with _REVIEWS_LOCK:
+                    try:
+                        current_reviews = load_reviews(batch_id)
+                    except Exception:
+                        self.send_reviews_corrupt_error()
+                        return
 
-                        current_reviews[pid]["comments"] = [
-                            c for c in current_reviews[pid]["comments"] if c.get("id") != comment_id
-                        ]
-                        save_reviews(batch_id, current_reviews)
+                    if pid in current_reviews and "comments" in current_reviews[pid]:
+                        c_to_del = next((c for c in current_reviews[pid]["comments"] if c.get("id") == comment_id), None)
+                        if c_to_del:
+                            u = self.current_user()
+                            if not can_delete_comment(self.is_admin_request(query, reviewer), u, reviewer, c_to_del.get("author")):
+                                self.send_response(403)
+                                self.send_header("Content-Type", "application/json; charset=utf-8")
+                                self.send_header("Access-Control-Allow-Origin", "*")
+                                self.end_headers()
+                                self.wfile.write(json.dumps({"error": "Du kan bara ta bort dina egna kommentarer."}, ensure_ascii=False).encode("utf-8"))
+                                return
+
+                            current_reviews[pid]["comments"] = [
+                                c for c in current_reviews[pid]["comments"] if c.get("id") != comment_id
+                            ]
+                            save_reviews(batch_id, current_reviews)
 
                 resp = json.dumps({"status": "ok", "reviews": current_reviews}).encode("utf-8")
                 self.send_response(200)
@@ -4126,20 +4176,26 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 emoji = body.get("emoji", "👍")
                 author = self.reviewer_name(body.get("author", "Anonym"))
 
-                current_reviews = load_reviews(batch_id)
-                if pid in current_reviews and "comments" in current_reviews[pid]:
-                    for c in current_reviews[pid]["comments"]:
-                        if c.get("id") == comment_id:
-                            reactions = c.setdefault("reactions", {})
-                            user_list = reactions.setdefault(emoji, [])
-                            if author in user_list:
-                                user_list.remove(author)
-                                if not user_list:
-                                    del reactions[emoji]
-                            else:
-                                user_list.append(author)
-                            break
-                    save_reviews(batch_id, current_reviews)
+                with _REVIEWS_LOCK:
+                    try:
+                        current_reviews = load_reviews(batch_id)
+                    except Exception:
+                        self.send_reviews_corrupt_error()
+                        return
+
+                    if pid in current_reviews and "comments" in current_reviews[pid]:
+                        for c in current_reviews[pid]["comments"]:
+                            if c.get("id") == comment_id:
+                                reactions = c.setdefault("reactions", {})
+                                user_list = reactions.setdefault(emoji, [])
+                                if author in user_list:
+                                    user_list.remove(author)
+                                    if not user_list:
+                                        del reactions[emoji]
+                                else:
+                                    user_list.append(author)
+                                break
+                        save_reviews(batch_id, current_reviews)
 
                 resp = json.dumps({"status": "ok", "reviews": current_reviews}).encode("utf-8")
                 self.send_response(200)
@@ -4172,27 +4228,33 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 has_resolved_arg = "resolved" in body
                 target_resolved = bool(body.get("resolved")) if has_resolved_arg else None
 
-                current_reviews = load_reviews(batch_id)
-                new_state = True
-                if pid in current_reviews:
-                    if comment_id == "legacy":
-                        if has_resolved_arg:
-                            new_state = target_resolved
-                        else:
-                            new_state = not bool(current_reviews[pid].get("notes_resolved", False))
-                        current_reviews[pid]["notes_resolved"] = new_state
-                    elif "comments" in current_reviews[pid]:
-                        for c in current_reviews[pid]["comments"]:
-                            if c.get("id") == comment_id:
-                                if has_resolved_arg:
-                                    new_state = target_resolved
-                                else:
-                                    new_state = not bool(c.get("resolved", False))
-                                c["resolved"] = new_state
-                                new_state = c["resolved"]
-                                break
-                    current_reviews[pid]["updatedAt"] = datetime.datetime.now().isoformat()
-                    save_reviews(batch_id, current_reviews)
+                with _REVIEWS_LOCK:
+                    try:
+                        current_reviews = load_reviews(batch_id)
+                    except Exception:
+                        self.send_reviews_corrupt_error()
+                        return
+
+                    new_state = True
+                    if pid in current_reviews:
+                        if comment_id == "legacy":
+                            if has_resolved_arg:
+                                new_state = target_resolved
+                            else:
+                                new_state = not bool(current_reviews[pid].get("notes_resolved", False))
+                            current_reviews[pid]["notes_resolved"] = new_state
+                        elif "comments" in current_reviews[pid]:
+                            for c in current_reviews[pid]["comments"]:
+                                if c.get("id") == comment_id:
+                                    if has_resolved_arg:
+                                        new_state = target_resolved
+                                    else:
+                                        new_state = not bool(c.get("resolved", False))
+                                    c["resolved"] = new_state
+                                    new_state = c["resolved"]
+                                    break
+                        current_reviews[pid]["updatedAt"] = datetime.datetime.now().isoformat()
+                        save_reviews(batch_id, current_reviews)
 
                 resp = json.dumps({"status": "ok", "resolved": new_state, "reviews": current_reviews}).encode("utf-8")
                 self.send_response(200)
@@ -4223,7 +4285,16 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             post_data = self.rfile.read(content_length)
             try:
                 review_data = json.loads(post_data.decode("utf-8"))
-                current_reviews = load_reviews(batch_id)
+            except Exception as e:
+                self.send_error(400, f"Invalid JSON: {e}")
+                return
+
+            with _REVIEWS_LOCK:
+                try:
+                    current_reviews = load_reviews(batch_id)
+                except Exception:
+                    self.send_reviews_corrupt_error()
+                    return
                 
                 curr_user = self.current_user()
                 reviewer_override = curr_user["name"] if curr_user and "name" in curr_user else None
@@ -4231,22 +4302,46 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 if "product_id" in review_data:
                     pid = review_data["product_id"]
                     new_data = review_data.get("data", {})
+                    if not isinstance(new_data, dict):
+                        new_data = {}
+
+                    # Strip client-sent reviewed_by and reviewed_at
+                    new_data.pop("reviewed_by", None)
+                    new_data.pop("reviewed_at", None)
+                    review_data.pop("reviewed_by", None)
+                    review_data.pop("reviewed_at", None)
+
+                    old_item = current_reviews.get(pid, {}) if isinstance(current_reviews.get(pid), dict) else {}
+                    old_status = str(old_item.get("status") or "").strip()
+
                     if pid in current_reviews and "comments" in current_reviews[pid] and "comments" not in new_data:
                         new_data["comments"] = current_reviews[pid]["comments"]
-                    rev_actor = reviewer_override or new_data.get("reviewer") or review_data.get("reviewer") or "Anonym"
-                    if reviewer_override:
-                        new_data["reviewer"] = reviewer_override
-                    elif "reviewer" not in new_data and review_data.get("reviewer"):
-                        new_data["reviewer"] = review_data["reviewer"]
+                    if "status" not in new_data and "status" in old_item:
+                        new_data["status"] = old_item["status"]
+                    if "flags" not in new_data and "flags" in old_item:
+                        new_data["flags"] = old_item["flags"]
+
+                    actor = reviewer_override or new_data.get("reviewer") or review_data.get("reviewer") or "Anonym"
+                    new_data["reviewer"] = actor
+
                     st_val = str(new_data.get("status") or "").strip()
                     now_iso = datetime.datetime.now().isoformat()
+
                     if st_val and st_val != "pending":
-                        new_data["reviewed_by"] = rev_actor
-                        new_data["reviewed_at"] = new_data.get("reviewed_at") or now_iso
-                        new_data.setdefault("updatedAt", now_iso)
+                        if st_val != old_status:
+                            new_data["reviewed_by"] = actor
+                            new_data["reviewed_at"] = now_iso
+                        else:
+                            if "reviewed_by" in old_item:
+                                new_data["reviewed_by"] = old_item["reviewed_by"]
+                            if "reviewed_at" in old_item:
+                                new_data["reviewed_at"] = old_item["reviewed_at"]
+                        new_data["updatedAt"] = now_iso
                     elif st_val == "pending":
                         new_data.pop("reviewed_by", None)
                         new_data.pop("reviewed_at", None)
+                        new_data["updatedAt"] = now_iso
+
                     current_reviews[pid] = new_data
                 elif "reviews" in review_data:
                     if not self.is_admin_request(query):
@@ -4267,9 +4362,6 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_header("Access-Control-Allow-Origin", "*")
                 self.end_headers()
                 self.wfile.write(resp)
-                return
-            except Exception as e:
-                self.send_error(400, f"Invalid JSON or save error: {e}")
                 return
 
         elif path == "/api/status/set":
@@ -4295,23 +4387,40 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                     self.send_error(400, "Missing product_id")
                     return
 
-                current_reviews = load_reviews(batch_id)
-                if pid not in current_reviews:
-                    current_reviews[pid] = { "status": status, "flags": {}, "comments": [] }
-                else:
-                    current_reviews[pid]["status"] = status
+                with _REVIEWS_LOCK:
+                    try:
+                        current_reviews = load_reviews(batch_id)
+                    except Exception:
+                        self.send_reviews_corrupt_error()
+                        return
 
-                now_iso = datetime.datetime.now().isoformat()
-                current_reviews[pid]["reviewer"] = reviewer
-                current_reviews[pid]["updatedAt"] = now_iso
-                if status and status != "pending":
-                    current_reviews[pid]["reviewed_by"] = reviewer
-                    current_reviews[pid]["reviewed_at"] = now_iso
-                else:
-                    current_reviews[pid].pop("reviewed_by", None)
-                    current_reviews[pid].pop("reviewed_at", None)
+                    old_item = current_reviews.get(pid, {}) if isinstance(current_reviews.get(pid), dict) else {}
+                    old_status = str(old_item.get("status") or "").strip()
 
-                save_reviews(batch_id, current_reviews)
+                    if pid not in current_reviews:
+                        current_reviews[pid] = { "status": status, "flags": {}, "comments": [] }
+                    else:
+                        current_reviews[pid]["status"] = status
+
+                    now_iso = datetime.datetime.now().isoformat()
+                    current_reviews[pid]["reviewer"] = reviewer
+                    current_reviews[pid]["updatedAt"] = now_iso
+
+                    st_val = str(status or "").strip()
+                    if st_val and st_val != "pending":
+                        if st_val != old_status:
+                            current_reviews[pid]["reviewed_by"] = reviewer
+                            current_reviews[pid]["reviewed_at"] = now_iso
+                        else:
+                            if "reviewed_by" in old_item:
+                                current_reviews[pid]["reviewed_by"] = old_item["reviewed_by"]
+                            if "reviewed_at" in old_item:
+                                current_reviews[pid]["reviewed_at"] = old_item["reviewed_at"]
+                    else:
+                        current_reviews[pid].pop("reviewed_by", None)
+                        current_reviews[pid].pop("reviewed_at", None)
+
+                    save_reviews(batch_id, current_reviews)
                 resp = json.dumps({"status": "ok", "reviews": current_reviews}, ensure_ascii=False).encode("utf-8")
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
@@ -4350,18 +4459,24 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                     self.send_error(400, "Missing product_id or flag")
                     return
 
-                current_reviews = load_reviews(batch_id)
-                if pid not in current_reviews:
-                    current_reviews[pid] = { "status": "pending", "flags": {}, "comments": [] }
+                with _REVIEWS_LOCK:
+                    try:
+                        current_reviews = load_reviews(batch_id)
+                    except Exception:
+                        self.send_reviews_corrupt_error()
+                        return
 
-                if "flags" not in current_reviews[pid]:
-                    current_reviews[pid]["flags"] = {}
+                    if pid not in current_reviews:
+                        current_reviews[pid] = { "status": "pending", "flags": {}, "comments": [] }
 
-                current_reviews[pid]["flags"][flag] = bool(value)
-                current_reviews[pid]["reviewer"] = reviewer
-                current_reviews[pid]["updatedAt"] = datetime.datetime.now().isoformat()
+                    if "flags" not in current_reviews[pid]:
+                        current_reviews[pid]["flags"] = {}
 
-                save_reviews(batch_id, current_reviews)
+                    current_reviews[pid]["flags"][flag] = bool(value)
+                    current_reviews[pid]["reviewer"] = reviewer
+                    current_reviews[pid]["updatedAt"] = datetime.datetime.now().isoformat()
+
+                    save_reviews(batch_id, current_reviews)
                 resp = json.dumps({"status": "ok", "reviews": current_reviews}, ensure_ascii=False).encode("utf-8")
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json; charset=utf-8")

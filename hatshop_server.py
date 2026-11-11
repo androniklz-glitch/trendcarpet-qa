@@ -2739,6 +2739,15 @@ def merge_gold_set_to_batch(source_batch, target_batch, product_id=None, dry_run
     if str(source_batch.get("id", "")).lower() == str(target_batch.get("id", "")).lower():
         raise ValueError("Käll- och målmapp är samma batch")
 
+    src_org = str(source_batch.get("org") or "cama").strip().lower()
+    dst_org = str(target_batch.get("org") or "cama").strip().lower()
+    src_id_l = str(source_batch.get("id", "")).lower()
+    dst_id_l = str(target_batch.get("id", "")).lower()
+    if src_org == "reforma" or dst_org == "reforma" or "reforma" in src_id_l or "reforma" in dst_id_l:
+        raise ValueError("Spärrad: Reforma-mappar får aldrig köras genom Trendcarpet/Hatshop Sajt-sammanslagning (strikt bolagsseparering).")
+    if src_org != dst_org:
+        raise ValueError(f"Spärrad: Källmapp ({src_org}) och målmapp ({dst_org}) tillhör olika bolag.")
+
     src_path = os.path.normpath(os.path.abspath(source_batch.get("path", "")))
     dst_path = os.path.normpath(os.path.abspath(target_batch.get("path", "")))
     if not os.path.isdir(src_path) or not os.path.isdir(dst_path):

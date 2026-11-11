@@ -1672,7 +1672,7 @@
     <header class="mobile-header">
       <div class="brand-wrap">
         <div class="brand-badge" style="display: inline-flex; align-items: center; gap: 5px;">
-          POCKET QA
+          <span id="mBrandBadgeText">POCKET QA</span>
           <span id="mHubStatusDot" style="width: 6px; height: 6px; border-radius: 50%; background: #10b981; box-shadow: 0 0 5px #10b981;" title="Online"></span>
         </div>
         <select id="mobileBatchSelect" class="batch-select-mobile" onchange="switchBatch(this.value)">
@@ -1710,7 +1710,7 @@
     </header>
 
     <!-- Brand Filter Pills Bar -->
-    <div class="mobile-brand-bar" id="mobileBrandBar">
+    <div class="mobile-brand-bar" id="mobileBrandBar" style="display: none;">
       <button type="button" class="m-brand-pill active" data-brand="all" onclick="setMobileBrandFilter('all')">Alla</button>
       <button type="button" class="m-brand-pill" data-brand="trendcarpet" onclick="setMobileBrandFilter('trendcarpet')">Trendcarpet</button>
       <button type="button" class="m-brand-pill" data-brand="reforma" onclick="setMobileBrandFilter('reforma')">Reforma</button>
@@ -2084,6 +2084,22 @@
       }
     }
 
+    function getMobileCeoQuerySuffix() {
+      if (typeof window === 'undefined' || !window.location) return '';
+      const hn = window.location.hostname;
+      const isLocalHost = (hn === '127.0.0.1' || hn === 'localhost' || hn === '192.168.2.33');
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlCeo = urlParams.get('ceo') || urlParams.get('all');
+      if (urlCeo === '0' || urlCeo === 'false') return '';
+      if (isLocalHost || urlCeo === '1' || urlCeo === 'true') return '&ceo=1';
+      try {
+        const stored = sessionStorage.getItem('qa_ceo');
+        if (stored === '0') return '';
+        if (stored === '1') return '&ceo=1';
+      } catch (e) {}
+      return '';
+    }
+
     // Bypass ngrok warning automatically & track hub reachability
     const _origFetch = window.fetch;
     window.fetch = async function(url, options = {}) {
@@ -2092,8 +2108,12 @@
       if (typeof options.headers === 'object' && !(options.headers instanceof Headers)) {
         options.headers['ngrok-skip-browser-warning'] = 'true';
       }
-      const urlStr = typeof url === 'string' ? url : (url && url.url ? url.url : '');
+      let urlStr = typeof url === 'string' ? url : (url && url.url ? url.url : '');
       const isApi = urlStr.includes('/api/');
+      if (isApi && typeof url === 'string' && getMobileCeoQuerySuffix() && !/[?&](ceo|all)=/.test(url)) {
+        url = url + (url.includes('?') ? '&' : '?') + 'ceo=1';
+        urlStr = url;
+      }
       try {
         const res = await _origFetch.call(this, url, options);
         if (isApi) {
@@ -2114,9 +2134,15 @@
 
     function withCacheBust(url, mtime) {
       if (!url) return '';
-      if (/[?&]v=/.test(url)) return url;
-      const v = Math.floor(mtime || 2);
-      return url + (url.includes('?') ? '&' : '?') + 'v=' + v;
+      let out = url;
+      if (!/[?&]v=/.test(out)) {
+        const v = Math.floor(mtime || 2);
+        out = out + (out.includes('?') ? '&' : '?') + 'v=' + v;
+      }
+      if (getMobileCeoQuerySuffix() && out.startsWith('/image/') && !/[?&](ceo|all)=/.test(out)) {
+        out = out + (out.includes('?') ? '&' : '?') + 'ceo=1';
+      }
+      return out;
     }
 
     function ensureProductsCacheBust(products) {
@@ -2136,8 +2162,8 @@
 
     function sizedUrl(url, w, mtime) {
       if (!url) return '';
-      const base = url + (url.includes('?') ? '&' : '?') + 'w=' + w;
-      return /[?&]v=/.test(base) ? base : (base + '&v=' + Math.floor(mtime || 2));
+      const base = withCacheBust(url, mtime);
+      return /[?&]w=/.test(base) ? base : (base + (base.includes('?') ? '&' : '?') + 'w=' + w);
     }
 
     function isVideoShot(shotOrUrl) {
@@ -2186,13 +2212,18 @@
     }
 
     function applyMobileRoleAndOrgVisibility() {
-      const isCama = (!state.userOrg || state.userOrg === 'cama');
+      const isReformaScoped = (state.userOrg === 'reforma' && (!state.isAdmin || state.viewAsViewer)) || state.viewOrg === 'reforma';
+      const isCama = !isReformaScoped && (!state.userOrg || state.userOrg === 'cama');
+      document.title = isReformaScoped ? 'Reforma QA' : 'Foto QA Pocket';
+      const badgeEl = document.getElementById('mBrandBadgeText');
+      if (badgeEl) badgeEl.textContent = isReformaScoped ? 'REFORMA QA' : 'POCKET QA';
       const quickWrap = document.getElementById('mCamaQuickReviewersWrap');
       if (quickWrap) quickWrap.style.display = isCama ? 'flex' : 'none';
       const descEl = document.getElementById('mNameModalDesc');
       if (descEl) descEl.innerText = isCama ? 'Välj ditt namn med ett klick eller skriv in det nedan:' : 'Skriv ditt namn nedan:';
       const odBtn = document.getElementById('mBtnOneDrive');
-      if (odBtn) odBtn.style.display = (isCama || state.isAdmin) ? 'flex' : 'none';
+      if (odBtn) odBtn.style.display = (isCama || (state.isAdmin && !state.viewAsViewer && state.viewOrg !== 'reforma')) ? 'flex' : 'none';
+      if (typeof syncMobileBrandBar === 'function') syncMobileBrandBar();
     }
 
     const ORG_NAMES = { cama: 'Trendcarpet/CaMa', reforma: 'Reforma' };
@@ -2215,6 +2246,7 @@
     }
 
     function switchOrgView(org) {
+      try { sessionStorage.setItem('qa_keep_view_org', (!org || org === 'all') ? '' : org); } catch (e) {}
       window.location.href = `/view?org=${encodeURIComponent(org)}&next=${encodeURIComponent('/mobile')}`;
     }
 
@@ -2289,19 +2321,27 @@
         }
 
         const paramBatch = urlParams.get('batch') || state.currentBatchId || '';
+        const paramBrandRaw = (urlParams.get('brand') || urlParams.get('company') || (urlParams.get('reforma') === '1' ? 'reforma' : '')).trim().toLowerCase();
         const urlCeo = urlParams.get('ceo') || urlParams.get('all');
         if (urlCeo === '1' || urlCeo === 'true') {
           sessionStorage.setItem('qa_ceo', '1');
         } else if (urlCeo === '0' || urlCeo === 'false') {
           sessionStorage.setItem('qa_ceo', '0');
         }
-        const isLocalHost = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost');
-        const storedCeo = sessionStorage.getItem('qa_ceo');
-        const ceoQuery = (storedCeo === '1' || (isLocalHost && storedCeo !== '0')) ? '&ceo=1' : '';
+        const ceoQuery = getMobileCeoQuerySuffix();
         const batchQuery = paramBatch ? `&batch=${encodeURIComponent(paramBatch)}` : '';
 
-        const res = await fetch(`/api/batches?reviewer=${encodeURIComponent(state.reviewer || '')}${batchQuery}${ceoQuery}`);
-        const data = await res.json();
+        let res = await fetch(`/api/batches?reviewer=${encodeURIComponent(state.reviewer || '')}${batchQuery}${ceoQuery}`);
+        let data = await res.json();
+        const keptViewOrg = (() => { try { return sessionStorage.getItem('qa_keep_view_org') || ''; } catch (e) { return ''; } })();
+        if (data.real_admin && !data.view_as_viewer && data.view_org && (data.view_org !== keptViewOrg || paramBrandRaw)) {
+          try {
+            sessionStorage.removeItem('qa_keep_view_org');
+            await _origFetch('/view?org=all', { cache: 'no-store' });
+            res = await fetch(`/api/batches?reviewer=${encodeURIComponent(state.reviewer || '')}${batchQuery}${ceoQuery}`, { cache: 'no-store' });
+            data = await res.json();
+          } catch (e) {}
+        }
         state.batches = data.batches || [];
         state.isAdmin = data.is_admin || false;
         state.canRemove = data.can_remove || state.isAdmin;
@@ -2309,13 +2349,14 @@
         state.serverUserName = data.user_name || '';
         updateAccountDisplay(data);
 
-        const camaQuickNames = ['Andro', 'Jesper', 'Amalia', 'Anton'];
+        const camaQuickNames = ['Andro', 'Andronik', 'Jesper', 'Amalia', 'Anton'];
+        const isCamaRev = Boolean(state.reviewer && camaQuickNames.some(n => n.toLowerCase() === state.reviewer.trim().toLowerCase()));
         if (data.view_as_viewer) {
           // admin viewer preview: keep the admin's own reviewer name
-        } else if (state.serverUserName && (!state.reviewer || (state.userOrg !== 'cama' && camaQuickNames.includes(state.reviewer)))) {
+        } else if (state.serverUserName && (!state.reviewer || (state.userOrg !== 'cama' && isCamaRev))) {
           state.reviewer = state.serverUserName;
           localStorage.setItem('hatshop_reviewer', state.reviewer);
-        } else if (state.userOrg === 'reforma' && (!state.reviewer || camaQuickNames.includes(state.reviewer))) {
+        } else if (state.userOrg === 'reforma' && (!state.reviewer || isCamaRev)) {
           state.reviewer = 'Reforma';
           localStorage.setItem('hatshop_reviewer', state.reviewer);
         }
@@ -2328,12 +2369,20 @@
           const nameModal = document.getElementById('nameModal');
           if (nameModal) nameModal.classList.remove('active');
         }
-        if (!state.mobileBrandFilter) state.mobileBrandFilter = 'all';
+        const allowedInitBrands = getAllowedMobileBrands();
+        if (paramBrandRaw && (paramBrandRaw === 'all' || allowedInitBrands.has(paramBrandRaw))) {
+          state.mobileBrandFilter = paramBrandRaw;
+        } else if (!state.mobileBrandFilter) {
+          state.mobileBrandFilter = 'all';
+        }
         populateMobileBatchSelect();
 
+        const brandPreferredBatch = (!paramBatch && state.mobileBrandFilter && state.mobileBrandFilter !== 'all')
+          ? (state.batches.find(b => getMobileBatchCompany(b) === state.mobileBrandFilter)?.id || '')
+          : '';
         const targetBatch = (paramBatch && state.batches.some(b => b.id === paramBatch))
           ? paramBatch
-          : (state.batches[0]?.id || '');
+          : (brandPreferredBatch || state.batches[0]?.id || '');
 
         if (targetBatch) {
           state.currentBatchId = targetBatch;
@@ -2349,9 +2398,20 @@
               renderMobileProduct();
             }
           }
+        } else {
+          state.currentBatchId = '';
+          state.products = [];
+          state.reviews = {};
+          renderMobileProduct(true);
+          const titleEl = document.getElementById('mModelTitle');
+          if (titleEl) titleEl.textContent = 'Inga publicerade mappar';
+          const carousel = document.getElementById('mobileCarousel');
+          if (carousel) carousel.innerHTML = '<div style="padding: 40px 16px; text-align: center; color: var(--text-dim); font-size: 15px; width: 100%;">Inga publicerade mappar tillgängliga för granskning just nu.</div>';
+          const gridEl = document.getElementById('mCardsGrid');
+          if (gridEl) gridEl.innerHTML = '<div style="padding: 40px 16px; text-align: center; color: var(--text-dim); font-size: 14px; grid-column: 1 / -1;">Inga publicerade mappar tillgängliga för granskning just nu.</div>';
         }
 
-        if (paramBatch && !state.batches.some(b => b.id === paramBatch)) {
+        if (paramBatch && targetBatch && !state.batches.some(b => b.id === paramBatch)) {
           const loadedBatchName = state.batches.find(b => b.id === targetBatch)?.name || state.batches[0]?.name || '';
           showToast(`Mappen "${paramBatch}" finns inte eller är ett privat utkast. Visar "${loadedBatchName}" i stället.`);
         }
@@ -3031,13 +3091,66 @@
       return 'trendcarpet';
     }
 
+    function getAllowedMobileBrands() {
+      const isMultiOrgAdmin = Boolean(state.isAdmin && !state.viewAsViewer && (!state.viewOrg || state.viewOrg === 'all'));
+      const effectiveOrg = isMultiOrgAdmin
+        ? 'all'
+        : ((state.viewOrg && state.viewOrg !== 'all') ? state.viewOrg : (state.userOrg || 'cama'));
+      if (effectiveOrg === 'reforma') return new Set(['reforma']);
+      if (effectiveOrg === 'cama') return new Set(['trendcarpet', 'hatshop']);
+      return new Set(['trendcarpet', 'reforma', 'hatshop']);
+    }
+
+    function syncMobileBrandBar() {
+      const bar = document.getElementById('mobileBrandBar');
+      const allowedBrands = getAllowedMobileBrands();
+      const isMultiOrgAdmin = Boolean(state.isAdmin && !state.viewAsViewer && (!state.viewOrg || state.viewOrg === 'all'));
+      const companiesPresent = new Set(
+        (state.batches || []).map(getMobileBatchCompany).filter(c => allowedBrands.has(c))
+      );
+      const hasMultipleOrgs = companiesPresent.has('reforma') && (companiesPresent.has('trendcarpet') || companiesPresent.has('hatshop'));
+      const showTabs = isMultiOrgAdmin ? (companiesPresent.size > 1 && hasMultipleOrgs || companiesPresent.size > 1) : (allowedBrands.size > 1 && companiesPresent.size > 1);
+
+      if (state.mobileBrandFilter && state.mobileBrandFilter !== 'all' && !companiesPresent.has(state.mobileBrandFilter)) {
+        state.mobileBrandFilter = 'all';
+      }
+
+      document.querySelectorAll('#mobileBrandBar .m-brand-pill').forEach(btn => {
+        const bKey = btn.dataset.brand;
+        let visible = false;
+        if (bKey === 'all') {
+          visible = showTabs && companiesPresent.size > 1;
+        } else if (bKey === 'reforma') {
+          visible = showTabs && allowedBrands.has('reforma') && isMultiOrgAdmin && companiesPresent.has('reforma');
+        } else {
+          visible = showTabs && allowedBrands.has(bKey) && companiesPresent.has(bKey);
+        }
+        btn.style.display = visible ? '' : 'none';
+        btn.classList.toggle('active', bKey === (state.mobileBrandFilter || 'all'));
+      });
+
+      if (bar) {
+        bar.style.display = showTabs ? '' : 'none';
+      }
+    }
+
     function populateMobileBatchSelect() {
+      syncMobileBrandBar();
       const select = document.getElementById('mobileBatchSelect');
       if (!select) return;
+      const allowedBrands = getAllowedMobileBrands();
+      const orgBatches = (state.batches || []).filter(b => allowedBrands.has(getMobileBatchCompany(b)));
       const filter = state.mobileBrandFilter || 'all';
       select.innerHTML = '';
-      const filtered = (state.batches || []).filter(b => filter === 'all' || getMobileBatchCompany(b) === filter);
-      const listToUse = filtered.length > 0 ? filtered : (state.batches || []);
+      const filtered = orgBatches.filter(b => filter === 'all' || getMobileBatchCompany(b) === filter);
+      const listToUse = filtered.length > 0 ? filtered : orgBatches;
+      if (listToUse.length === 0) {
+        const emptyOpt = document.createElement('option');
+        emptyOpt.value = '';
+        emptyOpt.innerText = 'Inga publicerade mappar';
+        select.appendChild(emptyOpt);
+        return;
+      }
       listToUse.forEach(b => {
         const opt = document.createElement('option');
         opt.value = b.id;
@@ -3051,10 +3164,9 @@
     }
 
     function setMobileBrandFilter(brand) {
+      const allowedBrands = getAllowedMobileBrands();
+      if (brand && brand !== 'all' && !allowedBrands.has(brand)) return;
       state.mobileBrandFilter = brand || 'all';
-      document.querySelectorAll('#mobileBrandBar .m-brand-pill').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.brand === state.mobileBrandFilter);
-      });
       populateMobileBatchSelect();
       if (state.mobileBrandFilter !== 'all') {
         const cur = (state.batches || []).find(b => b.id === state.currentBatchId);

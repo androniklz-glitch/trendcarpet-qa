@@ -18,7 +18,7 @@
     })();
   </script>
   <title>Foto- & Retusch-Hubb — Kvalitetsgranskning & Arkiv</title>
-  <link rel="icon" type="image/x-icon" href="/trendcarpet_qa.ico" />
+  <link id="hubFavicon" rel="icon" type="image/x-icon" href="/trendcarpet_qa.ico" />
   <link rel="manifest" href="/manifest.json" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2809,7 +2809,8 @@
   <header class="editorial-topbar">
     <!-- 1. Left: Brand Filter Tabs + Searchable Batch Popover -->
     <div class="topbar-left">
-      <div class="brand-tabs" id="editorialBrandTabs" role="tablist" aria-label="Varumärkesfilter">
+      <div id="editorialOrgBadge" style="display: none; align-items: center; padding: 4px 10px; border-radius: 7px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: #F3F4F6; text-transform: uppercase; white-space: nowrap;">Reforma QA</div>
+      <div class="brand-tabs" id="editorialBrandTabs" role="tablist" aria-label="Varumärkesfilter" style="display: none;">
         <button type="button" class="brand-tab-btn" data-brand="trendcarpet" onclick="setBrandFilter('trendcarpet')">Trendcarpet</button>
         <button type="button" class="brand-tab-btn" data-brand="reforma" onclick="setBrandFilter('reforma')">Reforma</button>
         <button type="button" class="brand-tab-btn" data-brand="hatshop" onclick="setBrandFilter('hatshop')">Hatshop</button>
@@ -3897,8 +3898,12 @@
       if (typeof options.headers === 'object' && !(options.headers instanceof Headers)) {
         options.headers['ngrok-skip-browser-warning'] = 'true';
       }
-      const urlStr = typeof url === 'string' ? url : (url && url.url ? url.url : '');
+      let urlStr = typeof url === 'string' ? url : (url && url.url ? url.url : '');
       const isApiCall = typeof urlStr === 'string' && urlStr.includes('/api/');
+      if (isApiCall && typeof url === 'string' && typeof getCeoQuerySuffix === 'function' && getCeoQuerySuffix() && !/[?&](ceo|all)=/.test(url)) {
+        url = url + (url.includes('?') ? '&' : '?') + 'ceo=1';
+        urlStr = url;
+      }
       try {
         const res = await _origFetch.call(this, url, options);
         if (isApiCall) {
@@ -3919,9 +3924,15 @@
 
     function withCacheBust(url, mtime) {
       if (!url) return '';
-      if (/[?&]v=/.test(url)) return url;
-      const v = Math.floor(mtime || 2);
-      return url + (url.includes('?') ? '&' : '?') + 'v=' + v;
+      let out = url;
+      if (!/[?&]v=/.test(out)) {
+        const v = Math.floor(mtime || 2);
+        out = out + (out.includes('?') ? '&' : '?') + 'v=' + v;
+      }
+      if (typeof getCeoQuerySuffix === 'function' && getCeoQuerySuffix() && out.startsWith('/image/') && !/[?&](ceo|all)=/.test(out)) {
+        out = out + (out.includes('?') ? '&' : '?') + 'ceo=1';
+      }
+      return out;
     }
 
     function ensureProductsCacheBust(products) {
@@ -4185,6 +4196,7 @@
     }
 
     function switchOrgView(org) {
+      try { sessionStorage.setItem('qa_keep_view_org', (!org || org === 'all') ? '' : org); } catch (e) {}
       window.location.href = `/view?org=${encodeURIComponent(org)}&next=${encodeURIComponent('/?desktop=1')}`;
     }
 
@@ -4208,30 +4220,48 @@
       window.location.href = '/logout';
     }
 
+    const REFORMA_FAVICON_DATA_URI = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23111315'/%3E%3Ctext x='16' y='22' font-family='sans-serif' font-size='18' font-weight='700' fill='%23F3F4F6' text-anchor='middle'%3ER%3C/text%3E%3C/svg%3E";
+
     function applyRoleAndOrgVisibility() {
-      const isCama = (!state.userOrg || state.userOrg === 'cama');
+      const isReformaScoped = (state.userOrg === 'reforma' && (!state.isAdmin || state.viewAsViewer)) || state.viewOrg === 'reforma';
+      const isCama = !isReformaScoped && (!state.userOrg || state.userOrg === 'cama');
+
+      document.title = isReformaScoped
+        ? 'Reforma QA — Kvalitetsgranskning'
+        : 'Foto- & Retusch-Hubb — Kvalitetsgranskning & Arkiv';
+      const fav = document.getElementById('hubFavicon');
+      if (fav) fav.href = isReformaScoped ? REFORMA_FAVICON_DATA_URI : '/trendcarpet_qa.ico';
+      const orgBadge = document.getElementById('editorialOrgBadge');
+      if (orgBadge) {
+        orgBadge.textContent = 'Reforma QA';
+        orgBadge.style.display = isReformaScoped ? 'inline-flex' : 'none';
+      }
+
       const quickWrap = document.getElementById('camaQuickReviewersWrap');
-      if (quickWrap) quickWrap.style.display = 'block';
+      if (quickWrap) quickWrap.style.display = isCama ? 'block' : 'none';
       const nameLbl = document.getElementById('initialNameLabel');
       if (nameLbl) nameLbl.innerText = isCama ? 'Eller skriv ditt förnamn:' : 'Skriv ditt namn:';
 
       const btnAddBatch = document.getElementById('btnAddBatchTop');
       if (btnAddBatch) btnAddBatch.style.display = state.isAdmin ? 'inline-flex' : 'none';
 
+      const batchIsReforma = state.currentBatch?.org === 'reforma';
       const odGroup = document.getElementById('onedriveActionGroup');
-      if (odGroup) odGroup.style.display = (isCama || state.isAdmin) ? 'inline-flex' : 'none';
+      if (odGroup) odGroup.style.display = (!batchIsReforma && (isCama || (state.isAdmin && !state.viewAsViewer && state.viewOrg !== 'reforma'))) ? 'inline-flex' : 'none';
 
       const btnEditOd = document.getElementById('btnEditOneDrive');
-      if (btnEditOd) btnEditOd.style.display = state.isAdmin ? 'inline-flex' : 'none';
+      if (btnEditOd) btnEditOd.style.display = (state.isAdmin && !batchIsReforma) ? 'inline-flex' : 'none';
 
       const tabCal = document.getElementById('tabBtnCalendar');
-      if (tabCal) tabCal.style.display = (isCama || state.isAdmin) ? 'inline-flex' : 'none';
+      if (tabCal) tabCal.style.display = (isCama || (state.isAdmin && !state.viewAsViewer && state.viewOrg !== 'reforma')) ? 'inline-flex' : 'none';
 
       const btnLocalTop = document.getElementById('btnOpenLocalFolderTop');
       if (btnLocalTop) btnLocalTop.style.display = state.isAdmin ? 'inline-flex' : 'none';
 
       const btnLocalProd = document.getElementById('btnOpenSelectedProdFolder');
       if (btnLocalProd) btnLocalProd.style.display = state.isAdmin ? 'inline-flex' : 'none';
+
+      if (typeof syncEditorialBrandTabs === 'function') syncEditorialBrandTabs();
     }
 
     function checkReviewerNameOnLoad() {
@@ -4293,10 +4323,18 @@
     }
 
     function getCeoQuerySuffix() {
-      const isLocalHost = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost');
-      const stored = sessionStorage.getItem('qa_ceo');
-      if (stored === '0') return '';
-      if (stored === '1' || isLocalHost) return '&ceo=1';
+      if (typeof window === 'undefined' || !window.location) return '';
+      const hn = window.location.hostname;
+      const isLocalHost = (hn === '127.0.0.1' || hn === 'localhost' || hn === '192.168.2.33');
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlCeo = urlParams.get('ceo') || urlParams.get('all');
+      if (urlCeo === '0' || urlCeo === 'false') return '';
+      if (isLocalHost || urlCeo === '1' || urlCeo === 'true') return '&ceo=1';
+      try {
+        const stored = sessionStorage.getItem('qa_ceo');
+        if (stored === '0') return '';
+        if (stored === '1') return '&ceo=1';
+      } catch (e) {}
       return '';
     }
 
@@ -4314,6 +4352,7 @@
         }
 
         const paramBatch = urlParams.get('batch') || state.currentBatchId || '';
+        const paramBrandRaw = (urlParams.get('brand') || urlParams.get('company') || (urlParams.get('reforma') === '1' ? 'reforma' : '')).trim().toLowerCase();
         const urlCeo = urlParams.get('ceo') || urlParams.get('all');
         if (urlCeo === '1' || urlCeo === 'true') {
           sessionStorage.setItem('qa_ceo', '1');
@@ -4323,8 +4362,17 @@
         const batchQuery = paramBatch ? `&batch=${encodeURIComponent(paramBatch)}` : '';
         const ceoQuery = getCeoQuerySuffix();
 
-        const res = await fetch(`/api/batches?reviewer=${encodeURIComponent(state.reviewer || '')}${batchQuery}${ceoQuery}`);
-        const data = await res.json();
+        let res = await fetch(`/api/batches?reviewer=${encodeURIComponent(state.reviewer || '')}${batchQuery}${ceoQuery}`);
+        let data = await res.json();
+        const keptViewOrg = (() => { try { return sessionStorage.getItem('qa_keep_view_org') || ''; } catch (e) { return ''; } })();
+        if (data.real_admin && !data.view_as_viewer && data.view_org && (data.view_org !== keptViewOrg || paramBrandRaw)) {
+          try {
+            sessionStorage.removeItem('qa_keep_view_org');
+            await _origFetch('/view?org=all', { cache: 'no-store' });
+            res = await fetch(`/api/batches?reviewer=${encodeURIComponent(state.reviewer || '')}${batchQuery}${ceoQuery}`, { cache: 'no-store' });
+            data = await res.json();
+          } catch (e) {}
+        }
         state.batches = data.batches || [];
         state.isAdmin = data.is_admin || false;
         state.canRemove = data.can_remove || state.isAdmin;
@@ -4333,17 +4381,16 @@
         updateAccountDisplay(data);
 
         const camaQuickNames = ['Andro', 'Andronik', 'Jesper', 'Amalia', 'Anton'];
-        const isCamaRev = state.reviewer && camaQuickNames.some(n => n.toLowerCase() === state.reviewer.trim().toLowerCase());
-        if (isCamaRev) {
-          state.userOrg = 'cama';
-        } else if (state.serverUserName && !state.reviewer) {
+        const isCamaRev = Boolean(state.reviewer && camaQuickNames.some(n => n.toLowerCase() === state.reviewer.trim().toLowerCase()));
+        if (data.view_as_viewer) {
+          state.userOrg = data.user_org || state.userOrg;  // viewer preview: that company's tabs, not the admin's name
+        } else if (state.serverUserName && (!state.reviewer || (state.userOrg !== 'cama' && isCamaRev))) {
           state.reviewer = state.serverUserName;
           localStorage.setItem('hatshop_reviewer', state.reviewer);
-        } else if (state.userOrg === 'reforma' && !state.reviewer && !data.view_as_viewer) {
+        } else if (state.userOrg === 'reforma' && (!state.reviewer || isCamaRev)) {
           state.reviewer = 'Reforma';
           localStorage.setItem('hatshop_reviewer', state.reviewer);
         }
-        if (data.view_as_viewer) state.userOrg = data.user_org || state.userOrg;  // viewer preview: that company's tabs, not the admin's name
 
         applyRoleAndOrgVisibility();
         checkReviewerNameOnLoad();
@@ -4358,15 +4405,23 @@
             bSelect.add(opt);
           });
         }
-        if (!state.brandFilter) state.brandFilter = 'all';
+        const allowedInitBrands = getAllowedBrands();
+        if (paramBrandRaw && (paramBrandRaw === 'all' || allowedInitBrands.has(paramBrandRaw))) {
+          state.brandFilter = paramBrandRaw;
+        } else if (!state.brandFilter) {
+          state.brandFilter = 'all';
+        }
         if (!state.editorialStatusFilter) state.editorialStatusFilter = 'all';
         if (!state.editorialCols) state.editorialCols = 2;
         renderBatchPopover();
 
-        // 1. Check if URL has a ?batch= parameter
+        // 1. Check if URL has a ?batch= parameter, or pick first matching brand batch
+        const brandPreferredBatch = (!paramBatch && state.brandFilter && state.brandFilter !== 'all')
+          ? (state.batches.find(b => getBatchCompany(b) === state.brandFilter)?.id || '')
+          : '';
         const targetBatch = (paramBatch && state.batches.some(b => b.id === paramBatch))
           ? paramBatch
-          : (state.batches[0]?.id || '');
+          : (brandPreferredBatch || state.batches[0]?.id || '');
 
         if (targetBatch) {
           await loadBatch(targetBatch, false);
@@ -4379,9 +4434,23 @@
               selectProductByIndex(prodIdx);
             }
           }
+        } else {
+          state.currentBatchId = '';
+          state.currentBatch = null;
+          state.products = [];
+          state.reviews = {};
+          const titleEl = document.getElementById('batchPickerTitle');
+          if (titleEl) titleEl.textContent = 'Inga publicerade mappar';
+          const metaEl = document.getElementById('batchPickerMeta');
+          if (metaEl) metaEl.textContent = '';
+          const sb = document.getElementById('productSidebar');
+          if (sb) sb.innerHTML = '<div style="padding: 20px 12px; text-align: center; color: var(--text-dim); font-size: 12px;">Inga publicerade mappar tillgängliga just nu.</div>';
+          const grid = document.getElementById('shotsGrid');
+          if (grid) grid.innerHTML = '<div style="padding: 48px 20px; text-align: center; color: var(--text-dim); font-size: 14px; grid-column: 1 / -1;">Inga publicerade mappar tillgängliga för granskning just nu.</div>';
+          updateQAStats();
         }
 
-        if (paramBatch && !state.batches.some(b => b.id === paramBatch)) {
+        if (paramBatch && targetBatch && !state.batches.some(b => b.id === paramBatch)) {
           const loadedBatchName = state.batches.find(b => b.id === targetBatch)?.name || state.batches[0]?.name || '';
           showToast(`Mappen "${paramBatch}" finns inte eller är ett privat utkast. Visar "${loadedBatchName}" i stället.`, 'error');
         }
@@ -4645,7 +4714,8 @@
 
       const mergeBtn = document.getElementById('btnMergeGoldBatch');
       if (mergeBtn) {
-        mergeBtn.style.display = state.isAdmin ? 'inline-flex' : 'none';
+        const batchIsReforma = state.currentBatch?.org === 'reforma' || state.viewOrg === 'reforma' || state.userOrg === 'reforma';
+        mergeBtn.style.display = (state.isAdmin && !batchIsReforma) ? 'inline-flex' : 'none';
       }
     }
 
@@ -4741,6 +4811,7 @@
       });
       if (productId) params.set('product_id', productId);
       if (state.currentSource) params.set('variant', state.currentSource);
+      if (typeof getCeoQuerySuffix === 'function' && getCeoQuerySuffix()) params.set('ceo', '1');
       try {
         const checkParams = new URLSearchParams(params);
         checkParams.set('dry_run', '1');
@@ -4767,7 +4838,11 @@
 
     async function openMergeGoldPrompt() {
       if (!state.isAdmin) return;
-      const otherBatches = (state.batches || []).filter(b => b.id !== state.currentBatchId);
+      if (state.currentBatch?.org === 'reforma' || String(state.currentBatchId || '').toLowerCase().includes('reforma')) {
+        alert('Spärrad: Reforma-mappar får aldrig köras genom Trendcarpet/Hatshop Sajt-urval.');
+        return;
+      }
+      const otherBatches = (state.batches || []).filter(b => b.id !== state.currentBatchId && b.org !== 'reforma' && !String(b.id || '').toLowerCase().includes('reforma'));
       const listHint = otherBatches.slice(0, 12).map(b => `• ${b.id} (${b.name})`).join('\n');
       const targetId = prompt(
         `Slå ihop Sajt-urvalet (endast 1:1 Guldset/Stjärnval) från "${state.currentBatch?.name}" till en produktmapp.\n\nAnge målmappens ID:\n${listHint}`,
@@ -5176,6 +5251,15 @@
     }
 
     function updateOneDriveButtons() {
+      const batchIsReforma = state.currentBatch?.org === 'reforma';
+      const odGroup = document.getElementById('onedriveActionGroup');
+      if (odGroup) {
+        const isReformaScoped = (state.userOrg === 'reforma' && (!state.isAdmin || state.viewAsViewer)) || state.viewOrg === 'reforma';
+        const isCama = !isReformaScoped && (!state.userOrg || state.userOrg === 'cama');
+        odGroup.style.display = (!batchIsReforma && (isCama || (state.isAdmin && !state.viewAsViewer && state.viewOrg !== 'reforma'))) ? 'inline-flex' : 'none';
+      }
+      updateZipMenuBadge();
+
       const btnCopy = document.getElementById('btnCopyOneDrive');
       const btnOpen = document.getElementById('btnOpenOneDrive');
       const btnEdit = document.getElementById('btnEditOneDrive');
@@ -8834,11 +8918,52 @@
       return '';
     }
 
-    function setBrandFilter(brand) {
-      state.brandFilter = brand || 'all';
+    function getAllowedBrands() {
+      const isMultiOrgAdmin = Boolean(state.isAdmin && !state.viewAsViewer && (!state.viewOrg || state.viewOrg === 'all'));
+      const effectiveOrg = isMultiOrgAdmin
+        ? 'all'
+        : ((state.viewOrg && state.viewOrg !== 'all') ? state.viewOrg : (state.userOrg || 'cama'));
+      if (effectiveOrg === 'reforma') return new Set(['reforma']);
+      if (effectiveOrg === 'cama') return new Set(['trendcarpet', 'hatshop']);
+      return new Set(['trendcarpet', 'reforma', 'hatshop']);
+    }
+
+    function syncEditorialBrandTabs() {
+      const bar = document.getElementById('editorialBrandTabs');
+      const allowedBrands = getAllowedBrands();
+      const isMultiOrgAdmin = Boolean(state.isAdmin && !state.viewAsViewer && (!state.viewOrg || state.viewOrg === 'all'));
+      const companiesPresent = new Set(
+        (state.batches || []).map(getBatchCompany).filter(c => allowedBrands.has(c))
+      );
+      const showTabs = isMultiOrgAdmin ? (companiesPresent.size > 1) : (allowedBrands.size > 1 && companiesPresent.size > 1);
+
+      if (state.brandFilter && state.brandFilter !== 'all' && !companiesPresent.has(state.brandFilter)) {
+        state.brandFilter = 'all';
+      }
+
       document.querySelectorAll('#editorialBrandTabs .brand-tab-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.brand === state.brandFilter);
+        const bKey = btn.dataset.brand;
+        let visible = false;
+        if (bKey === 'all') {
+          visible = showTabs && companiesPresent.size > 1;
+        } else if (bKey === 'reforma') {
+          visible = showTabs && allowedBrands.has('reforma') && isMultiOrgAdmin && companiesPresent.has('reforma');
+        } else {
+          visible = showTabs && allowedBrands.has(bKey) && companiesPresent.has(bKey);
+        }
+        btn.style.display = visible ? '' : 'none';
+        btn.classList.toggle('active', bKey === (state.brandFilter || 'all'));
       });
+
+      if (bar) {
+        bar.style.display = showTabs ? '' : 'none';
+      }
+    }
+
+    function setBrandFilter(brand) {
+      const allowedBrands = getAllowedBrands();
+      if (brand && brand !== 'all' && !allowedBrands.has(brand)) return;
+      state.brandFilter = brand || 'all';
       renderBatchPopover();
 
       if (state.brandFilter !== 'all') {
@@ -8875,31 +9000,24 @@
     });
 
     function renderBatchPopover() {
+      syncEditorialBrandTabs();
       const list = document.getElementById('batchPopoverList');
       if (!list) return;
+      const allowedBrands = getAllowedBrands();
       const q = (document.getElementById('batchPopoverSearch')?.value || '').trim().toLowerCase();
       const bFilter = state.brandFilter || 'all';
 
-      // Hide brand tabs that have 0 batches for non-admin org-isolated users (e.g. Reforma viewer)
-      const companiesPresent = new Set((state.batches || []).map(getBatchCompany));
-      document.querySelectorAll('#editorialBrandTabs .brand-tab-btn').forEach(btn => {
-        const bKey = btn.dataset.brand;
-        if (bKey === 'all') {
-          btn.style.display = companiesPresent.size > 1 ? '' : 'none';
-        } else {
-          btn.style.display = (state.isAdmin || companiesPresent.has(bKey)) ? '' : 'none';
-        }
-      });
-
       const matches = (state.batches || []).filter(b => {
-        if (bFilter !== 'all' && getBatchCompany(b) !== bFilter) return false;
+        const comp = getBatchCompany(b);
+        if (!allowedBrands.has(comp)) return false;
+        if (bFilter !== 'all' && comp !== bFilter) return false;
         if (!q) return true;
-        const hay = `${getCleanBatchLabel(b)} ${b.id || ''} ${getBatchCompany(b)}`.toLowerCase();
+        const hay = `${getCleanBatchLabel(b)} ${b.id || ''} ${comp}`.toLowerCase();
         return hay.includes(q);
       });
 
       if (matches.length === 0) {
-        list.innerHTML = `<div style="padding: 16px; text-align: center; color: var(--text-dim); font-size: 12px;">Inga batchar matchar sökningen.</div>`;
+        list.innerHTML = `<div style="padding: 16px; text-align: center; color: var(--text-dim); font-size: 12px;">Inga mappar tillgängliga.</div>`;
         return;
       }
 

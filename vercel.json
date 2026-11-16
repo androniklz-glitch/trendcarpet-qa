@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://handhelds-barriers-aberdeen-tin.trycloudflare.com/$1"
+      "destination": "https://include-canal-seriously-watched.trycloudflare.com/$1"
     }
   ]
 }

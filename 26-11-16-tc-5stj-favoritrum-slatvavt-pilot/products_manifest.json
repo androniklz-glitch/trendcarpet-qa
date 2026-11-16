@@ -1,0 +1,494 @@
+[
+  {
+    "id": "01_Charonne_Creme_V1_Ankarrum_Helbild",
+    "slot": "01",
+    "sku": "Charonne_Creme",
+    "title": "01 · Ullmatta Charonne Flat Handloom Wool Creme (SKU: Charonne_Creme) – Hem 1 (Jespers 5★ Nordiska Kalkstenssalong med Stenvalv & Salvia-Olivgrön Linnesoffa) — V1 Ankarrum Helbild (~130 cm)",
+    "clean_name": "01. Ullmatta Charonne Flat Handloom Wool Creme (@9701) – Hem 1 (Jespers 5★ Nordiska Kalkstenssalong med Stenvalv & Salvia-Olivgrön Linnesoffa) — V1 Ankarrum Helbild (~130 cm)",
+    "category": "[PRIVAT] TC Pilot 5★ Favoritrum Slätvävd Ull (9:16 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "9701",
+      "tag": "@9701",
+      "sku": "Charonne_Creme",
+      "name": "Ullmatta Charonne Flat Handloom Wool Creme",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1070x1500",
+      "ref_file": "refs_still/9701.jpg",
+      "ref_macro_file": "refs_still/9701_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular 100% solid-colored flatwoven handloom wool rug in pale natural oat and crisp unbleached off-white matte wool, crafted with a fine, taut horizontal panama/plain handloom weave across a completely flat, uniform surface with neat straight woven wool edges on all four sides and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "01_Charonne_Creme_V1_Ankarrum_Helbild/01_Charonne_Creme_V1_Ankarrum_Helbild.jpg",
+        "rel_path": "01_Charonne_Creme_V1_Ankarrum_Helbild/01_Charonne_Creme_V1_Ankarrum_Helbild.jpg",
+        "kind": "Interiör (01)"
+      },
+      {
+        "filename": "01_Charonne_Creme_V1_Ankarrum_Helbild/01_SKU9701-01_Hero_Ref_9701.jpg",
+        "rel_path": "01_Charonne_Creme_V1_Ankarrum_Helbild/01_SKU9701-01_Hero_Ref_9701.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@9701 · SKU Charonne_Creme)"
+      },
+      {
+        "filename": "01_Charonne_Creme_V1_Ankarrum_Helbild/01_SKU9701-01m_Hero_Macro_9701.jpg",
+        "rel_path": "01_Charonne_Creme_V1_Ankarrum_Helbild/01_SKU9701-01m_Hero_Macro_9701.jpg",
+        "kind": "3. Makroreferens (@9701_macro)"
+      }
+    ]
+  },
+  {
+    "id": "02_Charonne_Creme_V2_Halvnara_Sidovy",
+    "slot": "02",
+    "sku": "Charonne_Creme",
+    "title": "02 · Ullmatta Charonne Flat Handloom Wool Creme (SKU: Charonne_Creme) – Hem 1 (Jespers 5★ Nordiska Kalkstenssalong med Stenvalv & Salvia-Olivgrön Linnesoffa) — V2 Halvnära 3/4-Sidovy (~105 cm)",
+    "clean_name": "02. Ullmatta Charonne Flat Handloom Wool Creme (@9701) – Hem 1 (Jespers 5★ Nordiska Kalkstenssalong med Stenvalv & Salvia-Olivgrön Linnesoffa) — V2 Halvnära 3/4-Sidovy (~105 cm)",
+    "category": "[PRIVAT] TC Pilot 5★ Favoritrum Slätvävd Ull (9:16 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "9701",
+      "tag": "@9701",
+      "sku": "Charonne_Creme",
+      "name": "Ullmatta Charonne Flat Handloom Wool Creme",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1070x1500",
+      "ref_file": "refs_still/9701.jpg",
+      "ref_macro_file": "refs_still/9701_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular 100% solid-colored flatwoven handloom wool rug in pale natural oat and crisp unbleached off-white matte wool, crafted with a fine, taut horizontal panama/plain handloom weave across a completely flat, uniform surface with neat straight woven wool edges on all four sides and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "02_Charonne_Creme_V2_Halvnara_Sidovy/02_Charonne_Creme_V2_Halvnara_Sidovy.jpg",
+        "rel_path": "02_Charonne_Creme_V2_Halvnara_Sidovy/02_Charonne_Creme_V2_Halvnara_Sidovy.jpg",
+        "kind": "Interiör (02)"
+      },
+      {
+        "filename": "02_Charonne_Creme_V2_Halvnara_Sidovy/02_SKU9701-01_Hero_Ref_9701.jpg",
+        "rel_path": "02_Charonne_Creme_V2_Halvnara_Sidovy/02_SKU9701-01_Hero_Ref_9701.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@9701 · SKU Charonne_Creme)"
+      },
+      {
+        "filename": "02_Charonne_Creme_V2_Halvnara_Sidovy/02_SKU9701-01m_Hero_Macro_9701.jpg",
+        "rel_path": "02_Charonne_Creme_V2_Halvnara_Sidovy/02_SKU9701-01m_Hero_Macro_9701.jpg",
+        "kind": "3. Makroreferens (@9701_macro)"
+      }
+    ]
+  },
+  {
+    "id": "03_Charonne_Creme_V3_Lag_Knahojd",
+    "slot": "03",
+    "sku": "Charonne_Creme",
+    "title": "03 · Ullmatta Charonne Flat Handloom Wool Creme (SKU: Charonne_Creme) – Hem 1 (Jespers 5★ Nordiska Kalkstenssalong med Stenvalv & Salvia-Olivgrön Linnesoffa) — V3 Låg Knä-/Sitthöjd (~60 cm)",
+    "clean_name": "03. Ullmatta Charonne Flat Handloom Wool Creme (@9701) – Hem 1 (Jespers 5★ Nordiska Kalkstenssalong med Stenvalv & Salvia-Olivgrön Linnesoffa) — V3 Låg Knä-/Sitthöjd (~60 cm)",
+    "category": "[PRIVAT] TC Pilot 5★ Favoritrum Slätvävd Ull (9:16 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "9701",
+      "tag": "@9701",
+      "sku": "Charonne_Creme",
+      "name": "Ullmatta Charonne Flat Handloom Wool Creme",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1070x1500",
+      "ref_file": "refs_still/9701.jpg",
+      "ref_macro_file": "refs_still/9701_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular 100% solid-colored flatwoven handloom wool rug in pale natural oat and crisp unbleached off-white matte wool, crafted with a fine, taut horizontal panama/plain handloom weave across a completely flat, uniform surface with neat straight woven wool edges on all four sides and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "03_Charonne_Creme_V3_Lag_Knahojd/03_Charonne_Creme_V3_Lag_Knahojd.jpg",
+        "rel_path": "03_Charonne_Creme_V3_Lag_Knahojd/03_Charonne_Creme_V3_Lag_Knahojd.jpg",
+        "kind": "Interiör (03)"
+      },
+      {
+        "filename": "03_Charonne_Creme_V3_Lag_Knahojd/03_SKU9701-01_Hero_Ref_9701.jpg",
+        "rel_path": "03_Charonne_Creme_V3_Lag_Knahojd/03_SKU9701-01_Hero_Ref_9701.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@9701 · SKU Charonne_Creme)"
+      },
+      {
+        "filename": "03_Charonne_Creme_V3_Lag_Knahojd/03_SKU9701-01m_Hero_Macro_9701.jpg",
+        "rel_path": "03_Charonne_Creme_V3_Lag_Knahojd/03_SKU9701-01m_Hero_Macro_9701.jpg",
+        "kind": "3. Makroreferens (@9701_macro)"
+      }
+    ]
+  },
+  {
+    "id": "04_Charonne_Creme_V4_Taktil_Detalj",
+    "slot": "04",
+    "sku": "Charonne_Creme",
+    "title": "04 · Ullmatta Charonne Flat Handloom Wool Creme (SKU: Charonne_Creme) – Hem 1 (Jespers 5★ Nordiska Kalkstenssalong med Stenvalv & Salvia-Olivgrön Linnesoffa) — V4 Taktil Detalj & Hörnvinjett (~70 cm)",
+    "clean_name": "04. Ullmatta Charonne Flat Handloom Wool Creme (@9701) – Hem 1 (Jespers 5★ Nordiska Kalkstenssalong med Stenvalv & Salvia-Olivgrön Linnesoffa) — V4 Taktil Detalj & Hörnvinjett (~70 cm)",
+    "category": "[PRIVAT] TC Pilot 5★ Favoritrum Slätvävd Ull (9:16 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "9701",
+      "tag": "@9701",
+      "sku": "Charonne_Creme",
+      "name": "Ullmatta Charonne Flat Handloom Wool Creme",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1070x1500",
+      "ref_file": "refs_still/9701.jpg",
+      "ref_macro_file": "refs_still/9701_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular 100% solid-colored flatwoven handloom wool rug in pale natural oat and crisp unbleached off-white matte wool, crafted with a fine, taut horizontal panama/plain handloom weave across a completely flat, uniform surface with neat straight woven wool edges on all four sides and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "04_Charonne_Creme_V4_Taktil_Detalj/04_Charonne_Creme_V4_Taktil_Detalj.jpg",
+        "rel_path": "04_Charonne_Creme_V4_Taktil_Detalj/04_Charonne_Creme_V4_Taktil_Detalj.jpg",
+        "kind": "Interiör (04)"
+      },
+      {
+        "filename": "04_Charonne_Creme_V4_Taktil_Detalj/04_SKU9701-01_Hero_Ref_9701.jpg",
+        "rel_path": "04_Charonne_Creme_V4_Taktil_Detalj/04_SKU9701-01_Hero_Ref_9701.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@9701 · SKU Charonne_Creme)"
+      },
+      {
+        "filename": "04_Charonne_Creme_V4_Taktil_Detalj/04_SKU9701-01m_Hero_Macro_9701.jpg",
+        "rel_path": "04_Charonne_Creme_V4_Taktil_Detalj/04_SKU9701-01m_Hero_Macro_9701.jpg",
+        "kind": "3. Makroreferens (@9701_macro)"
+      }
+    ]
+  },
+  {
+    "id": "05_Brenta_Brun_V1_Ankarrum_Helbild",
+    "slot": "05",
+    "sku": "Brenta_Brun",
+    "title": "05 · Ullmatta Brenta Handloom Wool Premium Brun (SKU: Brenta_Brun) – Hem 2 (Amalias & Androniks 5★ Samlarsalong i Ådrad Valnöts-Boiserie & Ljus Parquet de Versailles) — V1 Ankarrum Helbild (~130 cm)",
+    "clean_name": "05. Ullmatta Brenta Handloom Wool Premium Brun (@9727) – Hem 2 (Amalias & Androniks 5★ Samlarsalong i Ådrad Valnöts-Boiserie & Ljus Parquet de Versailles) — V1 Ankarrum Helbild (~130 cm)",
+    "category": "[PRIVAT] TC Pilot 5★ Favoritrum Slätvävd Ull (9:16 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "9727",
+      "tag": "@9727",
+      "sku": "Brenta_Brun",
+      "name": "Ullmatta Brenta Handloom Wool Premium Brun",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1035x1500",
+      "ref_file": "refs_still/9727.jpg",
+      "ref_macro_file": "refs_still/9727_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular dense, low-profile handloom wool rug in warm cocoa-brown and roasted cacao-umber matte natural wool (#6B493A), structured with regular, even-width horizontal tone-on-tone stripes running straight from edge to edge across the width: flatwoven mid cocoa-brown wool bands alternating rhythmically with dense, low velvety dark cacao-umber wool bands, finished with clean straight woven wool edges all around and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "05_Brenta_Brun_V1_Ankarrum_Helbild/05_Brenta_Brun_V1_Ankarrum_Helbild.jpg",
+        "rel_path": "05_Brenta_Brun_V1_Ankarrum_Helbild/05_Brenta_Brun_V1_Ankarrum_Helbild.jpg",
+        "kind": "Interiör (05)"
+      },
+      {
+        "filename": "05_Brenta_Brun_V1_Ankarrum_Helbild/05_SKU9727-01_Hero_Ref_9727.jpg",
+        "rel_path": "05_Brenta_Brun_V1_Ankarrum_Helbild/05_SKU9727-01_Hero_Ref_9727.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@9727 · SKU Brenta_Brun)"
+      },
+      {
+        "filename": "05_Brenta_Brun_V1_Ankarrum_Helbild/05_SKU9727-01m_Hero_Macro_9727.jpg",
+        "rel_path": "05_Brenta_Brun_V1_Ankarrum_Helbild/05_SKU9727-01m_Hero_Macro_9727.jpg",
+        "kind": "3. Makroreferens (@9727_macro)"
+      }
+    ]
+  },
+  {
+    "id": "06_Brenta_Brun_V2_Halvnara_Sidovy",
+    "slot": "06",
+    "sku": "Brenta_Brun",
+    "title": "06 · Ullmatta Brenta Handloom Wool Premium Brun (SKU: Brenta_Brun) – Hem 2 (Amalias & Androniks 5★ Samlarsalong i Ådrad Valnöts-Boiserie & Ljus Parquet de Versailles) — V2 Halvnära 3/4-Sidovy (~105 cm)",
+    "clean_name": "06. Ullmatta Brenta Handloom Wool Premium Brun (@9727) – Hem 2 (Amalias & Androniks 5★ Samlarsalong i Ådrad Valnöts-Boiserie & Ljus Parquet de Versailles) — V2 Halvnära 3/4-Sidovy (~105 cm)",
+    "category": "[PRIVAT] TC Pilot 5★ Favoritrum Slätvävd Ull (9:16 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "9727",
+      "tag": "@9727",
+      "sku": "Brenta_Brun",
+      "name": "Ullmatta Brenta Handloom Wool Premium Brun",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1035x1500",
+      "ref_file": "refs_still/9727.jpg",
+      "ref_macro_file": "refs_still/9727_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular dense, low-profile handloom wool rug in warm cocoa-brown and roasted cacao-umber matte natural wool (#6B493A), structured with regular, even-width horizontal tone-on-tone stripes running straight from edge to edge across the width: flatwoven mid cocoa-brown wool bands alternating rhythmically with dense, low velvety dark cacao-umber wool bands, finished with clean straight woven wool edges all around and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "06_Brenta_Brun_V2_Halvnara_Sidovy/06_Brenta_Brun_V2_Halvnara_Sidovy.jpg",
+        "rel_path": "06_Brenta_Brun_V2_Halvnara_Sidovy/06_Brenta_Brun_V2_Halvnara_Sidovy.jpg",
+        "kind": "Interiör (06)"
+      },
+      {
+        "filename": "06_Brenta_Brun_V2_Halvnara_Sidovy/06_SKU9727-01_Hero_Ref_9727.jpg",
+        "rel_path": "06_Brenta_Brun_V2_Halvnara_Sidovy/06_SKU9727-01_Hero_Ref_9727.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@9727 · SKU Brenta_Brun)"
+      },
+      {
+        "filename": "06_Brenta_Brun_V2_Halvnara_Sidovy/06_SKU9727-01m_Hero_Macro_9727.jpg",
+        "rel_path": "06_Brenta_Brun_V2_Halvnara_Sidovy/06_SKU9727-01m_Hero_Macro_9727.jpg",
+        "kind": "3. Makroreferens (@9727_macro)"
+      }
+    ]
+  },
+  {
+    "id": "07_Brenta_Brun_V3_Lag_Knahojd",
+    "slot": "07",
+    "sku": "Brenta_Brun",
+    "title": "07 · Ullmatta Brenta Handloom Wool Premium Brun (SKU: Brenta_Brun) – Hem 2 (Amalias & Androniks 5★ Samlarsalong i Ådrad Valnöts-Boiserie & Ljus Parquet de Versailles) — V3 Låg Knä-/Sitthöjd (~60 cm)",
+    "clean_name": "07. Ullmatta Brenta Handloom Wool Premium Brun (@9727) – Hem 2 (Amalias & Androniks 5★ Samlarsalong i Ådrad Valnöts-Boiserie & Ljus Parquet de Versailles) — V3 Låg Knä-/Sitthöjd (~60 cm)",
+    "category": "[PRIVAT] TC Pilot 5★ Favoritrum Slätvävd Ull (9:16 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "9727",
+      "tag": "@9727",
+      "sku": "Brenta_Brun",
+      "name": "Ullmatta Brenta Handloom Wool Premium Brun",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1035x1500",
+      "ref_file": "refs_still/9727.jpg",
+      "ref_macro_file": "refs_still/9727_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular dense, low-profile handloom wool rug in warm cocoa-brown and roasted cacao-umber matte natural wool (#6B493A), structured with regular, even-width horizontal tone-on-tone stripes running straight from edge to edge across the width: flatwoven mid cocoa-brown wool bands alternating rhythmically with dense, low velvety dark cacao-umber wool bands, finished with clean straight woven wool edges all around and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "07_Brenta_Brun_V3_Lag_Knahojd/07_Brenta_Brun_V3_Lag_Knahojd.jpg",
+        "rel_path": "07_Brenta_Brun_V3_Lag_Knahojd/07_Brenta_Brun_V3_Lag_Knahojd.jpg",
+        "kind": "Interiör (07)"
+      },
+      {
+        "filename": "07_Brenta_Brun_V3_Lag_Knahojd/07_SKU9727-01_Hero_Ref_9727.jpg",
+        "rel_path": "07_Brenta_Brun_V3_Lag_Knahojd/07_SKU9727-01_Hero_Ref_9727.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@9727 · SKU Brenta_Brun)"
+      },
+      {
+        "filename": "07_Brenta_Brun_V3_Lag_Knahojd/07_SKU9727-01m_Hero_Macro_9727.jpg",
+        "rel_path": "07_Brenta_Brun_V3_Lag_Knahojd/07_SKU9727-01m_Hero_Macro_9727.jpg",
+        "kind": "3. Makroreferens (@9727_macro)"
+      }
+    ]
+  },
+  {
+    "id": "08_Brenta_Brun_V4_Taktil_Detalj",
+    "slot": "08",
+    "sku": "Brenta_Brun",
+    "title": "08 · Ullmatta Brenta Handloom Wool Premium Brun (SKU: Brenta_Brun) – Hem 2 (Amalias & Androniks 5★ Samlarsalong i Ådrad Valnöts-Boiserie & Ljus Parquet de Versailles) — V4 Taktil Detalj & Hörnvinjett (~70 cm)",
+    "clean_name": "08. Ullmatta Brenta Handloom Wool Premium Brun (@9727) – Hem 2 (Amalias & Androniks 5★ Samlarsalong i Ådrad Valnöts-Boiserie & Ljus Parquet de Versailles) — V4 Taktil Detalj & Hörnvinjett (~70 cm)",
+    "category": "[PRIVAT] TC Pilot 5★ Favoritrum Slätvävd Ull (9:16 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "9727",
+      "tag": "@9727",
+      "sku": "Brenta_Brun",
+      "name": "Ullmatta Brenta Handloom Wool Premium Brun",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1035x1500",
+      "ref_file": "refs_still/9727.jpg",
+      "ref_macro_file": "refs_still/9727_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular dense, low-profile handloom wool rug in warm cocoa-brown and roasted cacao-umber matte natural wool (#6B493A), structured with regular, even-width horizontal tone-on-tone stripes running straight from edge to edge across the width: flatwoven mid cocoa-brown wool bands alternating rhythmically with dense, low velvety dark cacao-umber wool bands, finished with clean straight woven wool edges all around and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "08_Brenta_Brun_V4_Taktil_Detalj/08_Brenta_Brun_V4_Taktil_Detalj.jpg",
+        "rel_path": "08_Brenta_Brun_V4_Taktil_Detalj/08_Brenta_Brun_V4_Taktil_Detalj.jpg",
+        "kind": "Interiör (08)"
+      },
+      {
+        "filename": "08_Brenta_Brun_V4_Taktil_Detalj/08_SKU9727-01_Hero_Ref_9727.jpg",
+        "rel_path": "08_Brenta_Brun_V4_Taktil_Detalj/08_SKU9727-01_Hero_Ref_9727.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@9727 · SKU Brenta_Brun)"
+      },
+      {
+        "filename": "08_Brenta_Brun_V4_Taktil_Detalj/08_SKU9727-01m_Hero_Macro_9727.jpg",
+        "rel_path": "08_Brenta_Brun_V4_Taktil_Detalj/08_SKU9727-01m_Hero_Macro_9727.jpg",
+        "kind": "3. Makroreferens (@9727_macro)"
+      }
+    ]
+  },
+  {
+    "id": "09_Rozel_Mossgron_V1_Ankarrum_Helbild",
+    "slot": "09",
+    "sku": "Rozel_Mossgron",
+    "title": "09 · Ullmatta Rozel Handloom Wool Mossgrön (SKU: Rozel_Mossgron) – Hem 3 (Antons & Amalias 5★ Nordiska Sekelskiftessalong med Bröstpanel, Hörnskåp i Ek & Ljus Ekparkett) — V1 Ankarrum Helbild (~130 cm)",
+    "clean_name": "09. Ullmatta Rozel Handloom Wool Mossgrön (@9735) – Hem 3 (Antons & Amalias 5★ Nordiska Sekelskiftessalong med Bröstpanel, Hörnskåp i Ek & Ljus Ekparkett) — V1 Ankarrum Helbild (~130 cm)",
+    "category": "[PRIVAT] TC Pilot 5★ Favoritrum Slätvävd Ull (9:16 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "9735",
+      "tag": "@9735",
+      "sku": "Rozel_Mossgron",
+      "name": "Ullmatta Rozel Handloom Wool Mossgrön",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1066x1500",
+      "ref_file": "refs_still/9735.jpg",
+      "ref_macro_file": "refs_still/9735_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular firm, dense low-pile handloom wool rug in warm olive-moss green matte natural wool (#80773E), featuring subtle broad horizontal tonal handloom slub variations across the width and clean, straight, unbroken woven wool edges along all four sides with zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "09_Rozel_Mossgron_V1_Ankarrum_Helbild/09_Rozel_Mossgron_V1_Ankarrum_Helbild.jpg",
+        "rel_path": "09_Rozel_Mossgron_V1_Ankarrum_Helbild/09_Rozel_Mossgron_V1_Ankarrum_Helbild.jpg",
+        "kind": "Interiör (09)"
+      },
+      {
+        "filename": "09_Rozel_Mossgron_V1_Ankarrum_Helbild/09_SKU9735-01_Hero_Ref_9735.jpg",
+        "rel_path": "09_Rozel_Mossgron_V1_Ankarrum_Helbild/09_SKU9735-01_Hero_Ref_9735.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@9735 · SKU Rozel_Mossgron)"
+      },
+      {
+        "filename": "09_Rozel_Mossgron_V1_Ankarrum_Helbild/09_SKU9735-01m_Hero_Macro_9735.jpg",
+        "rel_path": "09_Rozel_Mossgron_V1_Ankarrum_Helbild/09_SKU9735-01m_Hero_Macro_9735.jpg",
+        "kind": "3. Makroreferens (@9735_macro)"
+      }
+    ]
+  },
+  {
+    "id": "10_Rozel_Mossgron_V2_Halvnara_Sidovy",
+    "slot": "10",
+    "sku": "Rozel_Mossgron",
+    "title": "10 · Ullmatta Rozel Handloom Wool Mossgrön (SKU: Rozel_Mossgron) – Hem 3 (Antons & Amalias 5★ Nordiska Sekelskiftessalong med Bröstpanel, Hörnskåp i Ek & Ljus Ekparkett) — V2 Halvnära 3/4-Sidovy (~105 cm)",
+    "clean_name": "10. Ullmatta Rozel Handloom Wool Mossgrön (@9735) – Hem 3 (Antons & Amalias 5★ Nordiska Sekelskiftessalong med Bröstpanel, Hörnskåp i Ek & Ljus Ekparkett) — V2 Halvnära 3/4-Sidovy (~105 cm)",
+    "category": "[PRIVAT] TC Pilot 5★ Favoritrum Slätvävd Ull (9:16 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "9735",
+      "tag": "@9735",
+      "sku": "Rozel_Mossgron",
+      "name": "Ullmatta Rozel Handloom Wool Mossgrön",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1066x1500",
+      "ref_file": "refs_still/9735.jpg",
+      "ref_macro_file": "refs_still/9735_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular firm, dense low-pile handloom wool rug in warm olive-moss green matte natural wool (#80773E), featuring subtle broad horizontal tonal handloom slub variations across the width and clean, straight, unbroken woven wool edges along all four sides with zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "10_Rozel_Mossgron_V2_Halvnara_Sidovy/10_Rozel_Mossgron_V2_Halvnara_Sidovy.jpg",
+        "rel_path": "10_Rozel_Mossgron_V2_Halvnara_Sidovy/10_Rozel_Mossgron_V2_Halvnara_Sidovy.jpg",
+        "kind": "Interiör (10)"
+      },
+      {
+        "filename": "10_Rozel_Mossgron_V2_Halvnara_Sidovy/10_SKU9735-01_Hero_Ref_9735.jpg",
+        "rel_path": "10_Rozel_Mossgron_V2_Halvnara_Sidovy/10_SKU9735-01_Hero_Ref_9735.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@9735 · SKU Rozel_Mossgron)"
+      },
+      {
+        "filename": "10_Rozel_Mossgron_V2_Halvnara_Sidovy/10_SKU9735-01m_Hero_Macro_9735.jpg",
+        "rel_path": "10_Rozel_Mossgron_V2_Halvnara_Sidovy/10_SKU9735-01m_Hero_Macro_9735.jpg",
+        "kind": "3. Makroreferens (@9735_macro)"
+      }
+    ]
+  },
+  {
+    "id": "11_Rozel_Mossgron_V3_Lag_Knahojd",
+    "slot": "11",
+    "sku": "Rozel_Mossgron",
+    "title": "11 · Ullmatta Rozel Handloom Wool Mossgrön (SKU: Rozel_Mossgron) – Hem 3 (Antons & Amalias 5★ Nordiska Sekelskiftessalong med Bröstpanel, Hörnskåp i Ek & Ljus Ekparkett) — V3 Låg Knä-/Sitthöjd (~60 cm)",
+    "clean_name": "11. Ullmatta Rozel Handloom Wool Mossgrön (@9735) – Hem 3 (Antons & Amalias 5★ Nordiska Sekelskiftessalong med Bröstpanel, Hörnskåp i Ek & Ljus Ekparkett) — V3 Låg Knä-/Sitthöjd (~60 cm)",
+    "category": "[PRIVAT] TC Pilot 5★ Favoritrum Slätvävd Ull (9:16 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "9735",
+      "tag": "@9735",
+      "sku": "Rozel_Mossgron",
+      "name": "Ullmatta Rozel Handloom Wool Mossgrön",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1066x1500",
+      "ref_file": "refs_still/9735.jpg",
+      "ref_macro_file": "refs_still/9735_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular firm, dense low-pile handloom wool rug in warm olive-moss green matte natural wool (#80773E), featuring subtle broad horizontal tonal handloom slub variations across the width and clean, straight, unbroken woven wool edges along all four sides with zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "11_Rozel_Mossgron_V3_Lag_Knahojd/11_Rozel_Mossgron_V3_Lag_Knahojd.jpg",
+        "rel_path": "11_Rozel_Mossgron_V3_Lag_Knahojd/11_Rozel_Mossgron_V3_Lag_Knahojd.jpg",
+        "kind": "Interiör (11)"
+      },
+      {
+        "filename": "11_Rozel_Mossgron_V3_Lag_Knahojd/11_SKU9735-01_Hero_Ref_9735.jpg",
+        "rel_path": "11_Rozel_Mossgron_V3_Lag_Knahojd/11_SKU9735-01_Hero_Ref_9735.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@9735 · SKU Rozel_Mossgron)"
+      },
+      {
+        "filename": "11_Rozel_Mossgron_V3_Lag_Knahojd/11_SKU9735-01m_Hero_Macro_9735.jpg",
+        "rel_path": "11_Rozel_Mossgron_V3_Lag_Knahojd/11_SKU9735-01m_Hero_Macro_9735.jpg",
+        "kind": "3. Makroreferens (@9735_macro)"
+      }
+    ]
+  },
+  {
+    "id": "12_Rozel_Mossgron_V4_Taktil_Detalj",
+    "slot": "12",
+    "sku": "Rozel_Mossgron",
+    "title": "12 · Ullmatta Rozel Handloom Wool Mossgrön (SKU: Rozel_Mossgron) – Hem 3 (Antons & Amalias 5★ Nordiska Sekelskiftessalong med Bröstpanel, Hörnskåp i Ek & Ljus Ekparkett) — V4 Taktil Detalj & Hörnvinjett (~70 cm)",
+    "clean_name": "12. Ullmatta Rozel Handloom Wool Mossgrön (@9735) – Hem 3 (Antons & Amalias 5★ Nordiska Sekelskiftessalong med Bröstpanel, Hörnskåp i Ek & Ljus Ekparkett) — V4 Taktil Detalj & Hörnvinjett (~70 cm)",
+    "category": "[PRIVAT] TC Pilot 5★ Favoritrum Slätvävd Ull (9:16 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "9735",
+      "tag": "@9735",
+      "sku": "Rozel_Mossgron",
+      "name": "Ullmatta Rozel Handloom Wool Mossgrön",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1066x1500",
+      "ref_file": "refs_still/9735.jpg",
+      "ref_macro_file": "refs_still/9735_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular firm, dense low-pile handloom wool rug in warm olive-moss green matte natural wool (#80773E), featuring subtle broad horizontal tonal handloom slub variations across the width and clean, straight, unbroken woven wool edges along all four sides with zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "12_Rozel_Mossgron_V4_Taktil_Detalj/12_Rozel_Mossgron_V4_Taktil_Detalj.jpg",
+        "rel_path": "12_Rozel_Mossgron_V4_Taktil_Detalj/12_Rozel_Mossgron_V4_Taktil_Detalj.jpg",
+        "kind": "Interiör (12)"
+      },
+      {
+        "filename": "12_Rozel_Mossgron_V4_Taktil_Detalj/12_SKU9735-01_Hero_Ref_9735.jpg",
+        "rel_path": "12_Rozel_Mossgron_V4_Taktil_Detalj/12_SKU9735-01_Hero_Ref_9735.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@9735 · SKU Rozel_Mossgron)"
+      },
+      {
+        "filename": "12_Rozel_Mossgron_V4_Taktil_Detalj/12_SKU9735-01m_Hero_Macro_9735.jpg",
+        "rel_path": "12_Rozel_Mossgron_V4_Taktil_Detalj/12_SKU9735-01m_Hero_Macro_9735.jpg",
+        "kind": "3. Makroreferens (@9735_macro)"
+      }
+    ]
+  }
+]

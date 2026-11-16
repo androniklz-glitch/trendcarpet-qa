@@ -1,0 +1,254 @@
+[
+  {
+    "slot": "01",
+    "image_file": "01_Charonne_Creme_V1_Ankarrum_Helbild.jpg",
+    "subfolder": "01_Charonne_Creme_V1_Ankarrum_Helbild",
+    "home_style": "Hem 1 (Jespers 5★ Nordiska Kalkstenssalong med Stenvalv & Salvia-Olivgrön Linnesoffa) — V1 Ankarrum Helbild (~130 cm)",
+    "hero_product": {
+      "id": "9701",
+      "tag": "@9701",
+      "sku": "Charonne_Creme",
+      "name": "Ullmatta Charonne Flat Handloom Wool Creme",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1070x1500",
+      "ref_file": "refs_still/9701.jpg",
+      "ref_macro_file": "refs_still/9701_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular 100% solid-colored flatwoven handloom wool rug in pale natural oat and crisp unbleached off-white matte wool, crafted with a fine, taut horizontal panama/plain handloom weave across a completely flat, uniform surface with neat straight woven wool edges on all four sides and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "02",
+    "image_file": "02_Charonne_Creme_V2_Halvnara_Sidovy.jpg",
+    "subfolder": "02_Charonne_Creme_V2_Halvnara_Sidovy",
+    "home_style": "Hem 1 (Jespers 5★ Nordiska Kalkstenssalong med Stenvalv & Salvia-Olivgrön Linnesoffa) — V2 Halvnära 3/4-Sidovy (~105 cm)",
+    "hero_product": {
+      "id": "9701",
+      "tag": "@9701",
+      "sku": "Charonne_Creme",
+      "name": "Ullmatta Charonne Flat Handloom Wool Creme",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1070x1500",
+      "ref_file": "refs_still/9701.jpg",
+      "ref_macro_file": "refs_still/9701_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular 100% solid-colored flatwoven handloom wool rug in pale natural oat and crisp unbleached off-white matte wool, crafted with a fine, taut horizontal panama/plain handloom weave across a completely flat, uniform surface with neat straight woven wool edges on all four sides and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "03",
+    "image_file": "03_Charonne_Creme_V3_Lag_Knahojd.jpg",
+    "subfolder": "03_Charonne_Creme_V3_Lag_Knahojd",
+    "home_style": "Hem 1 (Jespers 5★ Nordiska Kalkstenssalong med Stenvalv & Salvia-Olivgrön Linnesoffa) — V3 Låg Knä-/Sitthöjd (~60 cm)",
+    "hero_product": {
+      "id": "9701",
+      "tag": "@9701",
+      "sku": "Charonne_Creme",
+      "name": "Ullmatta Charonne Flat Handloom Wool Creme",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1070x1500",
+      "ref_file": "refs_still/9701.jpg",
+      "ref_macro_file": "refs_still/9701_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular 100% solid-colored flatwoven handloom wool rug in pale natural oat and crisp unbleached off-white matte wool, crafted with a fine, taut horizontal panama/plain handloom weave across a completely flat, uniform surface with neat straight woven wool edges on all four sides and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "04",
+    "image_file": "04_Charonne_Creme_V4_Taktil_Detalj.jpg",
+    "subfolder": "04_Charonne_Creme_V4_Taktil_Detalj",
+    "home_style": "Hem 1 (Jespers 5★ Nordiska Kalkstenssalong med Stenvalv & Salvia-Olivgrön Linnesoffa) — V4 Taktil Detalj & Hörnvinjett (~70 cm)",
+    "hero_product": {
+      "id": "9701",
+      "tag": "@9701",
+      "sku": "Charonne_Creme",
+      "name": "Ullmatta Charonne Flat Handloom Wool Creme",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1070x1500",
+      "ref_file": "refs_still/9701.jpg",
+      "ref_macro_file": "refs_still/9701_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular 100% solid-colored flatwoven handloom wool rug in pale natural oat and crisp unbleached off-white matte wool, crafted with a fine, taut horizontal panama/plain handloom weave across a completely flat, uniform surface with neat straight woven wool edges on all four sides and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "05",
+    "image_file": "05_Brenta_Brun_V1_Ankarrum_Helbild.jpg",
+    "subfolder": "05_Brenta_Brun_V1_Ankarrum_Helbild",
+    "home_style": "Hem 2 (Amalias & Androniks 5★ Samlarsalong i Ådrad Valnöts-Boiserie & Ljus Parquet de Versailles) — V1 Ankarrum Helbild (~130 cm)",
+    "hero_product": {
+      "id": "9727",
+      "tag": "@9727",
+      "sku": "Brenta_Brun",
+      "name": "Ullmatta Brenta Handloom Wool Premium Brun",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1035x1500",
+      "ref_file": "refs_still/9727.jpg",
+      "ref_macro_file": "refs_still/9727_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular dense, low-profile handloom wool rug in warm cocoa-brown and roasted cacao-umber matte natural wool (#6B493A), structured with regular, even-width horizontal tone-on-tone stripes running straight from edge to edge across the width: flatwoven mid cocoa-brown wool bands alternating rhythmically with dense, low velvety dark cacao-umber wool bands, finished with clean straight woven wool edges all around and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "06",
+    "image_file": "06_Brenta_Brun_V2_Halvnara_Sidovy.jpg",
+    "subfolder": "06_Brenta_Brun_V2_Halvnara_Sidovy",
+    "home_style": "Hem 2 (Amalias & Androniks 5★ Samlarsalong i Ådrad Valnöts-Boiserie & Ljus Parquet de Versailles) — V2 Halvnära 3/4-Sidovy (~105 cm)",
+    "hero_product": {
+      "id": "9727",
+      "tag": "@9727",
+      "sku": "Brenta_Brun",
+      "name": "Ullmatta Brenta Handloom Wool Premium Brun",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1035x1500",
+      "ref_file": "refs_still/9727.jpg",
+      "ref_macro_file": "refs_still/9727_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular dense, low-profile handloom wool rug in warm cocoa-brown and roasted cacao-umber matte natural wool (#6B493A), structured with regular, even-width horizontal tone-on-tone stripes running straight from edge to edge across the width: flatwoven mid cocoa-brown wool bands alternating rhythmically with dense, low velvety dark cacao-umber wool bands, finished with clean straight woven wool edges all around and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "07",
+    "image_file": "07_Brenta_Brun_V3_Lag_Knahojd.jpg",
+    "subfolder": "07_Brenta_Brun_V3_Lag_Knahojd",
+    "home_style": "Hem 2 (Amalias & Androniks 5★ Samlarsalong i Ådrad Valnöts-Boiserie & Ljus Parquet de Versailles) — V3 Låg Knä-/Sitthöjd (~60 cm)",
+    "hero_product": {
+      "id": "9727",
+      "tag": "@9727",
+      "sku": "Brenta_Brun",
+      "name": "Ullmatta Brenta Handloom Wool Premium Brun",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1035x1500",
+      "ref_file": "refs_still/9727.jpg",
+      "ref_macro_file": "refs_still/9727_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular dense, low-profile handloom wool rug in warm cocoa-brown and roasted cacao-umber matte natural wool (#6B493A), structured with regular, even-width horizontal tone-on-tone stripes running straight from edge to edge across the width: flatwoven mid cocoa-brown wool bands alternating rhythmically with dense, low velvety dark cacao-umber wool bands, finished with clean straight woven wool edges all around and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "08",
+    "image_file": "08_Brenta_Brun_V4_Taktil_Detalj.jpg",
+    "subfolder": "08_Brenta_Brun_V4_Taktil_Detalj",
+    "home_style": "Hem 2 (Amalias & Androniks 5★ Samlarsalong i Ådrad Valnöts-Boiserie & Ljus Parquet de Versailles) — V4 Taktil Detalj & Hörnvinjett (~70 cm)",
+    "hero_product": {
+      "id": "9727",
+      "tag": "@9727",
+      "sku": "Brenta_Brun",
+      "name": "Ullmatta Brenta Handloom Wool Premium Brun",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1035x1500",
+      "ref_file": "refs_still/9727.jpg",
+      "ref_macro_file": "refs_still/9727_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular dense, low-profile handloom wool rug in warm cocoa-brown and roasted cacao-umber matte natural wool (#6B493A), structured with regular, even-width horizontal tone-on-tone stripes running straight from edge to edge across the width: flatwoven mid cocoa-brown wool bands alternating rhythmically with dense, low velvety dark cacao-umber wool bands, finished with clean straight woven wool edges all around and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "09",
+    "image_file": "09_Rozel_Mossgron_V1_Ankarrum_Helbild.jpg",
+    "subfolder": "09_Rozel_Mossgron_V1_Ankarrum_Helbild",
+    "home_style": "Hem 3 (Antons & Amalias 5★ Nordiska Sekelskiftessalong med Bröstpanel, Hörnskåp i Ek & Ljus Ekparkett) — V1 Ankarrum Helbild (~130 cm)",
+    "hero_product": {
+      "id": "9735",
+      "tag": "@9735",
+      "sku": "Rozel_Mossgron",
+      "name": "Ullmatta Rozel Handloom Wool Mossgrön",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1066x1500",
+      "ref_file": "refs_still/9735.jpg",
+      "ref_macro_file": "refs_still/9735_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular firm, dense low-pile handloom wool rug in warm olive-moss green matte natural wool (#80773E), featuring subtle broad horizontal tonal handloom slub variations across the width and clean, straight, unbroken woven wool edges along all four sides with zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "10",
+    "image_file": "10_Rozel_Mossgron_V2_Halvnara_Sidovy.jpg",
+    "subfolder": "10_Rozel_Mossgron_V2_Halvnara_Sidovy",
+    "home_style": "Hem 3 (Antons & Amalias 5★ Nordiska Sekelskiftessalong med Bröstpanel, Hörnskåp i Ek & Ljus Ekparkett) — V2 Halvnära 3/4-Sidovy (~105 cm)",
+    "hero_product": {
+      "id": "9735",
+      "tag": "@9735",
+      "sku": "Rozel_Mossgron",
+      "name": "Ullmatta Rozel Handloom Wool Mossgrön",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1066x1500",
+      "ref_file": "refs_still/9735.jpg",
+      "ref_macro_file": "refs_still/9735_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular firm, dense low-pile handloom wool rug in warm olive-moss green matte natural wool (#80773E), featuring subtle broad horizontal tonal handloom slub variations across the width and clean, straight, unbroken woven wool edges along all four sides with zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "11",
+    "image_file": "11_Rozel_Mossgron_V3_Lag_Knahojd.jpg",
+    "subfolder": "11_Rozel_Mossgron_V3_Lag_Knahojd",
+    "home_style": "Hem 3 (Antons & Amalias 5★ Nordiska Sekelskiftessalong med Bröstpanel, Hörnskåp i Ek & Ljus Ekparkett) — V3 Låg Knä-/Sitthöjd (~60 cm)",
+    "hero_product": {
+      "id": "9735",
+      "tag": "@9735",
+      "sku": "Rozel_Mossgron",
+      "name": "Ullmatta Rozel Handloom Wool Mossgrön",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1066x1500",
+      "ref_file": "refs_still/9735.jpg",
+      "ref_macro_file": "refs_still/9735_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular firm, dense low-pile handloom wool rug in warm olive-moss green matte natural wool (#80773E), featuring subtle broad horizontal tonal handloom slub variations across the width and clean, straight, unbroken woven wool edges along all four sides with zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "12",
+    "image_file": "12_Rozel_Mossgron_V4_Taktil_Detalj.jpg",
+    "subfolder": "12_Rozel_Mossgron_V4_Taktil_Detalj",
+    "home_style": "Hem 3 (Antons & Amalias 5★ Nordiska Sekelskiftessalong med Bröstpanel, Hörnskåp i Ek & Ljus Ekparkett) — V4 Taktil Detalj & Hörnvinjett (~70 cm)",
+    "hero_product": {
+      "id": "9735",
+      "tag": "@9735",
+      "sku": "Rozel_Mossgron",
+      "name": "Ullmatta Rozel Handloom Wool Mossgrön",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1066x1500",
+      "ref_file": "refs_still/9735.jpg",
+      "ref_macro_file": "refs_still/9735_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular firm, dense low-pile handloom wool rug in warm olive-moss green matte natural wool (#80773E), featuring subtle broad horizontal tonal handloom slub variations across the width and clean, straight, unbroken woven wool edges along all four sides with zero fringes."
+    },
+    "companion_products": []
+  }
+]

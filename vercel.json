@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://focuses-soviet-tier-patient.trycloudflare.com/$1"
+      "destination": "https://developer-literature-adams-tuner.trycloudflare.com/$1"
     }
   ]
 }

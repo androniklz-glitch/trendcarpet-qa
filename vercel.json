@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://developer-literature-adams-tuner.trycloudflare.com/$1"
+      "destination": "https://handhelds-barriers-aberdeen-tin.trycloudflare.com/$1"
     }
   ]
 }

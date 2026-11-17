@@ -1,0 +1,156 @@
+[
+  {
+    "id": "01_Charonne_Creme_Reel_100x",
+    "slot": "01",
+    "sku": "9701",
+    "title": "01 · 01_Charonne_Creme_Reel_100x (1.00x UGC + HyperFrames)",
+    "clean_name": "01. 01_Charonne_Creme_Reel_100x · s · 1.00x (MSE=0.0)",
+    "category": "[PRIVAT] TC 5★ Favoritrum Slätvävd Ull — Färdigklippta Reels (9:16)",
+    "company": "trendcarpet",
+    "kicker": "TRENDCARPET",
+    "text_overlay_layout": {},
+    "images": [
+      {
+        "filename": "01_Charonne_Creme_Reel_100x/01_Charonne_Creme_Reel_100x_ugc_ad_9x16.mp4",
+        "rel_path": "01_Charonne_Creme_Reel_100x/01_Charonne_Creme_Reel_100x_ugc_ad_9x16.mp4",
+        "kind": "Utgång B: HyperFrames Paid-Social 9:16 (TRENDCARPET · 01_Charonne_Creme_Reel_100x)",
+        "resolution": "1080x1920"
+      },
+      {
+        "filename": "01_Charonne_Creme_Reel_100x/01_Charonne_Creme_Reel_100x_clean.mp4",
+        "rel_path": "01_Charonne_Creme_Reel_100x/01_Charonne_Creme_Reel_100x_clean.mp4",
+        "kind": "Utgång A: Ren UGC-Master 9:16 (1080x1920, s, 24 fps, 1.0x, MSE=0.0, textfri)",
+        "resolution": "1080x1920"
+      }
+    ]
+  },
+  {
+    "id": "02_Charonne_Creme_Reel_130x",
+    "slot": "02",
+    "sku": "9701",
+    "title": "02 · 02_Charonne_Creme_Reel_130x (1.30x UGC + HyperFrames)",
+    "clean_name": "02. 02_Charonne_Creme_Reel_130x · s · 1.30x (MSE=0.0)",
+    "category": "[PRIVAT] TC 5★ Favoritrum Slätvävd Ull — Färdigklippta Reels (9:16)",
+    "company": "trendcarpet",
+    "kicker": "TRENDCARPET",
+    "text_overlay_layout": {},
+    "images": [
+      {
+        "filename": "02_Charonne_Creme_Reel_130x/02_Charonne_Creme_Reel_130x_ugc_ad_9x16.mp4",
+        "rel_path": "02_Charonne_Creme_Reel_130x/02_Charonne_Creme_Reel_130x_ugc_ad_9x16.mp4",
+        "kind": "Utgång B: HyperFrames Paid-Social 9:16 (TRENDCARPET · 02_Charonne_Creme_Reel_130x)",
+        "resolution": "1080x1920"
+      },
+      {
+        "filename": "02_Charonne_Creme_Reel_130x/02_Charonne_Creme_Reel_130x_clean.mp4",
+        "rel_path": "02_Charonne_Creme_Reel_130x/02_Charonne_Creme_Reel_130x_clean.mp4",
+        "kind": "Utgång A: Ren UGC-Master 9:16 (1080x1920, s, 24 fps, 1.0x, MSE=0.0, textfri)",
+        "resolution": "1080x1920"
+      }
+    ]
+  },
+  {
+    "id": "03_Brenta_Brun_Reel_100x",
+    "slot": "03",
+    "sku": "9727",
+    "title": "03 · Brenta — Handvävd Ullmatta (1.00x UGC + HyperFrames)",
+    "clean_name": "03. Brenta — Handvävd Ullmatta · 13.875s · 1.00x (MSE=0.0)",
+    "category": "[PRIVAT] TC 5★ Favoritrum Slätvävd Ull — Färdigklippta Reels (9:16)",
+    "company": "trendcarpet",
+    "kicker": "TRENDCARPET",
+    "text_overlay_layout": {
+      "hook_top_px": 264,
+      "hook_bottom_px": 360,
+      "hook_safe_band": [
+        260,
+        360
+      ],
+      "hook_placement_mode": "manual",
+      "hook_edge_density_at_316": 5.535,
+      "hook_edge_density_selected": 5.167,
+      "label_top_px": 254,
+      "label_bottom_px": 372,
+      "label_safe_band": [
+        1300,
+        1410
+      ],
+      "label_placement_mode": "manual",
+      "label_edge_density_at_1310": 11.223,
+      "label_edge_density_selected": 3.752,
+      "label_start_clip": 3,
+      "label_end_clip": 3,
+      "meta_safe_zone_verified": true
+    },
+    "images": [
+      {
+        "filename": "03_Brenta_Brun_Reel_100x/03_Brenta_Brun_Reel_100x_ugc_ad_9x16.mp4",
+        "rel_path": "03_Brenta_Brun_Reel_100x/03_Brenta_Brun_Reel_100x_ugc_ad_9x16.mp4",
+        "kind": "Utgång B: HyperFrames Paid-Social 9:16 (TRENDCARPET · Brenta — Handvävd Ullmatta)",
+        "resolution": "1080x1920"
+      },
+      {
+        "filename": "03_Brenta_Brun_Reel_100x/03_Brenta_Brun_Reel_100x_clean.mp4",
+        "rel_path": "03_Brenta_Brun_Reel_100x/03_Brenta_Brun_Reel_100x_clean.mp4",
+        "kind": "Utgång A: Ren UGC-Master 9:16 (1080x1920, 13.875s, 24 fps, 1.0x, MSE=0.0, textfri)",
+        "resolution": "1080x1920"
+      },
+      {
+        "filename": "03_Brenta_Brun_Reel_100x/03_Brenta_Brun_Reel_100x_audit_strip.jpg",
+        "rel_path": "03_Brenta_Brun_Reel_100x/03_Brenta_Brun_Reel_100x_audit_strip.jpg",
+        "kind": "Kontrollremsa (Utgång A + Utgång B)"
+      }
+    ]
+  },
+  {
+    "id": "04_Brenta_Brun_Reel_130x",
+    "slot": "04",
+    "sku": "9727",
+    "title": "04 · Brenta — Handvävd Ullmatta (1.30x UGC + HyperFrames)",
+    "clean_name": "04. Brenta — Handvävd Ullmatta · 10.7419s · 1.30x (MSE=0.0)",
+    "category": "[PRIVAT] TC 5★ Favoritrum Slätvävd Ull — Färdigklippta Reels (9:16)",
+    "company": "trendcarpet",
+    "kicker": "TRENDCARPET",
+    "text_overlay_layout": {
+      "hook_top_px": 264,
+      "hook_bottom_px": 360,
+      "hook_safe_band": [
+        260,
+        360
+      ],
+      "hook_placement_mode": "manual",
+      "hook_edge_density_at_316": 5.535,
+      "hook_edge_density_selected": 5.167,
+      "label_top_px": 254,
+      "label_bottom_px": 372,
+      "label_safe_band": [
+        1300,
+        1410
+      ],
+      "label_placement_mode": "manual",
+      "label_edge_density_at_1310": 11.223,
+      "label_edge_density_selected": 3.752,
+      "label_start_clip": 3,
+      "label_end_clip": 3,
+      "meta_safe_zone_verified": true
+    },
+    "images": [
+      {
+        "filename": "04_Brenta_Brun_Reel_130x/04_Brenta_Brun_Reel_130x_ugc_ad_9x16.mp4",
+        "rel_path": "04_Brenta_Brun_Reel_130x/04_Brenta_Brun_Reel_130x_ugc_ad_9x16.mp4",
+        "kind": "Utgång B: HyperFrames Paid-Social 9:16 (TRENDCARPET · Brenta — Handvävd Ullmatta)",
+        "resolution": "1080x1920"
+      },
+      {
+        "filename": "04_Brenta_Brun_Reel_130x/04_Brenta_Brun_Reel_130x_clean.mp4",
+        "rel_path": "04_Brenta_Brun_Reel_130x/04_Brenta_Brun_Reel_130x_clean.mp4",
+        "kind": "Utgång A: Ren UGC-Master 9:16 (1080x1920, 10.7419s, 31 fps, 1.2917x, MSE=0.0, textfri)",
+        "resolution": "1080x1920"
+      },
+      {
+        "filename": "04_Brenta_Brun_Reel_130x/04_Brenta_Brun_Reel_130x_audit_strip.jpg",
+        "rel_path": "04_Brenta_Brun_Reel_130x/04_Brenta_Brun_Reel_130x_audit_strip.jpg",
+        "kind": "Kontrollremsa (Utgång A + Utgång B)"
+      }
+    ]
+  }
+]

@@ -1,11 +1,134 @@
 [
   {
+    "id": "01_5531_Fotodag1_Nordisk_Ek_Vardagsrum",
+    "slot": "01",
+    "sku": "KA5531",
+    "title": "01 ↻ R2 · Aranga Super Soft Fur Beige (SKU: KA5531) – Fotodag 1 (Skandinavisk Trägolvsvåning) — Vardagsrum med linnegardiner, honungsek & kalkstensbord",
+    "clean_name": "01 ↻ R2. Aranga Super Soft Fur Beige (@5531) – Fotodag 1 (Skandinavisk Trägolvsvåning) — Vardagsrum med linnegardiner, honungsek & kalkstensbord",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "5531",
+      "tag": "@5531",
+      "sku": "KA5531",
+      "name": "Aranga Super Soft Fur Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
+      "role": "hero",
+      "resolution": "1015x1500",
+      "ref_file": "refs_still/5531.jpg",
+      "ref_macro_file": "refs_still/5531_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "01_5531_Fotodag1_Nordisk_Ek_Vardagsrum/01_5531_Fotodag1_Nordisk_Ek_Vardagsrum.jpg",
+        "rel_path": "01_5531_Fotodag1_Nordisk_Ek_Vardagsrum/01_5531_Fotodag1_Nordisk_Ek_Vardagsrum.jpg",
+        "kind": "1. Genererad 2K Interiör (Fotodag 1 (Skandinavisk Trägolvsvåning) — Vardagsrum med linnegardiner, honungsek & kalkstensbord)"
+      },
+      {
+        "filename": "01_5531_Fotodag1_Nordisk_Ek_Vardagsrum/01_SKU5531-01_Hero_Ref_5531.jpg",
+        "rel_path": "01_5531_Fotodag1_Nordisk_Ek_Vardagsrum/01_SKU5531-01_Hero_Ref_5531.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@5531 · SKU KA5531)"
+      },
+      {
+        "filename": "01_5531_Fotodag1_Nordisk_Ek_Vardagsrum/01_SKU5531-01m_Hero_Macro_5531.jpg",
+        "rel_path": "01_5531_Fotodag1_Nordisk_Ek_Vardagsrum/01_SKU5531-01m_Hero_Macro_5531.jpg",
+        "kind": "3. Makroreferens (@5531_macro)"
+      }
+    ]
+  },
+  {
+    "id": "04_5531_Fotodag2_Kalkputs_Valnot_Salong",
+    "slot": "04",
+    "sku": "KA5531",
+    "title": "04 · Aranga Super Soft Fur Beige (SKU: KA5531) – Fotodag 2 (Kontinental Kalkputs- & Valnötsvåning) — Salong med tobaksbrun fiskbensparkett, rak ullsoffa & valnöt",
+    "clean_name": "04. Aranga Super Soft Fur Beige (@5531) – Fotodag 2 (Kontinental Kalkputs- & Valnötsvåning) — Salong med tobaksbrun fiskbensparkett, rak ullsoffa & valnöt",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "5531",
+      "tag": "@5531",
+      "sku": "KA5531",
+      "name": "Aranga Super Soft Fur Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
+      "role": "hero",
+      "resolution": "1015x1500",
+      "ref_file": "refs_still/5531.jpg",
+      "ref_macro_file": "refs_still/5531_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "04_5531_Fotodag2_Kalkputs_Valnot_Salong/04_5531_Fotodag2_Kalkputs_Valnot_Salong.jpg",
+        "rel_path": "04_5531_Fotodag2_Kalkputs_Valnot_Salong/04_5531_Fotodag2_Kalkputs_Valnot_Salong.jpg",
+        "kind": "1. Genererad 2K Interiör (Fotodag 2 (Kontinental Kalkputs- & Valnötsvåning) — Salong med tobaksbrun fiskbensparkett, rak ullsoffa & valnöt)"
+      },
+      {
+        "filename": "04_5531_Fotodag2_Kalkputs_Valnot_Salong/04_SKU5531-01_Hero_Ref_5531.jpg",
+        "rel_path": "04_5531_Fotodag2_Kalkputs_Valnot_Salong/04_SKU5531-01_Hero_Ref_5531.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@5531 · SKU KA5531)"
+      },
+      {
+        "filename": "04_5531_Fotodag2_Kalkputs_Valnot_Salong/04_SKU5531-01m_Hero_Macro_5531.jpg",
+        "rel_path": "04_5531_Fotodag2_Kalkputs_Valnot_Salong/04_SKU5531-01m_Hero_Macro_5531.jpg",
+        "kind": "3. Makroreferens (@5531_macro)"
+      }
+    ]
+  },
+  {
+    "id": "07_5531_Fotodag3_Arkitektvilla_Stentrappa",
+    "slot": "07",
+    "sku": "KA5531",
+    "title": "07 · Aranga Super Soft Fur Beige (SKU: KA5531) – Fotodag 3 (Arkitektonisk Kalkstens- & Ateljévilla) — Modernistisk salong med travertintrappa, rökt ek & glasbord på valnöt",
+    "clean_name": "07. Aranga Super Soft Fur Beige (@5531) – Fotodag 3 (Arkitektonisk Kalkstens- & Ateljévilla) — Modernistisk salong med travertintrappa, rökt ek & glasbord på valnöt",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "5531",
+      "tag": "@5531",
+      "sku": "KA5531",
+      "name": "Aranga Super Soft Fur Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
+      "role": "hero",
+      "resolution": "1015x1500",
+      "ref_file": "refs_still/5531.jpg",
+      "ref_macro_file": "refs_still/5531_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "07_5531_Fotodag3_Arkitektvilla_Stentrappa/07_5531_Fotodag3_Arkitektvilla_Stentrappa.jpg",
+        "rel_path": "07_5531_Fotodag3_Arkitektvilla_Stentrappa/07_5531_Fotodag3_Arkitektvilla_Stentrappa.jpg",
+        "kind": "1. Genererad 2K Interiör (Fotodag 3 (Arkitektonisk Kalkstens- & Ateljévilla) — Modernistisk salong med travertintrappa, rökt ek & glasbord på valnöt)"
+      },
+      {
+        "filename": "07_5531_Fotodag3_Arkitektvilla_Stentrappa/07_SKU5531-01_Hero_Ref_5531.jpg",
+        "rel_path": "07_5531_Fotodag3_Arkitektvilla_Stentrappa/07_SKU5531-01_Hero_Ref_5531.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@5531 · SKU KA5531)"
+      },
+      {
+        "filename": "07_5531_Fotodag3_Arkitektvilla_Stentrappa/07_SKU5531-01m_Hero_Macro_5531.jpg",
+        "rel_path": "07_5531_Fotodag3_Arkitektvilla_Stentrappa/07_SKU5531-01m_Hero_Macro_5531.jpg",
+        "kind": "3. Makroreferens (@5531_macro)"
+      }
+    ]
+  },
+  {
     "id": "10_5531_Fotodag4_Kopenhamn_Douglasgran_Salong",
     "slot": "10",
     "sku": "KA5531",
-    "title": "10 · Aranga Super Soft Fur Beige (SKU: KA5531) – Fotodag 4 (Köpenhamnsk Designvåning i Douglasgran) — Salong med salviagrön bröstpanel, varma plankor & linnesoffa",
-    "clean_name": "10. Aranga Super Soft Fur Beige (@5531) – Fotodag 4 (Köpenhamnsk Designvåning i Douglasgran) — Salong med salviagrön bröstpanel, varma plankor & linnesoffa",
-    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (7 st 2K Vinnare)",
+    "title": "10 ★ Toppval · Aranga Super Soft Fur Beige (SKU: KA5531) – Fotodag 4 (Köpenhamnsk Designvåning i Douglasgran) — Salong med salviagrön bröstpanel, varma plankor & linnesoffa",
+    "clean_name": "10 ★ Toppval. Aranga Super Soft Fur Beige (@5531) – Fotodag 4 (Köpenhamnsk Designvåning i Douglasgran) — Salong med salviagrön bröstpanel, varma plankor & linnesoffa",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
     "company": "trendcarpet",
     "hero_product": {
       "id": "5531",
@@ -41,12 +164,12 @@
     ]
   },
   {
-    "id": "19_5531_Fotodag7_Funkisvilla_Korsbarspanel_Salong",
-    "slot": "19",
+    "id": "13_5531_Fotodag5_Townhouse_Boiserie_Salong",
+    "slot": "13",
     "sku": "KA5531",
-    "title": "19 · Aranga Super Soft Fur Beige (SKU: KA5531) – Fotodag 7 (1950-talets Arkitektvilla i Körsbär & Sten) — Salong med körsbärspanel, kammad ullsoffa & skifferbord",
-    "clean_name": "19. Aranga Super Soft Fur Beige (@5531) – Fotodag 7 (1950-talets Arkitektvilla i Körsbär & Sten) — Salong med körsbärspanel, kammad ullsoffa & skifferbord",
-    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (7 st 2K Vinnare)",
+    "title": "13 · Aranga Super Soft Fur Beige (SKU: KA5531) – Fotodag 5 (Kontinentalt Townhouse med Boiserie & Chevron) — Salong med krämvit boiserie, tobaksbrun chevron & sammetssoffa",
+    "clean_name": "13. Aranga Super Soft Fur Beige (@5531) – Fotodag 5 (Kontinentalt Townhouse med Boiserie & Chevron) — Salong med krämvit boiserie, tobaksbrun chevron & sammetssoffa",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
     "company": "trendcarpet",
     "hero_product": {
       "id": "5531",
@@ -65,18 +188,18 @@
     "companion_products": [],
     "images": [
       {
-        "filename": "19_5531_Fotodag7_Funkisvilla_Korsbarspanel_Salong/19_5531_Fotodag7_Funkisvilla_Korsbarspanel_Salong.jpg",
-        "rel_path": "19_5531_Fotodag7_Funkisvilla_Korsbarspanel_Salong/19_5531_Fotodag7_Funkisvilla_Korsbarspanel_Salong.jpg",
-        "kind": "1. Genererad 2K Interiör (Fotodag 7 (1950-talets Arkitektvilla i Körsbär & Sten) — Salong med körsbärspanel, kammad ullsoffa & skifferbord)"
+        "filename": "13_5531_Fotodag5_Townhouse_Boiserie_Salong/13_5531_Fotodag5_Townhouse_Boiserie_Salong.jpg",
+        "rel_path": "13_5531_Fotodag5_Townhouse_Boiserie_Salong/13_5531_Fotodag5_Townhouse_Boiserie_Salong.jpg",
+        "kind": "1. Genererad 2K Interiör (Fotodag 5 (Kontinentalt Townhouse med Boiserie & Chevron) — Salong med krämvit boiserie, tobaksbrun chevron & sammetssoffa)"
       },
       {
-        "filename": "19_5531_Fotodag7_Funkisvilla_Korsbarspanel_Salong/19_SKU5531-01_Hero_Ref_5531.jpg",
-        "rel_path": "19_5531_Fotodag7_Funkisvilla_Korsbarspanel_Salong/19_SKU5531-01_Hero_Ref_5531.jpg",
+        "filename": "13_5531_Fotodag5_Townhouse_Boiserie_Salong/13_SKU5531-01_Hero_Ref_5531.jpg",
+        "rel_path": "13_5531_Fotodag5_Townhouse_Boiserie_Salong/13_SKU5531-01_Hero_Ref_5531.jpg",
         "kind": "2. Stjärn-produkt Studioreferens (@5531 · SKU KA5531)"
       },
       {
-        "filename": "19_5531_Fotodag7_Funkisvilla_Korsbarspanel_Salong/19_SKU5531-01m_Hero_Macro_5531.jpg",
-        "rel_path": "19_5531_Fotodag7_Funkisvilla_Korsbarspanel_Salong/19_SKU5531-01m_Hero_Macro_5531.jpg",
+        "filename": "13_5531_Fotodag5_Townhouse_Boiserie_Salong/13_SKU5531-01m_Hero_Macro_5531.jpg",
+        "rel_path": "13_5531_Fotodag5_Townhouse_Boiserie_Salong/13_SKU5531-01m_Hero_Macro_5531.jpg",
         "kind": "3. Makroreferens (@5531_macro)"
       }
     ]
@@ -85,9 +208,9 @@
     "id": "16_5531_Fotodag6_Kalkstensgard_Orangeriljus_Sal",
     "slot": "16",
     "sku": "KA5531",
-    "title": "16 · Aranga Super Soft Fur Beige (SKU: KA5531) – Fotodag 6 (Nordisk Kalkstensgård & Orangeriljus) — Kalkmurad sal på grå kalksten med rökt ek & linnesoffa",
-    "clean_name": "16. Aranga Super Soft Fur Beige (@5531) – Fotodag 6 (Nordisk Kalkstensgård & Orangeriljus) — Kalkmurad sal på grå kalksten med rökt ek & linnesoffa",
-    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (7 st 2K Vinnare)",
+    "title": "16 ★ Toppval · Aranga Super Soft Fur Beige (SKU: KA5531) – Fotodag 6 (Nordisk Kalkstensgård & Orangeriljus) — Kalkmurad sal på grå kalksten med rökt ek & linnesoffa",
+    "clean_name": "16 ★ Toppval. Aranga Super Soft Fur Beige (@5531) – Fotodag 6 (Nordisk Kalkstensgård & Orangeriljus) — Kalkmurad sal på grå kalksten med rökt ek & linnesoffa",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
     "company": "trendcarpet",
     "hero_product": {
       "id": "5531",
@@ -123,12 +246,217 @@
     ]
   },
   {
+    "id": "19_5531_Fotodag7_Funkisvilla_Korsbarspanel_Salong",
+    "slot": "19",
+    "sku": "KA5531",
+    "title": "19 ★ Toppval · Aranga Super Soft Fur Beige (SKU: KA5531) – Fotodag 7 (1950-talets Arkitektvilla i Körsbär & Sten) — Salong med körsbärspanel, kammad ullsoffa & skifferbord",
+    "clean_name": "19 ★ Toppval. Aranga Super Soft Fur Beige (@5531) – Fotodag 7 (1950-talets Arkitektvilla i Körsbär & Sten) — Salong med körsbärspanel, kammad ullsoffa & skifferbord",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "5531",
+      "tag": "@5531",
+      "sku": "KA5531",
+      "name": "Aranga Super Soft Fur Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
+      "role": "hero",
+      "resolution": "1015x1500",
+      "ref_file": "refs_still/5531.jpg",
+      "ref_macro_file": "refs_still/5531_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "19_5531_Fotodag7_Funkisvilla_Korsbarspanel_Salong/19_5531_Fotodag7_Funkisvilla_Korsbarspanel_Salong.jpg",
+        "rel_path": "19_5531_Fotodag7_Funkisvilla_Korsbarspanel_Salong/19_5531_Fotodag7_Funkisvilla_Korsbarspanel_Salong.jpg",
+        "kind": "1. Genererad 2K Interiör (Fotodag 7 (1950-talets Arkitektvilla i Körsbär & Sten) — Salong med körsbärspanel, kammad ullsoffa & skifferbord)"
+      },
+      {
+        "filename": "19_5531_Fotodag7_Funkisvilla_Korsbarspanel_Salong/19_SKU5531-01_Hero_Ref_5531.jpg",
+        "rel_path": "19_5531_Fotodag7_Funkisvilla_Korsbarspanel_Salong/19_SKU5531-01_Hero_Ref_5531.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@5531 · SKU KA5531)"
+      },
+      {
+        "filename": "19_5531_Fotodag7_Funkisvilla_Korsbarspanel_Salong/19_SKU5531-01m_Hero_Macro_5531.jpg",
+        "rel_path": "19_5531_Fotodag7_Funkisvilla_Korsbarspanel_Salong/19_SKU5531-01m_Hero_Macro_5531.jpg",
+        "kind": "3. Makroreferens (@5531_macro)"
+      }
+    ]
+  },
+  {
+    "id": "22_5531_Fotodag8_Arkitektsovrum_Valnotssang",
+    "slot": "22",
+    "sku": "KA5531",
+    "title": "22 · Aranga Super Soft Fur Beige (SKU: KA5531) – Fotodag 8 (Stramt Arkitektoniskt Sovrum) — Låg valnötsplattformssäng centrerad 2/3 in på mattan med tvättat linne",
+    "clean_name": "22. Aranga Super Soft Fur Beige (@5531) – Fotodag 8 (Stramt Arkitektoniskt Sovrum) — Låg valnötsplattformssäng centrerad 2/3 in på mattan med tvättat linne",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "5531",
+      "tag": "@5531",
+      "sku": "KA5531",
+      "name": "Aranga Super Soft Fur Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
+      "role": "hero",
+      "resolution": "1015x1500",
+      "ref_file": "refs_still/5531.jpg",
+      "ref_macro_file": "refs_still/5531_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "22_5531_Fotodag8_Arkitektsovrum_Valnotssang/22_5531_Fotodag8_Arkitektsovrum_Valnotssang.jpg",
+        "rel_path": "22_5531_Fotodag8_Arkitektsovrum_Valnotssang/22_5531_Fotodag8_Arkitektsovrum_Valnotssang.jpg",
+        "kind": "1. Genererad 2K Interiör (Fotodag 8 (Stramt Arkitektoniskt Sovrum) — Låg valnötsplattformssäng centrerad 2/3 in på mattan med tvättat linne)"
+      },
+      {
+        "filename": "22_5531_Fotodag8_Arkitektsovrum_Valnotssang/22_SKU5531-01_Hero_Ref_5531.jpg",
+        "rel_path": "22_5531_Fotodag8_Arkitektsovrum_Valnotssang/22_SKU5531-01_Hero_Ref_5531.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@5531 · SKU KA5531)"
+      },
+      {
+        "filename": "22_5531_Fotodag8_Arkitektsovrum_Valnotssang/22_SKU5531-01m_Hero_Macro_5531.jpg",
+        "rel_path": "22_5531_Fotodag8_Arkitektsovrum_Valnotssang/22_SKU5531-01m_Hero_Macro_5531.jpg",
+        "kind": "3. Makroreferens (@5531_macro)"
+      }
+    ]
+  },
+  {
+    "id": "02_6554_Fotodag1_Nordisk_Ek_Salong",
+    "slot": "02",
+    "sku": "216554",
+    "title": "02 · Fergana Crème Beige (SKU: 216554) – Fotodag 1 (Skandinavisk Trägolvsvåning) — Salong med rökt honungsek, kammad ull & valnötsbord",
+    "clean_name": "02. Fergana Crème Beige (@6554) – Fotodag 1 (Skandinavisk Trägolvsvåning) — Salong med rökt honungsek, kammad ull & valnötsbord",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6554",
+      "tag": "@6554",
+      "sku": "216554",
+      "name": "Fergana Crème Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
+      "role": "hero",
+      "resolution": "1053x1500",
+      "ref_file": "refs_still/6554.jpg",
+      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "02_6554_Fotodag1_Nordisk_Ek_Salong/02_6554_Fotodag1_Nordisk_Ek_Salong.jpg",
+        "rel_path": "02_6554_Fotodag1_Nordisk_Ek_Salong/02_6554_Fotodag1_Nordisk_Ek_Salong.jpg",
+        "kind": "1. Genererad 2K Interiör (Fotodag 1 (Skandinavisk Trägolvsvåning) — Salong med rökt honungsek, kammad ull & valnötsbord)"
+      },
+      {
+        "filename": "02_6554_Fotodag1_Nordisk_Ek_Salong/02_SKU6554-01_Hero_Ref_6554.jpg",
+        "rel_path": "02_6554_Fotodag1_Nordisk_Ek_Salong/02_SKU6554-01_Hero_Ref_6554.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6554 · SKU 216554)"
+      },
+      {
+        "filename": "02_6554_Fotodag1_Nordisk_Ek_Salong/02_SKU6554-01m_Hero_Macro_6554.jpg",
+        "rel_path": "02_6554_Fotodag1_Nordisk_Ek_Salong/02_SKU6554-01m_Hero_Macro_6554.jpg",
+        "kind": "3. Makroreferens (@6554_macro)"
+      }
+    ]
+  },
+  {
+    "id": "05_6554_Fotodag2_Kalkputs_Kalksten_Atelje",
+    "slot": "05",
+    "sku": "216554",
+    "title": "05 ↻ R2 · Fergana Crème Beige (SKU: 216554) – Fotodag 2 (Kontinental Kalkputs- & Valnötsvåning) — Ateljévardagsrum på grå kalksten med rak linnesoffa & stenbord",
+    "clean_name": "05 ↻ R2. Fergana Crème Beige (@6554) – Fotodag 2 (Kontinental Kalkputs- & Valnötsvåning) — Ateljévardagsrum på grå kalksten med rak linnesoffa & stenbord",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6554",
+      "tag": "@6554",
+      "sku": "216554",
+      "name": "Fergana Crème Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
+      "role": "hero",
+      "resolution": "1053x1500",
+      "ref_file": "refs_still/6554.jpg",
+      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "05_6554_Fotodag2_Kalkputs_Kalksten_Atelje/05_6554_Fotodag2_Kalkputs_Kalksten_Atelje.jpg",
+        "rel_path": "05_6554_Fotodag2_Kalkputs_Kalksten_Atelje/05_6554_Fotodag2_Kalkputs_Kalksten_Atelje.jpg",
+        "kind": "1. Genererad 2K Interiör (Fotodag 2 (Kontinental Kalkputs- & Valnötsvåning) — Ateljévardagsrum på grå kalksten med rak linnesoffa & stenbord)"
+      },
+      {
+        "filename": "05_6554_Fotodag2_Kalkputs_Kalksten_Atelje/05_SKU6554-01_Hero_Ref_6554.jpg",
+        "rel_path": "05_6554_Fotodag2_Kalkputs_Kalksten_Atelje/05_SKU6554-01_Hero_Ref_6554.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6554 · SKU 216554)"
+      },
+      {
+        "filename": "05_6554_Fotodag2_Kalkputs_Kalksten_Atelje/05_SKU6554-01m_Hero_Macro_6554.jpg",
+        "rel_path": "05_6554_Fotodag2_Kalkputs_Kalksten_Atelje/05_SKU6554-01m_Hero_Macro_6554.jpg",
+        "kind": "3. Makroreferens (@6554_macro)"
+      }
+    ]
+  },
+  {
+    "id": "08_6554_Fotodag3_Arkitektvilla_Valvnisch",
+    "slot": "08",
+    "sku": "216554",
+    "title": "08 · Fergana Crème Beige (SKU: 216554) – Fotodag 3 (Arkitektonisk Kalkstens- & Ateljévilla) — Kalkputsad valvsalsvy med tobaksbrun sammet & rökfärgat glas på körsbär",
+    "clean_name": "08. Fergana Crème Beige (@6554) – Fotodag 3 (Arkitektonisk Kalkstens- & Ateljévilla) — Kalkputsad valvsalsvy med tobaksbrun sammet & rökfärgat glas på körsbär",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6554",
+      "tag": "@6554",
+      "sku": "216554",
+      "name": "Fergana Crème Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
+      "role": "hero",
+      "resolution": "1053x1500",
+      "ref_file": "refs_still/6554.jpg",
+      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "08_6554_Fotodag3_Arkitektvilla_Valvnisch/08_6554_Fotodag3_Arkitektvilla_Valvnisch.jpg",
+        "rel_path": "08_6554_Fotodag3_Arkitektvilla_Valvnisch/08_6554_Fotodag3_Arkitektvilla_Valvnisch.jpg",
+        "kind": "1. Genererad 2K Interiör (Fotodag 3 (Arkitektonisk Kalkstens- & Ateljévilla) — Kalkputsad valvsalsvy med tobaksbrun sammet & rökfärgat glas på körsbär)"
+      },
+      {
+        "filename": "08_6554_Fotodag3_Arkitektvilla_Valvnisch/08_SKU6554-01_Hero_Ref_6554.jpg",
+        "rel_path": "08_6554_Fotodag3_Arkitektvilla_Valvnisch/08_SKU6554-01_Hero_Ref_6554.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6554 · SKU 216554)"
+      },
+      {
+        "filename": "08_6554_Fotodag3_Arkitektvilla_Valvnisch/08_SKU6554-01m_Hero_Macro_6554.jpg",
+        "rel_path": "08_6554_Fotodag3_Arkitektvilla_Valvnisch/08_SKU6554-01m_Hero_Macro_6554.jpg",
+        "kind": "3. Makroreferens (@6554_macro)"
+      }
+    ]
+  },
+  {
     "id": "11_6554_Fotodag4_Kopenhamn_Douglasgran_Vardagsrum",
     "slot": "11",
     "sku": "216554",
-    "title": "11 · Fergana Crème Beige (SKU: 216554) – Fotodag 4 (Köpenhamnsk Designvåning i Douglasgran) — Vardagsrum med kameltonad väggpanel, eksoffa & skifferbord",
-    "clean_name": "11. Fergana Crème Beige (@6554) – Fotodag 4 (Köpenhamnsk Designvåning i Douglasgran) — Vardagsrum med kameltonad väggpanel, eksoffa & skifferbord",
-    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (7 st 2K Vinnare)",
+    "title": "11 ★ Toppval · Fergana Crème Beige (SKU: 216554) – Fotodag 4 (Köpenhamnsk Designvåning i Douglasgran) — Vardagsrum med kameltonad väggpanel, eksoffa & skifferbord",
+    "clean_name": "11 ★ Toppval. Fergana Crème Beige (@6554) – Fotodag 4 (Köpenhamnsk Designvåning i Douglasgran) — Vardagsrum med kameltonad väggpanel, eksoffa & skifferbord",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
     "company": "trendcarpet",
     "hero_product": {
       "id": "6554",
@@ -164,12 +492,135 @@
     ]
   },
   {
+    "id": "14_6554_Fotodag5_Townhouse_Boiserie_Chevron",
+    "slot": "14",
+    "sku": "216554",
+    "title": "14 · Fergana Crème Beige (SKU: 216554) – Fotodag 5 (Kontinentalt Townhouse med Boiserie & Chevron) — Sällskapsrum med varmgrå boiserie, kammad ull & grön marmor",
+    "clean_name": "14. Fergana Crème Beige (@6554) – Fotodag 5 (Kontinentalt Townhouse med Boiserie & Chevron) — Sällskapsrum med varmgrå boiserie, kammad ull & grön marmor",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6554",
+      "tag": "@6554",
+      "sku": "216554",
+      "name": "Fergana Crème Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
+      "role": "hero",
+      "resolution": "1053x1500",
+      "ref_file": "refs_still/6554.jpg",
+      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "14_6554_Fotodag5_Townhouse_Boiserie_Chevron/14_6554_Fotodag5_Townhouse_Boiserie_Chevron.jpg",
+        "rel_path": "14_6554_Fotodag5_Townhouse_Boiserie_Chevron/14_6554_Fotodag5_Townhouse_Boiserie_Chevron.jpg",
+        "kind": "1. Genererad 2K Interiör (Fotodag 5 (Kontinentalt Townhouse med Boiserie & Chevron) — Sällskapsrum med varmgrå boiserie, kammad ull & grön marmor)"
+      },
+      {
+        "filename": "14_6554_Fotodag5_Townhouse_Boiserie_Chevron/14_SKU6554-01_Hero_Ref_6554.jpg",
+        "rel_path": "14_6554_Fotodag5_Townhouse_Boiserie_Chevron/14_SKU6554-01_Hero_Ref_6554.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6554 · SKU 216554)"
+      },
+      {
+        "filename": "14_6554_Fotodag5_Townhouse_Boiserie_Chevron/14_SKU6554-01m_Hero_Macro_6554.jpg",
+        "rel_path": "14_6554_Fotodag5_Townhouse_Boiserie_Chevron/14_SKU6554-01m_Hero_Macro_6554.jpg",
+        "kind": "3. Makroreferens (@6554_macro)"
+      }
+    ]
+  },
+  {
+    "id": "17_6554_Fotodag6_Kalkstensgard_Orangeriljus_Vardag",
+    "slot": "17",
+    "sku": "216554",
+    "title": "17 · Fergana Crème Beige (SKU: 216554) – Fotodag 6 (Nordisk Kalkstensgård & Orangeriljus) — Vardagsrum med slammad kalkvägg, kanvassoffa & massiv alm",
+    "clean_name": "17. Fergana Crème Beige (@6554) – Fotodag 6 (Nordisk Kalkstensgård & Orangeriljus) — Vardagsrum med slammad kalkvägg, kanvassoffa & massiv alm",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6554",
+      "tag": "@6554",
+      "sku": "216554",
+      "name": "Fergana Crème Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
+      "role": "hero",
+      "resolution": "1053x1500",
+      "ref_file": "refs_still/6554.jpg",
+      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "17_6554_Fotodag6_Kalkstensgard_Orangeriljus_Vardag/17_6554_Fotodag6_Kalkstensgard_Orangeriljus_Vardag.jpg",
+        "rel_path": "17_6554_Fotodag6_Kalkstensgard_Orangeriljus_Vardag/17_6554_Fotodag6_Kalkstensgard_Orangeriljus_Vardag.jpg",
+        "kind": "1. Genererad 2K Interiör (Fotodag 6 (Nordisk Kalkstensgård & Orangeriljus) — Vardagsrum med slammad kalkvägg, kanvassoffa & massiv alm)"
+      },
+      {
+        "filename": "17_6554_Fotodag6_Kalkstensgard_Orangeriljus_Vardag/17_SKU6554-01_Hero_Ref_6554.jpg",
+        "rel_path": "17_6554_Fotodag6_Kalkstensgard_Orangeriljus_Vardag/17_SKU6554-01_Hero_Ref_6554.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6554 · SKU 216554)"
+      },
+      {
+        "filename": "17_6554_Fotodag6_Kalkstensgard_Orangeriljus_Vardag/17_SKU6554-01m_Hero_Macro_6554.jpg",
+        "rel_path": "17_6554_Fotodag6_Kalkstensgard_Orangeriljus_Vardag/17_SKU6554-01m_Hero_Macro_6554.jpg",
+        "kind": "3. Makroreferens (@6554_macro)"
+      }
+    ]
+  },
+  {
+    "id": "20_6554_Fotodag7_Funkisvilla_Teakpanel_Atelje",
+    "slot": "20",
+    "sku": "216554",
+    "title": "20 · Fergana Crème Beige (SKU: 216554) – Fotodag 7 (1950-talets Arkitektvilla i Körsbär & Sten) — Vardagsrum med oljad teakpanel, manchestersoffa & travertin",
+    "clean_name": "20. Fergana Crème Beige (@6554) – Fotodag 7 (1950-talets Arkitektvilla i Körsbär & Sten) — Vardagsrum med oljad teakpanel, manchestersoffa & travertin",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6554",
+      "tag": "@6554",
+      "sku": "216554",
+      "name": "Fergana Crème Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
+      "role": "hero",
+      "resolution": "1053x1500",
+      "ref_file": "refs_still/6554.jpg",
+      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "20_6554_Fotodag7_Funkisvilla_Teakpanel_Atelje/20_6554_Fotodag7_Funkisvilla_Teakpanel_Atelje.jpg",
+        "rel_path": "20_6554_Fotodag7_Funkisvilla_Teakpanel_Atelje/20_6554_Fotodag7_Funkisvilla_Teakpanel_Atelje.jpg",
+        "kind": "1. Genererad 2K Interiör (Fotodag 7 (1950-talets Arkitektvilla i Körsbär & Sten) — Vardagsrum med oljad teakpanel, manchestersoffa & travertin)"
+      },
+      {
+        "filename": "20_6554_Fotodag7_Funkisvilla_Teakpanel_Atelje/20_SKU6554-01_Hero_Ref_6554.jpg",
+        "rel_path": "20_6554_Fotodag7_Funkisvilla_Teakpanel_Atelje/20_SKU6554-01_Hero_Ref_6554.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6554 · SKU 216554)"
+      },
+      {
+        "filename": "20_6554_Fotodag7_Funkisvilla_Teakpanel_Atelje/20_SKU6554-01m_Hero_Macro_6554.jpg",
+        "rel_path": "20_6554_Fotodag7_Funkisvilla_Teakpanel_Atelje/20_SKU6554-01m_Hero_Macro_6554.jpg",
+        "kind": "3. Makroreferens (@6554_macro)"
+      }
+    ]
+  },
+  {
     "id": "23_6554_Fotodag8_Arkitektsovrum_Rostekssang",
     "slot": "23",
     "sku": "216554",
-    "title": "23 · Fergana Crème Beige (SKU: 216554) – Fotodag 8 (Stramt Arkitektoniskt Sovrum) — Låg plattformssäng i rökt ek centrerad 2/3 in på mattan med sandlinne",
-    "clean_name": "23. Fergana Crème Beige (@6554) – Fotodag 8 (Stramt Arkitektoniskt Sovrum) — Låg plattformssäng i rökt ek centrerad 2/3 in på mattan med sandlinne",
-    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (7 st 2K Vinnare)",
+    "title": "23 ★ Toppval · Fergana Crème Beige (SKU: 216554) – Fotodag 8 (Stramt Arkitektoniskt Sovrum) — Låg plattformssäng i rökt ek centrerad 2/3 in på mattan med sandlinne",
+    "clean_name": "23 ★ Toppval. Fergana Crème Beige (@6554) – Fotodag 8 (Stramt Arkitektoniskt Sovrum) — Låg plattformssäng i rökt ek centrerad 2/3 in på mattan med sandlinne",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
     "company": "trendcarpet",
     "hero_product": {
       "id": "6554",
@@ -205,12 +656,176 @@
     ]
   },
   {
+    "id": "03_6550_Fotodag1_Nordisk_Ek_Lounge",
+    "slot": "03",
+    "sku": "216550",
+    "title": "03 · Akaba Crème Grön (SKU: 216550) – Fotodag 1 (Skandinavisk Trägolvsvåning) — Dagbäddslounge med borstad ek, mockadagbädd & linnefåtölj",
+    "clean_name": "03. Akaba Crème Grön (@6550) – Fotodag 1 (Skandinavisk Trägolvsvåning) — Dagbäddslounge med borstad ek, mockadagbädd & linnefåtölj",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6550",
+      "tag": "@6550",
+      "sku": "216550",
+      "name": "Akaba Crème Grön",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/teppiche-modernes-design/hochflorteppiche-akaba-creme-grun/",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/6550.jpg",
+      "ref_macro_file": "refs_still/6550_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular sculpted high-low 3D relief rug featuring continuous meandering rich sage-moss and olive-moss green raised cut-pile bands together with rounded moss-green organic islands set in crisp carved relief against a smooth warm off-white and natural chalk low-pile ground, finished with a slim off-white overlocked border and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "03_6550_Fotodag1_Nordisk_Ek_Lounge/03_6550_Fotodag1_Nordisk_Ek_Lounge.jpg",
+        "rel_path": "03_6550_Fotodag1_Nordisk_Ek_Lounge/03_6550_Fotodag1_Nordisk_Ek_Lounge.jpg",
+        "kind": "1. Genererad 2K Interiör (Fotodag 1 (Skandinavisk Trägolvsvåning) — Dagbäddslounge med borstad ek, mockadagbädd & linnefåtölj)"
+      },
+      {
+        "filename": "03_6550_Fotodag1_Nordisk_Ek_Lounge/03_SKU6550-01_Hero_Ref_6550.jpg",
+        "rel_path": "03_6550_Fotodag1_Nordisk_Ek_Lounge/03_SKU6550-01_Hero_Ref_6550.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6550 · SKU 216550)"
+      },
+      {
+        "filename": "03_6550_Fotodag1_Nordisk_Ek_Lounge/03_SKU6550-01m_Hero_Macro_6550.jpg",
+        "rel_path": "03_6550_Fotodag1_Nordisk_Ek_Lounge/03_SKU6550-01m_Hero_Macro_6550.jpg",
+        "kind": "3. Makroreferens (@6550_macro)"
+      }
+    ]
+  },
+  {
+    "id": "06_6550_Fotodag2_Kalkputs_Fiskbensek_Horna",
+    "slot": "06",
+    "sku": "216550",
+    "title": "06 · Akaba Crème Grön (SKU: 216550) – Fotodag 2 (Kontinental Kalkputs- & Valnötsvåning) — Rätvinkligt fåtöljpar på rökt ek med valnötsbord",
+    "clean_name": "06. Akaba Crème Grön (@6550) – Fotodag 2 (Kontinental Kalkputs- & Valnötsvåning) — Rätvinkligt fåtöljpar på rökt ek med valnötsbord",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6550",
+      "tag": "@6550",
+      "sku": "216550",
+      "name": "Akaba Crème Grön",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/teppiche-modernes-design/hochflorteppiche-akaba-creme-grun/",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/6550.jpg",
+      "ref_macro_file": "refs_still/6550_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular sculpted high-low 3D relief rug featuring continuous meandering rich sage-moss and olive-moss green raised cut-pile bands together with rounded moss-green organic islands set in crisp carved relief against a smooth warm off-white and natural chalk low-pile ground, finished with a slim off-white overlocked border and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "06_6550_Fotodag2_Kalkputs_Fiskbensek_Horna/06_6550_Fotodag2_Kalkputs_Fiskbensek_Horna.jpg",
+        "rel_path": "06_6550_Fotodag2_Kalkputs_Fiskbensek_Horna/06_6550_Fotodag2_Kalkputs_Fiskbensek_Horna.jpg",
+        "kind": "1. Genererad 2K Interiör (Fotodag 2 (Kontinental Kalkputs- & Valnötsvåning) — Rätvinkligt fåtöljpar på rökt ek med valnötsbord)"
+      },
+      {
+        "filename": "06_6550_Fotodag2_Kalkputs_Fiskbensek_Horna/06_SKU6550-01_Hero_Ref_6550.jpg",
+        "rel_path": "06_6550_Fotodag2_Kalkputs_Fiskbensek_Horna/06_SKU6550-01_Hero_Ref_6550.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6550 · SKU 216550)"
+      },
+      {
+        "filename": "06_6550_Fotodag2_Kalkputs_Fiskbensek_Horna/06_SKU6550-01m_Hero_Macro_6550.jpg",
+        "rel_path": "06_6550_Fotodag2_Kalkputs_Fiskbensek_Horna/06_SKU6550-01m_Hero_Macro_6550.jpg",
+        "kind": "3. Makroreferens (@6550_macro)"
+      }
+    ]
+  },
+  {
+    "id": "09_6550_Fotodag3_Arkitektvilla_Glasbord_Slapljus",
+    "slot": "09",
+    "sku": "216550",
+    "title": "09 ↻ R2 · Akaba Crème Grön (SKU: 216550) – Fotodag 3 (Arkitektonisk Kalkstens- & Ateljévilla) — Släpljusvy med rak salviagrön linnesoffa, läderfåtölj & glasbord på valnöt",
+    "clean_name": "09 ↻ R2. Akaba Crème Grön (@6550) – Fotodag 3 (Arkitektonisk Kalkstens- & Ateljévilla) — Släpljusvy med rak salviagrön linnesoffa, läderfåtölj & glasbord på valnöt",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6550",
+      "tag": "@6550",
+      "sku": "216550",
+      "name": "Akaba Crème Grön",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/teppiche-modernes-design/hochflorteppiche-akaba-creme-grun/",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/6550.jpg",
+      "ref_macro_file": "refs_still/6550_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular sculpted high-low 3D relief rug featuring continuous meandering rich sage-moss and olive-moss green raised cut-pile bands together with rounded moss-green organic islands set in crisp carved relief against a smooth warm off-white and natural chalk low-pile ground, finished with a slim off-white overlocked border and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "09_6550_Fotodag3_Arkitektvilla_Glasbord_Slapljus/09_6550_Fotodag3_Arkitektvilla_Glasbord_Slapljus.jpg",
+        "rel_path": "09_6550_Fotodag3_Arkitektvilla_Glasbord_Slapljus/09_6550_Fotodag3_Arkitektvilla_Glasbord_Slapljus.jpg",
+        "kind": "1. Genererad 2K Interiör (Fotodag 3 (Arkitektonisk Kalkstens- & Ateljévilla) — Släpljusvy med rak salviagrön linnesoffa, läderfåtölj & glasbord på valnöt)"
+      },
+      {
+        "filename": "09_6550_Fotodag3_Arkitektvilla_Glasbord_Slapljus/09_SKU6550-01_Hero_Ref_6550.jpg",
+        "rel_path": "09_6550_Fotodag3_Arkitektvilla_Glasbord_Slapljus/09_SKU6550-01_Hero_Ref_6550.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6550 · SKU 216550)"
+      },
+      {
+        "filename": "09_6550_Fotodag3_Arkitektvilla_Glasbord_Slapljus/09_SKU6550-01m_Hero_Macro_6550.jpg",
+        "rel_path": "09_6550_Fotodag3_Arkitektvilla_Glasbord_Slapljus/09_SKU6550-01m_Hero_Macro_6550.jpg",
+        "kind": "3. Makroreferens (@6550_macro)"
+      }
+    ]
+  },
+  {
+    "id": "12_6550_Fotodag4_Kopenhamn_Douglasgran_Lounge",
+    "slot": "12",
+    "sku": "216550",
+    "title": "12 · Akaba Crème Grön (SKU: 216550) – Fotodag 4 (Köpenhamnsk Designvåning i Douglasgran) — Lounge med varm sandpanel, rak ulldagbädd & masurbjörk",
+    "clean_name": "12. Akaba Crème Grön (@6550) – Fotodag 4 (Köpenhamnsk Designvåning i Douglasgran) — Lounge med varm sandpanel, rak ulldagbädd & masurbjörk",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6550",
+      "tag": "@6550",
+      "sku": "216550",
+      "name": "Akaba Crème Grön",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/teppiche-modernes-design/hochflorteppiche-akaba-creme-grun/",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/6550.jpg",
+      "ref_macro_file": "refs_still/6550_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular sculpted high-low 3D relief rug featuring continuous meandering rich sage-moss and olive-moss green raised cut-pile bands together with rounded moss-green organic islands set in crisp carved relief against a smooth warm off-white and natural chalk low-pile ground, finished with a slim off-white overlocked border and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "12_6550_Fotodag4_Kopenhamn_Douglasgran_Lounge/12_6550_Fotodag4_Kopenhamn_Douglasgran_Lounge.jpg",
+        "rel_path": "12_6550_Fotodag4_Kopenhamn_Douglasgran_Lounge/12_6550_Fotodag4_Kopenhamn_Douglasgran_Lounge.jpg",
+        "kind": "1. Genererad 2K Interiör (Fotodag 4 (Köpenhamnsk Designvåning i Douglasgran) — Lounge med varm sandpanel, rak ulldagbädd & masurbjörk)"
+      },
+      {
+        "filename": "12_6550_Fotodag4_Kopenhamn_Douglasgran_Lounge/12_SKU6550-01_Hero_Ref_6550.jpg",
+        "rel_path": "12_6550_Fotodag4_Kopenhamn_Douglasgran_Lounge/12_SKU6550-01_Hero_Ref_6550.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6550 · SKU 216550)"
+      },
+      {
+        "filename": "12_6550_Fotodag4_Kopenhamn_Douglasgran_Lounge/12_SKU6550-01m_Hero_Macro_6550.jpg",
+        "rel_path": "12_6550_Fotodag4_Kopenhamn_Douglasgran_Lounge/12_SKU6550-01m_Hero_Macro_6550.jpg",
+        "kind": "3. Makroreferens (@6550_macro)"
+      }
+    ]
+  },
+  {
     "id": "15_6550_Fotodag5_Townhouse_Boiserie_Kabinett",
     "slot": "15",
     "sku": "216550",
-    "title": "15 · Akaba Crème Grön (SKU: 216550) – Fotodag 5 (Kontinentalt Townhouse med Boiserie & Chevron) — Salongskabinett med äggskalsboiserie, linnesoffa & valnöt",
-    "clean_name": "15. Akaba Crème Grön (@6550) – Fotodag 5 (Kontinentalt Townhouse med Boiserie & Chevron) — Salongskabinett med äggskalsboiserie, linnesoffa & valnöt",
-    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (7 st 2K Vinnare)",
+    "title": "15 ★ Toppval · Akaba Crème Grön (SKU: 216550) – Fotodag 5 (Kontinentalt Townhouse med Boiserie & Chevron) — Salongskabinett med äggskalsboiserie, linnesoffa & valnöt",
+    "clean_name": "15 ★ Toppval. Akaba Crème Grön (@6550) – Fotodag 5 (Kontinentalt Townhouse med Boiserie & Chevron) — Salongskabinett med äggskalsboiserie, linnesoffa & valnöt",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
     "company": "trendcarpet",
     "hero_product": {
       "id": "6550",
@@ -249,9 +864,9 @@
     "id": "18_6550_Fotodag6_Kalkstensgard_Orangeriljus_Horna",
     "slot": "18",
     "sku": "216550",
-    "title": "18 · Akaba Crème Grön (SKU: 216550) – Fotodag 6 (Nordisk Kalkstensgård & Orangeriljus) — Sällskapsrum på kalksten med rak rökt-ek-soffa & läderfåtölj",
-    "clean_name": "18. Akaba Crème Grön (@6550) – Fotodag 6 (Nordisk Kalkstensgård & Orangeriljus) — Sällskapsrum på kalksten med rak rökt-ek-soffa & läderfåtölj",
-    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (7 st 2K Vinnare)",
+    "title": "18 ★ Toppval · Akaba Crème Grön (SKU: 216550) – Fotodag 6 (Nordisk Kalkstensgård & Orangeriljus) — Sällskapsrum på kalksten med rak rökt-ek-soffa & läderfåtölj",
+    "clean_name": "18 ★ Toppval. Akaba Crème Grön (@6550) – Fotodag 6 (Nordisk Kalkstensgård & Orangeriljus) — Sällskapsrum på kalksten med rak rökt-ek-soffa & läderfåtölj",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
     "company": "trendcarpet",
     "hero_product": {
       "id": "6550",
@@ -282,6 +897,88 @@
       {
         "filename": "18_6550_Fotodag6_Kalkstensgard_Orangeriljus_Horna/18_SKU6550-01m_Hero_Macro_6550.jpg",
         "rel_path": "18_6550_Fotodag6_Kalkstensgard_Orangeriljus_Horna/18_SKU6550-01m_Hero_Macro_6550.jpg",
+        "kind": "3. Makroreferens (@6550_macro)"
+      }
+    ]
+  },
+  {
+    "id": "21_6550_Fotodag7_Funkisvilla_Valnotspanel_Lounge",
+    "slot": "21",
+    "sku": "216550",
+    "title": "21 · Akaba Crème Grön (SKU: 216550) – Fotodag 7 (1950-talets Arkitektvilla i Körsbär & Sten) — Lounge med räfflad valnötspanel, linnesoffa & grön marmor",
+    "clean_name": "21. Akaba Crème Grön (@6550) – Fotodag 7 (1950-talets Arkitektvilla i Körsbär & Sten) — Lounge med räfflad valnötspanel, linnesoffa & grön marmor",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6550",
+      "tag": "@6550",
+      "sku": "216550",
+      "name": "Akaba Crème Grön",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/teppiche-modernes-design/hochflorteppiche-akaba-creme-grun/",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/6550.jpg",
+      "ref_macro_file": "refs_still/6550_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular sculpted high-low 3D relief rug featuring continuous meandering rich sage-moss and olive-moss green raised cut-pile bands together with rounded moss-green organic islands set in crisp carved relief against a smooth warm off-white and natural chalk low-pile ground, finished with a slim off-white overlocked border and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "21_6550_Fotodag7_Funkisvilla_Valnotspanel_Lounge/21_6550_Fotodag7_Funkisvilla_Valnotspanel_Lounge.jpg",
+        "rel_path": "21_6550_Fotodag7_Funkisvilla_Valnotspanel_Lounge/21_6550_Fotodag7_Funkisvilla_Valnotspanel_Lounge.jpg",
+        "kind": "1. Genererad 2K Interiör (Fotodag 7 (1950-talets Arkitektvilla i Körsbär & Sten) — Lounge med räfflad valnötspanel, linnesoffa & grön marmor)"
+      },
+      {
+        "filename": "21_6550_Fotodag7_Funkisvilla_Valnotspanel_Lounge/21_SKU6550-01_Hero_Ref_6550.jpg",
+        "rel_path": "21_6550_Fotodag7_Funkisvilla_Valnotspanel_Lounge/21_SKU6550-01_Hero_Ref_6550.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6550 · SKU 216550)"
+      },
+      {
+        "filename": "21_6550_Fotodag7_Funkisvilla_Valnotspanel_Lounge/21_SKU6550-01m_Hero_Macro_6550.jpg",
+        "rel_path": "21_6550_Fotodag7_Funkisvilla_Valnotspanel_Lounge/21_SKU6550-01m_Hero_Macro_6550.jpg",
+        "kind": "3. Makroreferens (@6550_macro)"
+      }
+    ]
+  },
+  {
+    "id": "24_6550_Fotodag8_Arkitektsovrum_Korsbarssang",
+    "slot": "24",
+    "sku": "216550",
+    "title": "24 · Akaba Crème Grön (SKU: 216550) – Fotodag 8 (Stramt Arkitektoniskt Sovrum) — Låg körsbärsplattformssäng centrerad 2/3 in på mattan med salvialinne",
+    "clean_name": "24. Akaba Crème Grön (@6550) – Fotodag 8 (Stramt Arkitektoniskt Sovrum) — Låg körsbärsplattformssäng centrerad 2/3 in på mattan med salvialinne",
+    "category": "[PRIVAT] TC Inspirerade Rumsvarianter (Alla 24 Kandidater · 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6550",
+      "tag": "@6550",
+      "sku": "216550",
+      "name": "Akaba Crème Grön",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/teppiche-modernes-design/hochflorteppiche-akaba-creme-grun/",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/6550.jpg",
+      "ref_macro_file": "refs_still/6550_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular sculpted high-low 3D relief rug featuring continuous meandering rich sage-moss and olive-moss green raised cut-pile bands together with rounded moss-green organic islands set in crisp carved relief against a smooth warm off-white and natural chalk low-pile ground, finished with a slim off-white overlocked border and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "24_6550_Fotodag8_Arkitektsovrum_Korsbarssang/24_6550_Fotodag8_Arkitektsovrum_Korsbarssang.jpg",
+        "rel_path": "24_6550_Fotodag8_Arkitektsovrum_Korsbarssang/24_6550_Fotodag8_Arkitektsovrum_Korsbarssang.jpg",
+        "kind": "1. Genererad 2K Interiör (Fotodag 8 (Stramt Arkitektoniskt Sovrum) — Låg körsbärsplattformssäng centrerad 2/3 in på mattan med salvialinne)"
+      },
+      {
+        "filename": "24_6550_Fotodag8_Arkitektsovrum_Korsbarssang/24_SKU6550-01_Hero_Ref_6550.jpg",
+        "rel_path": "24_6550_Fotodag8_Arkitektsovrum_Korsbarssang/24_SKU6550-01_Hero_Ref_6550.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6550 · SKU 216550)"
+      },
+      {
+        "filename": "24_6550_Fotodag8_Arkitektsovrum_Korsbarssang/24_SKU6550-01m_Hero_Macro_6550.jpg",
+        "rel_path": "24_6550_Fotodag8_Arkitektsovrum_Korsbarssang/24_SKU6550-01m_Hero_Macro_6550.jpg",
         "kind": "3. Makroreferens (@6550_macro)"
       }
     ]

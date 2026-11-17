@@ -43,92 +43,6 @@
     ]
   },
   {
-    "id": "02_SKU219445_Huvudvinkel_Svart_Skinn_B",
-    "slot": "02",
-    "sku": "219445",
-    "title": "02 · Merida Soft Shaggy Crème (SKU: 219445) – Huvudvinkel Tagning B — Svart Skinnsoffa & Svart Skinnpuff",
-    "clean_name": "02. Merida Soft Shaggy Crème (@9445) – Huvudvinkel Tagning B — Svart Skinnsoffa & Svart Skinnpuff",
-    "category": "TC Svart Skinnsoffa & Nya Vinklar (219445)",
-    "company": "trendcarpet",
-    "hero_product": {
-      "id": "9445",
-      "tag": "@9445",
-      "sku": "219445",
-      "name": "Merida Soft Shaggy Crème",
-      "handle": "",
-      "url": "",
-      "role": "hero",
-      "resolution": "1077x1500",
-      "ref_file": "refs_still/9445.jpg",
-      "ref_macro_file": "refs_still/9445_macro.jpg",
-      "extra_tags": [
-        "@9445_room"
-      ],
-      "visual_spec": "large rectangular solid-toned area rug in pale warm cream-alabaster and soft oat-ivory, crafted with a dense, plush velvety cut-pile surface and finished on all four sides with a neat, slim matching cream overlocked yarn border and zero fringes"
-    },
-    "companion_products": [],
-    "images": [
-      {
-        "filename": "02_SKU219445_Huvudvinkel_Svart_Skinn_B/02_SKU219445_Huvudvinkel_Svart_Skinn_B.jpg",
-        "rel_path": "02_SKU219445_Huvudvinkel_Svart_Skinn_B/02_SKU219445_Huvudvinkel_Svart_Skinn_B.jpg",
-        "kind": "Interiör (02)"
-      },
-      {
-        "filename": "02_SKU219445_Huvudvinkel_Svart_Skinn_B/02_SKU9445-01_Hero_Ref_9445.jpg",
-        "rel_path": "02_SKU219445_Huvudvinkel_Svart_Skinn_B/02_SKU9445-01_Hero_Ref_9445.jpg",
-        "kind": "2. Stjärn-produkt Studioreferens (@9445 · SKU 219445)"
-      },
-      {
-        "filename": "02_SKU219445_Huvudvinkel_Svart_Skinn_B/02_SKU9445-01m_Hero_Macro_9445.jpg",
-        "rel_path": "02_SKU219445_Huvudvinkel_Svart_Skinn_B/02_SKU9445-01m_Hero_Macro_9445.jpg",
-        "kind": "3. Makroreferens (@9445_macro)"
-      }
-    ]
-  },
-  {
-    "id": "03_SKU219445_Huvudvinkel_Svart_Skinn_C",
-    "slot": "03",
-    "sku": "219445",
-    "title": "03 · Merida Soft Shaggy Crème (SKU: 219445) – Huvudvinkel Tagning C — Svart Skinnsoffa & Svart Skinnpuff",
-    "clean_name": "03. Merida Soft Shaggy Crème (@9445) – Huvudvinkel Tagning C — Svart Skinnsoffa & Svart Skinnpuff",
-    "category": "TC Svart Skinnsoffa & Nya Vinklar (219445)",
-    "company": "trendcarpet",
-    "hero_product": {
-      "id": "9445",
-      "tag": "@9445",
-      "sku": "219445",
-      "name": "Merida Soft Shaggy Crème",
-      "handle": "",
-      "url": "",
-      "role": "hero",
-      "resolution": "1077x1500",
-      "ref_file": "refs_still/9445.jpg",
-      "ref_macro_file": "refs_still/9445_macro.jpg",
-      "extra_tags": [
-        "@9445_room"
-      ],
-      "visual_spec": "large rectangular solid-toned area rug in pale warm cream-alabaster and soft oat-ivory, crafted with a dense, plush velvety cut-pile surface and finished on all four sides with a neat, slim matching cream overlocked yarn border and zero fringes"
-    },
-    "companion_products": [],
-    "images": [
-      {
-        "filename": "03_SKU219445_Huvudvinkel_Svart_Skinn_C/03_SKU219445_Huvudvinkel_Svart_Skinn_C.jpg",
-        "rel_path": "03_SKU219445_Huvudvinkel_Svart_Skinn_C/03_SKU219445_Huvudvinkel_Svart_Skinn_C.jpg",
-        "kind": "Interiör (03)"
-      },
-      {
-        "filename": "03_SKU219445_Huvudvinkel_Svart_Skinn_C/03_SKU9445-01_Hero_Ref_9445.jpg",
-        "rel_path": "03_SKU219445_Huvudvinkel_Svart_Skinn_C/03_SKU9445-01_Hero_Ref_9445.jpg",
-        "kind": "2. Stjärn-produkt Studioreferens (@9445 · SKU 219445)"
-      },
-      {
-        "filename": "03_SKU219445_Huvudvinkel_Svart_Skinn_C/03_SKU9445-01m_Hero_Macro_9445.jpg",
-        "rel_path": "03_SKU219445_Huvudvinkel_Svart_Skinn_C/03_SKU9445-01m_Hero_Macro_9445.jpg",
-        "kind": "3. Makroreferens (@9445_macro)"
-      }
-    ]
-  },
-  {
     "id": "04_SKU219445_Rakt_Mot_Svart_Skinnsoffa",
     "slot": "04",
     "sku": "219445",
@@ -215,49 +129,6 @@
     ]
   },
   {
-    "id": "06_SKU219445_Omvand_Diagonalvy_Fonstersida",
-    "slot": "06",
-    "sku": "219445",
-    "title": "06 · Merida Soft Shaggy Crème (SKU: 219445) – Ny Vinkel 3 (45mm) — Omvänd Diagonalvy från Fönstersidan ut över Mattan",
-    "clean_name": "06. Merida Soft Shaggy Crème (@9445) – Ny Vinkel 3 (45mm) — Omvänd Diagonalvy från Fönstersidan ut över Mattan",
-    "category": "TC Svart Skinnsoffa & Nya Vinklar (219445)",
-    "company": "trendcarpet",
-    "hero_product": {
-      "id": "9445",
-      "tag": "@9445",
-      "sku": "219445",
-      "name": "Merida Soft Shaggy Crème",
-      "handle": "",
-      "url": "",
-      "role": "hero",
-      "resolution": "1077x1500",
-      "ref_file": "refs_still/9445.jpg",
-      "ref_macro_file": "refs_still/9445_macro.jpg",
-      "extra_tags": [
-        "@9445_room"
-      ],
-      "visual_spec": "large rectangular solid-toned area rug in pale warm cream-alabaster and soft oat-ivory, crafted with a dense, plush velvety cut-pile surface and finished on all four sides with a neat, slim matching cream overlocked yarn border and zero fringes"
-    },
-    "companion_products": [],
-    "images": [
-      {
-        "filename": "06_SKU219445_Omvand_Diagonalvy_Fonstersida/06_SKU219445_Omvand_Diagonalvy_Fonstersida.jpg",
-        "rel_path": "06_SKU219445_Omvand_Diagonalvy_Fonstersida/06_SKU219445_Omvand_Diagonalvy_Fonstersida.jpg",
-        "kind": "Interiör (06)"
-      },
-      {
-        "filename": "06_SKU219445_Omvand_Diagonalvy_Fonstersida/06_SKU9445-01_Hero_Ref_9445.jpg",
-        "rel_path": "06_SKU219445_Omvand_Diagonalvy_Fonstersida/06_SKU9445-01_Hero_Ref_9445.jpg",
-        "kind": "2. Stjärn-produkt Studioreferens (@9445 · SKU 219445)"
-      },
-      {
-        "filename": "06_SKU219445_Omvand_Diagonalvy_Fonstersida/06_SKU9445-01m_Hero_Macro_9445.jpg",
-        "rel_path": "06_SKU219445_Omvand_Diagonalvy_Fonstersida/06_SKU9445-01m_Hero_Macro_9445.jpg",
-        "kind": "3. Makroreferens (@9445_macro)"
-      }
-    ]
-  },
-  {
     "id": "07_SKU219445_Vy_Fran_Valvet_Mot_Salongen",
     "slot": "07",
     "sku": "219445",
@@ -296,49 +167,6 @@
       {
         "filename": "07_SKU219445_Vy_Fran_Valvet_Mot_Salongen/07_SKU9445-01m_Hero_Macro_9445.jpg",
         "rel_path": "07_SKU219445_Vy_Fran_Valvet_Mot_Salongen/07_SKU9445-01m_Hero_Macro_9445.jpg",
-        "kind": "3. Makroreferens (@9445_macro)"
-      }
-    ]
-  },
-  {
-    "id": "08_SKU219445_Lag_Redaktionell_Lugg_Mot_Valv",
-    "slot": "08",
-    "sku": "219445",
-    "title": "08 · Merida Soft Shaggy Crème (SKU: 219445) – Ny Vinkel 5 (60mm f/2.8) — Låg Redaktionell Vy längs Mattkant mot Skinnpuff & Valv",
-    "clean_name": "08. Merida Soft Shaggy Crème (@9445) – Ny Vinkel 5 (60mm f/2.8) — Låg Redaktionell Vy längs Mattkant mot Skinnpuff & Valv",
-    "category": "TC Svart Skinnsoffa & Nya Vinklar (219445)",
-    "company": "trendcarpet",
-    "hero_product": {
-      "id": "9445",
-      "tag": "@9445",
-      "sku": "219445",
-      "name": "Merida Soft Shaggy Crème",
-      "handle": "",
-      "url": "",
-      "role": "hero",
-      "resolution": "1077x1500",
-      "ref_file": "refs_still/9445.jpg",
-      "ref_macro_file": "refs_still/9445_macro.jpg",
-      "extra_tags": [
-        "@9445_room"
-      ],
-      "visual_spec": "large rectangular solid-toned area rug in pale warm cream-alabaster and soft oat-ivory, crafted with a dense, plush velvety cut-pile surface and finished on all four sides with a neat, slim matching cream overlocked yarn border and zero fringes"
-    },
-    "companion_products": [],
-    "images": [
-      {
-        "filename": "08_SKU219445_Lag_Redaktionell_Lugg_Mot_Valv/08_SKU219445_Lag_Redaktionell_Lugg_Mot_Valv.jpg",
-        "rel_path": "08_SKU219445_Lag_Redaktionell_Lugg_Mot_Valv/08_SKU219445_Lag_Redaktionell_Lugg_Mot_Valv.jpg",
-        "kind": "Interiör (08)"
-      },
-      {
-        "filename": "08_SKU219445_Lag_Redaktionell_Lugg_Mot_Valv/08_SKU9445-01_Hero_Ref_9445.jpg",
-        "rel_path": "08_SKU219445_Lag_Redaktionell_Lugg_Mot_Valv/08_SKU9445-01_Hero_Ref_9445.jpg",
-        "kind": "2. Stjärn-produkt Studioreferens (@9445 · SKU 219445)"
-      },
-      {
-        "filename": "08_SKU219445_Lag_Redaktionell_Lugg_Mot_Valv/08_SKU9445-01m_Hero_Macro_9445.jpg",
-        "rel_path": "08_SKU219445_Lag_Redaktionell_Lugg_Mot_Valv/08_SKU9445-01m_Hero_Macro_9445.jpg",
         "kind": "3. Makroreferens (@9445_macro)"
       }
     ]

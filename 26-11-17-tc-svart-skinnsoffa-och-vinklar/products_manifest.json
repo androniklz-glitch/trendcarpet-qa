@@ -1,10 +1,10 @@
 [
   {
-    "id": "01_SKU219445_Huvudvinkel_Svart_Skinn_A",
-    "slot": "01",
+    "id": "02_SKU219445_Huvudvinkel_Svart_Skinn_B",
+    "slot": "02",
     "sku": "219445",
-    "title": "01 · Merida Soft Shaggy Crème (SKU: 219445) – Huvudvinkel Tagning A — Svart Skinnsoffa & Svart Skinnpuff",
-    "clean_name": "01. Merida Soft Shaggy Crème (@9445) – Huvudvinkel Tagning A — Svart Skinnsoffa & Svart Skinnpuff",
+    "title": "02 · Merida Soft Shaggy Crème (SKU: 219445) – Huvudvinkel Tagning B — Svart Skinnsoffa & Svart Skinnpuff",
+    "clean_name": "02. Merida Soft Shaggy Crème (@9445) – Huvudvinkel Tagning B — Svart Skinnsoffa & Svart Skinnpuff",
     "category": "TC Svart Skinnsoffa & Nya Vinklar (219445)",
     "company": "trendcarpet",
     "hero_product": {
@@ -26,18 +26,18 @@
     "companion_products": [],
     "images": [
       {
-        "filename": "01_SKU219445_Huvudvinkel_Svart_Skinn_A/01_SKU219445_Huvudvinkel_Svart_Skinn_A.jpg",
-        "rel_path": "01_SKU219445_Huvudvinkel_Svart_Skinn_A/01_SKU219445_Huvudvinkel_Svart_Skinn_A.jpg",
-        "kind": "Interiör (01)"
+        "filename": "02_SKU219445_Huvudvinkel_Svart_Skinn_B/02_SKU219445_Huvudvinkel_Svart_Skinn_B.jpg",
+        "rel_path": "02_SKU219445_Huvudvinkel_Svart_Skinn_B/02_SKU219445_Huvudvinkel_Svart_Skinn_B.jpg",
+        "kind": "Interiör (02)"
       },
       {
-        "filename": "01_SKU219445_Huvudvinkel_Svart_Skinn_A/01_SKU9445-01_Hero_Ref_9445.jpg",
-        "rel_path": "01_SKU219445_Huvudvinkel_Svart_Skinn_A/01_SKU9445-01_Hero_Ref_9445.jpg",
+        "filename": "02_SKU219445_Huvudvinkel_Svart_Skinn_B/02_SKU9445-01_Hero_Ref_9445.jpg",
+        "rel_path": "02_SKU219445_Huvudvinkel_Svart_Skinn_B/02_SKU9445-01_Hero_Ref_9445.jpg",
         "kind": "2. Stjärn-produkt Studioreferens (@9445 · SKU 219445)"
       },
       {
-        "filename": "01_SKU219445_Huvudvinkel_Svart_Skinn_A/01_SKU9445-01m_Hero_Macro_9445.jpg",
-        "rel_path": "01_SKU219445_Huvudvinkel_Svart_Skinn_A/01_SKU9445-01m_Hero_Macro_9445.jpg",
+        "filename": "02_SKU219445_Huvudvinkel_Svart_Skinn_B/02_SKU9445-01m_Hero_Macro_9445.jpg",
+        "rel_path": "02_SKU219445_Huvudvinkel_Svart_Skinn_B/02_SKU9445-01m_Hero_Macro_9445.jpg",
         "kind": "3. Makroreferens (@9445_macro)"
       }
     ]
@@ -61,9 +61,7 @@
       "resolution": "1077x1500",
       "ref_file": "refs_still/9445.jpg",
       "ref_macro_file": "refs_still/9445_macro.jpg",
-      "extra_tags": [
-        "@9445_room"
-      ],
+      "extra_tags": [],
       "visual_spec": "large rectangular solid-toned area rug in pale warm cream-alabaster and soft oat-ivory, crafted with a dense, plush velvety cut-pile surface and finished on all four sides with a neat, slim matching cream overlocked yarn border and zero fringes"
     },
     "companion_products": [],
@@ -104,9 +102,7 @@
       "resolution": "1077x1500",
       "ref_file": "refs_still/9445.jpg",
       "ref_macro_file": "refs_still/9445_macro.jpg",
-      "extra_tags": [
-        "@9445_room"
-      ],
+      "extra_tags": [],
       "visual_spec": "large rectangular solid-toned area rug in pale warm cream-alabaster and soft oat-ivory, crafted with a dense, plush velvety cut-pile surface and finished on all four sides with a neat, slim matching cream overlocked yarn border and zero fringes"
     },
     "companion_products": [],
@@ -147,9 +143,7 @@
       "resolution": "1077x1500",
       "ref_file": "refs_still/9445.jpg",
       "ref_macro_file": "refs_still/9445_macro.jpg",
-      "extra_tags": [
-        "@9445_room"
-      ],
+      "extra_tags": [],
       "visual_spec": "large rectangular solid-toned area rug in pale warm cream-alabaster and soft oat-ivory, crafted with a dense, plush velvety cut-pile surface and finished on all four sides with a neat, slim matching cream overlocked yarn border and zero fringes"
     },
     "companion_products": [],

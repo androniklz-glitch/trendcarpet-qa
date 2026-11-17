@@ -1,55 +1,9 @@
 [
   {
-    "slot": "01",
-    "image_file": "01_SKU219445_Huvudvinkel_Svart_Skinn_A.jpg",
-    "subfolder": "01_SKU219445_Huvudvinkel_Svart_Skinn_A",
-    "home_style": "Huvudvinkel Tagning A — Svart Skinnsoffa & Svart Skinnpuff",
-    "hero_product": {
-      "id": "9445",
-      "tag": "@9445",
-      "sku": "219445",
-      "name": "Merida Soft Shaggy Crème",
-      "handle": "",
-      "url": "",
-      "role": "hero",
-      "resolution": "1077x1500",
-      "ref_file": "refs_still/9445.jpg",
-      "ref_macro_file": "refs_still/9445_macro.jpg",
-      "extra_tags": [
-        "@9445_room"
-      ],
-      "visual_spec": "large rectangular solid-toned area rug in pale warm cream-alabaster and soft oat-ivory, crafted with a dense, plush velvety cut-pile surface and finished on all four sides with a neat, slim matching cream overlocked yarn border and zero fringes"
-    },
-    "companion_products": []
-  },
-  {
     "slot": "02",
     "image_file": "02_SKU219445_Huvudvinkel_Svart_Skinn_B.jpg",
     "subfolder": "02_SKU219445_Huvudvinkel_Svart_Skinn_B",
     "home_style": "Huvudvinkel Tagning B — Svart Skinnsoffa & Svart Skinnpuff",
-    "hero_product": {
-      "id": "9445",
-      "tag": "@9445",
-      "sku": "219445",
-      "name": "Merida Soft Shaggy Crème",
-      "handle": "",
-      "url": "",
-      "role": "hero",
-      "resolution": "1077x1500",
-      "ref_file": "refs_still/9445.jpg",
-      "ref_macro_file": "refs_still/9445_macro.jpg",
-      "extra_tags": [
-        "@9445_room"
-      ],
-      "visual_spec": "large rectangular solid-toned area rug in pale warm cream-alabaster and soft oat-ivory, crafted with a dense, plush velvety cut-pile surface and finished on all four sides with a neat, slim matching cream overlocked yarn border and zero fringes"
-    },
-    "companion_products": []
-  },
-  {
-    "slot": "03",
-    "image_file": "03_SKU219445_Huvudvinkel_Svart_Skinn_C.jpg",
-    "subfolder": "03_SKU219445_Huvudvinkel_Svart_Skinn_C",
-    "home_style": "Huvudvinkel Tagning C — Svart Skinnsoffa & Svart Skinnpuff",
     "hero_product": {
       "id": "9445",
       "tag": "@9445",
@@ -84,9 +38,7 @@
       "resolution": "1077x1500",
       "ref_file": "refs_still/9445.jpg",
       "ref_macro_file": "refs_still/9445_macro.jpg",
-      "extra_tags": [
-        "@9445_room"
-      ],
+      "extra_tags": [],
       "visual_spec": "large rectangular solid-toned area rug in pale warm cream-alabaster and soft oat-ivory, crafted with a dense, plush velvety cut-pile surface and finished on all four sides with a neat, slim matching cream overlocked yarn border and zero fringes"
     },
     "companion_products": []
@@ -107,32 +59,7 @@
       "resolution": "1077x1500",
       "ref_file": "refs_still/9445.jpg",
       "ref_macro_file": "refs_still/9445_macro.jpg",
-      "extra_tags": [
-        "@9445_room"
-      ],
-      "visual_spec": "large rectangular solid-toned area rug in pale warm cream-alabaster and soft oat-ivory, crafted with a dense, plush velvety cut-pile surface and finished on all four sides with a neat, slim matching cream overlocked yarn border and zero fringes"
-    },
-    "companion_products": []
-  },
-  {
-    "slot": "06",
-    "image_file": "06_SKU219445_Omvand_Diagonalvy_Fonstersida.jpg",
-    "subfolder": "06_SKU219445_Omvand_Diagonalvy_Fonstersida",
-    "home_style": "Ny Vinkel 3 (45mm) — Omvänd Diagonalvy från Fönstersidan ut över Mattan",
-    "hero_product": {
-      "id": "9445",
-      "tag": "@9445",
-      "sku": "219445",
-      "name": "Merida Soft Shaggy Crème",
-      "handle": "",
-      "url": "",
-      "role": "hero",
-      "resolution": "1077x1500",
-      "ref_file": "refs_still/9445.jpg",
-      "ref_macro_file": "refs_still/9445_macro.jpg",
-      "extra_tags": [
-        "@9445_room"
-      ],
+      "extra_tags": [],
       "visual_spec": "large rectangular solid-toned area rug in pale warm cream-alabaster and soft oat-ivory, crafted with a dense, plush velvety cut-pile surface and finished on all four sides with a neat, slim matching cream overlocked yarn border and zero fringes"
     },
     "companion_products": []
@@ -153,32 +80,7 @@
       "resolution": "1077x1500",
       "ref_file": "refs_still/9445.jpg",
       "ref_macro_file": "refs_still/9445_macro.jpg",
-      "extra_tags": [
-        "@9445_room"
-      ],
-      "visual_spec": "large rectangular solid-toned area rug in pale warm cream-alabaster and soft oat-ivory, crafted with a dense, plush velvety cut-pile surface and finished on all four sides with a neat, slim matching cream overlocked yarn border and zero fringes"
-    },
-    "companion_products": []
-  },
-  {
-    "slot": "08",
-    "image_file": "08_SKU219445_Lag_Redaktionell_Lugg_Mot_Valv.jpg",
-    "subfolder": "08_SKU219445_Lag_Redaktionell_Lugg_Mot_Valv",
-    "home_style": "Ny Vinkel 5 (60mm f/2.8) — Låg Redaktionell Vy längs Mattkant mot Skinnpuff & Valv",
-    "hero_product": {
-      "id": "9445",
-      "tag": "@9445",
-      "sku": "219445",
-      "name": "Merida Soft Shaggy Crème",
-      "handle": "",
-      "url": "",
-      "role": "hero",
-      "resolution": "1077x1500",
-      "ref_file": "refs_still/9445.jpg",
-      "ref_macro_file": "refs_still/9445_macro.jpg",
-      "extra_tags": [
-        "@9445_room"
-      ],
+      "extra_tags": [],
       "visual_spec": "large rectangular solid-toned area rug in pale warm cream-alabaster and soft oat-ivory, crafted with a dense, plush velvety cut-pile surface and finished on all four sides with a neat, slim matching cream overlocked yarn border and zero fringes"
     },
     "companion_products": []

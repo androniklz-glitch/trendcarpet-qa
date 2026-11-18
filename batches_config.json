@@ -1,9 +1,51 @@
 [
   {
+    "id": "26-11-18-tc-akaba-svart-skinnsoffa-1x1",
+    "folder": "26-11-18-tc-akaba-svart-skinnsoffa-1x1",
+    "name": "Trendcarpet — Akaba Cream Grön (SKU 216550) i Svart Skinnsoffa-vardagsrum (1:1)",
+    "label": "Akaba Cream Grön (216550) · Svart Skinnsoffa 1:1",
+    "path": "C:\\Users\\AndronikLindgren\\.gemini\\antigravity\\scratch\\Projects\\Trendcarpet_Interiors\\26-11-18-tc-akaba-svart-skinnsoffa-1x1",
+    "category": "mattor_inredning",
+    "org": "cama",
+    "company": "trendcarpet",
+    "onedrive_url": "",
+    "published": false,
+    "content_kind": "ai",
+    "createdAt": "2026-11-18T10:59:37.178894"
+  },
+  {
+    "id": "26-11-18-tc-hero-akaba-cream-gron",
+    "folder": "26-11-18-tc-hero-akaba-cream-gron",
+    "name": "Akaba Cream Grön — Hero-rumsbyte (1:1 2K)",
+    "label": "Akaba Cream Grön — Hero-rumsbyte (1:1 2K)",
+    "path": "C:\\Users\\AndronikLindgren\\.gemini\\antigravity\\scratch\\Projects\\Trendcarpet_Interiors\\26-11-18-tc-hero-akaba-cream-gron",
+    "category": "mattor_inredning",
+    "org": "cama",
+    "company": "trendcarpet",
+    "onedrive_url": "",
+    "published": false,
+    "content_kind": "ai",
+    "createdAt": "2026-11-18T09:37:27.228732"
+  },
+  {
+    "id": "26-11-18-tc-video-aranga-fergana-akaba",
+    "folder": "26-11-18-tc-video-aranga-fergana-akaba",
+    "name": "[PRIVAT] Trendcarpet — 9:16 UGC Video: Aranga, Fergana & Akaba (9 klipp, Veo 3.1 Lite LP)",
+    "label": "[PRIVAT] TC 9:16 Video: Aranga, Fergana & Akaba",
+    "path": "C:\\Users\\AndronikLindgren\\.gemini\\antigravity\\scratch\\Projects\\Trendcarpet_Interiors\\26-11-18-tc-video-aranga-fergana-akaba",
+    "category": "mattor_inredning",
+    "org": "cama",
+    "company": "trendcarpet",
+    "onedrive_url": "",
+    "published": false,
+    "content_kind": "ai",
+    "createdAt": "2026-11-18T08:35:29.792397"
+  },
+  {
     "id": "26-11-17-tc-video-vinklar-urval",
     "folder": "26-11-17-tc-video-vinklar-urval",
-    "name": "[PRIVAT] Trendcarpet — 9:16 Videovinklar Urval: Aranga, Fergana & Akaba (9 st 2K)",
-    "label": "[PRIVAT] TC 9:16 Videovinklar Urval (9 st 2K)",
+    "name": "[PRIVAT] Trendcarpet — 9:16 UGC Video: Aranga, Fergana & Akaba (9 klipp, Veo 3.1 Lite LP)",
+    "label": "[PRIVAT] TC 9:16 Video: Aranga, Fergana & Akaba",
     "path": "C:\\Users\\AndronikLindgren\\.gemini\\antigravity\\scratch\\Projects\\Trendcarpet_Interiors\\26-11-17-tc-video-vinklar-urval",
     "category": "mattor_inredning",
     "org": "cama",
@@ -11,7 +53,7 @@
     "onedrive_url": "",
     "published": false,
     "content_kind": "ai",
-    "createdAt": "2026-11-17T23:24:57.947245"
+    "createdAt": "2026-11-18T08:32:51.874213"
   },
   {
     "id": "26-11-16-tc-5stj-favoritrum-slatvavt-video-pilot",

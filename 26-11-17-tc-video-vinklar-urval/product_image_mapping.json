@@ -1,0 +1,197 @@
+[
+  {
+    "slot": "01",
+    "image_file": "01_5531_Vinkel1_Helbild.jpg",
+    "subfolder": "01_5531_Vinkel1_Helbild",
+    "home_style": "Aranga (@5531) — Vinkel 1: Helbild 50–65mm i boiseriesalong (smaragd mohair-sammet & masurbjörk)",
+    "hero_product": {
+      "id": "5531",
+      "tag": "@5531",
+      "sku": "KA5531",
+      "name": "Aranga Super Soft Fur Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
+      "role": "hero",
+      "resolution": "1015x1500",
+      "ref_file": "refs_still/5531.jpg",
+      "ref_macro_file": "refs_still/5531_macro.jpg",
+      "extra_tags": [
+        "@5531_room"
+      ],
+      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "02",
+    "image_file": "02_5531_Vinkel2_Halvnara.jpg",
+    "subfolder": "02_5531_Vinkel2_Halvnara",
+    "home_style": "Aranga (@5531) — Vinkel 2: Halvnära 65–75mm i boiseriesalong (smaragd mohair-sammet & masurbjörk)",
+    "hero_product": {
+      "id": "5531",
+      "tag": "@5531",
+      "sku": "KA5531",
+      "name": "Aranga Super Soft Fur Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
+      "role": "hero",
+      "resolution": "1015x1500",
+      "ref_file": "refs_still/5531.jpg",
+      "ref_macro_file": "refs_still/5531_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "03",
+    "image_file": "03_5531_Vinkel3_Detalj.jpg",
+    "subfolder": "03_5531_Vinkel3_Detalj",
+    "home_style": "Aranga (@5531) — Vinkel 3: Taktil detalj 85mm mot mattkant och hörn",
+    "hero_product": {
+      "id": "5531",
+      "tag": "@5531",
+      "sku": "KA5531",
+      "name": "Aranga Super Soft Fur Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
+      "role": "hero",
+      "resolution": "1015x1500",
+      "ref_file": "refs_still/5531.jpg",
+      "ref_macro_file": "refs_still/5531_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "04",
+    "image_file": "04_6554_Vinkel1_Helbild.jpg",
+    "subfolder": "04_6554_Vinkel1_Helbild",
+    "home_style": "Fergana (@6554) — Vinkel 1: Helbild 50–65mm i funkissalong (svart sadelläder, masurbjörk & valnöt)",
+    "hero_product": {
+      "id": "6554",
+      "tag": "@6554",
+      "sku": "216554",
+      "name": "Fergana Crème Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
+      "role": "hero",
+      "resolution": "1053x1500",
+      "ref_file": "refs_still/6554.jpg",
+      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "extra_tags": [
+        "@6554_room"
+      ],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "05",
+    "image_file": "05_6554_Vinkel2_Halvnara.jpg",
+    "subfolder": "05_6554_Vinkel2_Halvnara",
+    "home_style": "Fergana (@6554) — Vinkel 2: Halvnära 65–75mm i funkissalong (svart sadelläder, masurbjörk & valnöt)",
+    "hero_product": {
+      "id": "6554",
+      "tag": "@6554",
+      "sku": "216554",
+      "name": "Fergana Crème Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
+      "role": "hero",
+      "resolution": "1053x1500",
+      "ref_file": "refs_still/6554.jpg",
+      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "06",
+    "image_file": "06_6554_Vinkel3_Detalj.jpg",
+    "subfolder": "06_6554_Vinkel3_Detalj",
+    "home_style": "Fergana (@6554) — Vinkel 3: Taktil detalj 85mm över 3D-vågrelief och langettkant",
+    "hero_product": {
+      "id": "6554",
+      "tag": "@6554",
+      "sku": "216554",
+      "name": "Fergana Crème Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
+      "role": "hero",
+      "resolution": "1053x1500",
+      "ref_file": "refs_still/6554.jpg",
+      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "07",
+    "image_file": "07_6550_Vinkel1_Helbild.jpg",
+    "subfolder": "07_6550_Vinkel1_Helbild",
+    "home_style": "Akaba (@6550) — Vinkel 1: Helbild 50–65mm i boiseriesalong (rostterrakotta sammet & rökt ek)",
+    "hero_product": {
+      "id": "6550",
+      "tag": "@6550",
+      "sku": "216550",
+      "name": "Akaba Crème Grön",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-akaba-creme-gron/",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/6550.jpg",
+      "ref_macro_file": "refs_still/6550_macro.jpg",
+      "extra_tags": [
+        "@6550_room"
+      ],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring continuous meandering organic ribbon waves and rounded islands in rich sage-moss green dense cut pile rising crisply above a smooth warm off-white low-pile ground, finished with a slim matching off-white overlocked border and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "08",
+    "image_file": "08_6550_Vinkel2_Halvnara.jpg",
+    "subfolder": "08_6550_Vinkel2_Halvnara",
+    "home_style": "Akaba (@6550) — Vinkel 2: Halvnära 65–75mm i boiseriesalong (rostterrakotta sammet & rökt ek)",
+    "hero_product": {
+      "id": "6550",
+      "tag": "@6550",
+      "sku": "216550",
+      "name": "Akaba Crème Grön",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-akaba-creme-gron/",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/6550.jpg",
+      "ref_macro_file": "refs_still/6550_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring continuous meandering organic ribbon waves and rounded islands in rich sage-moss green dense cut pile rising crisply above a smooth warm off-white low-pile ground, finished with a slim matching off-white overlocked border and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "09",
+    "image_file": "09_6550_Vinkel3_Detalj.jpg",
+    "subfolder": "09_6550_Vinkel3_Detalj",
+    "home_style": "Akaba (@6550) — Vinkel 3: Taktil detalj 85mm över mossgrön 3D-relief och off-white botten",
+    "hero_product": {
+      "id": "6550",
+      "tag": "@6550",
+      "sku": "216550",
+      "name": "Akaba Crème Grön",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-akaba-creme-gron/",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/6550.jpg",
+      "ref_macro_file": "refs_still/6550_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring continuous meandering organic ribbon waves and rounded islands in rich sage-moss green dense cut pile rising crisply above a smooth warm off-white low-pile ground, finished with a slim matching off-white overlocked border and zero fringes."
+    },
+    "companion_products": []
+  }
+]

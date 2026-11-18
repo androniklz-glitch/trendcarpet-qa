@@ -1,0 +1,377 @@
+[
+  {
+    "id": "01_5531_Vinkel1_Helbild",
+    "slot": "01",
+    "sku": "KA5531",
+    "title": "01 · Aranga Super Soft Fur Beige (SKU: KA5531) – Vinkel 1: Helbild 50–65mm i boiseriesalong",
+    "clean_name": "01. Aranga Super Soft Fur Beige (@5531) – Vinkel 1: Helbild (9:16)",
+    "category": "[PRIVAT] TC 9:16 Videovinklar Urval (9 st 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "5531",
+      "tag": "@5531",
+      "sku": "KA5531",
+      "name": "Aranga Super Soft Fur Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
+      "role": "hero",
+      "resolution": "1015x1500",
+      "ref_file": "refs_still/5531.jpg",
+      "ref_macro_file": "refs_still/5531_macro.jpg",
+      "extra_tags": [
+        "@5531_room"
+      ],
+      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "01_5531_Vinkel1_Helbild/01_5531_Vinkel1_Helbild.jpg",
+        "rel_path": "01_5531_Vinkel1_Helbild/01_5531_Vinkel1_Helbild.jpg",
+        "kind": "Interiör (01)"
+      },
+      {
+        "filename": "01_5531_Vinkel1_Helbild/01_SKU5531-01_Hero_Ref_5531.jpg",
+        "rel_path": "01_5531_Vinkel1_Helbild/01_SKU5531-01_Hero_Ref_5531.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@5531 · SKU KA5531)"
+      },
+      {
+        "filename": "01_5531_Vinkel1_Helbild/01_SKU5531-01m_Hero_Macro_5531.jpg",
+        "rel_path": "01_5531_Vinkel1_Helbild/01_SKU5531-01m_Hero_Macro_5531.jpg",
+        "kind": "3. Makroreferens (@5531_macro)"
+      }
+    ]
+  },
+  {
+    "id": "02_5531_Vinkel2_Halvnara",
+    "slot": "02",
+    "sku": "KA5531",
+    "title": "02 · Aranga Super Soft Fur Beige (SKU: KA5531) – Vinkel 2: Halvnära 65–75mm i boiseriesalong",
+    "clean_name": "02. Aranga Super Soft Fur Beige (@5531) – Vinkel 2: Halvnära (9:16)",
+    "category": "[PRIVAT] TC 9:16 Videovinklar Urval (9 st 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "5531",
+      "tag": "@5531",
+      "sku": "KA5531",
+      "name": "Aranga Super Soft Fur Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
+      "role": "hero",
+      "resolution": "1015x1500",
+      "ref_file": "refs_still/5531.jpg",
+      "ref_macro_file": "refs_still/5531_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "02_5531_Vinkel2_Halvnara/02_5531_Vinkel2_Halvnara.jpg",
+        "rel_path": "02_5531_Vinkel2_Halvnara/02_5531_Vinkel2_Halvnara.jpg",
+        "kind": "Interiör (02)"
+      },
+      {
+        "filename": "02_5531_Vinkel2_Halvnara/02_SKU5531-01_Hero_Ref_5531.jpg",
+        "rel_path": "02_5531_Vinkel2_Halvnara/02_SKU5531-01_Hero_Ref_5531.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@5531 · SKU KA5531)"
+      },
+      {
+        "filename": "02_5531_Vinkel2_Halvnara/02_SKU5531-01m_Hero_Macro_5531.jpg",
+        "rel_path": "02_5531_Vinkel2_Halvnara/02_SKU5531-01m_Hero_Macro_5531.jpg",
+        "kind": "3. Makroreferens (@5531_macro)"
+      }
+    ]
+  },
+  {
+    "id": "03_5531_Vinkel3_Detalj",
+    "slot": "03",
+    "sku": "KA5531",
+    "title": "03 · Aranga Super Soft Fur Beige (SKU: KA5531) – Vinkel 3: Taktil detalj 85mm",
+    "clean_name": "03. Aranga Super Soft Fur Beige (@5531) – Vinkel 3: Taktil detalj (9:16)",
+    "category": "[PRIVAT] TC 9:16 Videovinklar Urval (9 st 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "5531",
+      "tag": "@5531",
+      "sku": "KA5531",
+      "name": "Aranga Super Soft Fur Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
+      "role": "hero",
+      "resolution": "1015x1500",
+      "ref_file": "refs_still/5531.jpg",
+      "ref_macro_file": "refs_still/5531_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "03_5531_Vinkel3_Detalj/03_5531_Vinkel3_Detalj.jpg",
+        "rel_path": "03_5531_Vinkel3_Detalj/03_5531_Vinkel3_Detalj.jpg",
+        "kind": "Interiör (03)"
+      },
+      {
+        "filename": "03_5531_Vinkel3_Detalj/03_SKU5531-01_Hero_Ref_5531.jpg",
+        "rel_path": "03_5531_Vinkel3_Detalj/03_SKU5531-01_Hero_Ref_5531.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@5531 · SKU KA5531)"
+      },
+      {
+        "filename": "03_5531_Vinkel3_Detalj/03_SKU5531-01m_Hero_Macro_5531.jpg",
+        "rel_path": "03_5531_Vinkel3_Detalj/03_SKU5531-01m_Hero_Macro_5531.jpg",
+        "kind": "3. Makroreferens (@5531_macro)"
+      }
+    ]
+  },
+  {
+    "id": "04_6554_Vinkel1_Helbild",
+    "slot": "04",
+    "sku": "216554",
+    "title": "04 · Fergana Crème Beige (SKU: 216554) – Vinkel 1: Helbild 50–65mm i funkissalong",
+    "clean_name": "04. Fergana Crème Beige (@6554) – Vinkel 1: Helbild (9:16)",
+    "category": "[PRIVAT] TC 9:16 Videovinklar Urval (9 st 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6554",
+      "tag": "@6554",
+      "sku": "216554",
+      "name": "Fergana Crème Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
+      "role": "hero",
+      "resolution": "1053x1500",
+      "ref_file": "refs_still/6554.jpg",
+      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "extra_tags": [
+        "@6554_room"
+      ],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "04_6554_Vinkel1_Helbild/04_6554_Vinkel1_Helbild.jpg",
+        "rel_path": "04_6554_Vinkel1_Helbild/04_6554_Vinkel1_Helbild.jpg",
+        "kind": "Interiör (04)"
+      },
+      {
+        "filename": "04_6554_Vinkel1_Helbild/04_SKU6554-01_Hero_Ref_6554.jpg",
+        "rel_path": "04_6554_Vinkel1_Helbild/04_SKU6554-01_Hero_Ref_6554.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6554 · SKU 216554)"
+      },
+      {
+        "filename": "04_6554_Vinkel1_Helbild/04_SKU6554-01m_Hero_Macro_6554.jpg",
+        "rel_path": "04_6554_Vinkel1_Helbild/04_SKU6554-01m_Hero_Macro_6554.jpg",
+        "kind": "3. Makroreferens (@6554_macro)"
+      }
+    ]
+  },
+  {
+    "id": "05_6554_Vinkel2_Halvnara",
+    "slot": "05",
+    "sku": "216554",
+    "title": "05 · Fergana Crème Beige (SKU: 216554) – Vinkel 2: Halvnära 65–75mm i funkissalong",
+    "clean_name": "05. Fergana Crème Beige (@6554) – Vinkel 2: Halvnära (9:16)",
+    "category": "[PRIVAT] TC 9:16 Videovinklar Urval (9 st 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6554",
+      "tag": "@6554",
+      "sku": "216554",
+      "name": "Fergana Crème Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
+      "role": "hero",
+      "resolution": "1053x1500",
+      "ref_file": "refs_still/6554.jpg",
+      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "05_6554_Vinkel2_Halvnara/05_6554_Vinkel2_Halvnara.jpg",
+        "rel_path": "05_6554_Vinkel2_Halvnara/05_6554_Vinkel2_Halvnara.jpg",
+        "kind": "Interiör (05)"
+      },
+      {
+        "filename": "05_6554_Vinkel2_Halvnara/05_SKU6554-01_Hero_Ref_6554.jpg",
+        "rel_path": "05_6554_Vinkel2_Halvnara/05_SKU6554-01_Hero_Ref_6554.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6554 · SKU 216554)"
+      },
+      {
+        "filename": "05_6554_Vinkel2_Halvnara/05_SKU6554-01m_Hero_Macro_6554.jpg",
+        "rel_path": "05_6554_Vinkel2_Halvnara/05_SKU6554-01m_Hero_Macro_6554.jpg",
+        "kind": "3. Makroreferens (@6554_macro)"
+      }
+    ]
+  },
+  {
+    "id": "06_6554_Vinkel3_Detalj",
+    "slot": "06",
+    "sku": "216554",
+    "title": "06 · Fergana Crème Beige (SKU: 216554) – Vinkel 3: Taktil detalj 85mm",
+    "clean_name": "06. Fergana Crème Beige (@6554) – Vinkel 3: Taktil detalj (9:16)",
+    "category": "[PRIVAT] TC 9:16 Videovinklar Urval (9 st 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6554",
+      "tag": "@6554",
+      "sku": "216554",
+      "name": "Fergana Crème Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
+      "role": "hero",
+      "resolution": "1053x1500",
+      "ref_file": "refs_still/6554.jpg",
+      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "06_6554_Vinkel3_Detalj/06_6554_Vinkel3_Detalj.jpg",
+        "rel_path": "06_6554_Vinkel3_Detalj/06_6554_Vinkel3_Detalj.jpg",
+        "kind": "Interiör (06)"
+      },
+      {
+        "filename": "06_6554_Vinkel3_Detalj/06_SKU6554-01_Hero_Ref_6554.jpg",
+        "rel_path": "06_6554_Vinkel3_Detalj/06_SKU6554-01_Hero_Ref_6554.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6554 · SKU 216554)"
+      },
+      {
+        "filename": "06_6554_Vinkel3_Detalj/06_SKU6554-01m_Hero_Macro_6554.jpg",
+        "rel_path": "06_6554_Vinkel3_Detalj/06_SKU6554-01m_Hero_Macro_6554.jpg",
+        "kind": "3. Makroreferens (@6554_macro)"
+      }
+    ]
+  },
+  {
+    "id": "07_6550_Vinkel1_Helbild",
+    "slot": "07",
+    "sku": "216550",
+    "title": "07 · Akaba Crème Grön (SKU: 216550) – Vinkel 1: Helbild 50–65mm i boiseriesalong",
+    "clean_name": "07. Akaba Crème Grön (@6550) – Vinkel 1: Helbild (9:16)",
+    "category": "[PRIVAT] TC 9:16 Videovinklar Urval (9 st 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6550",
+      "tag": "@6550",
+      "sku": "216550",
+      "name": "Akaba Crème Grön",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-akaba-creme-gron/",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/6550.jpg",
+      "ref_macro_file": "refs_still/6550_macro.jpg",
+      "extra_tags": [
+        "@6550_room"
+      ],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring continuous meandering organic ribbon waves and rounded islands in rich sage-moss green dense cut pile rising crisply above a smooth warm off-white low-pile ground, finished with a slim matching off-white overlocked border and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "07_6550_Vinkel1_Helbild/07_6550_Vinkel1_Helbild.jpg",
+        "rel_path": "07_6550_Vinkel1_Helbild/07_6550_Vinkel1_Helbild.jpg",
+        "kind": "Interiör (07)"
+      },
+      {
+        "filename": "07_6550_Vinkel1_Helbild/07_SKU6550-01_Hero_Ref_6550.jpg",
+        "rel_path": "07_6550_Vinkel1_Helbild/07_SKU6550-01_Hero_Ref_6550.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6550 · SKU 216550)"
+      },
+      {
+        "filename": "07_6550_Vinkel1_Helbild/07_SKU6550-01m_Hero_Macro_6550.jpg",
+        "rel_path": "07_6550_Vinkel1_Helbild/07_SKU6550-01m_Hero_Macro_6550.jpg",
+        "kind": "3. Makroreferens (@6550_macro)"
+      }
+    ]
+  },
+  {
+    "id": "08_6550_Vinkel2_Halvnara",
+    "slot": "08",
+    "sku": "216550",
+    "title": "08 · Akaba Crème Grön (SKU: 216550) – Vinkel 2: Halvnära 65–75mm i boiseriesalong",
+    "clean_name": "08. Akaba Crème Grön (@6550) – Vinkel 2: Halvnära (9:16)",
+    "category": "[PRIVAT] TC 9:16 Videovinklar Urval (9 st 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6550",
+      "tag": "@6550",
+      "sku": "216550",
+      "name": "Akaba Crème Grön",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-akaba-creme-gron/",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/6550.jpg",
+      "ref_macro_file": "refs_still/6550_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring continuous meandering organic ribbon waves and rounded islands in rich sage-moss green dense cut pile rising crisply above a smooth warm off-white low-pile ground, finished with a slim matching off-white overlocked border and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "08_6550_Vinkel2_Halvnara/08_6550_Vinkel2_Halvnara.jpg",
+        "rel_path": "08_6550_Vinkel2_Halvnara/08_6550_Vinkel2_Halvnara.jpg",
+        "kind": "Interiör (08)"
+      },
+      {
+        "filename": "08_6550_Vinkel2_Halvnara/08_SKU6550-01_Hero_Ref_6550.jpg",
+        "rel_path": "08_6550_Vinkel2_Halvnara/08_SKU6550-01_Hero_Ref_6550.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6550 · SKU 216550)"
+      },
+      {
+        "filename": "08_6550_Vinkel2_Halvnara/08_SKU6550-01m_Hero_Macro_6550.jpg",
+        "rel_path": "08_6550_Vinkel2_Halvnara/08_SKU6550-01m_Hero_Macro_6550.jpg",
+        "kind": "3. Makroreferens (@6550_macro)"
+      }
+    ]
+  },
+  {
+    "id": "09_6550_Vinkel3_Detalj",
+    "slot": "09",
+    "sku": "216550",
+    "title": "09 · Akaba Crème Grön (SKU: 216550) – Vinkel 3: Taktil detalj 85mm",
+    "clean_name": "09. Akaba Crème Grön (@6550) – Vinkel 3: Taktil detalj (9:16)",
+    "category": "[PRIVAT] TC 9:16 Videovinklar Urval (9 st 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6550",
+      "tag": "@6550",
+      "sku": "216550",
+      "name": "Akaba Crème Grön",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-akaba-creme-gron/",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/6550.jpg",
+      "ref_macro_file": "refs_still/6550_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring continuous meandering organic ribbon waves and rounded islands in rich sage-moss green dense cut pile rising crisply above a smooth warm off-white low-pile ground, finished with a slim matching off-white overlocked border and zero fringes."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "09_6550_Vinkel3_Detalj/09_6550_Vinkel3_Detalj.jpg",
+        "rel_path": "09_6550_Vinkel3_Detalj/09_6550_Vinkel3_Detalj.jpg",
+        "kind": "Interiör (09)"
+      },
+      {
+        "filename": "09_6550_Vinkel3_Detalj/09_SKU6550-01_Hero_Ref_6550.jpg",
+        "rel_path": "09_6550_Vinkel3_Detalj/09_SKU6550-01_Hero_Ref_6550.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6550 · SKU 216550)"
+      },
+      {
+        "filename": "09_6550_Vinkel3_Detalj/09_SKU6550-01m_Hero_Macro_6550.jpg",
+        "rel_path": "09_6550_Vinkel3_Detalj/09_SKU6550-01m_Hero_Macro_6550.jpg",
+        "kind": "3. Makroreferens (@6550_macro)"
+      }
+    ]
+  }
+]

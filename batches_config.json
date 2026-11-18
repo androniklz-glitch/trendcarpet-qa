@@ -1,5 +1,33 @@
 [
   {
+    "id": "26-11-17-tc-video-vinklar-urval",
+    "folder": "26-11-17-tc-video-vinklar-urval",
+    "name": "[PRIVAT] Trendcarpet — 9:16 Videovinklar Urval: Aranga, Fergana & Akaba (9 st 2K)",
+    "label": "[PRIVAT] TC 9:16 Videovinklar Urval (9 st 2K)",
+    "path": "C:\\Users\\AndronikLindgren\\.gemini\\antigravity\\scratch\\Projects\\Trendcarpet_Interiors\\26-11-17-tc-video-vinklar-urval",
+    "category": "mattor_inredning",
+    "org": "cama",
+    "company": "trendcarpet",
+    "onedrive_url": "",
+    "published": false,
+    "content_kind": "ai",
+    "createdAt": "2026-11-17T23:24:57.947245"
+  },
+  {
+    "id": "26-11-16-tc-5stj-favoritrum-slatvavt-video-pilot",
+    "folder": "26-11-16-tc-5stj-favoritrum-slatvavt-video-pilot",
+    "name": "[PRIVAT] Trendcarpet — Video Pilot: 5-Stjärniga Favoritrum Slätvävd Handloom-Ull (9:16 1080p ~15s UGC Reels, 1.00x + 1.30x, 0 credits)",
+    "label": "[PRIVAT] TC Video Pilot 5★ Favoritrum Slätvävd Ull (~15s UGC Reels)",
+    "path": "C:\\Users\\AndronikLindgren\\.gemini\\antigravity\\scratch\\Projects\\Trendcarpet_Interiors\\26-11-16-tc-5stj-favoritrum-slatvavt-video-pilot",
+    "category": "mattor_inredning",
+    "org": "cama",
+    "company": "trendcarpet",
+    "onedrive_url": "",
+    "published": false,
+    "content_kind": "ai",
+    "createdAt": "2026-11-17T21:46:55.348983"
+  },
+  {
     "id": "26-11-17-tc-inspirerade-rum-attityd",
     "folder": "26-11-17-tc-inspirerade-rum-attityd",
     "name": "[PRIVAT] Trendcarpet — Rum med Attityd (Sammet, Manchester & Skinn): Aranga, Fergana & Akaba (18 st 2K)",
@@ -40,20 +68,6 @@
     "published": false,
     "content_kind": "ai",
     "createdAt": "2026-11-17T15:51:42.582163"
-  },
-  {
-    "id": "26-11-16-tc-5stj-favoritrum-slatvavt-video-pilot",
-    "folder": "26-11-16-tc-5stj-favoritrum-slatvavt-video-pilot",
-    "name": "[PRIVAT] Trendcarpet — 5★ Favoritrum Slätvävd Ull Reels (9:16, 1.00x + 1.30x, MSE=0.0)",
-    "label": "[PRIVAT] TC 5★ Slätvävd Ull — Färdigklippta Reels (9:16)",
-    "path": "C:\\Users\\AndronikLindgren\\.gemini\\antigravity\\scratch\\Projects\\Trendcarpet_Interiors\\26-11-16-tc-5stj-favoritrum-slatvavt-video-pilot",
-    "category": "mattor_inredning",
-    "org": "cama",
-    "company": "trendcarpet",
-    "onedrive_url": "",
-    "published": false,
-    "content_kind": "ai",
-    "createdAt": "2026-11-16T23:33:35.031407"
   },
   {
     "id": "26-11-16-tc-5stj-favoritrum-slatvavt-pilot",

@@ -1,0 +1,246 @@
+[
+  {
+    "id": "01_SKU216550_Akaba_Cream_Gron_Vy01",
+    "slot": "01",
+    "sku": "216550",
+    "title": "01 · Akaba Cream Grön (SKU: 216550) – Svart skinnsoffa 9:16 · Vy 01 (3/4 från vänster)",
+    "clean_name": "01. Akaba Cream Grön (@216550) + Vardagsrum 1:1 Vy 01 (@vy01) – Svart skinnsoffa 9:16 · Vy 01 (3/4 från vänster)",
+    "category": "Akaba Cream Grön (216550) · Svart Skinnsoffa 9:16",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "216550",
+      "tag": "@216550",
+      "sku": "216550",
+      "name": "Akaba Cream Grön",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/216550.jpg",
+      "ref_macro_file": "refs_still/216550_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular 1.5-3.0 cm sculpted 3D high-and-low pile rug combining raised dense 3.0 cm muted moss/olive-green organic labyrinth paths and island motifs with recessed 1.5 cm warm oat/sand-cream flat-cut lower fields, finished with a clean overlocked yarn edge."
+    },
+    "companion_products": [
+      {
+        "id": "vy01",
+        "tag": "@vy01",
+        "sku": "vy01",
+        "name": "Vardagsrum 1:1 Vy 01",
+        "handle": "",
+        "url": "",
+        "role": "room_reference",
+        "resolution": "2048x2048",
+        "ref_file": "refs_still/vy01.jpg",
+        "ref_macro_file": null,
+        "extra_tags": [],
+        "visual_spec": "1:1 living room reference: 3/4 view from left past travertine cube and armchair toward black leather sofa and arched opening."
+      }
+    ],
+    "images": [
+      {
+        "filename": "01_SKU216550_Akaba_Cream_Gron_Vy01/01_SKU216550_Akaba_Cream_Gron_Vy01.jpg",
+        "rel_path": "01_SKU216550_Akaba_Cream_Gron_Vy01/01_SKU216550_Akaba_Cream_Gron_Vy01.jpg",
+        "kind": "Interiör (01)"
+      },
+      {
+        "filename": "01_SKU216550_Akaba_Cream_Gron_Vy01/01_SKU216550-01_Hero_Ref_216550.jpg",
+        "rel_path": "01_SKU216550_Akaba_Cream_Gron_Vy01/01_SKU216550-01_Hero_Ref_216550.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@216550 · SKU 216550)"
+      },
+      {
+        "filename": "01_SKU216550_Akaba_Cream_Gron_Vy01/01_SKU216550-01m_Hero_Macro_216550.jpg",
+        "rel_path": "01_SKU216550_Akaba_Cream_Gron_Vy01/01_SKU216550-01m_Hero_Macro_216550.jpg",
+        "kind": "3. Makroreferens (@216550_macro)"
+      },
+      {
+        "filename": "01_SKU216550_Akaba_Cream_Gron_Vy01/01_SKU216550-01b_Companion_Ref_vy01.jpg",
+        "rel_path": "01_SKU216550_Akaba_Cream_Gron_Vy01/01_SKU216550-01b_Companion_Ref_vy01.jpg",
+        "kind": "3. Sällskapsprodukt Studioreferens (@vy01 · Vardagsrum 1:1 Vy 01)"
+      }
+    ]
+  },
+  {
+    "id": "02_SKU216550_Akaba_Cream_Gron_Vy02",
+    "slot": "02",
+    "sku": "216550",
+    "title": "02 · Akaba Cream Grön (SKU: 216550) – Svart skinnsoffa 9:16 · Vy 02 (Nära låg 3/4 över hörn)",
+    "clean_name": "02. Akaba Cream Grön (@216550) + Vardagsrum 1:1 Vy 02 (@vy02) – Svart skinnsoffa 9:16 · Vy 02 (Nära låg 3/4 över hörn)",
+    "category": "Akaba Cream Grön (216550) · Svart Skinnsoffa 9:16",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "216550",
+      "tag": "@216550",
+      "sku": "216550",
+      "name": "Akaba Cream Grön",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/216550.jpg",
+      "ref_macro_file": "refs_still/216550_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular 1.5-3.0 cm sculpted 3D high-and-low pile rug combining raised dense 3.0 cm muted moss/olive-green organic labyrinth paths and island motifs with recessed 1.5 cm warm oat/sand-cream flat-cut lower fields, finished with a clean overlocked yarn edge."
+    },
+    "companion_products": [
+      {
+        "id": "vy02",
+        "tag": "@vy02",
+        "sku": "vy02",
+        "name": "Vardagsrum 1:1 Vy 02",
+        "handle": "",
+        "url": "",
+        "role": "room_reference",
+        "resolution": "2048x2048",
+        "ref_file": "refs_still/vy02.jpg",
+        "ref_macro_file": null,
+        "extra_tags": [],
+        "visual_spec": "1:1 living room reference: close low 3/4 view across front rug corner, travertine cube, and black leather pouf."
+      }
+    ],
+    "images": [
+      {
+        "filename": "02_SKU216550_Akaba_Cream_Gron_Vy02/02_SKU216550_Akaba_Cream_Gron_Vy02.jpg",
+        "rel_path": "02_SKU216550_Akaba_Cream_Gron_Vy02/02_SKU216550_Akaba_Cream_Gron_Vy02.jpg",
+        "kind": "Interiör (02)"
+      },
+      {
+        "filename": "02_SKU216550_Akaba_Cream_Gron_Vy02/02_SKU216550-01_Hero_Ref_216550.jpg",
+        "rel_path": "02_SKU216550_Akaba_Cream_Gron_Vy02/02_SKU216550-01_Hero_Ref_216550.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@216550 · SKU 216550)"
+      },
+      {
+        "filename": "02_SKU216550_Akaba_Cream_Gron_Vy02/02_SKU216550-01m_Hero_Macro_216550.jpg",
+        "rel_path": "02_SKU216550_Akaba_Cream_Gron_Vy02/02_SKU216550-01m_Hero_Macro_216550.jpg",
+        "kind": "3. Makroreferens (@216550_macro)"
+      },
+      {
+        "filename": "02_SKU216550_Akaba_Cream_Gron_Vy02/02_SKU216550-01b_Companion_Ref_vy02.jpg",
+        "rel_path": "02_SKU216550_Akaba_Cream_Gron_Vy02/02_SKU216550-01b_Companion_Ref_vy02.jpg",
+        "kind": "3. Sällskapsprodukt Studioreferens (@vy02 · Vardagsrum 1:1 Vy 02)"
+      }
+    ]
+  },
+  {
+    "id": "03_SKU216550_Akaba_Cream_Gron_Vy03",
+    "slot": "03",
+    "sku": "216550",
+    "title": "03 · Akaba Cream Grön (SKU: 216550) – Svart skinnsoffa 9:16 · Vy 03 (Genom valvöppning)",
+    "clean_name": "03. Akaba Cream Grön (@216550) + Vardagsrum 1:1 Vy 03 (@vy03) – Svart skinnsoffa 9:16 · Vy 03 (Genom valvöppning)",
+    "category": "Akaba Cream Grön (216550) · Svart Skinnsoffa 9:16",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "216550",
+      "tag": "@216550",
+      "sku": "216550",
+      "name": "Akaba Cream Grön",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/216550.jpg",
+      "ref_macro_file": "refs_still/216550_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular 1.5-3.0 cm sculpted 3D high-and-low pile rug combining raised dense 3.0 cm muted moss/olive-green organic labyrinth paths and island motifs with recessed 1.5 cm warm oat/sand-cream flat-cut lower fields, finished with a clean overlocked yarn edge."
+    },
+    "companion_products": [
+      {
+        "id": "vy03",
+        "tag": "@vy03",
+        "sku": "vy03",
+        "name": "Vardagsrum 1:1 Vy 03",
+        "handle": "",
+        "url": "",
+        "role": "room_reference",
+        "resolution": "2048x2048",
+        "ref_file": "refs_still/vy03.jpg",
+        "ref_macro_file": null,
+        "extra_tags": [],
+        "visual_spec": "1:1 living room reference: overview inside living room looking past the plastered archway toward the black leather sofa."
+      }
+    ],
+    "images": [
+      {
+        "filename": "03_SKU216550_Akaba_Cream_Gron_Vy03/03_SKU216550_Akaba_Cream_Gron_Vy03.jpg",
+        "rel_path": "03_SKU216550_Akaba_Cream_Gron_Vy03/03_SKU216550_Akaba_Cream_Gron_Vy03.jpg",
+        "kind": "Interiör (03)"
+      },
+      {
+        "filename": "03_SKU216550_Akaba_Cream_Gron_Vy03/03_SKU216550-01_Hero_Ref_216550.jpg",
+        "rel_path": "03_SKU216550_Akaba_Cream_Gron_Vy03/03_SKU216550-01_Hero_Ref_216550.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@216550 · SKU 216550)"
+      },
+      {
+        "filename": "03_SKU216550_Akaba_Cream_Gron_Vy03/03_SKU216550-01m_Hero_Macro_216550.jpg",
+        "rel_path": "03_SKU216550_Akaba_Cream_Gron_Vy03/03_SKU216550-01m_Hero_Macro_216550.jpg",
+        "kind": "3. Makroreferens (@216550_macro)"
+      },
+      {
+        "filename": "03_SKU216550_Akaba_Cream_Gron_Vy03/03_SKU216550-01b_Companion_Ref_vy03.jpg",
+        "rel_path": "03_SKU216550_Akaba_Cream_Gron_Vy03/03_SKU216550-01b_Companion_Ref_vy03.jpg",
+        "kind": "3. Sällskapsprodukt Studioreferens (@vy03 · Vardagsrum 1:1 Vy 03)"
+      }
+    ]
+  },
+  {
+    "id": "04_SKU216550_Akaba_Cream_Gron_Vy04",
+    "slot": "04",
+    "sku": "216550",
+    "title": "04 · Akaba Cream Grön (SKU: 216550) – Svart skinnsoffa 9:16 · Vy 04 (Rak symmetrisk)",
+    "clean_name": "04. Akaba Cream Grön (@216550) + Vardagsrum 1:1 Vy 04 (@vy04) – Svart skinnsoffa 9:16 · Vy 04 (Rak symmetrisk)",
+    "category": "Akaba Cream Grön (216550) · Svart Skinnsoffa 9:16",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "216550",
+      "tag": "@216550",
+      "sku": "216550",
+      "name": "Akaba Cream Grön",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/216550.jpg",
+      "ref_macro_file": "refs_still/216550_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular 1.5-3.0 cm sculpted 3D high-and-low pile rug combining raised dense 3.0 cm muted moss/olive-green organic labyrinth paths and island motifs with recessed 1.5 cm warm oat/sand-cream flat-cut lower fields, finished with a clean overlocked yarn edge."
+    },
+    "companion_products": [
+      {
+        "id": "vy04",
+        "tag": "@vy04",
+        "sku": "vy04",
+        "name": "Vardagsrum 1:1 Vy 04",
+        "handle": "",
+        "url": "",
+        "role": "room_reference",
+        "resolution": "2048x2048",
+        "ref_file": "refs_still/vy04.jpg",
+        "ref_macro_file": null,
+        "extra_tags": [],
+        "visual_spec": "1:1 living room reference: straight symmetrical view toward the black leather sofa and sheer-curtained window wall."
+      }
+    ],
+    "images": [
+      {
+        "filename": "04_SKU216550_Akaba_Cream_Gron_Vy04/04_SKU216550_Akaba_Cream_Gron_Vy04.jpg",
+        "rel_path": "04_SKU216550_Akaba_Cream_Gron_Vy04/04_SKU216550_Akaba_Cream_Gron_Vy04.jpg",
+        "kind": "Interiör (04)"
+      },
+      {
+        "filename": "04_SKU216550_Akaba_Cream_Gron_Vy04/04_SKU216550-01_Hero_Ref_216550.jpg",
+        "rel_path": "04_SKU216550_Akaba_Cream_Gron_Vy04/04_SKU216550-01_Hero_Ref_216550.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@216550 · SKU 216550)"
+      },
+      {
+        "filename": "04_SKU216550_Akaba_Cream_Gron_Vy04/04_SKU216550-01m_Hero_Macro_216550.jpg",
+        "rel_path": "04_SKU216550_Akaba_Cream_Gron_Vy04/04_SKU216550-01m_Hero_Macro_216550.jpg",
+        "kind": "3. Makroreferens (@216550_macro)"
+      },
+      {
+        "filename": "04_SKU216550_Akaba_Cream_Gron_Vy04/04_SKU216550-01b_Companion_Ref_vy04.jpg",
+        "rel_path": "04_SKU216550_Akaba_Cream_Gron_Vy04/04_SKU216550-01b_Companion_Ref_vy04.jpg",
+        "kind": "3. Sällskapsprodukt Studioreferens (@vy04 · Vardagsrum 1:1 Vy 04)"
+      }
+    ]
+  }
+]

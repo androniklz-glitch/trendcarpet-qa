@@ -1,0 +1,146 @@
+[
+  {
+    "slot": "01",
+    "image_file": "01_SKU216550_Akaba_Cream_Gron_Vy01.jpg",
+    "subfolder": "01_SKU216550_Akaba_Cream_Gron_Vy01",
+    "home_style": "Svart skinnsoffa 9:16 · Vy 01 (Luftig 3/4 från vänster)",
+    "hero_product": {
+      "id": "216550",
+      "tag": "@216550",
+      "sku": "216550",
+      "name": "Akaba Cream Grön",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/216550.jpg",
+      "ref_macro_file": "refs_still/216550_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular 1.5-3.0 cm sculpted 3D high-and-low pile rug combining raised dense 3.0 cm muted moss/olive-green organic labyrinth paths and island motifs with recessed 1.5 cm warm oat/sand-cream flat-cut lower fields, finished with a clean overlocked yarn edge."
+    },
+    "companion_products": [
+      {
+        "id": "r916b1",
+        "tag": "@r916b1",
+        "sku": "r916b1",
+        "name": "Vardagsrum 9:16 Ref B1",
+        "handle": "",
+        "url": "",
+        "role": "room_reference",
+        "resolution": "900x1600",
+        "ref_file": "refs_still/r916b1.jpg",
+        "ref_macro_file": null,
+        "extra_tags": [],
+        "visual_spec": "Open rug-centered 9:16 living room reference: generous sculpted rug foreground down to bottom edge with airy spacing between cream flat-woven armchair on slim black steel frame, porous travertine plinth with dark ceramic vessel, walnut coffee table with two speckled stoneware bowls, stitched black leather pouf, and black leather sofa against heavy matte warm taupe-oatmeal woven linen curtains in subdued shaded afternoon midtones."
+      }
+    ]
+  },
+  {
+    "slot": "02",
+    "image_file": "02_SKU216550_Akaba_Cream_Gron_Vy02.jpg",
+    "subfolder": "02_SKU216550_Akaba_Cream_Gron_Vy02",
+    "home_style": "Svart skinnsoffa 9:16 · Vy 02 (Nära låg 3/4 över hörn)",
+    "hero_product": {
+      "id": "216550",
+      "tag": "@216550",
+      "sku": "216550",
+      "name": "Akaba Cream Grön",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/216550.jpg",
+      "ref_macro_file": "refs_still/216550_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular 1.5-3.0 cm sculpted 3D high-and-low pile rug combining raised dense 3.0 cm muted moss/olive-green organic labyrinth paths and island motifs with recessed 1.5 cm warm oat/sand-cream flat-cut lower fields, finished with a clean overlocked yarn edge."
+    },
+    "companion_products": [
+      {
+        "id": "gardinref",
+        "tag": "@gardinref",
+        "sku": "gardinref",
+        "name": "Godkänd Gardin- & Rumsreferens (Vy04)",
+        "handle": "",
+        "url": "",
+        "role": "room_reference",
+        "resolution": "1536x2752",
+        "ref_file": "refs_still/gardinref.jpg",
+        "ref_macro_file": null,
+        "extra_tags": [],
+        "visual_spec": "Approved 9:16 living room and curtain reference (0.03% > 240): continuous full-width background wall of completely opaque thickly lined heavy matte warm oatmeal-taupe woven linen curtains in even shaded afternoon midtones, three-seat black leather sofa, organic solid walnut coffee table on symmetrical twin solid walnut slab legs with two speckled stoneware bowls, stitched black leather cube pouf, and sculpted 3D high-and-low rug."
+      }
+    ]
+  },
+  {
+    "slot": "03",
+    "image_file": "03_SKU216550_Akaba_Cream_Gron_Vy03.jpg",
+    "subfolder": "03_SKU216550_Akaba_Cream_Gron_Vy03",
+    "home_style": "Svart skinnsoffa 9:16 · Vy 03 (Inne vid valvbågen)",
+    "hero_product": {
+      "id": "216550",
+      "tag": "@216550",
+      "sku": "216550",
+      "name": "Akaba Cream Grön",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/216550.jpg",
+      "ref_macro_file": "refs_still/216550_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular 1.5-3.0 cm sculpted 3D high-and-low pile rug combining raised dense 3.0 cm muted moss/olive-green organic labyrinth paths and island motifs with recessed 1.5 cm warm oat/sand-cream flat-cut lower fields, finished with a clean overlocked yarn edge."
+    },
+    "companion_products": [
+      {
+        "id": "gardinref",
+        "tag": "@gardinref",
+        "sku": "gardinref",
+        "name": "Godkänd Gardin- & Rumsreferens (Vy04)",
+        "handle": "",
+        "url": "",
+        "role": "room_reference",
+        "resolution": "1536x2752",
+        "ref_file": "refs_still/gardinref.jpg",
+        "ref_macro_file": null,
+        "extra_tags": [],
+        "visual_spec": "Approved 9:16 living room and curtain reference (0.03% > 240): continuous full-width background wall of completely opaque thickly lined heavy matte warm oatmeal-taupe woven linen curtains in even shaded afternoon midtones, three-seat black leather sofa, organic solid walnut coffee table on symmetrical twin solid walnut slab legs with two speckled stoneware bowls, stitched black leather cube pouf, and sculpted 3D high-and-low rug."
+      }
+    ]
+  },
+  {
+    "slot": "04",
+    "image_file": "04_SKU216550_Akaba_Cream_Gron_Vy04.jpg",
+    "subfolder": "04_SKU216550_Akaba_Cream_Gron_Vy04",
+    "home_style": "Svart skinnsoffa 9:16 · Vy 04 (Rak symmetrisk)",
+    "hero_product": {
+      "id": "216550",
+      "tag": "@216550",
+      "sku": "216550",
+      "name": "Akaba Cream Grön",
+      "handle": "",
+      "url": "",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/216550.jpg",
+      "ref_macro_file": "refs_still/216550_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rectangular 1.5-3.0 cm sculpted 3D high-and-low pile rug combining raised dense 3.0 cm muted moss/olive-green organic labyrinth paths and island motifs with recessed 1.5 cm warm oat/sand-cream flat-cut lower fields, finished with a clean overlocked yarn edge."
+    },
+    "companion_products": [
+      {
+        "id": "r916b4",
+        "tag": "@r916b4",
+        "sku": "r916b4",
+        "name": "Vardagsrum 9:16 Ref B4",
+        "handle": "",
+        "url": "",
+        "role": "room_reference",
+        "resolution": "900x1600",
+        "ref_file": "refs_still/r916b4.jpg",
+        "ref_macro_file": null,
+        "extra_tags": [],
+        "visual_spec": "Close straight symmetrical 9:16 living room reference against continuous wall of heavy matte warm taupe-oatmeal woven linen curtains in subdued shaded afternoon midtones with three-seat black leather sofa, walnut coffee table on symmetrical twin slab legs with two speckled stoneware bowls, stitched black leather pouf, and rug filling the lower half down to the bottom edge."
+      }
+    ]
+  }
+]

@@ -1,0 +1,123 @@
+[
+  {
+    "id": "01_akaba_216550",
+    "slot": "01",
+    "sku": "216550",
+    "title": "01 · Akaba Cream Grön (1.00x / 1.30x · ~15s · MSE=0.0)",
+    "clean_name": "01. Akaba Cream Grön · 11.613s · 1.29x (MSE=0.0)",
+    "category": "Akaba Cream Grön 216550 · 9:16 UGC-Reel D (~15s)",
+    "company": "trendcarpet",
+    "kicker": "Trendcarpet",
+    "hook_top_px": 280,
+    "label_top_px": 300,
+    "text_overlay_layout": {
+      "hook_top_px": 280,
+      "hook_bottom_px": 376,
+      "hook_safe_band": [
+        260,
+        360
+      ],
+      "hook_placement_mode": "manual",
+      "hook_edge_density_at_316": 8.208,
+      "hook_edge_density_selected": 8.117,
+      "label_top_px": 300,
+      "label_bottom_px": 418,
+      "label_safe_band": [
+        1300,
+        1410
+      ],
+      "label_placement_mode": "manual",
+      "label_edge_density_at_1310": 31.769,
+      "label_edge_density_selected": 6.428,
+      "label_start_clip": 2,
+      "label_end_clip": 3,
+      "meta_safe_zone_verified": true
+    },
+    "clip_diagnostics": [
+      {
+        "clip_index": 1,
+        "window": [
+          17,
+          136
+        ],
+        "selection_mode": "per_shot_frames_smart",
+        "mean_motion": 10.3855,
+        "std_motion": 2.2807,
+        "accel_ratio": 1.0884,
+        "sharpness_retention_pct": 69.11,
+        "min_over_max_sharpness_pct": 69.11,
+        "end_over_top_sharpness_pct": 83.95,
+        "mean_sharpness": 1084.54,
+        "max_blown_highlights_pct": 0.079,
+        "quality_warnings": []
+      },
+      {
+        "clip_index": 2,
+        "window": [
+          15,
+          134
+        ],
+        "selection_mode": "per_shot_frames_smart",
+        "mean_motion": 10.3306,
+        "std_motion": 2.1664,
+        "accel_ratio": 0.9947,
+        "sharpness_retention_pct": 68.65,
+        "min_over_max_sharpness_pct": 68.65,
+        "end_over_top_sharpness_pct": 91.6,
+        "mean_sharpness": 1088.2,
+        "max_blown_highlights_pct": 0.282,
+        "quality_warnings": []
+      },
+      {
+        "clip_index": 3,
+        "window": [
+          17,
+          136
+        ],
+        "selection_mode": "per_shot_frames_smart",
+        "mean_motion": 11.0027,
+        "std_motion": 1.4885,
+        "accel_ratio": 1.1377,
+        "sharpness_retention_pct": 67.49,
+        "min_over_max_sharpness_pct": 67.49,
+        "end_over_top_sharpness_pct": 78.16,
+        "mean_sharpness": 1255.86,
+        "max_blown_highlights_pct": 0.044,
+        "quality_warnings": []
+      }
+    ],
+    "reel_tempo_diagnostics": {
+      "clip_mean_motions": [
+        10.3855,
+        10.3306,
+        11.0027
+      ],
+      "adjacent_motion_deltas": [
+        0.0549,
+        0.6721
+      ],
+      "max_adjacent_motion_delta": 0.6721,
+      "motion_std_across_reel": 0.3047
+    },
+    "quality_warnings": [],
+    "images": [
+      {
+        "filename": "01_akaba_216550/akaba_216550_clean_100x.mp4",
+        "rel_path": "01_akaba_216550/akaba_216550_clean_100x.mp4",
+        "kind": "Utgång A: Ren UGC-Master 9:16 (1080x1920, 11.613s, 31 fps, 1.29x, MSE=0.0, textfri)",
+        "resolution": "1080x1920"
+      },
+      {
+        "filename": "01_akaba_216550/akaba_216550_ugc_ad_9x16.mp4",
+        "rel_path": "01_akaba_216550/akaba_216550_ugc_ad_9x16.mp4",
+        "kind": "Utgång B: HyperFrames Paid-Social 9:16 (Trendcarpet · Hook y=280px, Label y=300px)",
+        "resolution": "1080x1920"
+      },
+      {
+        "filename": "01_akaba_216550/akaba_216550_audit_strip.jpg",
+        "rel_path": "01_akaba_216550/akaba_216550_audit_strip.jpg",
+        "kind": "6-Rutors Kontrollremsa (3 rutor Utgång A + 3 rutor Utgång B)"
+      }
+    ]
+  }
+]

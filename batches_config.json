@@ -1,5 +1,47 @@
 [
   {
+    "id": "26-11-18-tc-akaba-svart-skinnsoffa-video-c",
+    "folder": "26-11-18-tc-akaba-svart-skinnsoffa-video-c",
+    "name": "[PRIVAT] Trendcarpet 9:16 UGC-Video C — Akaba Cream Grön (SKU 216550)",
+    "label": "Akaba Cream Grön 216550 · 9:16 UGC-Reel C",
+    "path": "C:\\Users\\AndronikLindgren\\.gemini\\antigravity\\scratch\\Projects\\Trendcarpet_Interiors\\26-11-18-tc-akaba-svart-skinnsoffa-video-c",
+    "category": "mattor_inredning",
+    "org": "cama",
+    "company": "trendcarpet",
+    "onedrive_url": "",
+    "published": false,
+    "content_kind": "ai",
+    "createdAt": "2026-11-19T12:06:33.318330"
+  },
+  {
+    "id": "26-11-18-tc-video-aranga-fergana-akaba-b",
+    "folder": "26-11-18-tc-video-aranga-fergana-akaba-b",
+    "name": "[PRIVAT] Trendcarpet 9:16 UGC-Video B — Aranga, Fergana & Akaba (KA5531 · 216554 · 216550)",
+    "label": "Aranga, Fergana & Akaba · 9:16 UGC-Reels B",
+    "path": "C:\\Users\\AndronikLindgren\\.gemini\\antigravity\\scratch\\Projects\\Trendcarpet_Interiors\\26-11-18-tc-video-aranga-fergana-akaba-b",
+    "category": "mattor_inredning",
+    "org": "cama",
+    "company": "trendcarpet",
+    "onedrive_url": "",
+    "published": false,
+    "content_kind": "ai",
+    "createdAt": "2026-11-19T12:04:15.182474"
+  },
+  {
+    "id": "26-11-19-hs-black-river",
+    "folder": "26-11-19-hs-black-river",
+    "name": "Hatshop — Black River Trucker Kampanj & 50/50 Black Friday Collage (8 modeller)",
+    "label": "Hatshop Black River (16 bilder + 8x2 4:5 Collage)",
+    "path": "C:\\Users\\AndronikLindgren\\.gemini\\antigravity\\scratch\\Projects\\Trendcarpet_Interiors\\26-11-19-hs-black-river",
+    "category": "kepsar",
+    "org": "cama",
+    "company": "hatshop",
+    "onedrive_url": "",
+    "published": false,
+    "content_kind": "ai",
+    "createdAt": "2026-11-19T11:58:45.777498"
+  },
+  {
     "id": "26-11-19-tc-attityd-vinklar-och-djup",
     "folder": "26-11-19-tc-attityd-vinklar-och-djup",
     "name": "[PRIVAT] Trendcarpet — Rum med Attityd (Kort 19–28): Diagonalt Djup, Förgrundsankare & Luftiga Glasbord (10 st 2K)",
@@ -26,20 +68,6 @@
     "published": false,
     "content_kind": "ai",
     "createdAt": "2026-11-19T10:04:18.080878"
-  },
-  {
-    "id": "26-11-18-tc-akaba-svart-skinnsoffa-video-c",
-    "folder": "26-11-18-tc-akaba-svart-skinnsoffa-video-c",
-    "name": "[PRIVAT] Trendcarpet 9:16 UGC-Video C — Akaba Cream Grön (SKU 216550)",
-    "label": "Akaba Cream Grön 216550 · 9:16 UGC-Reel C",
-    "path": "C:\\Users\\AndronikLindgren\\.gemini\\antigravity\\scratch\\Projects\\Trendcarpet_Interiors\\26-11-18-tc-akaba-svart-skinnsoffa-video-c",
-    "category": "mattor_inredning",
-    "org": "cama",
-    "company": "trendcarpet",
-    "onedrive_url": "",
-    "published": false,
-    "content_kind": "ai",
-    "createdAt": "2026-11-19T00:31:17.303055"
   },
   {
     "id": "26-11-18-tc-akaba-svart-skinnsoffa-video-b",
@@ -170,8 +198,8 @@
   {
     "id": "26-11-17-tc-inspirerade-rum-attityd",
     "folder": "26-11-17-tc-inspirerade-rum-attityd",
-    "name": "[PRIVAT] Trendcarpet — Rum med Attityd (Sammet, Manchester & Skinn): Aranga, Fergana & Akaba (18 st 2K)",
-    "label": "[PRIVAT] TC Rum med Attityd: Sammet, Manchester & Skinn (18 st 2K)",
+    "name": "[PRIVAT] Trendcarpet — Rum med Attityd (Sammet, Manchester & Skinn): Aranga, Fergana & Akaba (28 st 2K: 01–18 + 19–28 Diagonalt Djup)",
+    "label": "[PRIVAT] TC Rum med Attityd: Sammet, Manchester & Skinn (28 st 2K: 01–18 + 19–28 Diagonalt Djup)",
     "path": "C:\\Users\\AndronikLindgren\\.gemini\\antigravity\\scratch\\Projects\\Trendcarpet_Interiors\\26-11-17-tc-inspirerade-rum-attityd",
     "category": "mattor_inredning",
     "org": "cama",

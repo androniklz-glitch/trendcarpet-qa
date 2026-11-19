@@ -5,7 +5,7 @@
     "sku": "216550",
     "title": "19 · Akaba Crème Grön (SKU: 216550) – Fotodag 1 (Monolitisk Kalkputs- & Etagevilla) — Chokladsammet i förgrunden, salvia-oliv kanalsydd manchester, klarglas på valnötscylindrar & putsad hörntrappa",
     "clean_name": "19. Akaba Crème Grön (@6550) – Fotodag 1 (Monolitisk Kalkputs- & Etagevilla) — Chokladsammet i förgrunden, salvia-oliv kanalsydd manchester, klarglas på valnötscylindrar & putsad hörntrappa",
-    "category": "[PRIVAT] TC Attityd Vinklar & Djup (Kort 19–28, 10 st 2K)",
+    "category": "[PRIVAT] TC Attityd Vinklar & Djup: Kort 19–28 (10 Original + 10 v2 Kodak · 2K)",
     "company": "trendcarpet",
     "hero_product": {
       "id": "6550",
@@ -16,8 +16,8 @@
       "url": "https://www.trendcarpet.de/de/teppiche-modernes-design/hochflorteppiche-akaba-creme-grun/",
       "role": "hero",
       "resolution": "1071x1500",
-      "ref_file": "refs_still/6550.jpg",
-      "ref_macro_file": "refs_still/6550_macro.jpg",
+      "ref_file": "",
+      "ref_macro_file": "",
       "extra_tags": [],
       "visual_spec": "Large rectangular sculpted high-low 3D relief rug featuring continuous meandering rich sage-moss and olive-moss green raised cut-pile bands together with rounded moss-green organic islands set in crisp carved relief against a smooth warm off-white and natural chalk low-pile ground, finished with a slim off-white overlocked border and zero fringes."
     },
@@ -26,19 +26,15 @@
       {
         "filename": "19_6550_Fotodag1_Etagevilla_SalviaManchester_GlasValnot_Trappa/19_6550_Fotodag1_Etagevilla_SalviaManchester_GlasValnot_Trappa.jpg",
         "rel_path": "19_6550_Fotodag1_Etagevilla_SalviaManchester_GlasValnot_Trappa/19_6550_Fotodag1_Etagevilla_SalviaManchester_GlasValnot_Trappa.jpg",
-        "kind": "Interiör (19)"
+        "kind": "1. Genererad 2K Interiör (Fotodag 1 (Monolitisk Kalkputs- & Etagevilla) — Chokladsammet i förgrunden, salvia-oliv kanalsydd manchester, klarglas på valnötscylindrar & putsad hörntrappa)"
       },
       {
-        "filename": "19_6550_Fotodag1_Etagevilla_SalviaManchester_GlasValnot_Trappa/19_SKU6550-01_Hero_Ref_6550.jpg",
-        "rel_path": "19_6550_Fotodag1_Etagevilla_SalviaManchester_GlasValnot_Trappa/19_SKU6550-01_Hero_Ref_6550.jpg",
-        "kind": "2. Stjärn-produkt Studioreferens (@6550 · SKU 216550)"
-      },
-      {
-        "filename": "19_6550_Fotodag1_Etagevilla_SalviaManchester_GlasValnot_Trappa/19_SKU6550-01m_Hero_Macro_6550.jpg",
-        "rel_path": "19_6550_Fotodag1_Etagevilla_SalviaManchester_GlasValnot_Trappa/19_SKU6550-01m_Hero_Macro_6550.jpg",
-        "kind": "3. Makroreferens (@6550_macro)"
+        "filename": "19_6550_Fotodag1_Etagevilla_SalviaManchester_GlasValnot_Trappa/19_6550_Fotodag1_Etagevilla_SalviaManchester_GlasValnot_Trappa_v2_kodak.jpg",
+        "rel_path": "19_6550_Fotodag1_Etagevilla_SalviaManchester_GlasValnot_Trappa/19_6550_Fotodag1_Etagevilla_SalviaManchester_GlasValnot_Trappa_v2_kodak.jpg",
+        "kind": "1b. v2 Kodak 35mm — 2K Interiör (Portra 400 / filmgrainer · Fotodag 1 (Monolitisk Kalkputs- & Etagevilla) — Chokladsammet i förgrunden, salvia-oliv kanalsydd manchester, klarglas på valnötscylindrar & putsad hörntrappa)"
       }
-    ]
+    ],
+    "refs": []
   },
   {
     "id": "20_5531_Fotodag1_Etagevilla_RostSammet_GlasRoktEk_Kalkstenstrapp",
@@ -46,7 +42,7 @@
     "sku": "KA5531",
     "title": "20 · Aranga Super Soft Fur Beige (SKU: KA5531) – Fotodag 1 (Monolitisk Kalkputs- & Etagevilla) — Svart anilinskinn i förgrunden, roströd kanalsydd mohair-sammet, klarglas på rökta ekcylindrar & kalkstensetage",
     "clean_name": "20. Aranga Super Soft Fur Beige (@5531) – Fotodag 1 (Monolitisk Kalkputs- & Etagevilla) — Svart anilinskinn i förgrunden, roströd kanalsydd mohair-sammet, klarglas på rökta ekcylindrar & kalkstensetage",
-    "category": "[PRIVAT] TC Attityd Vinklar & Djup (Kort 19–28, 10 st 2K)",
+    "category": "[PRIVAT] TC Attityd Vinklar & Djup: Kort 19–28 (10 Original + 10 v2 Kodak · 2K)",
     "company": "trendcarpet",
     "hero_product": {
       "id": "5531",
@@ -57,8 +53,8 @@
       "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
       "role": "hero",
       "resolution": "1015x1500",
-      "ref_file": "refs_still/5531.jpg",
-      "ref_macro_file": "refs_still/5531_macro.jpg",
+      "ref_file": "",
+      "ref_macro_file": "",
       "extra_tags": [],
       "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
     },
@@ -67,19 +63,15 @@
       {
         "filename": "20_5531_Fotodag1_Etagevilla_RostSammet_GlasRoktEk_Kalkstenstrapp/20_5531_Fotodag1_Etagevilla_RostSammet_GlasRoktEk_Kalkstenstrapp.jpg",
         "rel_path": "20_5531_Fotodag1_Etagevilla_RostSammet_GlasRoktEk_Kalkstenstrapp/20_5531_Fotodag1_Etagevilla_RostSammet_GlasRoktEk_Kalkstenstrapp.jpg",
-        "kind": "Interiör (20)"
+        "kind": "1. Genererad 2K Interiör (Fotodag 1 (Monolitisk Kalkputs- & Etagevilla) — Svart anilinskinn i förgrunden, roströd kanalsydd mohair-sammet, klarglas på rökta ekcylindrar & kalkstensetage)"
       },
       {
-        "filename": "20_5531_Fotodag1_Etagevilla_RostSammet_GlasRoktEk_Kalkstenstrapp/20_SKU5531-01_Hero_Ref_5531.jpg",
-        "rel_path": "20_5531_Fotodag1_Etagevilla_RostSammet_GlasRoktEk_Kalkstenstrapp/20_SKU5531-01_Hero_Ref_5531.jpg",
-        "kind": "2. Stjärn-produkt Studioreferens (@5531 · SKU KA5531)"
-      },
-      {
-        "filename": "20_5531_Fotodag1_Etagevilla_RostSammet_GlasRoktEk_Kalkstenstrapp/20_SKU5531-01m_Hero_Macro_5531.jpg",
-        "rel_path": "20_5531_Fotodag1_Etagevilla_RostSammet_GlasRoktEk_Kalkstenstrapp/20_SKU5531-01m_Hero_Macro_5531.jpg",
-        "kind": "3. Makroreferens (@5531_macro)"
+        "filename": "20_5531_Fotodag1_Etagevilla_RostSammet_GlasRoktEk_Kalkstenstrapp/20_5531_Fotodag1_Etagevilla_RostSammet_GlasRoktEk_Kalkstenstrapp_v2_kodak.jpg",
+        "rel_path": "20_5531_Fotodag1_Etagevilla_RostSammet_GlasRoktEk_Kalkstenstrapp/20_5531_Fotodag1_Etagevilla_RostSammet_GlasRoktEk_Kalkstenstrapp_v2_kodak.jpg",
+        "kind": "1b. v2 Kodak 35mm — 2K Interiör (Portra 400 / filmgrainer · Fotodag 1 (Monolitisk Kalkputs- & Etagevilla) — Svart anilinskinn i förgrunden, roströd kanalsydd mohair-sammet, klarglas på rökta ekcylindrar & kalkstensetage)"
       }
-    ]
+    ],
+    "refs": []
   },
   {
     "id": "21_6554_Fotodag1_Etagevilla_EspressoSadellader_RokglasTravertin",
@@ -87,7 +79,7 @@
     "sku": "216554",
     "title": "21 · Fergana Crème Beige (SKU: 216554) – Fotodag 1 (Monolitisk Kalkputs- & Etagevilla) — Tobaksbrun manchester i förgrunden, espresso-sadelläder snett längs sidan, rökglas på travertincylindrar & trappavsats",
     "clean_name": "21. Fergana Crème Beige (@6554) – Fotodag 1 (Monolitisk Kalkputs- & Etagevilla) — Tobaksbrun manchester i förgrunden, espresso-sadelläder snett längs sidan, rökglas på travertincylindrar & trappavsats",
-    "category": "[PRIVAT] TC Attityd Vinklar & Djup (Kort 19–28, 10 st 2K)",
+    "category": "[PRIVAT] TC Attityd Vinklar & Djup: Kort 19–28 (10 Original + 10 v2 Kodak · 2K)",
     "company": "trendcarpet",
     "hero_product": {
       "id": "6554",
@@ -98,8 +90,8 @@
       "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
       "role": "hero",
       "resolution": "1053x1500",
-      "ref_file": "refs_still/6554.jpg",
-      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "ref_file": "",
+      "ref_macro_file": "",
       "extra_tags": [],
       "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
     },
@@ -108,19 +100,15 @@
       {
         "filename": "21_6554_Fotodag1_Etagevilla_EspressoSadellader_RokglasTravertin/21_6554_Fotodag1_Etagevilla_EspressoSadellader_RokglasTravertin.jpg",
         "rel_path": "21_6554_Fotodag1_Etagevilla_EspressoSadellader_RokglasTravertin/21_6554_Fotodag1_Etagevilla_EspressoSadellader_RokglasTravertin.jpg",
-        "kind": "Interiör (21)"
+        "kind": "1. Genererad 2K Interiör (Fotodag 1 (Monolitisk Kalkputs- & Etagevilla) — Tobaksbrun manchester i förgrunden, espresso-sadelläder snett längs sidan, rökglas på travertincylindrar & trappavsats)"
       },
       {
-        "filename": "21_6554_Fotodag1_Etagevilla_EspressoSadellader_RokglasTravertin/21_SKU6554-01_Hero_Ref_6554.jpg",
-        "rel_path": "21_6554_Fotodag1_Etagevilla_EspressoSadellader_RokglasTravertin/21_SKU6554-01_Hero_Ref_6554.jpg",
-        "kind": "2. Stjärn-produkt Studioreferens (@6554 · SKU 216554)"
-      },
-      {
-        "filename": "21_6554_Fotodag1_Etagevilla_EspressoSadellader_RokglasTravertin/21_SKU6554-01m_Hero_Macro_6554.jpg",
-        "rel_path": "21_6554_Fotodag1_Etagevilla_EspressoSadellader_RokglasTravertin/21_SKU6554-01m_Hero_Macro_6554.jpg",
-        "kind": "3. Makroreferens (@6554_macro)"
+        "filename": "21_6554_Fotodag1_Etagevilla_EspressoSadellader_RokglasTravertin/21_6554_Fotodag1_Etagevilla_EspressoSadellader_RokglasTravertin_v2_kodak.jpg",
+        "rel_path": "21_6554_Fotodag1_Etagevilla_EspressoSadellader_RokglasTravertin/21_6554_Fotodag1_Etagevilla_EspressoSadellader_RokglasTravertin_v2_kodak.jpg",
+        "kind": "1b. v2 Kodak 35mm — 2K Interiör (Portra 400 / filmgrainer · Fotodag 1 (Monolitisk Kalkputs- & Etagevilla) — Tobaksbrun manchester i förgrunden, espresso-sadelläder snett längs sidan, rökglas på travertincylindrar & trappavsats)"
       }
-    ]
+    ],
+    "refs": []
   },
   {
     "id": "22_6550_Fotodag1_Etagevilla_KaramellSammet_GlasSkiffer_Portal",
@@ -128,7 +116,7 @@
     "sku": "216550",
     "title": "22 · Akaba Crème Grön (SKU: 216550) – Fotodag 1 (Monolitisk Kalkputs- & Etagevilla) — Oxblodsskinn i förgrunden, karamell-ockra mohair-sammet, klarglas på skiffercylindrar & etageportal på rökt ek",
     "clean_name": "22. Akaba Crème Grön (@6550) – Fotodag 1 (Monolitisk Kalkputs- & Etagevilla) — Oxblodsskinn i förgrunden, karamell-ockra mohair-sammet, klarglas på skiffercylindrar & etageportal på rökt ek",
-    "category": "[PRIVAT] TC Attityd Vinklar & Djup (Kort 19–28, 10 st 2K)",
+    "category": "[PRIVAT] TC Attityd Vinklar & Djup: Kort 19–28 (10 Original + 10 v2 Kodak · 2K)",
     "company": "trendcarpet",
     "hero_product": {
       "id": "6550",
@@ -139,8 +127,8 @@
       "url": "https://www.trendcarpet.de/de/teppiche-modernes-design/hochflorteppiche-akaba-creme-grun/",
       "role": "hero",
       "resolution": "1071x1500",
-      "ref_file": "refs_still/6550.jpg",
-      "ref_macro_file": "refs_still/6550_macro.jpg",
+      "ref_file": "",
+      "ref_macro_file": "",
       "extra_tags": [],
       "visual_spec": "Large rectangular sculpted high-low 3D relief rug featuring continuous meandering rich sage-moss and olive-moss green raised cut-pile bands together with rounded moss-green organic islands set in crisp carved relief against a smooth warm off-white and natural chalk low-pile ground, finished with a slim off-white overlocked border and zero fringes."
     },
@@ -149,19 +137,15 @@
       {
         "filename": "22_6550_Fotodag1_Etagevilla_KaramellSammet_GlasSkiffer_Portal/22_6550_Fotodag1_Etagevilla_KaramellSammet_GlasSkiffer_Portal.jpg",
         "rel_path": "22_6550_Fotodag1_Etagevilla_KaramellSammet_GlasSkiffer_Portal/22_6550_Fotodag1_Etagevilla_KaramellSammet_GlasSkiffer_Portal.jpg",
-        "kind": "Interiör (22)"
+        "kind": "1. Genererad 2K Interiör (Fotodag 1 (Monolitisk Kalkputs- & Etagevilla) — Oxblodsskinn i förgrunden, karamell-ockra mohair-sammet, klarglas på skiffercylindrar & etageportal på rökt ek)"
       },
       {
-        "filename": "22_6550_Fotodag1_Etagevilla_KaramellSammet_GlasSkiffer_Portal/22_SKU6550-01_Hero_Ref_6550.jpg",
-        "rel_path": "22_6550_Fotodag1_Etagevilla_KaramellSammet_GlasSkiffer_Portal/22_SKU6550-01_Hero_Ref_6550.jpg",
-        "kind": "2. Stjärn-produkt Studioreferens (@6550 · SKU 216550)"
-      },
-      {
-        "filename": "22_6550_Fotodag1_Etagevilla_KaramellSammet_GlasSkiffer_Portal/22_SKU6550-01m_Hero_Macro_6550.jpg",
-        "rel_path": "22_6550_Fotodag1_Etagevilla_KaramellSammet_GlasSkiffer_Portal/22_SKU6550-01m_Hero_Macro_6550.jpg",
-        "kind": "3. Makroreferens (@6550_macro)"
+        "filename": "22_6550_Fotodag1_Etagevilla_KaramellSammet_GlasSkiffer_Portal/22_6550_Fotodag1_Etagevilla_KaramellSammet_GlasSkiffer_Portal_v2_kodak.jpg",
+        "rel_path": "22_6550_Fotodag1_Etagevilla_KaramellSammet_GlasSkiffer_Portal/22_6550_Fotodag1_Etagevilla_KaramellSammet_GlasSkiffer_Portal_v2_kodak.jpg",
+        "kind": "1b. v2 Kodak 35mm — 2K Interiör (Portra 400 / filmgrainer · Fotodag 1 (Monolitisk Kalkputs- & Etagevilla) — Oxblodsskinn i förgrunden, karamell-ockra mohair-sammet, klarglas på skiffercylindrar & etageportal på rökt ek)"
       }
-    ]
+    ],
+    "refs": []
   },
   {
     "id": "23_6550_Fotodag2_Arkitektvaning_UmbraManchester_GlasValnot_Passage",
@@ -169,7 +153,7 @@
     "sku": "216550",
     "title": "23 · Akaba Crème Grön (SKU: 216550) – Fotodag 2 (1960-tals Arkitektvåning) — Svart sadelläder i förgrunden, rostad umbra kanalsydd manchester, klarglas på valnötscylindrar & valnötsklädd etagetrappa",
     "clean_name": "23. Akaba Crème Grön (@6550) – Fotodag 2 (1960-tals Arkitektvåning) — Svart sadelläder i förgrunden, rostad umbra kanalsydd manchester, klarglas på valnötscylindrar & valnötsklädd etagetrappa",
-    "category": "[PRIVAT] TC Attityd Vinklar & Djup (Kort 19–28, 10 st 2K)",
+    "category": "[PRIVAT] TC Attityd Vinklar & Djup: Kort 19–28 (10 Original + 10 v2 Kodak · 2K)",
     "company": "trendcarpet",
     "hero_product": {
       "id": "6550",
@@ -180,8 +164,8 @@
       "url": "https://www.trendcarpet.de/de/teppiche-modernes-design/hochflorteppiche-akaba-creme-grun/",
       "role": "hero",
       "resolution": "1071x1500",
-      "ref_file": "refs_still/6550.jpg",
-      "ref_macro_file": "refs_still/6550_macro.jpg",
+      "ref_file": "",
+      "ref_macro_file": "",
       "extra_tags": [],
       "visual_spec": "Large rectangular sculpted high-low 3D relief rug featuring continuous meandering rich sage-moss and olive-moss green raised cut-pile bands together with rounded moss-green organic islands set in crisp carved relief against a smooth warm off-white and natural chalk low-pile ground, finished with a slim off-white overlocked border and zero fringes."
     },
@@ -190,19 +174,15 @@
       {
         "filename": "23_6550_Fotodag2_Arkitektvaning_UmbraManchester_GlasValnot_Passage/23_6550_Fotodag2_Arkitektvaning_UmbraManchester_GlasValnot_Passage.jpg",
         "rel_path": "23_6550_Fotodag2_Arkitektvaning_UmbraManchester_GlasValnot_Passage/23_6550_Fotodag2_Arkitektvaning_UmbraManchester_GlasValnot_Passage.jpg",
-        "kind": "Interiör (23)"
+        "kind": "1. Genererad 2K Interiör (Fotodag 2 (1960-tals Arkitektvåning) — Svart sadelläder i förgrunden, rostad umbra kanalsydd manchester, klarglas på valnötscylindrar & valnötsklädd etagetrappa)"
       },
       {
-        "filename": "23_6550_Fotodag2_Arkitektvaning_UmbraManchester_GlasValnot_Passage/23_SKU6550-01_Hero_Ref_6550.jpg",
-        "rel_path": "23_6550_Fotodag2_Arkitektvaning_UmbraManchester_GlasValnot_Passage/23_SKU6550-01_Hero_Ref_6550.jpg",
-        "kind": "2. Stjärn-produkt Studioreferens (@6550 · SKU 216550)"
-      },
-      {
-        "filename": "23_6550_Fotodag2_Arkitektvaning_UmbraManchester_GlasValnot_Passage/23_SKU6550-01m_Hero_Macro_6550.jpg",
-        "rel_path": "23_6550_Fotodag2_Arkitektvaning_UmbraManchester_GlasValnot_Passage/23_SKU6550-01m_Hero_Macro_6550.jpg",
-        "kind": "3. Makroreferens (@6550_macro)"
+        "filename": "23_6550_Fotodag2_Arkitektvaning_UmbraManchester_GlasValnot_Passage/23_6550_Fotodag2_Arkitektvaning_UmbraManchester_GlasValnot_Passage_v2_kodak.jpg",
+        "rel_path": "23_6550_Fotodag2_Arkitektvaning_UmbraManchester_GlasValnot_Passage/23_6550_Fotodag2_Arkitektvaning_UmbraManchester_GlasValnot_Passage_v2_kodak.jpg",
+        "kind": "1b. v2 Kodak 35mm — 2K Interiör (Portra 400 / filmgrainer · Fotodag 2 (1960-tals Arkitektvåning) — Svart sadelläder i förgrunden, rostad umbra kanalsydd manchester, klarglas på valnötscylindrar & valnötsklädd etagetrappa)"
       }
-    ]
+    ],
+    "refs": []
   },
   {
     "id": "24_5531_Fotodag2_Arkitektvaning_SmaragdSammet_GlasMasurbjork_Trappa",
@@ -210,7 +190,7 @@
     "sku": "KA5531",
     "title": "24 · Aranga Super Soft Fur Beige (SKU: KA5531) – Fotodag 2 (1960-tals Arkitektvåning) — Bärnstensockra sammet i förgrunden, smaragdgrön svängd mohair-sammet, klarglas på masurbjörk & galleritrappa på fiskbensek",
     "clean_name": "24. Aranga Super Soft Fur Beige (@5531) – Fotodag 2 (1960-tals Arkitektvåning) — Bärnstensockra sammet i förgrunden, smaragdgrön svängd mohair-sammet, klarglas på masurbjörk & galleritrappa på fiskbensek",
-    "category": "[PRIVAT] TC Attityd Vinklar & Djup (Kort 19–28, 10 st 2K)",
+    "category": "[PRIVAT] TC Attityd Vinklar & Djup: Kort 19–28 (10 Original + 10 v2 Kodak · 2K)",
     "company": "trendcarpet",
     "hero_product": {
       "id": "5531",
@@ -221,8 +201,8 @@
       "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
       "role": "hero",
       "resolution": "1015x1500",
-      "ref_file": "refs_still/5531.jpg",
-      "ref_macro_file": "refs_still/5531_macro.jpg",
+      "ref_file": "",
+      "ref_macro_file": "",
       "extra_tags": [],
       "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
     },
@@ -231,19 +211,15 @@
       {
         "filename": "24_5531_Fotodag2_Arkitektvaning_SmaragdSammet_GlasMasurbjork_Trappa/24_5531_Fotodag2_Arkitektvaning_SmaragdSammet_GlasMasurbjork_Trappa.jpg",
         "rel_path": "24_5531_Fotodag2_Arkitektvaning_SmaragdSammet_GlasMasurbjork_Trappa/24_5531_Fotodag2_Arkitektvaning_SmaragdSammet_GlasMasurbjork_Trappa.jpg",
-        "kind": "Interiör (24)"
+        "kind": "1. Genererad 2K Interiör (Fotodag 2 (1960-tals Arkitektvåning) — Bärnstensockra sammet i förgrunden, smaragdgrön svängd mohair-sammet, klarglas på masurbjörk & galleritrappa på fiskbensek)"
       },
       {
-        "filename": "24_5531_Fotodag2_Arkitektvaning_SmaragdSammet_GlasMasurbjork_Trappa/24_SKU5531-01_Hero_Ref_5531.jpg",
-        "rel_path": "24_5531_Fotodag2_Arkitektvaning_SmaragdSammet_GlasMasurbjork_Trappa/24_SKU5531-01_Hero_Ref_5531.jpg",
-        "kind": "2. Stjärn-produkt Studioreferens (@5531 · SKU KA5531)"
-      },
-      {
-        "filename": "24_5531_Fotodag2_Arkitektvaning_SmaragdSammet_GlasMasurbjork_Trappa/24_SKU5531-01m_Hero_Macro_5531.jpg",
-        "rel_path": "24_5531_Fotodag2_Arkitektvaning_SmaragdSammet_GlasMasurbjork_Trappa/24_SKU5531-01m_Hero_Macro_5531.jpg",
-        "kind": "3. Makroreferens (@5531_macro)"
+        "filename": "24_5531_Fotodag2_Arkitektvaning_SmaragdSammet_GlasMasurbjork_Trappa/24_5531_Fotodag2_Arkitektvaning_SmaragdSammet_GlasMasurbjork_Trappa_v2_kodak.jpg",
+        "rel_path": "24_5531_Fotodag2_Arkitektvaning_SmaragdSammet_GlasMasurbjork_Trappa/24_5531_Fotodag2_Arkitektvaning_SmaragdSammet_GlasMasurbjork_Trappa_v2_kodak.jpg",
+        "kind": "1b. v2 Kodak 35mm — 2K Interiör (Portra 400 / filmgrainer · Fotodag 2 (1960-tals Arkitektvåning) — Bärnstensockra sammet i förgrunden, smaragdgrön svängd mohair-sammet, klarglas på masurbjörk & galleritrappa på fiskbensek)"
       }
-    ]
+    ],
+    "refs": []
   },
   {
     "id": "25_6554_Fotodag2_Arkitektvaning_KastanjLader_RokglasGronMarmor",
@@ -251,7 +227,7 @@
     "sku": "216554",
     "title": "25 · Fergana Crème Beige (SKU: 216554) – Fotodag 2 (1960-tals Arkitektvåning) — Plommon mohair-sammet i förgrunden, kastanjebrunt sadelläder, rökglas på Verde Alpi-marmorcylindrar & räfflad valnötstrappa",
     "clean_name": "25. Fergana Crème Beige (@6554) – Fotodag 2 (1960-tals Arkitektvåning) — Plommon mohair-sammet i förgrunden, kastanjebrunt sadelläder, rökglas på Verde Alpi-marmorcylindrar & räfflad valnötstrappa",
-    "category": "[PRIVAT] TC Attityd Vinklar & Djup (Kort 19–28, 10 st 2K)",
+    "category": "[PRIVAT] TC Attityd Vinklar & Djup: Kort 19–28 (10 Original + 10 v2 Kodak · 2K)",
     "company": "trendcarpet",
     "hero_product": {
       "id": "6554",
@@ -262,8 +238,8 @@
       "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
       "role": "hero",
       "resolution": "1053x1500",
-      "ref_file": "refs_still/6554.jpg",
-      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "ref_file": "",
+      "ref_macro_file": "",
       "extra_tags": [],
       "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
     },
@@ -272,19 +248,15 @@
       {
         "filename": "25_6554_Fotodag2_Arkitektvaning_KastanjLader_RokglasGronMarmor/25_6554_Fotodag2_Arkitektvaning_KastanjLader_RokglasGronMarmor.jpg",
         "rel_path": "25_6554_Fotodag2_Arkitektvaning_KastanjLader_RokglasGronMarmor/25_6554_Fotodag2_Arkitektvaning_KastanjLader_RokglasGronMarmor.jpg",
-        "kind": "Interiör (25)"
+        "kind": "1. Genererad 2K Interiör (Fotodag 2 (1960-tals Arkitektvåning) — Plommon mohair-sammet i förgrunden, kastanjebrunt sadelläder, rökglas på Verde Alpi-marmorcylindrar & räfflad valnötstrappa)"
       },
       {
-        "filename": "25_6554_Fotodag2_Arkitektvaning_KastanjLader_RokglasGronMarmor/25_SKU6554-01_Hero_Ref_6554.jpg",
-        "rel_path": "25_6554_Fotodag2_Arkitektvaning_KastanjLader_RokglasGronMarmor/25_SKU6554-01_Hero_Ref_6554.jpg",
-        "kind": "2. Stjärn-produkt Studioreferens (@6554 · SKU 216554)"
-      },
-      {
-        "filename": "25_6554_Fotodag2_Arkitektvaning_KastanjLader_RokglasGronMarmor/25_SKU6554-01m_Hero_Macro_6554.jpg",
-        "rel_path": "25_6554_Fotodag2_Arkitektvaning_KastanjLader_RokglasGronMarmor/25_SKU6554-01m_Hero_Macro_6554.jpg",
-        "kind": "3. Makroreferens (@6554_macro)"
+        "filename": "25_6554_Fotodag2_Arkitektvaning_KastanjLader_RokglasGronMarmor/25_6554_Fotodag2_Arkitektvaning_KastanjLader_RokglasGronMarmor_v2_kodak.jpg",
+        "rel_path": "25_6554_Fotodag2_Arkitektvaning_KastanjLader_RokglasGronMarmor/25_6554_Fotodag2_Arkitektvaning_KastanjLader_RokglasGronMarmor_v2_kodak.jpg",
+        "kind": "1b. v2 Kodak 35mm — 2K Interiör (Portra 400 / filmgrainer · Fotodag 2 (1960-tals Arkitektvåning) — Plommon mohair-sammet i förgrunden, kastanjebrunt sadelläder, rökglas på Verde Alpi-marmorcylindrar & räfflad valnötstrappa)"
       }
-    ]
+    ],
+    "refs": []
   },
   {
     "id": "26_6550_Fotodag3_Townhouse_TerrakottaManchester_GlasEk_Valvtrappa",
@@ -292,7 +264,7 @@
     "sku": "216550",
     "title": "26 · Akaba Crème Grön (SKU: 216550) – Fotodag 3 (Nordiskt Townhouse & Stenhus) — Olivgrön sammet i förgrunden, terrakotta bredspårig manchester, klarglas på ekcylindrar & svängd valvtrappa på douglasgran",
     "clean_name": "26. Akaba Crème Grön (@6550) – Fotodag 3 (Nordiskt Townhouse & Stenhus) — Olivgrön sammet i förgrunden, terrakotta bredspårig manchester, klarglas på ekcylindrar & svängd valvtrappa på douglasgran",
-    "category": "[PRIVAT] TC Attityd Vinklar & Djup (Kort 19–28, 10 st 2K)",
+    "category": "[PRIVAT] TC Attityd Vinklar & Djup: Kort 19–28 (10 Original + 10 v2 Kodak · 2K)",
     "company": "trendcarpet",
     "hero_product": {
       "id": "6550",
@@ -303,8 +275,8 @@
       "url": "https://www.trendcarpet.de/de/teppiche-modernes-design/hochflorteppiche-akaba-creme-grun/",
       "role": "hero",
       "resolution": "1071x1500",
-      "ref_file": "refs_still/6550.jpg",
-      "ref_macro_file": "refs_still/6550_macro.jpg",
+      "ref_file": "",
+      "ref_macro_file": "",
       "extra_tags": [],
       "visual_spec": "Large rectangular sculpted high-low 3D relief rug featuring continuous meandering rich sage-moss and olive-moss green raised cut-pile bands together with rounded moss-green organic islands set in crisp carved relief against a smooth warm off-white and natural chalk low-pile ground, finished with a slim off-white overlocked border and zero fringes."
     },
@@ -313,19 +285,15 @@
       {
         "filename": "26_6550_Fotodag3_Townhouse_TerrakottaManchester_GlasEk_Valvtrappa/26_6550_Fotodag3_Townhouse_TerrakottaManchester_GlasEk_Valvtrappa.jpg",
         "rel_path": "26_6550_Fotodag3_Townhouse_TerrakottaManchester_GlasEk_Valvtrappa/26_6550_Fotodag3_Townhouse_TerrakottaManchester_GlasEk_Valvtrappa.jpg",
-        "kind": "Interiör (26)"
+        "kind": "1. Genererad 2K Interiör (Fotodag 3 (Nordiskt Townhouse & Stenhus) — Olivgrön sammet i förgrunden, terrakotta bredspårig manchester, klarglas på ekcylindrar & svängd valvtrappa på douglasgran)"
       },
       {
-        "filename": "26_6550_Fotodag3_Townhouse_TerrakottaManchester_GlasEk_Valvtrappa/26_SKU6550-01_Hero_Ref_6550.jpg",
-        "rel_path": "26_6550_Fotodag3_Townhouse_TerrakottaManchester_GlasEk_Valvtrappa/26_SKU6550-01_Hero_Ref_6550.jpg",
-        "kind": "2. Stjärn-produkt Studioreferens (@6550 · SKU 216550)"
-      },
-      {
-        "filename": "26_6550_Fotodag3_Townhouse_TerrakottaManchester_GlasEk_Valvtrappa/26_SKU6550-01m_Hero_Macro_6550.jpg",
-        "rel_path": "26_6550_Fotodag3_Townhouse_TerrakottaManchester_GlasEk_Valvtrappa/26_SKU6550-01m_Hero_Macro_6550.jpg",
-        "kind": "3. Makroreferens (@6550_macro)"
+        "filename": "26_6550_Fotodag3_Townhouse_TerrakottaManchester_GlasEk_Valvtrappa/26_6550_Fotodag3_Townhouse_TerrakottaManchester_GlasEk_Valvtrappa_v2_kodak.jpg",
+        "rel_path": "26_6550_Fotodag3_Townhouse_TerrakottaManchester_GlasEk_Valvtrappa/26_6550_Fotodag3_Townhouse_TerrakottaManchester_GlasEk_Valvtrappa_v2_kodak.jpg",
+        "kind": "1b. v2 Kodak 35mm — 2K Interiör (Portra 400 / filmgrainer · Fotodag 3 (Nordiskt Townhouse & Stenhus) — Olivgrön sammet i förgrunden, terrakotta bredspårig manchester, klarglas på ekcylindrar & svängd valvtrappa på douglasgran)"
       }
-    ]
+    ],
+    "refs": []
   },
   {
     "id": "27_5531_Fotodag3_Townhouse_MidnattsblaSammet_GlasValnot_Etage",
@@ -333,7 +301,7 @@
     "sku": "KA5531",
     "title": "27 · Aranga Super Soft Fur Beige (SKU: KA5531) – Fotodag 3 (Nordiskt Townhouse & Stenhus) — Chokladmanchester i förgrunden, midnattsblå kanalsydd mohair-sammet, klarglas på valnötscylindrar & etagefil på chevronparkett",
     "clean_name": "27. Aranga Super Soft Fur Beige (@5531) – Fotodag 3 (Nordiskt Townhouse & Stenhus) — Chokladmanchester i förgrunden, midnattsblå kanalsydd mohair-sammet, klarglas på valnötscylindrar & etagefil på chevronparkett",
-    "category": "[PRIVAT] TC Attityd Vinklar & Djup (Kort 19–28, 10 st 2K)",
+    "category": "[PRIVAT] TC Attityd Vinklar & Djup: Kort 19–28 (10 Original + 10 v2 Kodak · 2K)",
     "company": "trendcarpet",
     "hero_product": {
       "id": "5531",
@@ -344,8 +312,8 @@
       "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
       "role": "hero",
       "resolution": "1015x1500",
-      "ref_file": "refs_still/5531.jpg",
-      "ref_macro_file": "refs_still/5531_macro.jpg",
+      "ref_file": "",
+      "ref_macro_file": "",
       "extra_tags": [],
       "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
     },
@@ -354,19 +322,15 @@
       {
         "filename": "27_5531_Fotodag3_Townhouse_MidnattsblaSammet_GlasValnot_Etage/27_5531_Fotodag3_Townhouse_MidnattsblaSammet_GlasValnot_Etage.jpg",
         "rel_path": "27_5531_Fotodag3_Townhouse_MidnattsblaSammet_GlasValnot_Etage/27_5531_Fotodag3_Townhouse_MidnattsblaSammet_GlasValnot_Etage.jpg",
-        "kind": "Interiör (27)"
+        "kind": "1. Genererad 2K Interiör (Fotodag 3 (Nordiskt Townhouse & Stenhus) — Chokladmanchester i förgrunden, midnattsblå kanalsydd mohair-sammet, klarglas på valnötscylindrar & etagefil på chevronparkett)"
       },
       {
-        "filename": "27_5531_Fotodag3_Townhouse_MidnattsblaSammet_GlasValnot_Etage/27_SKU5531-01_Hero_Ref_5531.jpg",
-        "rel_path": "27_5531_Fotodag3_Townhouse_MidnattsblaSammet_GlasValnot_Etage/27_SKU5531-01_Hero_Ref_5531.jpg",
-        "kind": "2. Stjärn-produkt Studioreferens (@5531 · SKU KA5531)"
-      },
-      {
-        "filename": "27_5531_Fotodag3_Townhouse_MidnattsblaSammet_GlasValnot_Etage/27_SKU5531-01m_Hero_Macro_5531.jpg",
-        "rel_path": "27_5531_Fotodag3_Townhouse_MidnattsblaSammet_GlasValnot_Etage/27_SKU5531-01m_Hero_Macro_5531.jpg",
-        "kind": "3. Makroreferens (@5531_macro)"
+        "filename": "27_5531_Fotodag3_Townhouse_MidnattsblaSammet_GlasValnot_Etage/27_5531_Fotodag3_Townhouse_MidnattsblaSammet_GlasValnot_Etage_v2_kodak.jpg",
+        "rel_path": "27_5531_Fotodag3_Townhouse_MidnattsblaSammet_GlasValnot_Etage/27_5531_Fotodag3_Townhouse_MidnattsblaSammet_GlasValnot_Etage_v2_kodak.jpg",
+        "kind": "1b. v2 Kodak 35mm — 2K Interiör (Portra 400 / filmgrainer · Fotodag 3 (Nordiskt Townhouse & Stenhus) — Chokladmanchester i förgrunden, midnattsblå kanalsydd mohair-sammet, klarglas på valnötscylindrar & etagefil på chevronparkett)"
       }
-    ]
+    ],
+    "refs": []
   },
   {
     "id": "28_6554_Fotodag3_Stenhus_BarnstenManchester_GlasEk_Kalktrappa",
@@ -374,7 +338,7 @@
     "sku": "216554",
     "title": "28 · Fergana Crème Beige (SKU: 216554) – Fotodag 3 (Nordiskt Townhouse & Stenhus) — Svart anilinskinn i förgrunden, bärnstens-karamell bredspårig manchester, klarglas på ekcylindrar & kalktrappa på kalkstenshällar",
     "clean_name": "28. Fergana Crème Beige (@6554) – Fotodag 3 (Nordiskt Townhouse & Stenhus) — Svart anilinskinn i förgrunden, bärnstens-karamell bredspårig manchester, klarglas på ekcylindrar & kalktrappa på kalkstenshällar",
-    "category": "[PRIVAT] TC Attityd Vinklar & Djup (Kort 19–28, 10 st 2K)",
+    "category": "[PRIVAT] TC Attityd Vinklar & Djup: Kort 19–28 (10 Original + 10 v2 Kodak · 2K)",
     "company": "trendcarpet",
     "hero_product": {
       "id": "6554",
@@ -385,8 +349,8 @@
       "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
       "role": "hero",
       "resolution": "1053x1500",
-      "ref_file": "refs_still/6554.jpg",
-      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "ref_file": "",
+      "ref_macro_file": "",
       "extra_tags": [],
       "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
     },
@@ -395,18 +359,14 @@
       {
         "filename": "28_6554_Fotodag3_Stenhus_BarnstenManchester_GlasEk_Kalktrappa/28_6554_Fotodag3_Stenhus_BarnstenManchester_GlasEk_Kalktrappa.jpg",
         "rel_path": "28_6554_Fotodag3_Stenhus_BarnstenManchester_GlasEk_Kalktrappa/28_6554_Fotodag3_Stenhus_BarnstenManchester_GlasEk_Kalktrappa.jpg",
-        "kind": "Interiör (28)"
+        "kind": "1. Genererad 2K Interiör (Fotodag 3 (Nordiskt Townhouse & Stenhus) — Svart anilinskinn i förgrunden, bärnstens-karamell bredspårig manchester, klarglas på ekcylindrar & kalktrappa på kalkstenshällar)"
       },
       {
-        "filename": "28_6554_Fotodag3_Stenhus_BarnstenManchester_GlasEk_Kalktrappa/28_SKU6554-01_Hero_Ref_6554.jpg",
-        "rel_path": "28_6554_Fotodag3_Stenhus_BarnstenManchester_GlasEk_Kalktrappa/28_SKU6554-01_Hero_Ref_6554.jpg",
-        "kind": "2. Stjärn-produkt Studioreferens (@6554 · SKU 216554)"
-      },
-      {
-        "filename": "28_6554_Fotodag3_Stenhus_BarnstenManchester_GlasEk_Kalktrappa/28_SKU6554-01m_Hero_Macro_6554.jpg",
-        "rel_path": "28_6554_Fotodag3_Stenhus_BarnstenManchester_GlasEk_Kalktrappa/28_SKU6554-01m_Hero_Macro_6554.jpg",
-        "kind": "3. Makroreferens (@6554_macro)"
+        "filename": "28_6554_Fotodag3_Stenhus_BarnstenManchester_GlasEk_Kalktrappa/28_6554_Fotodag3_Stenhus_BarnstenManchester_GlasEk_Kalktrappa_v2_kodak.jpg",
+        "rel_path": "28_6554_Fotodag3_Stenhus_BarnstenManchester_GlasEk_Kalktrappa/28_6554_Fotodag3_Stenhus_BarnstenManchester_GlasEk_Kalktrappa_v2_kodak.jpg",
+        "kind": "1b. v2 Kodak 35mm — 2K Interiör (Portra 400 / filmgrainer · Fotodag 3 (Nordiskt Townhouse & Stenhus) — Svart anilinskinn i förgrunden, bärnstens-karamell bredspårig manchester, klarglas på ekcylindrar & kalktrappa på kalkstenshällar)"
       }
-    ]
+    ],
+    "refs": []
   }
 ]

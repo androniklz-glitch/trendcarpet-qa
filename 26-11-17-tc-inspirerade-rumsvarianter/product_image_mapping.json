@@ -21,304 +21,10 @@
     "companion_products": []
   },
   {
-    "slot": "04",
-    "image_file": "04_5531_Fotodag2_Kalkputs_Valnot_Salong.jpg",
-    "subfolder": "04_5531_Fotodag2_Kalkputs_Valnot_Salong",
-    "home_style": "Fotodag 2 (Kontinental Kalkputs- & Valnötsvåning) — Salong med tobaksbrun fiskbensparkett, rak ullsoffa & valnöt",
-    "hero_product": {
-      "id": "5531",
-      "tag": "@5531",
-      "sku": "KA5531",
-      "name": "Aranga Super Soft Fur Beige",
-      "handle": "",
-      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
-      "role": "hero",
-      "resolution": "1015x1500",
-      "ref_file": "refs_still/5531.jpg",
-      "ref_macro_file": "refs_still/5531_macro.jpg",
-      "extra_tags": [],
-      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
-    },
-    "companion_products": []
-  },
-  {
-    "slot": "07",
-    "image_file": "07_5531_Fotodag3_Arkitektvilla_Stentrappa.jpg",
-    "subfolder": "07_5531_Fotodag3_Arkitektvilla_Stentrappa",
-    "home_style": "Fotodag 3 (Arkitektonisk Kalkstens- & Ateljévilla) — Modernistisk salong med travertintrappa, rökt ek & glasbord på valnöt",
-    "hero_product": {
-      "id": "5531",
-      "tag": "@5531",
-      "sku": "KA5531",
-      "name": "Aranga Super Soft Fur Beige",
-      "handle": "",
-      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
-      "role": "hero",
-      "resolution": "1015x1500",
-      "ref_file": "refs_still/5531.jpg",
-      "ref_macro_file": "refs_still/5531_macro.jpg",
-      "extra_tags": [],
-      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
-    },
-    "companion_products": []
-  },
-  {
-    "slot": "10",
-    "image_file": "10_5531_Fotodag4_Kopenhamn_Douglasgran_Salong.jpg",
-    "subfolder": "10_5531_Fotodag4_Kopenhamn_Douglasgran_Salong",
-    "home_style": "Fotodag 4 (Köpenhamnsk Designvåning i Douglasgran) — Salong med salviagrön bröstpanel, varma plankor & linnesoffa",
-    "hero_product": {
-      "id": "5531",
-      "tag": "@5531",
-      "sku": "KA5531",
-      "name": "Aranga Super Soft Fur Beige",
-      "handle": "",
-      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
-      "role": "hero",
-      "resolution": "1015x1500",
-      "ref_file": "refs_still/5531.jpg",
-      "ref_macro_file": "refs_still/5531_macro.jpg",
-      "extra_tags": [],
-      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
-    },
-    "companion_products": []
-  },
-  {
-    "slot": "13",
-    "image_file": "13_5531_Fotodag5_Townhouse_Boiserie_Salong.jpg",
-    "subfolder": "13_5531_Fotodag5_Townhouse_Boiserie_Salong",
-    "home_style": "Fotodag 5 (Kontinentalt Townhouse med Boiserie & Chevron) — Salong med krämvit boiserie, tobaksbrun chevron & sammetssoffa",
-    "hero_product": {
-      "id": "5531",
-      "tag": "@5531",
-      "sku": "KA5531",
-      "name": "Aranga Super Soft Fur Beige",
-      "handle": "",
-      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
-      "role": "hero",
-      "resolution": "1015x1500",
-      "ref_file": "refs_still/5531.jpg",
-      "ref_macro_file": "refs_still/5531_macro.jpg",
-      "extra_tags": [],
-      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
-    },
-    "companion_products": []
-  },
-  {
-    "slot": "16",
-    "image_file": "16_5531_Fotodag6_Kalkstensgard_Orangeriljus_Sal.jpg",
-    "subfolder": "16_5531_Fotodag6_Kalkstensgard_Orangeriljus_Sal",
-    "home_style": "Fotodag 6 (Nordisk Kalkstensgård & Orangeriljus) — Kalkmurad sal på grå kalksten med rökt ek & linnesoffa",
-    "hero_product": {
-      "id": "5531",
-      "tag": "@5531",
-      "sku": "KA5531",
-      "name": "Aranga Super Soft Fur Beige",
-      "handle": "",
-      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
-      "role": "hero",
-      "resolution": "1015x1500",
-      "ref_file": "refs_still/5531.jpg",
-      "ref_macro_file": "refs_still/5531_macro.jpg",
-      "extra_tags": [],
-      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
-    },
-    "companion_products": []
-  },
-  {
-    "slot": "19",
-    "image_file": "19_5531_Fotodag7_Funkisvilla_Korsbarspanel_Salong.jpg",
-    "subfolder": "19_5531_Fotodag7_Funkisvilla_Korsbarspanel_Salong",
-    "home_style": "Fotodag 7 (1950-talets Arkitektvilla i Körsbär & Sten) — Salong med körsbärspanel, kammad ullsoffa & skifferbord",
-    "hero_product": {
-      "id": "5531",
-      "tag": "@5531",
-      "sku": "KA5531",
-      "name": "Aranga Super Soft Fur Beige",
-      "handle": "",
-      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
-      "role": "hero",
-      "resolution": "1015x1500",
-      "ref_file": "refs_still/5531.jpg",
-      "ref_macro_file": "refs_still/5531_macro.jpg",
-      "extra_tags": [],
-      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
-    },
-    "companion_products": []
-  },
-  {
-    "slot": "22",
-    "image_file": "22_5531_Fotodag8_Arkitektsovrum_Valnotssang.jpg",
-    "subfolder": "22_5531_Fotodag8_Arkitektsovrum_Valnotssang",
-    "home_style": "Fotodag 8 (Stramt Arkitektoniskt Sovrum) — Låg valnötsplattformssäng centrerad 2/3 in på mattan med tvättat linne",
-    "hero_product": {
-      "id": "5531",
-      "tag": "@5531",
-      "sku": "KA5531",
-      "name": "Aranga Super Soft Fur Beige",
-      "handle": "",
-      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
-      "role": "hero",
-      "resolution": "1015x1500",
-      "ref_file": "refs_still/5531.jpg",
-      "ref_macro_file": "refs_still/5531_macro.jpg",
-      "extra_tags": [],
-      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
-    },
-    "companion_products": []
-  },
-  {
     "slot": "02",
     "image_file": "02_6554_Fotodag1_Nordisk_Ek_Salong.jpg",
     "subfolder": "02_6554_Fotodag1_Nordisk_Ek_Salong",
     "home_style": "Fotodag 1 (Skandinavisk Trägolvsvåning) — Salong med rökt honungsek, kammad ull & valnötsbord",
-    "hero_product": {
-      "id": "6554",
-      "tag": "@6554",
-      "sku": "216554",
-      "name": "Fergana Crème Beige",
-      "handle": "",
-      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
-      "role": "hero",
-      "resolution": "1053x1500",
-      "ref_file": "refs_still/6554.jpg",
-      "ref_macro_file": "refs_still/6554_macro.jpg",
-      "extra_tags": [],
-      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
-    },
-    "companion_products": []
-  },
-  {
-    "slot": "05",
-    "image_file": "05_6554_Fotodag2_Kalkputs_Kalksten_Atelje.jpg",
-    "subfolder": "05_6554_Fotodag2_Kalkputs_Kalksten_Atelje",
-    "home_style": "Fotodag 2 (Kontinental Kalkputs- & Valnötsvåning) — Ateljévardagsrum på grå kalksten med rak linnesoffa & stenbord",
-    "hero_product": {
-      "id": "6554",
-      "tag": "@6554",
-      "sku": "216554",
-      "name": "Fergana Crème Beige",
-      "handle": "",
-      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
-      "role": "hero",
-      "resolution": "1053x1500",
-      "ref_file": "refs_still/6554.jpg",
-      "ref_macro_file": "refs_still/6554_macro.jpg",
-      "extra_tags": [],
-      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
-    },
-    "companion_products": []
-  },
-  {
-    "slot": "08",
-    "image_file": "08_6554_Fotodag3_Arkitektvilla_Valvnisch.jpg",
-    "subfolder": "08_6554_Fotodag3_Arkitektvilla_Valvnisch",
-    "home_style": "Fotodag 3 (Arkitektonisk Kalkstens- & Ateljévilla) — Kalkputsad valvsalsvy med tobaksbrun sammet & rökfärgat glas på körsbär",
-    "hero_product": {
-      "id": "6554",
-      "tag": "@6554",
-      "sku": "216554",
-      "name": "Fergana Crème Beige",
-      "handle": "",
-      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
-      "role": "hero",
-      "resolution": "1053x1500",
-      "ref_file": "refs_still/6554.jpg",
-      "ref_macro_file": "refs_still/6554_macro.jpg",
-      "extra_tags": [],
-      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
-    },
-    "companion_products": []
-  },
-  {
-    "slot": "11",
-    "image_file": "11_6554_Fotodag4_Kopenhamn_Douglasgran_Vardagsrum.jpg",
-    "subfolder": "11_6554_Fotodag4_Kopenhamn_Douglasgran_Vardagsrum",
-    "home_style": "Fotodag 4 (Köpenhamnsk Designvåning i Douglasgran) — Vardagsrum med kameltonad väggpanel, eksoffa & skifferbord",
-    "hero_product": {
-      "id": "6554",
-      "tag": "@6554",
-      "sku": "216554",
-      "name": "Fergana Crème Beige",
-      "handle": "",
-      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
-      "role": "hero",
-      "resolution": "1053x1500",
-      "ref_file": "refs_still/6554.jpg",
-      "ref_macro_file": "refs_still/6554_macro.jpg",
-      "extra_tags": [],
-      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
-    },
-    "companion_products": []
-  },
-  {
-    "slot": "14",
-    "image_file": "14_6554_Fotodag5_Townhouse_Boiserie_Chevron.jpg",
-    "subfolder": "14_6554_Fotodag5_Townhouse_Boiserie_Chevron",
-    "home_style": "Fotodag 5 (Kontinentalt Townhouse med Boiserie & Chevron) — Sällskapsrum med varmgrå boiserie, kammad ull & grön marmor",
-    "hero_product": {
-      "id": "6554",
-      "tag": "@6554",
-      "sku": "216554",
-      "name": "Fergana Crème Beige",
-      "handle": "",
-      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
-      "role": "hero",
-      "resolution": "1053x1500",
-      "ref_file": "refs_still/6554.jpg",
-      "ref_macro_file": "refs_still/6554_macro.jpg",
-      "extra_tags": [],
-      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
-    },
-    "companion_products": []
-  },
-  {
-    "slot": "17",
-    "image_file": "17_6554_Fotodag6_Kalkstensgard_Orangeriljus_Vardag.jpg",
-    "subfolder": "17_6554_Fotodag6_Kalkstensgard_Orangeriljus_Vardag",
-    "home_style": "Fotodag 6 (Nordisk Kalkstensgård & Orangeriljus) — Vardagsrum med slammad kalkvägg, kanvassoffa & massiv alm",
-    "hero_product": {
-      "id": "6554",
-      "tag": "@6554",
-      "sku": "216554",
-      "name": "Fergana Crème Beige",
-      "handle": "",
-      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
-      "role": "hero",
-      "resolution": "1053x1500",
-      "ref_file": "refs_still/6554.jpg",
-      "ref_macro_file": "refs_still/6554_macro.jpg",
-      "extra_tags": [],
-      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
-    },
-    "companion_products": []
-  },
-  {
-    "slot": "20",
-    "image_file": "20_6554_Fotodag7_Funkisvilla_Teakpanel_Atelje.jpg",
-    "subfolder": "20_6554_Fotodag7_Funkisvilla_Teakpanel_Atelje",
-    "home_style": "Fotodag 7 (1950-talets Arkitektvilla i Körsbär & Sten) — Vardagsrum med oljad teakpanel, manchestersoffa & travertin",
-    "hero_product": {
-      "id": "6554",
-      "tag": "@6554",
-      "sku": "216554",
-      "name": "Fergana Crème Beige",
-      "handle": "",
-      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
-      "role": "hero",
-      "resolution": "1053x1500",
-      "ref_file": "refs_still/6554.jpg",
-      "ref_macro_file": "refs_still/6554_macro.jpg",
-      "extra_tags": [],
-      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
-    },
-    "companion_products": []
-  },
-  {
-    "slot": "23",
-    "image_file": "23_6554_Fotodag8_Arkitektsovrum_Rostekssang.jpg",
-    "subfolder": "23_6554_Fotodag8_Arkitektsovrum_Rostekssang",
-    "home_style": "Fotodag 8 (Stramt Arkitektoniskt Sovrum) — Låg plattformssäng i rökt ek centrerad 2/3 in på mattan med sandlinne",
     "hero_product": {
       "id": "6554",
       "tag": "@6554",
@@ -357,10 +63,52 @@
     "companion_products": []
   },
   {
+    "slot": "04",
+    "image_file": "04_5531_Fotodag2_Kalkputs_Valnot_Salong.jpg",
+    "subfolder": "04_5531_Fotodag2_Kalkputs_Valnot_Salong",
+    "home_style": "Fotodag 2 (Kontinental Kalkputs- & Valnötsvåning) — Salong med tobaksbrun fiskbensparkett, rak ullsoffa & valnöt",
+    "hero_product": {
+      "id": "5531",
+      "tag": "@5531",
+      "sku": "KA5531",
+      "name": "Aranga Super Soft Fur Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
+      "role": "hero",
+      "resolution": "1015x1500",
+      "ref_file": "refs_still/5531.jpg",
+      "ref_macro_file": "refs_still/5531_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "05",
+    "image_file": "05_6554_Fotodag2_Kalkputs_Kalksten_Atelje.jpg",
+    "subfolder": "05_6554_Fotodag2_Kalkputs_Kalksten_Atelje",
+    "home_style": "Fotodag 2 (Kontinental Kalkputs- & Valnötsvåning) — Ateljévardagsrum på grå kalksten med rak linnesoffa & stenbord",
+    "hero_product": {
+      "id": "6554",
+      "tag": "@6554",
+      "sku": "216554",
+      "name": "Fergana Crème Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
+      "role": "hero",
+      "resolution": "1053x1500",
+      "ref_file": "refs_still/6554.jpg",
+      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
     "slot": "06",
     "image_file": "06_6550_Fotodag2_Kalkputs_Fiskbensek_Horna.jpg",
     "subfolder": "06_6550_Fotodag2_Kalkputs_Fiskbensek_Horna",
-    "home_style": "Fotodag 2 (Kontinental Kalkputs- & Valnötsvåning) — Rätvinkligt fåtöljpar på rökt ek med valnötsbord",
+    "home_style": "Fotodag 2 (Kontinental Kalkputs- & Valnötsvåning) — Sällskapsrum på rökt fiskbensek med linnesoffa, läderfåtölj & valnötsbord",
     "hero_product": {
       "id": "6550",
       "tag": "@6550",
@@ -374,6 +122,48 @@
       "ref_macro_file": "refs_still/6550_macro.jpg",
       "extra_tags": [],
       "visual_spec": "Large rectangular sculpted high-low 3D relief rug featuring continuous meandering rich sage-moss and olive-moss green raised cut-pile bands together with rounded moss-green organic islands set in crisp carved relief against a smooth warm off-white and natural chalk low-pile ground, finished with a slim off-white overlocked border and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "07",
+    "image_file": "07_5531_Fotodag3_Arkitektvilla_Stentrappa.jpg",
+    "subfolder": "07_5531_Fotodag3_Arkitektvilla_Stentrappa",
+    "home_style": "Fotodag 3 (Arkitektonisk Kalkstens- & Ateljévilla) — Modernistisk salong med travertintrappa, rökt ek & glasbord på valnöt",
+    "hero_product": {
+      "id": "5531",
+      "tag": "@5531",
+      "sku": "KA5531",
+      "name": "Aranga Super Soft Fur Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
+      "role": "hero",
+      "resolution": "1015x1500",
+      "ref_file": "refs_still/5531.jpg",
+      "ref_macro_file": "refs_still/5531_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "08",
+    "image_file": "08_6554_Fotodag3_Arkitektvilla_Valvnisch.jpg",
+    "subfolder": "08_6554_Fotodag3_Arkitektvilla_Valvnisch",
+    "home_style": "Fotodag 3 (Arkitektonisk Kalkstens- & Ateljévilla) — Kalkputsad valvsalsvy med tobaksbrun sammet & rökfärgat glas på körsbär",
+    "hero_product": {
+      "id": "6554",
+      "tag": "@6554",
+      "sku": "216554",
+      "name": "Fergana Crème Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
+      "role": "hero",
+      "resolution": "1053x1500",
+      "ref_file": "refs_still/6554.jpg",
+      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
     },
     "companion_products": []
   },
@@ -399,10 +189,52 @@
     "companion_products": []
   },
   {
+    "slot": "10",
+    "image_file": "10_5531_Fotodag4_Kopenhamn_Douglasgran_Salong.jpg",
+    "subfolder": "10_5531_Fotodag4_Kopenhamn_Douglasgran_Salong",
+    "home_style": "Fotodag 4 (Köpenhamnsk Designvåning i Douglasgran) — Salong med salviagrön bröstpanel, varma plankor & linnesoffa",
+    "hero_product": {
+      "id": "5531",
+      "tag": "@5531",
+      "sku": "KA5531",
+      "name": "Aranga Super Soft Fur Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
+      "role": "hero",
+      "resolution": "1015x1500",
+      "ref_file": "refs_still/5531.jpg",
+      "ref_macro_file": "refs_still/5531_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "11",
+    "image_file": "11_6554_Fotodag4_Kopenhamn_Douglasgran_Vardagsrum.jpg",
+    "subfolder": "11_6554_Fotodag4_Kopenhamn_Douglasgran_Vardagsrum",
+    "home_style": "Fotodag 4 (Köpenhamnsk Designvåning i Douglasgran) — Vardagsrum med kameltonad väggpanel, eksoffa & skifferbord",
+    "hero_product": {
+      "id": "6554",
+      "tag": "@6554",
+      "sku": "216554",
+      "name": "Fergana Crème Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
+      "role": "hero",
+      "resolution": "1053x1500",
+      "ref_file": "refs_still/6554.jpg",
+      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
     "slot": "12",
     "image_file": "12_6550_Fotodag4_Kopenhamn_Douglasgran_Lounge.jpg",
     "subfolder": "12_6550_Fotodag4_Kopenhamn_Douglasgran_Lounge",
-    "home_style": "Fotodag 4 (Köpenhamnsk Designvåning i Douglasgran) — Lounge med varm sandpanel, rak ulldagbädd & masurbjörk",
+    "home_style": "Fotodag 4 (Köpenhamnsk Designvåning i Douglasgran) — Salong med varm sandpanel, ullsoffa, mockafåtölj & masurbjörk",
     "hero_product": {
       "id": "6550",
       "tag": "@6550",
@@ -416,6 +248,48 @@
       "ref_macro_file": "refs_still/6550_macro.jpg",
       "extra_tags": [],
       "visual_spec": "Large rectangular sculpted high-low 3D relief rug featuring continuous meandering rich sage-moss and olive-moss green raised cut-pile bands together with rounded moss-green organic islands set in crisp carved relief against a smooth warm off-white and natural chalk low-pile ground, finished with a slim off-white overlocked border and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "13",
+    "image_file": "13_5531_Fotodag5_Townhouse_Boiserie_Salong.jpg",
+    "subfolder": "13_5531_Fotodag5_Townhouse_Boiserie_Salong",
+    "home_style": "Fotodag 5 (Kontinentalt Townhouse med Boiserie & Chevron) — Salong med krämvit boiserie, tobaksbrun chevron & sammetssoffa",
+    "hero_product": {
+      "id": "5531",
+      "tag": "@5531",
+      "sku": "KA5531",
+      "name": "Aranga Super Soft Fur Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
+      "role": "hero",
+      "resolution": "1015x1500",
+      "ref_file": "refs_still/5531.jpg",
+      "ref_macro_file": "refs_still/5531_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "14",
+    "image_file": "14_6554_Fotodag5_Townhouse_Boiserie_Chevron.jpg",
+    "subfolder": "14_6554_Fotodag5_Townhouse_Boiserie_Chevron",
+    "home_style": "Fotodag 5 (Kontinentalt Townhouse med Boiserie & Chevron) — Sällskapsrum med varmgrå boiserie, kammad ull & grön marmor",
+    "hero_product": {
+      "id": "6554",
+      "tag": "@6554",
+      "sku": "216554",
+      "name": "Fergana Crème Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
+      "role": "hero",
+      "resolution": "1053x1500",
+      "ref_file": "refs_still/6554.jpg",
+      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
     },
     "companion_products": []
   },
@@ -441,6 +315,48 @@
     "companion_products": []
   },
   {
+    "slot": "16",
+    "image_file": "16_5531_Fotodag6_Kalkstensgard_Orangeriljus_Sal.jpg",
+    "subfolder": "16_5531_Fotodag6_Kalkstensgard_Orangeriljus_Sal",
+    "home_style": "Fotodag 6 (Nordisk Kalkstensgård & Orangeriljus) — Kalkmurad sal på grå kalksten med rökt ek & linnesoffa",
+    "hero_product": {
+      "id": "5531",
+      "tag": "@5531",
+      "sku": "KA5531",
+      "name": "Aranga Super Soft Fur Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
+      "role": "hero",
+      "resolution": "1015x1500",
+      "ref_file": "refs_still/5531.jpg",
+      "ref_macro_file": "refs_still/5531_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "17",
+    "image_file": "17_6554_Fotodag6_Kalkstensgard_Orangeriljus_Vardag.jpg",
+    "subfolder": "17_6554_Fotodag6_Kalkstensgard_Orangeriljus_Vardag",
+    "home_style": "Fotodag 6 (Nordisk Kalkstensgård & Orangeriljus) — Vardagsrum med slammad kalkvägg, kanvassoffa & massiv alm",
+    "hero_product": {
+      "id": "6554",
+      "tag": "@6554",
+      "sku": "216554",
+      "name": "Fergana Crème Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
+      "role": "hero",
+      "resolution": "1053x1500",
+      "ref_file": "refs_still/6554.jpg",
+      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
     "slot": "18",
     "image_file": "18_6550_Fotodag6_Kalkstensgard_Orangeriljus_Horna.jpg",
     "subfolder": "18_6550_Fotodag6_Kalkstensgard_Orangeriljus_Horna",
@@ -458,6 +374,48 @@
       "ref_macro_file": "refs_still/6550_macro.jpg",
       "extra_tags": [],
       "visual_spec": "Large rectangular sculpted high-low 3D relief rug featuring continuous meandering rich sage-moss and olive-moss green raised cut-pile bands together with rounded moss-green organic islands set in crisp carved relief against a smooth warm off-white and natural chalk low-pile ground, finished with a slim off-white overlocked border and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "19",
+    "image_file": "19_5531_Fotodag7_Funkisvilla_Korsbarspanel_Salong.jpg",
+    "subfolder": "19_5531_Fotodag7_Funkisvilla_Korsbarspanel_Salong",
+    "home_style": "Fotodag 7 (1950-talets Arkitektvilla i Körsbär & Sten) — Salong med körsbärspanel, kammad ullsoffa & skifferbord",
+    "hero_product": {
+      "id": "5531",
+      "tag": "@5531",
+      "sku": "KA5531",
+      "name": "Aranga Super Soft Fur Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
+      "role": "hero",
+      "resolution": "1015x1500",
+      "ref_file": "refs_still/5531.jpg",
+      "ref_macro_file": "refs_still/5531_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "20",
+    "image_file": "20_6554_Fotodag7_Funkisvilla_Teakpanel_Atelje.jpg",
+    "subfolder": "20_6554_Fotodag7_Funkisvilla_Teakpanel_Atelje",
+    "home_style": "Fotodag 7 (1950-talets Arkitektvilla i Körsbär & Sten) — Vardagsrum med oljad teakpanel, manchestersoffa & travertin",
+    "hero_product": {
+      "id": "6554",
+      "tag": "@6554",
+      "sku": "216554",
+      "name": "Fergana Crème Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
+      "role": "hero",
+      "resolution": "1053x1500",
+      "ref_file": "refs_still/6554.jpg",
+      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
     },
     "companion_products": []
   },
@@ -483,10 +441,52 @@
     "companion_products": []
   },
   {
+    "slot": "22",
+    "image_file": "22_5531_Fotodag8_Arkitektsovrum_Valnotssang.jpg",
+    "subfolder": "22_5531_Fotodag8_Arkitektsovrum_Valnotssang",
+    "home_style": "Fotodag 8 (Stramt Arkitektoniskt Sovrum) — Låg valnötsplattformssäng centrerad 2/3 in på mattan med tvättat linne",
+    "hero_product": {
+      "id": "5531",
+      "tag": "@5531",
+      "sku": "KA5531",
+      "name": "Aranga Super Soft Fur Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
+      "role": "hero",
+      "resolution": "1015x1500",
+      "ref_file": "refs_still/5531.jpg",
+      "ref_macro_file": "refs_still/5531_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a dense, ultra-fine velvety micro-plush pile showing soft natural directional velvet shading and finished with a slim, neat matching overlocked edge on all four sides and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "23",
+    "image_file": "23_6554_Fotodag8_Arkitektsovrum_Rostekssang.jpg",
+    "subfolder": "23_6554_Fotodag8_Arkitektsovrum_Rostekssang",
+    "home_style": "Fotodag 8 (Arkitektoniskt Sovrum) — Sovrum med låg dubbelsäng i rökt ek & tvättat sandlinne",
+    "hero_product": {
+      "id": "6554",
+      "tag": "@6554",
+      "sku": "216554",
+      "name": "Fergana Crème Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
+      "role": "hero",
+      "resolution": "1053x1500",
+      "ref_file": "refs_still/6554.jpg",
+      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, asymmetrically sweeping organic sand-dune wave contours in warm sand-beige and camel-oat dense cut pile rising crisply above a smooth warm chalky off-white low-pile ground, finished with a slim matching sand-cream overlocked border and zero fringes."
+    },
+    "companion_products": []
+  },
+  {
     "slot": "24",
     "image_file": "24_6550_Fotodag8_Arkitektsovrum_Korsbarssang.jpg",
     "subfolder": "24_6550_Fotodag8_Arkitektsovrum_Korsbarssang",
-    "home_style": "Fotodag 8 (Stramt Arkitektoniskt Sovrum) — Låg körsbärsplattformssäng centrerad 2/3 in på mattan med salvialinne",
+    "home_style": "Fotodag 8 (Arkitektoniskt Sovrum) — Sovrum med låg dubbelsäng i körsbär & tvättat salvialinne",
     "hero_product": {
       "id": "6550",
       "tag": "@6550",

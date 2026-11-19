@@ -30,9 +30,19 @@
         "kind": "1. Genererad 2K Övre Bild (1:1 — Direktblixt på kopparbrun vintage-motorhuv)"
       },
       {
+        "filename": "01_SKU219486_Legacy_Svart_Top_v2_kodak.jpg",
+        "rel_path": "01_SKU219486_Legacy_Svart_Top_v2_kodak.jpg",
+        "kind": "1b. v2 Kodak 35mm — 2K Övre Bild (Portra 400 / filmgrainer)"
+      },
+      {
         "filename": "02_SKU219486_Legacy_Svart_Bottom.jpg",
         "rel_path": "02_SKU219486_Legacy_Svart_Bottom.jpg",
         "kind": "2. Genererad 2K Nedre Bild (1:1 — Förhöjd 35mm bärarvinkel i havrestickad merinotröja vid rökt valnötsbord (direktblixt))"
+      },
+      {
+        "filename": "02_SKU219486_Legacy_Svart_Bottom_v2_kodak.jpg",
+        "rel_path": "02_SKU219486_Legacy_Svart_Bottom_v2_kodak.jpg",
+        "kind": "2b. v2 Kodak 35mm — 2K Nedre Bild (Portra 400 / filmgrainer)"
       },
       {
         "filename": "01_SKU219486_Legacy_Trucker_Svart_collage_utan_text.jpg",
@@ -40,9 +50,19 @@
         "kind": "3. Genererad 4:5 Collage Utan Text (1440x1800)"
       },
       {
+        "filename": "01_SKU219486_Legacy_Trucker_Svart_collage_utan_text_v2_kodak.jpg",
+        "rel_path": "01_SKU219486_Legacy_Trucker_Svart_collage_utan_text_v2_kodak.jpg",
+        "kind": "3b. v2 Kodak 35mm — 4:5 Collage Utan Text (1440x1800)"
+      },
+      {
         "filename": "01_SKU219486_Legacy_Trucker_Svart_collage_med_text.jpg",
         "rel_path": "01_SKU219486_Legacy_Trucker_Svart_collage_med_text.jpg",
         "kind": "4. Genererad 4:5 Black Friday Collage Med Text (1440x1800)"
+      },
+      {
+        "filename": "01_SKU219486_Legacy_Trucker_Svart_collage_med_text_v2_kodak.jpg",
+        "rel_path": "01_SKU219486_Legacy_Trucker_Svart_collage_med_text_v2_kodak.jpg",
+        "kind": "4b. v2 Kodak 35mm — 4:5 Black Friday Collage Med Text (1440x1800)"
       }
     ]
   },
@@ -77,9 +97,19 @@
         "kind": "1. Genererad 2K Övre Bild (1:1 — Direktblixt på mörk skifferbänk i garage med vintage-bilnycklar)"
       },
       {
+        "filename": "03_SKU219487_Legacy_Rod_Top_v2_kodak.jpg",
+        "rel_path": "03_SKU219487_Legacy_Rod_Top_v2_kodak.jpg",
+        "kind": "1b. v2 Kodak 35mm — 2K Övre Bild (Portra 400 / filmgrainer)"
+      },
+      {
         "filename": "04_SKU219487_Legacy_Rod_Bottom.jpg",
         "rel_path": "04_SKU219487_Legacy_Rod_Bottom.jpg",
         "kind": "2. Genererad 2K Nedre Bild (1:1 — Förhöjd 35mm bärarvinkel i olivgrön fältjacka mot varm cederträvägg)"
+      },
+      {
+        "filename": "04_SKU219487_Legacy_Rod_Bottom_v2_kodak.jpg",
+        "rel_path": "04_SKU219487_Legacy_Rod_Bottom_v2_kodak.jpg",
+        "kind": "2b. v2 Kodak 35mm — 2K Nedre Bild (Portra 400 / filmgrainer)"
       },
       {
         "filename": "02_SKU219487_Legacy_Trucker_Rod_collage_utan_text.jpg",
@@ -87,9 +117,19 @@
         "kind": "3. Genererad 4:5 Collage Utan Text (1440x1800)"
       },
       {
+        "filename": "02_SKU219487_Legacy_Trucker_Rod_collage_utan_text_v2_kodak.jpg",
+        "rel_path": "02_SKU219487_Legacy_Trucker_Rod_collage_utan_text_v2_kodak.jpg",
+        "kind": "3b. v2 Kodak 35mm — 4:5 Collage Utan Text (1440x1800)"
+      },
+      {
         "filename": "02_SKU219487_Legacy_Trucker_Rod_collage_med_text.jpg",
         "rel_path": "02_SKU219487_Legacy_Trucker_Rod_collage_med_text.jpg",
         "kind": "4. Genererad 4:5 Black Friday Collage Med Text (1440x1800)"
+      },
+      {
+        "filename": "02_SKU219487_Legacy_Trucker_Rod_collage_med_text_v2_kodak.jpg",
+        "rel_path": "02_SKU219487_Legacy_Trucker_Rod_collage_med_text_v2_kodak.jpg",
+        "kind": "4b. v2 Kodak 35mm — 4:5 Black Friday Collage Med Text (1440x1800)"
       }
     ]
   },
@@ -124,9 +164,19 @@
         "kind": "1. Genererad 2K Övre Bild (1:1 — Utomhus POV hand-hold över våta granithällar & höstlöv)"
       },
       {
+        "filename": "05_SKU219488_Rodeo_GraSvart_Top_v2_kodak.jpg",
+        "rel_path": "05_SKU219488_Rodeo_GraSvart_Top_v2_kodak.jpg",
+        "kind": "1b. v2 Kodak 35mm — 2K Övre Bild (Portra 400 / filmgrainer)"
+      },
+      {
         "filename": "06_SKU219488_Rodeo_GraSvart_Bottom.jpg",
         "rel_path": "06_SKU219488_Rodeo_GraSvart_Bottom.jpg",
         "kind": "2. Genererad 2K Nedre Bild (1:1 — Förhöjd 35mm bärarvinkel i kastanjebrun skinnjacka i dunkel träkorridor)"
+      },
+      {
+        "filename": "06_SKU219488_Rodeo_GraSvart_Bottom_v2_kodak.jpg",
+        "rel_path": "06_SKU219488_Rodeo_GraSvart_Bottom_v2_kodak.jpg",
+        "kind": "2b. v2 Kodak 35mm — 2K Nedre Bild (Portra 400 / filmgrainer)"
       },
       {
         "filename": "03_SKU219488_Rodeo_Trucker_Gra_Svart_collage_utan_text.jpg",
@@ -134,9 +184,19 @@
         "kind": "3. Genererad 4:5 Collage Utan Text (1440x1800)"
       },
       {
+        "filename": "03_SKU219488_Rodeo_Trucker_Gra_Svart_collage_utan_text_v2_kodak.jpg",
+        "rel_path": "03_SKU219488_Rodeo_Trucker_Gra_Svart_collage_utan_text_v2_kodak.jpg",
+        "kind": "3b. v2 Kodak 35mm — 4:5 Collage Utan Text (1440x1800)"
+      },
+      {
         "filename": "03_SKU219488_Rodeo_Trucker_Gra_Svart_collage_med_text.jpg",
         "rel_path": "03_SKU219488_Rodeo_Trucker_Gra_Svart_collage_med_text.jpg",
         "kind": "4. Genererad 4:5 Black Friday Collage Med Text (1440x1800)"
+      },
+      {
+        "filename": "03_SKU219488_Rodeo_Trucker_Gra_Svart_collage_med_text_v2_kodak.jpg",
+        "rel_path": "03_SKU219488_Rodeo_Trucker_Gra_Svart_collage_med_text_v2_kodak.jpg",
+        "kind": "4b. v2 Kodak 35mm — 4:5 Black Friday Collage Med Text (1440x1800)"
       }
     ]
   },
@@ -171,9 +231,19 @@
         "kind": "1. Genererad 2K Övre Bild (1:1 — POV hand-hold över mörkbrunt sadelläder (direktblixt))"
       },
       {
+        "filename": "07_SKU219489_Ranch_KhakiNavy_Top_v2_kodak.jpg",
+        "rel_path": "07_SKU219489_Ranch_KhakiNavy_Top_v2_kodak.jpg",
+        "kind": "1b. v2 Kodak 35mm — 2K Övre Bild (Portra 400 / filmgrainer)"
+      },
+      {
         "filename": "08_SKU219489_Ranch_KhakiNavy_Bottom.jpg",
         "rel_path": "08_SKU219489_Ranch_KhakiNavy_Bottom.jpg",
         "kind": "2. Genererad 2K Nedre Bild (1:1 — Tät förhöjd 35mm natt-/blixtbild i kolsvart t-shirt)"
+      },
+      {
+        "filename": "08_SKU219489_Ranch_KhakiNavy_Bottom_v2_kodak.jpg",
+        "rel_path": "08_SKU219489_Ranch_KhakiNavy_Bottom_v2_kodak.jpg",
+        "kind": "2b. v2 Kodak 35mm — 2K Nedre Bild (Portra 400 / filmgrainer)"
       },
       {
         "filename": "04_SKU219489_Ranch_Trucker_Khaki_Navy_collage_utan_text.jpg",
@@ -181,9 +251,19 @@
         "kind": "3. Genererad 4:5 Collage Utan Text (1440x1800)"
       },
       {
+        "filename": "04_SKU219489_Ranch_Trucker_Khaki_Navy_collage_utan_text_v2_kodak.jpg",
+        "rel_path": "04_SKU219489_Ranch_Trucker_Khaki_Navy_collage_utan_text_v2_kodak.jpg",
+        "kind": "3b. v2 Kodak 35mm — 4:5 Collage Utan Text (1440x1800)"
+      },
+      {
         "filename": "04_SKU219489_Ranch_Trucker_Khaki_Navy_collage_med_text.jpg",
         "rel_path": "04_SKU219489_Ranch_Trucker_Khaki_Navy_collage_med_text.jpg",
         "kind": "4. Genererad 4:5 Black Friday Collage Med Text (1440x1800)"
+      },
+      {
+        "filename": "04_SKU219489_Ranch_Trucker_Khaki_Navy_collage_med_text_v2_kodak.jpg",
+        "rel_path": "04_SKU219489_Ranch_Trucker_Khaki_Navy_collage_med_text_v2_kodak.jpg",
+        "kind": "4b. v2 Kodak 35mm — 4:5 Black Friday Collage Med Text (1440x1800)"
       }
     ]
   },
@@ -218,9 +298,19 @@
         "kind": "1. Genererad 2K Övre Bild (1:1 — Direktblixt på räfflat mattsvart pickupflak med läderrep)"
       },
       {
+        "filename": "09_SKU219490_Shield_Gra_Top_v2_kodak.jpg",
+        "rel_path": "09_SKU219490_Shield_Gra_Top_v2_kodak.jpg",
+        "kind": "1b. v2 Kodak 35mm — 2K Övre Bild (Portra 400 / filmgrainer)"
+      },
+      {
         "filename": "10_SKU219490_Shield_Gra_Bottom.jpg",
         "rel_path": "10_SKU219490_Shield_Gra_Bottom.jpg",
         "kind": "2. Genererad 2K Nedre Bild (1:1 — Förhöjd 35mm bärarvinkel i kolgrå stickad tröja vid ekbord & schackbräde)"
+      },
+      {
+        "filename": "10_SKU219490_Shield_Gra_Bottom_v2_kodak.jpg",
+        "rel_path": "10_SKU219490_Shield_Gra_Bottom_v2_kodak.jpg",
+        "kind": "2b. v2 Kodak 35mm — 2K Nedre Bild (Portra 400 / filmgrainer)"
       },
       {
         "filename": "05_SKU219490_Shield_Trucker_Gra_collage_utan_text.jpg",
@@ -228,9 +318,19 @@
         "kind": "3. Genererad 4:5 Collage Utan Text (1440x1800)"
       },
       {
+        "filename": "05_SKU219490_Shield_Trucker_Gra_collage_utan_text_v2_kodak.jpg",
+        "rel_path": "05_SKU219490_Shield_Trucker_Gra_collage_utan_text_v2_kodak.jpg",
+        "kind": "3b. v2 Kodak 35mm — 4:5 Collage Utan Text (1440x1800)"
+      },
+      {
         "filename": "05_SKU219490_Shield_Trucker_Gra_collage_med_text.jpg",
         "rel_path": "05_SKU219490_Shield_Trucker_Gra_collage_med_text.jpg",
         "kind": "4. Genererad 4:5 Black Friday Collage Med Text (1440x1800)"
+      },
+      {
+        "filename": "05_SKU219490_Shield_Trucker_Gra_collage_med_text_v2_kodak.jpg",
+        "rel_path": "05_SKU219490_Shield_Trucker_Gra_collage_med_text_v2_kodak.jpg",
+        "kind": "4b. v2 Kodak 35mm — 4:5 Black Friday Collage Med Text (1440x1800)"
       }
     ]
   },
@@ -265,9 +365,19 @@
         "kind": "1. Genererad 2K Övre Bild (1:1 — POV hand-hold i vaxad canvasjacka över väderbiten träbänk (direktblixt))"
       },
       {
+        "filename": "11_SKU219491_Longhorn_KhakiGron_Top_v2_kodak.jpg",
+        "rel_path": "11_SKU219491_Longhorn_KhakiGron_Top_v2_kodak.jpg",
+        "kind": "1b. v2 Kodak 35mm — 2K Övre Bild (Portra 400 / filmgrainer)"
+      },
+      {
         "filename": "12_SKU219491_Longhorn_KhakiGron_Bottom.jpg",
         "rel_path": "12_SKU219491_Longhorn_KhakiGron_Bottom.jpg",
         "kind": "2. Genererad 2K Nedre Bild (1:1 — Förhöjd 3/4-bärarvinkel i sandfärgad flanell mot varm furupanel)"
+      },
+      {
+        "filename": "12_SKU219491_Longhorn_KhakiGron_Bottom_v2_kodak.jpg",
+        "rel_path": "12_SKU219491_Longhorn_KhakiGron_Bottom_v2_kodak.jpg",
+        "kind": "2b. v2 Kodak 35mm — 2K Nedre Bild (Portra 400 / filmgrainer)"
       },
       {
         "filename": "06_SKU219491_Longhorn_Trucker_Khaki_Gron_collage_utan_text.jpg",
@@ -275,9 +385,19 @@
         "kind": "3. Genererad 4:5 Collage Utan Text (1440x1800)"
       },
       {
+        "filename": "06_SKU219491_Longhorn_Trucker_Khaki_Gron_collage_utan_text_v2_kodak.jpg",
+        "rel_path": "06_SKU219491_Longhorn_Trucker_Khaki_Gron_collage_utan_text_v2_kodak.jpg",
+        "kind": "3b. v2 Kodak 35mm — 4:5 Collage Utan Text (1440x1800)"
+      },
+      {
         "filename": "06_SKU219491_Longhorn_Trucker_Khaki_Gron_collage_med_text.jpg",
         "rel_path": "06_SKU219491_Longhorn_Trucker_Khaki_Gron_collage_med_text.jpg",
         "kind": "4. Genererad 4:5 Black Friday Collage Med Text (1440x1800)"
+      },
+      {
+        "filename": "06_SKU219491_Longhorn_Trucker_Khaki_Gron_collage_med_text_v2_kodak.jpg",
+        "rel_path": "06_SKU219491_Longhorn_Trucker_Khaki_Gron_collage_med_text_v2_kodak.jpg",
+        "kind": "4b. v2 Kodak 35mm — 4:5 Black Friday Collage Med Text (1440x1800)"
       }
     ]
   },
@@ -312,9 +432,19 @@
         "kind": "1. Genererad 2K Övre Bild (1:1 — Utomhus POV hand-hold över våt kullersten & höstlöv)"
       },
       {
+        "filename": "13_SKU219492_Longhorn_KhakiVinrod_Top_v2_kodak.jpg",
+        "rel_path": "13_SKU219492_Longhorn_KhakiVinrod_Top_v2_kodak.jpg",
+        "kind": "1b. v2 Kodak 35mm — 2K Övre Bild (Portra 400 / filmgrainer)"
+      },
+      {
         "filename": "14_SKU219492_Longhorn_KhakiVinrod_Bottom.jpg",
         "rel_path": "14_SKU219492_Longhorn_KhakiVinrod_Bottom.jpg",
         "kind": "2. Genererad 2K Nedre Bild (1:1 — Förhöjd 35mm blixtbild i tobaksbrun mockajacka i vinrött dinerbås)"
+      },
+      {
+        "filename": "14_SKU219492_Longhorn_KhakiVinrod_Bottom_v2_kodak.jpg",
+        "rel_path": "14_SKU219492_Longhorn_KhakiVinrod_Bottom_v2_kodak.jpg",
+        "kind": "2b. v2 Kodak 35mm — 2K Nedre Bild (Portra 400 / filmgrainer)"
       },
       {
         "filename": "07_SKU219492_Longhorn_Trucker_Khaki_Vinrod_collage_utan_text.jpg",
@@ -322,9 +452,19 @@
         "kind": "3. Genererad 4:5 Collage Utan Text (1440x1800)"
       },
       {
+        "filename": "07_SKU219492_Longhorn_Trucker_Khaki_Vinrod_collage_utan_text_v2_kodak.jpg",
+        "rel_path": "07_SKU219492_Longhorn_Trucker_Khaki_Vinrod_collage_utan_text_v2_kodak.jpg",
+        "kind": "3b. v2 Kodak 35mm — 4:5 Collage Utan Text (1440x1800)"
+      },
+      {
         "filename": "07_SKU219492_Longhorn_Trucker_Khaki_Vinrod_collage_med_text.jpg",
         "rel_path": "07_SKU219492_Longhorn_Trucker_Khaki_Vinrod_collage_med_text.jpg",
         "kind": "4. Genererad 4:5 Black Friday Collage Med Text (1440x1800)"
+      },
+      {
+        "filename": "07_SKU219492_Longhorn_Trucker_Khaki_Vinrod_collage_med_text_v2_kodak.jpg",
+        "rel_path": "07_SKU219492_Longhorn_Trucker_Khaki_Vinrod_collage_med_text_v2_kodak.jpg",
+        "kind": "4b. v2 Kodak 35mm — 4:5 Black Friday Collage Med Text (1440x1800)"
       }
     ]
   },
@@ -359,9 +499,19 @@
         "kind": "1. Genererad 2K Övre Bild (1:1 — Taktilt stilleben på rå betongbänk vid skivtallrik & 35mm mätsökarkamera)"
       },
       {
+        "filename": "15_SKU219493_Legacy_Khaki_Top_v2_kodak.jpg",
+        "rel_path": "15_SKU219493_Legacy_Khaki_Top_v2_kodak.jpg",
+        "kind": "1b. v2 Kodak 35mm — 2K Övre Bild (Portra 400 / filmgrainer)"
+      },
+      {
         "filename": "16_SKU219493_Legacy_Khaki_Bottom.jpg",
         "rel_path": "16_SKU219493_Legacy_Khaki_Bottom.jpg",
         "kind": "2. Genererad 2K Nedre Bild (1:1 — Förhöjd 35mm bärarvinkel i mörk selvedge-denim mot varm tegelvägg)"
+      },
+      {
+        "filename": "16_SKU219493_Legacy_Khaki_Bottom_v2_kodak.jpg",
+        "rel_path": "16_SKU219493_Legacy_Khaki_Bottom_v2_kodak.jpg",
+        "kind": "2b. v2 Kodak 35mm — 2K Nedre Bild (Portra 400 / filmgrainer)"
       },
       {
         "filename": "08_SKU219493_Legacy_Trucker_Khaki_collage_utan_text.jpg",
@@ -369,9 +519,19 @@
         "kind": "3. Genererad 4:5 Collage Utan Text (1440x1800)"
       },
       {
+        "filename": "08_SKU219493_Legacy_Trucker_Khaki_collage_utan_text_v2_kodak.jpg",
+        "rel_path": "08_SKU219493_Legacy_Trucker_Khaki_collage_utan_text_v2_kodak.jpg",
+        "kind": "3b. v2 Kodak 35mm — 4:5 Collage Utan Text (1440x1800)"
+      },
+      {
         "filename": "08_SKU219493_Legacy_Trucker_Khaki_collage_med_text.jpg",
         "rel_path": "08_SKU219493_Legacy_Trucker_Khaki_collage_med_text.jpg",
         "kind": "4. Genererad 4:5 Black Friday Collage Med Text (1440x1800)"
+      },
+      {
+        "filename": "08_SKU219493_Legacy_Trucker_Khaki_collage_med_text_v2_kodak.jpg",
+        "rel_path": "08_SKU219493_Legacy_Trucker_Khaki_collage_med_text_v2_kodak.jpg",
+        "kind": "4b. v2 Kodak 35mm — 4:5 Black Friday Collage Med Text (1440x1800)"
       }
     ]
   }

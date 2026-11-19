@@ -1,0 +1,536 @@
+[
+  {
+    "id": "01_5531_Vy01_Helhet_3_4",
+    "slot": "01",
+    "sku": "KA5531",
+    "title": "01 · Aranga Super Soft Fur Beige (SKU: KA5531) – Kalkstensateljé 9:16 · Vy 01 (Stående 3/4)",
+    "clean_name": "01. Aranga Super Soft Fur Beige (@5531_velvet) + Kalkstens- & Tegelateljé (@5531_atelier_crop) – Kalkstensateljé 9:16 · Vy 01 (Stående 3/4)",
+    "category": "Aranga, Fergana & Akaba · 9:16 Attitydrum B (9 st 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "5531_velvet",
+      "tag": "@5531_velvet",
+      "sku": "KA5531",
+      "name": "Aranga Super Soft Fur Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
+      "role": "hero",
+      "resolution": "1500x678",
+      "ref_file": "refs_still/5531_velvet.jpg",
+      "ref_macro_file": null,
+      "extra_tags": [],
+      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a smooth, level, uniform velvety micro-plush pile in one even solid tone and finished with a slim matching overlocked edge on all four sides and zero fringes."
+    },
+    "companion_products": [
+      {
+        "id": "5531_atelier_crop",
+        "tag": "@5531_atelier_crop",
+        "sku": "5531_atelier_crop",
+        "name": "Kalkstens- & Tegelateljé (Kastanj Sadelläder + Stengodsnisch)",
+        "handle": "",
+        "url": "",
+        "role": "room_reference",
+        "resolution": "1080x500",
+        "ref_file": "refs_still/5531_atelier_crop.jpg",
+        "ref_macro_file": null,
+        "extra_tags": [],
+        "visual_spec": "Unmanipulated tight rectangular room crop (1080x500, zero floor rug) showing the patinated chestnut-brown saddle leather sofa backrest and seat cushions against an off-white limewashed brick wall with the lower portion of a recessed niche holding two glazed stoneware vessels."
+      }
+    ],
+    "images": [
+      {
+        "filename": "01_5531_Vy01_Helhet_3_4/01_5531_Vy01_Helhet_3_4.jpg",
+        "rel_path": "01_5531_Vy01_Helhet_3_4/01_5531_Vy01_Helhet_3_4.jpg",
+        "kind": "1. Genererad 2K Interiör (Kalkstensateljé 9:16 · Vy 01 (Stående 3/4))"
+      },
+      {
+        "filename": "01_5531_Vy01_Helhet_3_4/01_SKU5531_velvet-01_Hero_Ref_5531_velvet.jpg",
+        "rel_path": "01_5531_Vy01_Helhet_3_4/01_SKU5531_velvet-01_Hero_Ref_5531_velvet.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@5531_velvet · SKU KA5531)"
+      },
+      {
+        "filename": "01_5531_Vy01_Helhet_3_4/01_SKU5531_velvet-01b_Companion_Ref_5531_atelier_crop.jpg",
+        "rel_path": "01_5531_Vy01_Helhet_3_4/01_SKU5531_velvet-01b_Companion_Ref_5531_atelier_crop.jpg",
+        "kind": "3. Sällskapsprodukt Studioreferens (@5531_atelier_crop · Kalkstens- & Tegelateljé (Kastanj Sadelläder + Stengodsnisch))"
+      }
+    ]
+  },
+  {
+    "id": "02_5531_Vy02_Lag_Horn",
+    "slot": "02",
+    "sku": "KA5531",
+    "title": "02 · Aranga Super Soft Fur Beige (SKU: KA5531) – Kalkstensateljé 9:16 · Vy 02 (Låg taktil hörnvinkel)",
+    "clean_name": "02. Aranga Super Soft Fur Beige (@5531_velvet) + Kalkstens- & Tegelateljé (@5531_atelier_crop) – Kalkstensateljé 9:16 · Vy 02 (Låg taktil hörnvinkel)",
+    "category": "Aranga, Fergana & Akaba · 9:16 Attitydrum B (9 st 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "5531_velvet",
+      "tag": "@5531_velvet",
+      "sku": "KA5531",
+      "name": "Aranga Super Soft Fur Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
+      "role": "hero",
+      "resolution": "1500x678",
+      "ref_file": "refs_still/5531_velvet.jpg",
+      "ref_macro_file": null,
+      "extra_tags": [],
+      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a smooth, level, uniform velvety micro-plush pile in one even solid tone and finished with a slim matching overlocked edge on all four sides and zero fringes."
+    },
+    "companion_products": [
+      {
+        "id": "5531_atelier_crop",
+        "tag": "@5531_atelier_crop",
+        "sku": "5531_atelier_crop",
+        "name": "Kalkstens- & Tegelateljé (Kastanj Sadelläder + Stengodsnisch)",
+        "handle": "",
+        "url": "",
+        "role": "room_reference",
+        "resolution": "1080x500",
+        "ref_file": "refs_still/5531_atelier_crop.jpg",
+        "ref_macro_file": null,
+        "extra_tags": [],
+        "visual_spec": "Unmanipulated tight rectangular room crop (1080x500, zero floor rug) showing the patinated chestnut-brown saddle leather sofa backrest and seat cushions against an off-white limewashed brick wall with the lower portion of a recessed niche holding two glazed stoneware vessels."
+      }
+    ],
+    "images": [
+      {
+        "filename": "02_5531_Vy02_Lag_Horn/02_5531_Vy02_Lag_Horn.jpg",
+        "rel_path": "02_5531_Vy02_Lag_Horn/02_5531_Vy02_Lag_Horn.jpg",
+        "kind": "1. Genererad 2K Interiör (Kalkstensateljé 9:16 · Vy 02 (Låg taktil hörnvinkel))"
+      },
+      {
+        "filename": "02_5531_Vy02_Lag_Horn/02_SKU5531_velvet-01_Hero_Ref_5531_velvet.jpg",
+        "rel_path": "02_5531_Vy02_Lag_Horn/02_SKU5531_velvet-01_Hero_Ref_5531_velvet.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@5531_velvet · SKU KA5531)"
+      },
+      {
+        "filename": "02_5531_Vy02_Lag_Horn/02_SKU5531_velvet-01b_Companion_Ref_5531_atelier_crop.jpg",
+        "rel_path": "02_5531_Vy02_Lag_Horn/02_SKU5531_velvet-01b_Companion_Ref_5531_atelier_crop.jpg",
+        "kind": "3. Sällskapsprodukt Studioreferens (@5531_atelier_crop · Kalkstens- & Tegelateljé (Kastanj Sadelläder + Stengodsnisch))"
+      }
+    ]
+  },
+  {
+    "id": "03_5531_Vy03_Rak_Symmetrisk",
+    "slot": "03",
+    "sku": "KA5531",
+    "title": "03 · Aranga Super Soft Fur Beige (SKU: KA5531) – Kalkstensateljé 9:16 · Vy 03 (Rak symmetrisk)",
+    "clean_name": "03. Aranga Super Soft Fur Beige (@5531_velvet) + Kalkstens- & Tegelateljé (@5531_atelier_crop) – Kalkstensateljé 9:16 · Vy 03 (Rak symmetrisk)",
+    "category": "Aranga, Fergana & Akaba · 9:16 Attitydrum B (9 st 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "5531_velvet",
+      "tag": "@5531_velvet",
+      "sku": "KA5531",
+      "name": "Aranga Super Soft Fur Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-aranga-super-soft-fur-beige/",
+      "role": "hero",
+      "resolution": "1500x678",
+      "ref_file": "refs_still/5531_velvet.jpg",
+      "ref_macro_file": null,
+      "extra_tags": [],
+      "visual_spec": "Large rectangular solid-toned rug in pale warm alabaster-ecru and light oat-cream, crafted with a smooth, level, uniform velvety micro-plush pile in one even solid tone and finished with a slim matching overlocked edge on all four sides and zero fringes."
+    },
+    "companion_products": [
+      {
+        "id": "5531_atelier_crop",
+        "tag": "@5531_atelier_crop",
+        "sku": "5531_atelier_crop",
+        "name": "Kalkstens- & Tegelateljé (Kastanj Sadelläder + Stengodsnisch)",
+        "handle": "",
+        "url": "",
+        "role": "room_reference",
+        "resolution": "1080x500",
+        "ref_file": "refs_still/5531_atelier_crop.jpg",
+        "ref_macro_file": null,
+        "extra_tags": [],
+        "visual_spec": "Unmanipulated tight rectangular room crop (1080x500, zero floor rug) showing the patinated chestnut-brown saddle leather sofa backrest and seat cushions against an off-white limewashed brick wall with the lower portion of a recessed niche holding two glazed stoneware vessels."
+      }
+    ],
+    "images": [
+      {
+        "filename": "03_5531_Vy03_Rak_Symmetrisk/03_5531_Vy03_Rak_Symmetrisk.jpg",
+        "rel_path": "03_5531_Vy03_Rak_Symmetrisk/03_5531_Vy03_Rak_Symmetrisk.jpg",
+        "kind": "Interiör (03)"
+      },
+      {
+        "filename": "03_5531_Vy03_Rak_Symmetrisk/03_SKU5531_velvet-01_Hero_Ref_5531_velvet.jpg",
+        "rel_path": "03_5531_Vy03_Rak_Symmetrisk/03_SKU5531_velvet-01_Hero_Ref_5531_velvet.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@5531_velvet · SKU KA5531)"
+      },
+      {
+        "filename": "03_5531_Vy03_Rak_Symmetrisk/03_SKU5531_velvet-01b_Companion_Ref_5531_atelier_crop.jpg",
+        "rel_path": "03_5531_Vy03_Rak_Symmetrisk/03_SKU5531_velvet-01b_Companion_Ref_5531_atelier_crop.jpg",
+        "kind": "2. Sällskapsprodukt Studioreferens (@5531_atelier_crop · Kalkstens- & Tegelateljé (Kastanj Sadelläder + Stengodsnisch))"
+      }
+    ]
+  },
+  {
+    "id": "04_6554_Vy01_Helhet_3_4",
+    "slot": "04",
+    "sku": "216554",
+    "title": "04 · Fergana Crème Beige (SKU: 216554) – Boiserie-våning 9:16 · Vy 01 (Stående 3/4)",
+    "clean_name": "04. Fergana Crème Beige (@6554) + Boiserie-våning Helhet (@6554_room_v2) – Boiserie-våning 9:16 · Vy 01 (Stående 3/4)",
+    "category": "Aranga, Fergana & Akaba · 9:16 Attitydrum B (9 st 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6554",
+      "tag": "@6554",
+      "sku": "216554",
+      "name": "Fergana Crème Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
+      "role": "hero",
+      "resolution": "1053x1500",
+      "ref_file": "refs_still/6554.jpg",
+      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, softly curving organic wave contours in warm sand-beige and camel-oat dense cut pile rising cleanly above a flat, smooth dense short-cut velvety low-pile ground in warm chalky off-white, finished with a slim matching sand-cream overlocked border and zero fringes."
+    },
+    "companion_products": [
+      {
+        "id": "6554_room_v2",
+        "tag": "@6554_room_v2",
+        "sku": "6554_room_v2",
+        "name": "Boiserie-våning Helhet (Bärnstensockra Sammet på Fergana-matta + Grön Marmor)",
+        "handle": "",
+        "url": "",
+        "role": "room_reference",
+        "resolution": "1536x2752",
+        "ref_file": "refs_still/6554_room_v2.jpg",
+        "ref_macro_file": null,
+        "extra_tags": [],
+        "visual_spec": "Approved 9:16 classic warm greige-taupe boiserie living room with framed tonal raw-linen relief artwork, spiced amber-ochre mohair-velvet sofa whose dark tapered walnut front legs rest firmly deep inside the large sculpted relief rug over mid-honey oak chevron parquet, and low dark green Verde Alpi marble coffee table on solid oiled walnut slab legs styled with a fluted ceramic vase of dried wheat stalks and a sculpted travertine dish."
+      }
+    ],
+    "images": [
+      {
+        "filename": "04_6554_Vy01_Helhet_3_4/04_6554_Vy01_Helhet_3_4.jpg",
+        "rel_path": "04_6554_Vy01_Helhet_3_4/04_6554_Vy01_Helhet_3_4.jpg",
+        "kind": "1. Genererad 2K Interiör (Boiserie-våning 9:16 · Vy 01 (Stående 3/4))"
+      },
+      {
+        "filename": "04_6554_Vy01_Helhet_3_4/04_SKU6554-01_Hero_Ref_6554.jpg",
+        "rel_path": "04_6554_Vy01_Helhet_3_4/04_SKU6554-01_Hero_Ref_6554.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6554 · SKU 216554)"
+      },
+      {
+        "filename": "04_6554_Vy01_Helhet_3_4/04_SKU6554-01m_Hero_Macro_6554.jpg",
+        "rel_path": "04_6554_Vy01_Helhet_3_4/04_SKU6554-01m_Hero_Macro_6554.jpg",
+        "kind": "3. Makroreferens (@6554_macro)"
+      },
+      {
+        "filename": "04_6554_Vy01_Helhet_3_4/04_SKU6554-01b_Companion_Ref_6554_room_v2.jpg",
+        "rel_path": "04_6554_Vy01_Helhet_3_4/04_SKU6554-01b_Companion_Ref_6554_room_v2.jpg",
+        "kind": "4. Sällskapsprodukt Studioreferens (@6554_room_v2 · Boiserie-våning Helhet (Bärnstensockra Sammet på Fergana-matta + Grön Marmor))"
+      }
+    ]
+  },
+  {
+    "id": "05_6554_Vy02_Lag_Horn",
+    "slot": "05",
+    "sku": "216554",
+    "title": "05 · Fergana Crème Beige (SKU: 216554) – Boiserie-våning 9:16 · Vy 02 (Låg taktil hörnvinkel)",
+    "clean_name": "05. Fergana Crème Beige (@6554) + Boiserie-våning Rak Frontvy (@6554_front_v3) – Boiserie-våning 9:16 · Vy 02 (Låg taktil hörnvinkel)",
+    "category": "Aranga, Fergana & Akaba · 9:16 Attitydrum B (9 st 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6554",
+      "tag": "@6554",
+      "sku": "216554",
+      "name": "Fergana Crème Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
+      "role": "hero",
+      "resolution": "1053x1500",
+      "ref_file": "refs_still/6554.jpg",
+      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, softly curving organic wave contours in warm sand-beige and camel-oat dense cut pile rising cleanly above a flat, smooth dense short-cut velvety low-pile ground in warm chalky off-white, finished with a slim matching sand-cream overlocked border and zero fringes."
+    },
+    "companion_products": [
+      {
+        "id": "6554_front_v3",
+        "tag": "@6554_front_v3",
+        "sku": "6554_front_v3",
+        "name": "Boiserie-våning Rak Frontvy (Bärnstensockra Sammet + Grön Marmor på Valnötsben)",
+        "handle": "",
+        "url": "",
+        "role": "room_reference",
+        "resolution": "1536x2752",
+        "ref_file": "refs_still/6554_front_v3.jpg",
+        "ref_macro_file": null,
+        "extra_tags": [],
+        "visual_spec": "Approved 9:16 straight symmetrical frontal view of the classic warm greige-taupe boiserie living room showing the spiced amber-ochre mohair-velvet sofa with dark tapered walnut front legs planted deep inside the large sculpted relief rug over mid-honey oak chevron parquet, and the centered low dark green Verde Alpi marble coffee table resting on two wide solid oiled walnut slab legs holding a fluted ceramic vase of dried wheat stalks and a sculpted travertine dish."
+      }
+    ],
+    "images": [
+      {
+        "filename": "05_6554_Vy02_Lag_Horn/05_6554_Vy02_Lag_Horn.jpg",
+        "rel_path": "05_6554_Vy02_Lag_Horn/05_6554_Vy02_Lag_Horn.jpg",
+        "kind": "Interiör (05)"
+      },
+      {
+        "filename": "05_6554_Vy02_Lag_Horn/05_SKU6554-01_Hero_Ref_6554.jpg",
+        "rel_path": "05_6554_Vy02_Lag_Horn/05_SKU6554-01_Hero_Ref_6554.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6554 · SKU 216554)"
+      },
+      {
+        "filename": "05_6554_Vy02_Lag_Horn/05_SKU6554-01m_Hero_Macro_6554.jpg",
+        "rel_path": "05_6554_Vy02_Lag_Horn/05_SKU6554-01m_Hero_Macro_6554.jpg",
+        "kind": "3. Makroreferens (@6554_macro)"
+      },
+      {
+        "filename": "05_6554_Vy02_Lag_Horn/05_SKU6554-01b_Companion_Ref_6554_front_v3.jpg",
+        "rel_path": "05_6554_Vy02_Lag_Horn/05_SKU6554-01b_Companion_Ref_6554_front_v3.jpg",
+        "kind": "3. Sällskapsprodukt Studioreferens (@6554_front_v3 · Boiserie-våning Rak Frontvy (Bärnstensockra Sammet + Grön Marmor på Valnötsben))"
+      }
+    ]
+  },
+  {
+    "id": "06_6554_Vy03_Rak_Symmetrisk",
+    "slot": "06",
+    "sku": "216554",
+    "title": "06 · Fergana Crème Beige (SKU: 216554) – Boiserie-våning 9:16 · Vy 03 (Rak symmetrisk)",
+    "clean_name": "06. Fergana Crème Beige (@6554) + Boiserie-våning Helhet (@6554_room_v2) – Boiserie-våning 9:16 · Vy 03 (Rak symmetrisk)",
+    "category": "Aranga, Fergana & Akaba · 9:16 Attitydrum B (9 st 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6554",
+      "tag": "@6554",
+      "sku": "216554",
+      "name": "Fergana Crème Beige",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/hochflorteppiche/hochflorteppiche-fergana-creme-beige/",
+      "role": "hero",
+      "resolution": "1053x1500",
+      "ref_file": "refs_still/6554.jpg",
+      "ref_macro_file": "refs_still/6554_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular two-tone sculpted high-low 3D relief rug featuring broad, softly curving organic wave contours in warm sand-beige and camel-oat dense cut pile rising cleanly above a flat, smooth dense short-cut velvety low-pile ground in warm chalky off-white, finished with a slim matching sand-cream overlocked border and zero fringes."
+    },
+    "companion_products": [
+      {
+        "id": "6554_room_v2",
+        "tag": "@6554_room_v2",
+        "sku": "6554_room_v2",
+        "name": "Boiserie-våning Helhet (Bärnstensockra Sammet på Fergana-matta + Grön Marmor)",
+        "handle": "",
+        "url": "",
+        "role": "room_reference",
+        "resolution": "1536x2752",
+        "ref_file": "refs_still/6554_room_v2.jpg",
+        "ref_macro_file": null,
+        "extra_tags": [],
+        "visual_spec": "Approved 9:16 classic warm greige-taupe boiserie living room with framed tonal raw-linen relief artwork, spiced amber-ochre mohair-velvet sofa whose dark tapered walnut front legs rest firmly deep inside the large sculpted relief rug over mid-honey oak chevron parquet, and low dark green Verde Alpi marble coffee table on solid oiled walnut slab legs styled with a fluted ceramic vase of dried wheat stalks and a sculpted travertine dish."
+      }
+    ],
+    "images": [
+      {
+        "filename": "06_6554_Vy03_Rak_Symmetrisk/06_6554_Vy03_Rak_Symmetrisk.jpg",
+        "rel_path": "06_6554_Vy03_Rak_Symmetrisk/06_6554_Vy03_Rak_Symmetrisk.jpg",
+        "kind": "1. Genererad 2K Interiör (Boiserie-våning 9:16 · Vy 03 (Rak symmetrisk))"
+      },
+      {
+        "filename": "06_6554_Vy03_Rak_Symmetrisk/06_SKU6554-01_Hero_Ref_6554.jpg",
+        "rel_path": "06_6554_Vy03_Rak_Symmetrisk/06_SKU6554-01_Hero_Ref_6554.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6554 · SKU 216554)"
+      },
+      {
+        "filename": "06_6554_Vy03_Rak_Symmetrisk/06_SKU6554-01m_Hero_Macro_6554.jpg",
+        "rel_path": "06_6554_Vy03_Rak_Symmetrisk/06_SKU6554-01m_Hero_Macro_6554.jpg",
+        "kind": "3. Makroreferens (@6554_macro)"
+      },
+      {
+        "filename": "06_6554_Vy03_Rak_Symmetrisk/06_SKU6554-01b_Companion_Ref_6554_room_v2.jpg",
+        "rel_path": "06_6554_Vy03_Rak_Symmetrisk/06_SKU6554-01b_Companion_Ref_6554_room_v2.jpg",
+        "kind": "4. Sällskapsprodukt Studioreferens (@6554_room_v2 · Boiserie-våning Helhet (Bärnstensockra Sammet på Fergana-matta + Grön Marmor))"
+      }
+    ]
+  },
+  {
+    "id": "07_6550_Vy01_Helhet_3_4",
+    "slot": "07",
+    "sku": "216550",
+    "title": "07 · Akaba Crème Grön (SKU: 216550) – Träpanelsvilla 9:16 · Vy 01 (Stående 3/4)",
+    "clean_name": "07. Akaba Crème Grön (@6550) + Modernistisk Träpanelsvilla Helhet (@6550_room_v2) – Träpanelsvilla 9:16 · Vy 01 (Stående 3/4)",
+    "category": "Aranga, Fergana & Akaba · 9:16 Attitydrum B (9 st 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6550",
+      "tag": "@6550",
+      "sku": "216550",
+      "name": "Akaba Crème Grön",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/teppiche-modernes-design/hochflorteppiche-akaba-creme-grun/",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/6550.jpg",
+      "ref_macro_file": "refs_still/6550_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular sculpted high-low 3D relief rug featuring continuous meandering rich sage-moss and olive-moss green raised cut-pile bands together with rounded moss-green organic islands set in crisp carved relief against a smooth dense short-cut velvety low-pile ground in warm off-white and natural chalk, finished with a slim off-white overlocked border and zero fringes."
+    },
+    "companion_products": [
+      {
+        "id": "6550_room_v2",
+        "tag": "@6550_room_v2",
+        "sku": "6550_room_v2",
+        "name": "Modernistisk Träpanelsvilla Helhet (Mörkbrun Manchester på Akaba-matta + Aluminium)",
+        "handle": "",
+        "url": "",
+        "role": "room_reference",
+        "resolution": "1536x2752",
+        "ref_file": "refs_still/6550_room_v2.jpg",
+        "ref_macro_file": null,
+        "extra_tags": [],
+        "visual_spec": "Approved 9:16 warm modernist living room where the deep roasted-umber wide-wale corduroy sofa with natural linen pillows rests straight along the dark fluted walnut wainscoting directly beneath the centered framed geometric tonal linen relief artwork on a warm taupe-sand plaster wall, paired with a centered sculptural low brushed-aluminum pedestal coffee table holding a carved dark stone bowl and a speckled ceramic vase of dried grasses over the large sage-moss sculpted relief rug on wide warm oiled oak planks."
+      }
+    ],
+    "images": [
+      {
+        "filename": "07_6550_Vy01_Helhet_3_4/07_6550_Vy01_Helhet_3_4.jpg",
+        "rel_path": "07_6550_Vy01_Helhet_3_4/07_6550_Vy01_Helhet_3_4.jpg",
+        "kind": "1. Genererad 2K Interiör (Träpanelsvilla 9:16 · Vy 01 (Stående 3/4))"
+      },
+      {
+        "filename": "07_6550_Vy01_Helhet_3_4/07_SKU6550-01_Hero_Ref_6550.jpg",
+        "rel_path": "07_6550_Vy01_Helhet_3_4/07_SKU6550-01_Hero_Ref_6550.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6550 · SKU 216550)"
+      },
+      {
+        "filename": "07_6550_Vy01_Helhet_3_4/07_SKU6550-01m_Hero_Macro_6550.jpg",
+        "rel_path": "07_6550_Vy01_Helhet_3_4/07_SKU6550-01m_Hero_Macro_6550.jpg",
+        "kind": "3. Makroreferens (@6550_macro)"
+      },
+      {
+        "filename": "07_6550_Vy01_Helhet_3_4/07_SKU6550-01b_Companion_Ref_6550_room_v2.jpg",
+        "rel_path": "07_6550_Vy01_Helhet_3_4/07_SKU6550-01b_Companion_Ref_6550_room_v2.jpg",
+        "kind": "4. Sällskapsprodukt Studioreferens (@6550_room_v2 · Modernistisk Träpanelsvilla Helhet (Mörkbrun Manchester på Akaba-matta + Aluminium))"
+      }
+    ]
+  },
+  {
+    "id": "08_6550_Vy02_Lag_Horn",
+    "slot": "08",
+    "sku": "216550",
+    "title": "08 · Akaba Crème Grön (SKU: 216550) – Träpanelsvilla 9:16 · Vy 02 (Låg taktil hörnvinkel)",
+    "clean_name": "08. Akaba Crème Grön (@6550) + Modernistisk Träpanelsvilla Helhet (@6550_room_v2) – Träpanelsvilla 9:16 · Vy 02 (Låg taktil hörnvinkel)",
+    "category": "Aranga, Fergana & Akaba · 9:16 Attitydrum B (9 st 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6550",
+      "tag": "@6550",
+      "sku": "216550",
+      "name": "Akaba Crème Grön",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/teppiche-modernes-design/hochflorteppiche-akaba-creme-grun/",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/6550.jpg",
+      "ref_macro_file": "refs_still/6550_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular sculpted high-low 3D relief rug featuring continuous meandering rich sage-moss and olive-moss green raised cut-pile bands together with rounded moss-green organic islands set in crisp carved relief against a smooth dense short-cut velvety low-pile ground in warm off-white and natural chalk, finished with a slim off-white overlocked border and zero fringes."
+    },
+    "companion_products": [
+      {
+        "id": "6550_room_v2",
+        "tag": "@6550_room_v2",
+        "sku": "6550_room_v2",
+        "name": "Modernistisk Träpanelsvilla Helhet (Mörkbrun Manchester på Akaba-matta + Aluminium)",
+        "handle": "",
+        "url": "",
+        "role": "room_reference",
+        "resolution": "1536x2752",
+        "ref_file": "refs_still/6550_room_v2.jpg",
+        "ref_macro_file": null,
+        "extra_tags": [],
+        "visual_spec": "Approved 9:16 warm modernist living room where the deep roasted-umber wide-wale corduroy sofa with natural linen pillows rests straight along the dark fluted walnut wainscoting directly beneath the centered framed geometric tonal linen relief artwork on a warm taupe-sand plaster wall, paired with a centered sculptural low brushed-aluminum pedestal coffee table holding a carved dark stone bowl and a speckled ceramic vase of dried grasses over the large sage-moss sculpted relief rug on wide warm oiled oak planks."
+      }
+    ],
+    "images": [
+      {
+        "filename": "08_6550_Vy02_Lag_Horn/08_6550_Vy02_Lag_Horn.jpg",
+        "rel_path": "08_6550_Vy02_Lag_Horn/08_6550_Vy02_Lag_Horn.jpg",
+        "kind": "1. Genererad 2K Interiör (Träpanelsvilla 9:16 · Vy 02 (Låg taktil hörnvinkel))"
+      },
+      {
+        "filename": "08_6550_Vy02_Lag_Horn/08_SKU6550-01_Hero_Ref_6550.jpg",
+        "rel_path": "08_6550_Vy02_Lag_Horn/08_SKU6550-01_Hero_Ref_6550.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6550 · SKU 216550)"
+      },
+      {
+        "filename": "08_6550_Vy02_Lag_Horn/08_SKU6550-01m_Hero_Macro_6550.jpg",
+        "rel_path": "08_6550_Vy02_Lag_Horn/08_SKU6550-01m_Hero_Macro_6550.jpg",
+        "kind": "3. Makroreferens (@6550_macro)"
+      },
+      {
+        "filename": "08_6550_Vy02_Lag_Horn/08_SKU6550-01b_Companion_Ref_6550_room_v2.jpg",
+        "rel_path": "08_6550_Vy02_Lag_Horn/08_SKU6550-01b_Companion_Ref_6550_room_v2.jpg",
+        "kind": "4. Sällskapsprodukt Studioreferens (@6550_room_v2 · Modernistisk Träpanelsvilla Helhet (Mörkbrun Manchester på Akaba-matta + Aluminium))"
+      }
+    ]
+  },
+  {
+    "id": "09_6550_Vy03_Rak_Symmetrisk",
+    "slot": "09",
+    "sku": "216550",
+    "title": "09 · Akaba Crème Grön (SKU: 216550) – Träpanelsvilla 9:16 · Vy 03 (Rak symmetrisk)",
+    "clean_name": "09. Akaba Crème Grön (@6550) + Modernistisk Träpanelsvilla Helhet (@6550_room_v2) – Träpanelsvilla 9:16 · Vy 03 (Rak symmetrisk)",
+    "category": "Aranga, Fergana & Akaba · 9:16 Attitydrum B (9 st 2K)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "6550",
+      "tag": "@6550",
+      "sku": "216550",
+      "name": "Akaba Crème Grön",
+      "handle": "",
+      "url": "https://www.trendcarpet.de/de/teppiche-modernes-design/hochflorteppiche-akaba-creme-grun/",
+      "role": "hero",
+      "resolution": "1071x1500",
+      "ref_file": "refs_still/6550.jpg",
+      "ref_macro_file": "refs_still/6550_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Large rectangular sculpted high-low 3D relief rug featuring continuous meandering rich sage-moss and olive-moss green raised cut-pile bands together with rounded moss-green organic islands set in crisp carved relief against a smooth dense short-cut velvety low-pile ground in warm off-white and natural chalk, finished with a slim off-white overlocked border and zero fringes."
+    },
+    "companion_products": [
+      {
+        "id": "6550_room_v2",
+        "tag": "@6550_room_v2",
+        "sku": "6550_room_v2",
+        "name": "Modernistisk Träpanelsvilla Helhet (Mörkbrun Manchester på Akaba-matta + Aluminium)",
+        "handle": "",
+        "url": "",
+        "role": "room_reference",
+        "resolution": "1536x2752",
+        "ref_file": "refs_still/6550_room_v2.jpg",
+        "ref_macro_file": null,
+        "extra_tags": [],
+        "visual_spec": "Approved 9:16 warm modernist living room where the deep roasted-umber wide-wale corduroy sofa with natural linen pillows rests straight along the dark fluted walnut wainscoting directly beneath the centered framed geometric tonal linen relief artwork on a warm taupe-sand plaster wall, paired with a centered sculptural low brushed-aluminum pedestal coffee table holding a carved dark stone bowl and a speckled ceramic vase of dried grasses over the large sage-moss sculpted relief rug on wide warm oiled oak planks."
+      }
+    ],
+    "images": [
+      {
+        "filename": "09_6550_Vy03_Rak_Symmetrisk/09_6550_Vy03_Rak_Symmetrisk.jpg",
+        "rel_path": "09_6550_Vy03_Rak_Symmetrisk/09_6550_Vy03_Rak_Symmetrisk.jpg",
+        "kind": "1. Genererad 2K Interiör (Träpanelsvilla 9:16 · Vy 03 (Rak symmetrisk))"
+      },
+      {
+        "filename": "09_6550_Vy03_Rak_Symmetrisk/09_SKU6550-01_Hero_Ref_6550.jpg",
+        "rel_path": "09_6550_Vy03_Rak_Symmetrisk/09_SKU6550-01_Hero_Ref_6550.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@6550 · SKU 216550)"
+      },
+      {
+        "filename": "09_6550_Vy03_Rak_Symmetrisk/09_SKU6550-01m_Hero_Macro_6550.jpg",
+        "rel_path": "09_6550_Vy03_Rak_Symmetrisk/09_SKU6550-01m_Hero_Macro_6550.jpg",
+        "kind": "3. Makroreferens (@6550_macro)"
+      },
+      {
+        "filename": "09_6550_Vy03_Rak_Symmetrisk/09_SKU6550-01b_Companion_Ref_6550_room_v2.jpg",
+        "rel_path": "09_6550_Vy03_Rak_Symmetrisk/09_SKU6550-01b_Companion_Ref_6550_room_v2.jpg",
+        "kind": "4. Sällskapsprodukt Studioreferens (@6550_room_v2 · Modernistisk Träpanelsvilla Helhet (Mörkbrun Manchester på Akaba-matta + Aluminium))"
+      }
+    ]
+  }
+]

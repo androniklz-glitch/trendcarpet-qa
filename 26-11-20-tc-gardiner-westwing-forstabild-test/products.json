@@ -1,0 +1,186 @@
+[
+  {
+    "id": "01_Andrada_Beige_Linne_Look",
+    "slot": "01",
+    "sku": "TC-ANDRADA-BEIGE",
+    "title": "01 · Linne-look Gardin Andrada (Beige) – Westwing Förstabild",
+    "clean_name": "01. Linne-look Gardin Andrada Beige – Westwing Studio Förstabild",
+    "category": "TC Home Gardiner · Westwing Förstabildstest (4 tygtyper)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "7101",
+      "tag": "@7101",
+      "sku": "TC-ANDRADA-BEIGE",
+      "name": "Linne-look Gardin Andrada (Beige)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/gardiner-linne-look-gardin-andrada-beige/",
+      "role": "hero",
+      "resolution": "1500x1500",
+      "ref_file": "refs_still/7101.jpg",
+      "ref_macro_file": "refs_still/7101_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Warm oat-sand beige structured linen-look curtain fabric (#DFD7C8) with a crisp, visible basketweave cross-slub yarn texture and soft semi-opaque drape."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "01_Andrada_Beige_Linne_Look/01_TC7101_Andrada_Beige_Westwing_Forstabild.jpg",
+        "rel_path": "01_Andrada_Beige_Linne_Look/01_TC7101_Andrada_Beige_Westwing_Forstabild.jpg",
+        "kind": "Interiör (01)"
+      },
+      {
+        "filename": "01_Andrada_Beige_Linne_Look/01_Nuvarande_Sajtbild_andrada_beige_01.jpg",
+        "rel_path": "01_Andrada_Beige_Linne_Look/01_Nuvarande_Sajtbild_andrada_beige_01.jpg",
+        "kind": "2. Nuvarande förstabild på trendcarpet.se (Miljöbild 1:1)"
+      },
+      {
+        "filename": "01_Andrada_Beige_Linne_Look/01_SKU7101-01_Hero_Ref_7101.jpg",
+        "rel_path": "01_Andrada_Beige_Linne_Look/01_SKU7101-01_Hero_Ref_7101.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@7101 · SKU TC-ANDRADA-BEIGE)"
+      },
+      {
+        "filename": "01_Andrada_Beige_Linne_Look/01_SKU7101-01m_Hero_Macro_7101.jpg",
+        "rel_path": "01_Andrada_Beige_Linne_Look/01_SKU7101-01m_Hero_Macro_7101.jpg",
+        "kind": "3. Makroreferens (@7101_macro)"
+      }
+    ]
+  },
+  {
+    "id": "02_Lumira_Gron_Halvtransparent_Linnemix",
+    "slot": "02",
+    "sku": "TC-LUMIRA-GREEN",
+    "title": "02 · Linnemixgardin Lumira (Grön) – Westwing Förstabild",
+    "clean_name": "02. Linnemixgardin Lumira Grön (Halvtransparent) – Westwing Studio Förstabild",
+    "category": "TC Home Gardiner · Westwing Förstabildstest (4 tygtyper)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "7102",
+      "tag": "@7102",
+      "sku": "TC-LUMIRA-GREEN",
+      "name": "Linnemixgardin Lumira 2-Pack (Grön)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/gardiner-2-pack-linnemixgardin-lumira-gron/",
+      "role": "hero",
+      "resolution": "1500x1500",
+      "ref_file": "refs_still/7102.jpg",
+      "ref_macro_file": "refs_still/7102_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Fresh olive-chartreuse green semi-sheer linen-mix curtain (#B0AE52) with fine regular plain weave, subtle horizontal slub yarns, gentle silky sheen, and airy translucent light transmission."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "02_Lumira_Gron_Halvtransparent_Linnemix/02_TC7102_Lumira_Gron_Westwing_Forstabild.jpg",
+        "rel_path": "02_Lumira_Gron_Halvtransparent_Linnemix/02_TC7102_Lumira_Gron_Westwing_Forstabild.jpg",
+        "kind": "Interiör (02)"
+      },
+      {
+        "filename": "02_Lumira_Gron_Halvtransparent_Linnemix/02_Nuvarande_Sajtbild_lumira_gron_01.jpg",
+        "rel_path": "02_Lumira_Gron_Halvtransparent_Linnemix/02_Nuvarande_Sajtbild_lumira_gron_01.jpg",
+        "kind": "2. Nuvarande förstabild på trendcarpet.se (Miljöbild 1:1)"
+      },
+      {
+        "filename": "02_Lumira_Gron_Halvtransparent_Linnemix/02_SKU7102-01_Hero_Ref_7102.jpg",
+        "rel_path": "02_Lumira_Gron_Halvtransparent_Linnemix/02_SKU7102-01_Hero_Ref_7102.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@7102 · SKU TC-LUMIRA-GREEN)"
+      },
+      {
+        "filename": "02_Lumira_Gron_Halvtransparent_Linnemix/02_SKU7102-01m_Hero_Macro_7102.jpg",
+        "rel_path": "02_Lumira_Gron_Halvtransparent_Linnemix/02_SKU7102-01m_Hero_Macro_7102.jpg",
+        "kind": "3. Makroreferens (@7102_macro)"
+      }
+    ]
+  },
+  {
+    "id": "03_Amaris_Morkbrun_Morklaggningsgardin",
+    "slot": "03",
+    "sku": "TC-AMARIS-DARKBROWN",
+    "title": "03 · Mörkläggningsgardin Amaris (Mörkbrun) – Westwing Förstabild",
+    "clean_name": "03. Mörkläggningsgardin Amaris Mörkbrun – Westwing Studio Förstabild",
+    "category": "TC Home Gardiner · Westwing Förstabildstest (4 tygtyper)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "7103",
+      "tag": "@7103",
+      "sku": "TC-AMARIS-DARKBROWN",
+      "name": "Mörkläggningsgardin Amaris (Mörkbrun)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/gardiner-morklaggningsgardin-amaris-morkbrun/",
+      "role": "hero",
+      "resolution": "1500x1500",
+      "ref_file": "refs_still/7103.jpg",
+      "ref_macro_file": "refs_still/7103_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Heavy opaque dark espresso-chocolate brown blackout curtain (#543D2E) with a fine melange woven textile texture and weighty sculpted vertical folds."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "03_Amaris_Morkbrun_Morklaggningsgardin/03_TC7103_Amaris_Morkbrun_Westwing_Forstabild.jpg",
+        "rel_path": "03_Amaris_Morkbrun_Morklaggningsgardin/03_TC7103_Amaris_Morkbrun_Westwing_Forstabild.jpg",
+        "kind": "Interiör (03)"
+      },
+      {
+        "filename": "03_Amaris_Morkbrun_Morklaggningsgardin/03_Nuvarande_Sajtbild_amaris_morkbrun_01.jpg",
+        "rel_path": "03_Amaris_Morkbrun_Morklaggningsgardin/03_Nuvarande_Sajtbild_amaris_morkbrun_01.jpg",
+        "kind": "2. Nuvarande förstabild på trendcarpet.se (Sned fönstervy)"
+      },
+      {
+        "filename": "03_Amaris_Morkbrun_Morklaggningsgardin/03_SKU7103-01_Hero_Ref_7103.jpg",
+        "rel_path": "03_Amaris_Morkbrun_Morklaggningsgardin/03_SKU7103-01_Hero_Ref_7103.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@7103 · SKU TC-AMARIS-DARKBROWN)"
+      },
+      {
+        "filename": "03_Amaris_Morkbrun_Morklaggningsgardin/03_SKU7103-01m_Hero_Macro_7103.jpg",
+        "rel_path": "03_Amaris_Morkbrun_Morklaggningsgardin/03_SKU7103-01m_Hero_Macro_7103.jpg",
+        "kind": "3. Makroreferens (@7103_macro)"
+      }
+    ]
+  },
+  {
+    "id": "04_Poppy_Svart_Monstrad_Bomullsgardin",
+    "slot": "04",
+    "sku": "TC-POPPY-BLACK",
+    "title": "04 · Bomullsgardin Poppy (Svart Mönstrad) – Westwing Förstabild",
+    "clean_name": "04. Bomullsgardin Poppy Svart (Mönstrad) – Westwing Studio Förstabild",
+    "category": "TC Home Gardiner · Westwing Förstabildstest (4 tygtyper)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "7104",
+      "tag": "@7104",
+      "sku": "TC-POPPY-BLACK",
+      "name": "Bomullsgardin Poppy (Svart)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/bomullsgardin-poppy-svart/",
+      "role": "hero",
+      "resolution": "813x1439",
+      "ref_file": "refs_still/7104.jpg",
+      "ref_macro_file": "refs_still/7104_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Crisp matte cotton curtain with a charcoal-black ground printed with botanical poppy flowers, seed pods, and scrolling foliage in terracotta-coral, sage green, muted slate blue, and warm sand."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "04_Poppy_Svart_Monstrad_Bomullsgardin/04_TC7104_Poppy_Svart_Westwing_Forstabild.jpg",
+        "rel_path": "04_Poppy_Svart_Monstrad_Bomullsgardin/04_TC7104_Poppy_Svart_Westwing_Forstabild.jpg",
+        "kind": "Interiör (04)"
+      },
+      {
+        "filename": "04_Poppy_Svart_Monstrad_Bomullsgardin/04_Nuvarande_Sajtbild_poppy_svart_01.jpg",
+        "rel_path": "04_Poppy_Svart_Monstrad_Bomullsgardin/04_Nuvarande_Sajtbild_poppy_svart_01.jpg",
+        "kind": "2. Nuvarande förstabild på trendcarpet.se (Halvdold fönstervy)"
+      },
+      {
+        "filename": "04_Poppy_Svart_Monstrad_Bomullsgardin/04_SKU7104-01_Hero_Ref_7104.jpg",
+        "rel_path": "04_Poppy_Svart_Monstrad_Bomullsgardin/04_SKU7104-01_Hero_Ref_7104.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@7104 · SKU TC-POPPY-BLACK)"
+      },
+      {
+        "filename": "04_Poppy_Svart_Monstrad_Bomullsgardin/04_SKU7104-01m_Hero_Macro_7104.jpg",
+        "rel_path": "04_Poppy_Svart_Monstrad_Bomullsgardin/04_SKU7104-01m_Hero_Macro_7104.jpg",
+        "kind": "3. Makroreferens (@7104_macro)"
+      }
+    ]
+  }
+]

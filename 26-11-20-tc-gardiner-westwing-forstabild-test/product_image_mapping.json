@@ -1,0 +1,86 @@
+[
+  {
+    "slot": "01",
+    "image_file": "01_TC7101_Andrada_Beige_Westwing_Forstabild.jpg",
+    "subfolder": "01_Andrada_Beige_Linne_Look",
+    "home_style": "Westwing Studio Förstabild (3:4)",
+    "hero_product": {
+      "id": "7101",
+      "tag": "@7101",
+      "sku": "TC-ANDRADA-BEIGE",
+      "name": "Linne-look Gardin Andrada (Beige)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/gardiner-linne-look-gardin-andrada-beige/",
+      "role": "hero",
+      "resolution": "1500x1500",
+      "ref_file": "refs_still/7101.jpg",
+      "ref_macro_file": "refs_still/7101_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Warm oat-sand beige structured linen-look curtain fabric (#DFD7C8) with a crisp, visible basketweave cross-slub yarn texture and soft semi-opaque drape."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "02",
+    "image_file": "02_TC7102_Lumira_Gron_Westwing_Forstabild.jpg",
+    "subfolder": "02_Lumira_Gron_Halvtransparent_Linnemix",
+    "home_style": "Westwing Studio Förstabild (3:4)",
+    "hero_product": {
+      "id": "7102",
+      "tag": "@7102",
+      "sku": "TC-LUMIRA-GREEN",
+      "name": "Linnemixgardin Lumira 2-Pack (Grön)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/gardiner-2-pack-linnemixgardin-lumira-gron/",
+      "role": "hero",
+      "resolution": "1500x1500",
+      "ref_file": "refs_still/7102.jpg",
+      "ref_macro_file": "refs_still/7102_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Fresh olive-chartreuse green semi-sheer linen-mix curtain (#B0AE52) with fine regular plain weave, subtle horizontal slub yarns, gentle silky sheen, and airy translucent light transmission."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "03",
+    "image_file": "03_TC7103_Amaris_Morkbrun_Westwing_Forstabild.jpg",
+    "subfolder": "03_Amaris_Morkbrun_Morklaggningsgardin",
+    "home_style": "Westwing Studio Förstabild (3:4)",
+    "hero_product": {
+      "id": "7103",
+      "tag": "@7103",
+      "sku": "TC-AMARIS-DARKBROWN",
+      "name": "Mörkläggningsgardin Amaris (Mörkbrun)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/gardiner-morklaggningsgardin-amaris-morkbrun/",
+      "role": "hero",
+      "resolution": "1500x1500",
+      "ref_file": "refs_still/7103.jpg",
+      "ref_macro_file": "refs_still/7103_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Heavy opaque dark espresso-chocolate brown blackout curtain (#543D2E) with a fine melange woven textile texture and weighty sculpted vertical folds."
+    },
+    "companion_products": []
+  },
+  {
+    "slot": "04",
+    "image_file": "04_TC7104_Poppy_Svart_Westwing_Forstabild.jpg",
+    "subfolder": "04_Poppy_Svart_Monstrad_Bomullsgardin",
+    "home_style": "Westwing Studio Förstabild (3:4)",
+    "hero_product": {
+      "id": "7104",
+      "tag": "@7104",
+      "sku": "TC-POPPY-BLACK",
+      "name": "Bomullsgardin Poppy (Svart)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/bomullsgardin-poppy-svart/",
+      "role": "hero",
+      "resolution": "813x1439",
+      "ref_file": "refs_still/7104.jpg",
+      "ref_macro_file": "refs_still/7104_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Crisp matte cotton curtain with a charcoal-black ground printed with botanical poppy flowers, seed pods, and scrolling foliage in terracotta-coral, sage green, muted slate blue, and warm sand."
+    },
+    "companion_products": []
+  }
+]

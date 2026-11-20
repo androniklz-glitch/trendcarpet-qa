@@ -4,7 +4,7 @@
     "slot": "01",
     "sku": "216550",
     "title": "01 · Akaba Cream Grön (1.00x / 1.30x · ~15s · MSE=0.0)",
-    "clean_name": "01. Akaba Cream Grön · 11.613s · 1.29x (MSE=0.0)",
+    "clean_name": "01. Akaba Cream Grön · 11.0s · 1.29x (MSE=0.0)",
     "category": "Akaba Cream Grön 216550 · 9:16 UGC-Reel D (~15s)",
     "company": "trendcarpet",
     "kicker": "Trendcarpet",
@@ -18,8 +18,8 @@
         360
       ],
       "hook_placement_mode": "manual",
-      "hook_edge_density_at_316": 8.208,
-      "hook_edge_density_selected": 8.117,
+      "hook_edge_density_at_316": 4.335,
+      "hook_edge_density_selected": 5.178,
       "label_top_px": 300,
       "label_bottom_px": 418,
       "label_safe_band": [
@@ -27,8 +27,8 @@
         1410
       ],
       "label_placement_mode": "manual",
-      "label_edge_density_at_1310": 31.769,
-      "label_edge_density_selected": 6.428,
+      "label_edge_density_at_1310": 33.88,
+      "label_edge_density_selected": 3.725,
       "label_start_clip": 2,
       "label_end_clip": 3,
       "meta_safe_zone_verified": true
@@ -37,35 +37,35 @@
       {
         "clip_index": 1,
         "window": [
-          17,
-          136
+          12,
+          131
         ],
         "selection_mode": "per_shot_frames_smart",
-        "mean_motion": 10.3855,
-        "std_motion": 2.2807,
-        "accel_ratio": 1.0884,
-        "sharpness_retention_pct": 69.11,
-        "min_over_max_sharpness_pct": 69.11,
-        "end_over_top_sharpness_pct": 83.95,
-        "mean_sharpness": 1084.54,
-        "max_blown_highlights_pct": 0.079,
+        "mean_motion": 7.2122,
+        "std_motion": 0.9862,
+        "accel_ratio": 0.9527,
+        "sharpness_retention_pct": 75.1,
+        "min_over_max_sharpness_pct": 75.1,
+        "end_over_top_sharpness_pct": 94.14,
+        "mean_sharpness": 1376.61,
+        "max_blown_highlights_pct": 0.098,
         "quality_warnings": []
       },
       {
         "clip_index": 2,
         "window": [
-          15,
-          134
+          12,
+          112
         ],
         "selection_mode": "per_shot_frames_smart",
-        "mean_motion": 10.3306,
-        "std_motion": 2.1664,
-        "accel_ratio": 0.9947,
-        "sharpness_retention_pct": 68.65,
-        "min_over_max_sharpness_pct": 68.65,
-        "end_over_top_sharpness_pct": 91.6,
-        "mean_sharpness": 1088.2,
-        "max_blown_highlights_pct": 0.282,
+        "mean_motion": 10.9156,
+        "std_motion": 1.5807,
+        "accel_ratio": 0.8851,
+        "sharpness_retention_pct": 77.79,
+        "min_over_max_sharpness_pct": 77.79,
+        "end_over_top_sharpness_pct": 86.63,
+        "mean_sharpness": 912.24,
+        "max_blown_highlights_pct": 0.018,
         "quality_warnings": []
       },
       {
@@ -75,36 +75,36 @@
           136
         ],
         "selection_mode": "per_shot_frames_smart",
-        "mean_motion": 11.0027,
-        "std_motion": 1.4885,
-        "accel_ratio": 1.1377,
-        "sharpness_retention_pct": 67.49,
-        "min_over_max_sharpness_pct": 67.49,
-        "end_over_top_sharpness_pct": 78.16,
-        "mean_sharpness": 1255.86,
-        "max_blown_highlights_pct": 0.044,
+        "mean_motion": 15.3345,
+        "std_motion": 4.6828,
+        "accel_ratio": 1.0887,
+        "sharpness_retention_pct": 58.03,
+        "min_over_max_sharpness_pct": 58.03,
+        "end_over_top_sharpness_pct": 90.83,
+        "mean_sharpness": 1587.44,
+        "max_blown_highlights_pct": 0.119,
         "quality_warnings": []
       }
     ],
     "reel_tempo_diagnostics": {
       "clip_mean_motions": [
-        10.3855,
-        10.3306,
-        11.0027
+        7.2122,
+        10.9156,
+        15.3345
       ],
       "adjacent_motion_deltas": [
-        0.0549,
-        0.6721
+        3.7034,
+        4.4189
       ],
-      "max_adjacent_motion_delta": 0.6721,
-      "motion_std_across_reel": 0.3047
+      "max_adjacent_motion_delta": 4.4189,
+      "motion_std_across_reel": 3.3202
     },
     "quality_warnings": [],
     "images": [
       {
         "filename": "01_akaba_216550/akaba_216550_clean_100x.mp4",
         "rel_path": "01_akaba_216550/akaba_216550_clean_100x.mp4",
-        "kind": "Utgång A: Ren UGC-Master 9:16 (1080x1920, 11.613s, 31 fps, 1.29x, MSE=0.0, textfri)",
+        "kind": "Utgång A: Ren UGC-Master 9:16 (1080x1920, 11.0s, 31 fps, 1.29x, MSE=0.0, textfri)",
         "resolution": "1080x1920"
       },
       {

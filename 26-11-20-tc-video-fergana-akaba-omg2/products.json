@@ -1,0 +1,244 @@
+[
+  {
+    "id": "01_fergana_216554",
+    "slot": "01",
+    "sku": "216554",
+    "title": "01 · Fergana Crème Beige (1.00x / 1.30x · ~15s · MSE=0.0)",
+    "clean_name": "01. Fergana Crème Beige · 11.484s · 1.29x (MSE=0.0)",
+    "category": "Fergana & Akaba · 9:16 UGC-Reels Omg 2 (~15s)",
+    "company": "trendcarpet",
+    "kicker": "Trendcarpet",
+    "hook_top_px": 280,
+    "label_top_px": 300,
+    "text_overlay_layout": {
+      "hook_top_px": 280,
+      "hook_bottom_px": 376,
+      "hook_safe_band": [
+        260,
+        360
+      ],
+      "hook_placement_mode": "manual",
+      "hook_edge_density_at_316": 8.01,
+      "hook_edge_density_selected": 7.767,
+      "label_top_px": 300,
+      "label_bottom_px": 418,
+      "label_safe_band": [
+        1300,
+        1410
+      ],
+      "label_placement_mode": "manual",
+      "label_edge_density_at_1310": 14.701,
+      "label_edge_density_selected": 7.172,
+      "label_start_clip": 2,
+      "label_end_clip": 3,
+      "meta_safe_zone_verified": true
+    },
+    "clip_diagnostics": [
+      {
+        "clip_index": 1,
+        "window": [
+          12,
+          135
+        ],
+        "selection_mode": "per_shot_start_and_frames",
+        "mean_motion": 9.7948,
+        "std_motion": 1.117,
+        "accel_ratio": 0.9213,
+        "sharpness_retention_pct": 71.08,
+        "min_over_max_sharpness_pct": 71.08,
+        "end_over_top_sharpness_pct": 81.53,
+        "mean_sharpness": 681.02,
+        "max_blown_highlights_pct": 0.778,
+        "quality_warnings": []
+      },
+      {
+        "clip_index": 2,
+        "window": [
+          16,
+          135
+        ],
+        "selection_mode": "per_shot_start_and_frames",
+        "mean_motion": 6.8587,
+        "std_motion": 0.8696,
+        "accel_ratio": 1.1553,
+        "sharpness_retention_pct": 77.48,
+        "min_over_max_sharpness_pct": 77.48,
+        "end_over_top_sharpness_pct": 81.11,
+        "mean_sharpness": 450.09,
+        "max_blown_highlights_pct": 0.063,
+        "quality_warnings": []
+      },
+      {
+        "clip_index": 3,
+        "window": [
+          12,
+          123
+        ],
+        "selection_mode": "per_shot_start_and_frames",
+        "mean_motion": 7.634,
+        "std_motion": 1.2138,
+        "accel_ratio": 0.9268,
+        "sharpness_retention_pct": 75.39,
+        "min_over_max_sharpness_pct": 75.39,
+        "end_over_top_sharpness_pct": 94.7,
+        "mean_sharpness": 315.6,
+        "max_blown_highlights_pct": 0.172,
+        "quality_warnings": []
+      }
+    ],
+    "reel_tempo_diagnostics": {
+      "clip_mean_motions": [
+        9.7948,
+        6.8587,
+        7.634
+      ],
+      "adjacent_motion_deltas": [
+        2.9361,
+        0.7753
+      ],
+      "max_adjacent_motion_delta": 2.9361,
+      "motion_std_across_reel": 1.2423
+    },
+    "quality_warnings": [],
+    "images": [
+      {
+        "filename": "01_fergana_216554/fergana_216554_clean_100x.mp4",
+        "rel_path": "01_fergana_216554/fergana_216554_clean_100x.mp4",
+        "kind": "Utgång A: Ren UGC-Master 9:16 (1080x1920, 11.484s, 31 fps, 1.29x, MSE=0.0, textfri)",
+        "resolution": "1080x1920"
+      },
+      {
+        "filename": "01_fergana_216554/fergana_216554_ugc_ad_9x16.mp4",
+        "rel_path": "01_fergana_216554/fergana_216554_ugc_ad_9x16.mp4",
+        "kind": "Utgång B: HyperFrames Paid-Social 9:16 (Trendcarpet · Hook y=280px, Label y=300px)",
+        "resolution": "1080x1920"
+      },
+      {
+        "filename": "01_fergana_216554/fergana_216554_audit_strip.jpg",
+        "rel_path": "01_fergana_216554/fergana_216554_audit_strip.jpg",
+        "kind": "6-Rutors Kontrollremsa (3 rutor Utgång A + 3 rutor Utgång B)"
+      }
+    ]
+  },
+  {
+    "id": "02_akaba_216550",
+    "slot": "02",
+    "sku": "216550",
+    "title": "02 · Akaba Crème Grön (1.00x / 1.30x · ~15s · MSE=0.0)",
+    "clean_name": "02. Akaba Crème Grön · 10.484s · 1.29x (MSE=0.0)",
+    "category": "Fergana & Akaba · 9:16 UGC-Reels Omg 2 (~15s)",
+    "company": "trendcarpet",
+    "kicker": "Trendcarpet",
+    "hook_top_px": 280,
+    "label_top_px": 300,
+    "text_overlay_layout": {
+      "hook_top_px": 280,
+      "hook_bottom_px": 376,
+      "hook_safe_band": [
+        260,
+        360
+      ],
+      "hook_placement_mode": "manual",
+      "hook_edge_density_at_316": 1.637,
+      "hook_edge_density_selected": 3.573,
+      "label_top_px": 300,
+      "label_bottom_px": 418,
+      "label_safe_band": [
+        1300,
+        1410
+      ],
+      "label_placement_mode": "manual",
+      "label_edge_density_at_1310": 18.01,
+      "label_edge_density_selected": 8.888,
+      "label_start_clip": 2,
+      "label_end_clip": 3,
+      "meta_safe_zone_verified": true
+    },
+    "clip_diagnostics": [
+      {
+        "clip_index": 1,
+        "window": [
+          6,
+          136
+        ],
+        "selection_mode": "per_shot_start_and_frames",
+        "mean_motion": 12.0704,
+        "std_motion": 0.7392,
+        "accel_ratio": 0.999,
+        "sharpness_retention_pct": 71.28,
+        "min_over_max_sharpness_pct": 71.28,
+        "end_over_top_sharpness_pct": 84.68,
+        "mean_sharpness": 852.76,
+        "max_blown_highlights_pct": 0.421,
+        "quality_warnings": []
+      },
+      {
+        "clip_index": 2,
+        "window": [
+          8,
+          70
+        ],
+        "selection_mode": "per_shot_start_and_frames",
+        "mean_motion": 8.0892,
+        "std_motion": 2.4033,
+        "accel_ratio": 1.2803,
+        "sharpness_retention_pct": 55.3,
+        "min_over_max_sharpness_pct": 55.3,
+        "end_over_top_sharpness_pct": 58.48,
+        "mean_sharpness": 737.42,
+        "max_blown_highlights_pct": 0.045,
+        "quality_warnings": []
+      },
+      {
+        "clip_index": 3,
+        "window": [
+          6,
+          136
+        ],
+        "selection_mode": "per_shot_start_and_frames",
+        "mean_motion": 8.6468,
+        "std_motion": 0.8421,
+        "accel_ratio": 1.111,
+        "sharpness_retention_pct": 76.0,
+        "min_over_max_sharpness_pct": 76.0,
+        "end_over_top_sharpness_pct": 84.05,
+        "mean_sharpness": 442.01,
+        "max_blown_highlights_pct": 0.06,
+        "quality_warnings": []
+      }
+    ],
+    "reel_tempo_diagnostics": {
+      "clip_mean_motions": [
+        12.0704,
+        8.0892,
+        8.6468
+      ],
+      "adjacent_motion_deltas": [
+        3.9812,
+        0.5576
+      ],
+      "max_adjacent_motion_delta": 3.9812,
+      "motion_std_across_reel": 1.7601
+    },
+    "quality_warnings": [],
+    "images": [
+      {
+        "filename": "02_akaba_216550/akaba_216550_clean_100x.mp4",
+        "rel_path": "02_akaba_216550/akaba_216550_clean_100x.mp4",
+        "kind": "Utgång A: Ren UGC-Master 9:16 (1080x1920, 10.484s, 31 fps, 1.29x, MSE=0.0, textfri)",
+        "resolution": "1080x1920"
+      },
+      {
+        "filename": "02_akaba_216550/akaba_216550_ugc_ad_9x16.mp4",
+        "rel_path": "02_akaba_216550/akaba_216550_ugc_ad_9x16.mp4",
+        "kind": "Utgång B: HyperFrames Paid-Social 9:16 (Trendcarpet · Hook y=280px, Label y=300px)",
+        "resolution": "1080x1920"
+      },
+      {
+        "filename": "02_akaba_216550/akaba_216550_audit_strip.jpg",
+        "rel_path": "02_akaba_216550/akaba_216550_audit_strip.jpg",
+        "kind": "6-Rutors Kontrollremsa (3 rutor Utgång A + 3 rutor Utgång B)"
+      }
+    ]
+  }
+]

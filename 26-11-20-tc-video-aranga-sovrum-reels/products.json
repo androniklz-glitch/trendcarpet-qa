@@ -1,0 +1,266 @@
+[
+  {
+    "id": "01_aranga_5531",
+    "slot": "01",
+    "sku": "KA5531",
+    "title": "01 · Aranga Super Soft Fur Beige (1.00x / 1.30x · ~15s · MSE=0.0)",
+    "clean_name": "01. Aranga Super Soft Fur Beige · 12.097s · 1.29x (MSE=0.0)",
+    "category": "Aranga (KA5531) & Fergana (216554) · 9:16 UGC-Reels (~15s)",
+    "company": "trendcarpet",
+    "kicker": "Trendcarpet",
+    "hook_top_px": 280,
+    "label_top_px": 300,
+    "text_overlay_layout": {
+      "hook_top_px": 280,
+      "hook_bottom_px": 376,
+      "hook_safe_band": [
+        260,
+        360
+      ],
+      "hook_placement_mode": "manual",
+      "hook_edge_density_at_316": 1.384,
+      "hook_edge_density_selected": 1.403,
+      "label_top_px": 300,
+      "label_bottom_px": 418,
+      "label_safe_band": [
+        1300,
+        1410
+      ],
+      "label_placement_mode": "manual",
+      "label_edge_density_at_1310": 10.166,
+      "label_edge_density_selected": 9.409,
+      "label_start_clip": 2,
+      "label_end_clip": 3,
+      "meta_safe_zone_verified": true
+    },
+    "clip_diagnostics": [
+      {
+        "clip_index": 1,
+        "window": [
+          12,
+          136
+        ],
+        "selection_mode": "smart_optimal",
+        "mean_motion": 3.0831,
+        "std_motion": 0.5307,
+        "accel_ratio": 1.3551,
+        "sharpness_retention_pct": 58.14,
+        "min_over_max_sharpness_pct": 58.14,
+        "end_over_top_sharpness_pct": 62.35,
+        "mean_sharpness": 1247.38,
+        "max_blown_highlights_pct": 0.132,
+        "quality_warnings": [
+          "SPEED_RAMP_RISK: accel_ratio=1.355 avviker från konstant hastighetsplatå"
+        ]
+      },
+      {
+        "clip_index": 2,
+        "window": [
+          12,
+          136
+        ],
+        "selection_mode": "smart_optimal",
+        "mean_motion": 8.1371,
+        "std_motion": 0.7409,
+        "accel_ratio": 1.1085,
+        "sharpness_retention_pct": 53.14,
+        "min_over_max_sharpness_pct": 53.14,
+        "end_over_top_sharpness_pct": 57.88,
+        "mean_sharpness": 352.61,
+        "max_blown_highlights_pct": 0.211,
+        "quality_warnings": [
+          "BLUR_COLLAPSE_RISK: sharpness_retention_pct=53.1% < 55.0% (skärpetapp > 45% inom fönstret)"
+        ]
+      },
+      {
+        "clip_index": 3,
+        "window": [
+          12,
+          136
+        ],
+        "selection_mode": "smart_optimal",
+        "mean_motion": 6.5469,
+        "std_motion": 1.2065,
+        "accel_ratio": 1.1436,
+        "sharpness_retention_pct": 27.91,
+        "min_over_max_sharpness_pct": 27.91,
+        "end_over_top_sharpness_pct": 31.32,
+        "mean_sharpness": 328.4,
+        "max_blown_highlights_pct": 0.08,
+        "quality_warnings": [
+          "BLUR_COLLAPSE_RISK: sharpness_retention_pct=27.9% < 55.0% (skärpetapp > 45% inom fönstret)"
+        ]
+      }
+    ],
+    "reel_tempo_diagnostics": {
+      "clip_mean_motions": [
+        3.0831,
+        8.1371,
+        6.5469
+      ],
+      "adjacent_motion_deltas": [
+        5.054,
+        1.5902
+      ],
+      "max_adjacent_motion_delta": 5.054,
+      "motion_std_across_reel": 2.11
+    },
+    "quality_warnings": [
+      "Clip 1: SPEED_RAMP_RISK: accel_ratio=1.355 avviker från konstant hastighetsplatå",
+      "Clip 2: BLUR_COLLAPSE_RISK: sharpness_retention_pct=53.1% < 55.0% (skärpetapp > 45% inom fönstret)",
+      "Clip 3: BLUR_COLLAPSE_RISK: sharpness_retention_pct=27.9% < 55.0% (skärpetapp > 45% inom fönstret)"
+    ],
+    "images": [
+      {
+        "filename": "01_aranga_5531/aranga_5531_clean_100x.mp4",
+        "rel_path": "01_aranga_5531/aranga_5531_clean_100x.mp4",
+        "kind": "Utgång A: Ren UGC-Master 9:16 (1080x1920, 12.097s, 31 fps, 1.29x, MSE=0.0, textfri)",
+        "resolution": "1080x1920"
+      },
+      {
+        "filename": "01_aranga_5531/aranga_5531_ugc_ad_9x16.mp4",
+        "rel_path": "01_aranga_5531/aranga_5531_ugc_ad_9x16.mp4",
+        "kind": "Utgång B: HyperFrames Paid-Social 9:16 (Trendcarpet · Hook y=280px, Label y=300px)",
+        "resolution": "1080x1920"
+      },
+      {
+        "filename": "01_aranga_5531/aranga_5531_audit_strip.jpg",
+        "rel_path": "01_aranga_5531/aranga_5531_audit_strip.jpg",
+        "kind": "6-Rutors Kontrollremsa (3 rutor Utgång A + 3 rutor Utgång B)"
+      }
+    ]
+  },
+  {
+    "id": "02_fergana_6554",
+    "slot": "02",
+    "sku": "216554",
+    "title": "02 · Fergana Crème Beige (1.00x / 1.30x · ~15s · MSE=0.0)",
+    "clean_name": "02. Fergana Crème Beige · 12.097s · 1.29x (MSE=0.0)",
+    "category": "Aranga (KA5531) & Fergana (216554) · 9:16 UGC-Reels (~15s)",
+    "company": "trendcarpet",
+    "kicker": "Trendcarpet",
+    "hook_top_px": 280,
+    "label_top_px": 300,
+    "text_overlay_layout": {
+      "hook_top_px": 280,
+      "hook_bottom_px": 376,
+      "hook_safe_band": [
+        260,
+        360
+      ],
+      "hook_placement_mode": "manual",
+      "hook_edge_density_at_316": 20.517,
+      "hook_edge_density_selected": 20.048,
+      "label_top_px": 300,
+      "label_bottom_px": 418,
+      "label_safe_band": [
+        1300,
+        1410
+      ],
+      "label_placement_mode": "manual",
+      "label_edge_density_at_1310": 18.225,
+      "label_edge_density_selected": 11.688,
+      "label_start_clip": 2,
+      "label_end_clip": 3,
+      "meta_safe_zone_verified": true
+    },
+    "clip_diagnostics": [
+      {
+        "clip_index": 1,
+        "window": [
+          12,
+          136
+        ],
+        "selection_mode": "smart_optimal",
+        "mean_motion": 27.9987,
+        "std_motion": 3.2189,
+        "accel_ratio": 1.0855,
+        "sharpness_retention_pct": 39.96,
+        "min_over_max_sharpness_pct": 39.96,
+        "end_over_top_sharpness_pct": 58.9,
+        "mean_sharpness": 1901.77,
+        "max_blown_highlights_pct": 0.522,
+        "quality_warnings": [
+          "BLUR_COLLAPSE_RISK: sharpness_retention_pct=40.0% < 55.0% (skärpetapp > 45% inom fönstret)"
+        ]
+      },
+      {
+        "clip_index": 2,
+        "window": [
+          12,
+          136
+        ],
+        "selection_mode": "smart_optimal",
+        "mean_motion": 18.5871,
+        "std_motion": 3.5808,
+        "accel_ratio": 0.7226,
+        "sharpness_retention_pct": 12.53,
+        "min_over_max_sharpness_pct": 12.53,
+        "end_over_top_sharpness_pct": 14.42,
+        "mean_sharpness": 443.09,
+        "max_blown_highlights_pct": 0.299,
+        "quality_warnings": [
+          "BLUR_COLLAPSE_RISK: sharpness_retention_pct=12.5% < 55.0% (skärpetapp > 45% inom fönstret)"
+        ]
+      },
+      {
+        "clip_index": 3,
+        "window": [
+          12,
+          136
+        ],
+        "selection_mode": "smart_optimal",
+        "mean_motion": 9.1839,
+        "std_motion": 5.3239,
+        "accel_ratio": 1.7407,
+        "sharpness_retention_pct": 12.21,
+        "min_over_max_sharpness_pct": 12.21,
+        "end_over_top_sharpness_pct": 18.53,
+        "mean_sharpness": 546.81,
+        "max_blown_highlights_pct": 0.542,
+        "quality_warnings": [
+          "BLUR_COLLAPSE_RISK: sharpness_retention_pct=12.2% < 55.0% (skärpetapp > 45% inom fönstret)",
+          "SPEED_RAMP_RISK: accel_ratio=1.741 avviker från konstant hastighetsplatå"
+        ]
+      }
+    ],
+    "reel_tempo_diagnostics": {
+      "clip_mean_motions": [
+        27.9987,
+        18.5871,
+        9.1839
+      ],
+      "adjacent_motion_deltas": [
+        9.4116,
+        9.4032
+      ],
+      "max_adjacent_motion_delta": 9.4116,
+      "motion_std_across_reel": 7.6811
+    },
+    "quality_warnings": [
+      "Clip 1: BLUR_COLLAPSE_RISK: sharpness_retention_pct=40.0% < 55.0% (skärpetapp > 45% inom fönstret)",
+      "Clip 2: BLUR_COLLAPSE_RISK: sharpness_retention_pct=12.5% < 55.0% (skärpetapp > 45% inom fönstret)",
+      "Clip 3: BLUR_COLLAPSE_RISK: sharpness_retention_pct=12.2% < 55.0% (skärpetapp > 45% inom fönstret)",
+      "Clip 3: SPEED_RAMP_RISK: accel_ratio=1.741 avviker från konstant hastighetsplatå"
+    ],
+    "images": [
+      {
+        "filename": "02_fergana_6554/fergana_6554_clean_100x.mp4",
+        "rel_path": "02_fergana_6554/fergana_6554_clean_100x.mp4",
+        "kind": "Utgång A: Ren UGC-Master 9:16 (1080x1920, 12.097s, 31 fps, 1.29x, MSE=0.0, textfri)",
+        "resolution": "1080x1920"
+      },
+      {
+        "filename": "02_fergana_6554/fergana_6554_ugc_ad_9x16.mp4",
+        "rel_path": "02_fergana_6554/fergana_6554_ugc_ad_9x16.mp4",
+        "kind": "Utgång B: HyperFrames Paid-Social 9:16 (Trendcarpet · Hook y=280px, Label y=300px)",
+        "resolution": "1080x1920"
+      },
+      {
+        "filename": "02_fergana_6554/fergana_6554_audit_strip.jpg",
+        "rel_path": "02_fergana_6554/fergana_6554_audit_strip.jpg",
+        "kind": "6-Rutors Kontrollremsa (3 rutor Utgång A + 3 rutor Utgång B)"
+      }
+    ]
+  }
+]

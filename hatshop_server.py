@@ -26,6 +26,7 @@ _BATCHES_LOCK = threading.Lock()
 _RATINGS_LOCK = threading.Lock()
 _MERGE_LOCK = threading.Lock()
 _REVIEWS_LOCK = threading.RLock()
+_SUBPROCESS_NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0) if os.name == "nt" else 0
 
 PORT = 8092
 WORKSPACE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -1254,10 +1255,11 @@ def scan_batch_products(batch):
         except Exception as e:
             print(f"[!] Error parsing manifest {manifest_file}: {e}")
 
+    _aux_subdir_prefixes = ("content", "kampanjcollage", "_batch_alla")
     root_entries = [d for d in os.listdir(base_dir) if os.path.isdir(os.path.join(base_dir, d))]
     has_variant_subdirs = any(v.lower() in ["1500px", "1500px iphone", "original", "web", "print"] for v in root_entries)
     prefix = ""
-    variant_subdirs = root_entries
+    variant_subdirs = [d for d in root_entries if not d.lower().startswith(_aux_subdir_prefixes)] if has_variant_subdirs else root_entries
     if not has_variant_subdirs and len(root_entries) == 1:
         direct_images = [f for f in os.listdir(base_dir) if f.lower().endswith(MEDIA_EXTS)]
         if not direct_images:
@@ -1266,7 +1268,7 @@ def scan_batch_products(batch):
             cand_subdirs = [d for d in os.listdir(cand_path) if os.path.isdir(os.path.join(cand_path, d))]
             if any(v.lower() in ["1500px", "1500px iphone", "original", "web", "print"] for v in cand_subdirs):
                 prefix = cand_name
-                variant_subdirs = cand_subdirs
+                variant_subdirs = [d for d in cand_subdirs if not d.lower().startswith(_aux_subdir_prefixes)]
                 has_variant_subdirs = True
 
     products_map = {}
@@ -2421,7 +2423,7 @@ def remove_shot(batch, product_id, filename, user, count_user=None, undo_user=No
                 try:
                     batch_id = batch.get("id", "")
                     msg = f"[QA-hubb 1.0] Få bilder kvar: {batch_id} / {product_id} har {remaining} bild(er) kvar efter utrensning ({user})"
-                    subprocess.Popen(["node", NOTIFY_SCRIPT, msg])
+                    subprocess.Popen(["node", NOTIFY_SCRIPT, msg], creationflags=_SUBPROCESS_NO_WINDOW)
                 except Exception:
                     pass
 
@@ -3578,7 +3580,7 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                             if not os.path.exists(cache_file):
                                 subprocess.run(
                                     ["ffmpeg", "-y", "-ss", "0.5", "-i", file_path, "-vf", f"scale={target_w}:-2", "-frames:v", "1", "-q:v", "3", cache_file],
-                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=15
+                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=15, creationflags=_SUBPROCESS_NO_WINDOW
                                 )
                             if os.path.exists(cache_file):
                                 file_to_serve = cache_file
@@ -3631,12 +3633,12 @@ class HubHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                                         "-c:a", "copy", "-movflags", "+faststart",
                                         fast_file,
                                     ],
-                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=60
+                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=60, creationflags=_SUBPROCESS_NO_WINDOW
                                 )
                             else:
                                 subprocess.run(
                                     ["ffmpeg", "-y", "-i", file_path, "-c", "copy", "-movflags", "+faststart", fast_file],
-                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=20
+                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=20, creationflags=_SUBPROCESS_NO_WINDOW
                                 )
                         if os.path.exists(fast_file) and os.path.getsize(fast_file) > 0:
                             file_to_serve = fast_file

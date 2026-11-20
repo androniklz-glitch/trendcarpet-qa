@@ -1,0 +1,41 @@
+HATSHOP — BLACK RIVER (8 MODELLER) — KLAR FÖR SAJTUPPLADDNING + SEPARAT CONTENT-MAPP
+=====================================================================================
+
+Denna leveransmapp följer Hatshops fasta bildordning på produktsidorna (hatshop.se)
+för alla 8 Black River-kepsar (SKU 219486–219493) uppdelat i "Original\" och "1500px\".
+Alla Kodak-miljöbilder som inte föreställer en människa (8 st stilleben/detaljbilder)
+är utflyttade ur sajtens produktbildserie och lagda i undermappen "content\".
+
+1. 1500px\ (FÄRDIG FÖR SAJTUPPLADDNING — 8 mappar × 6 bilder = 48 filer, 1500×1500 px)
+---------------------------------------------------------------------------------------
+Samtliga 6 bilder (-01 till -06) i varje produktmapp under "1500px\" håller 100 %
+enhetligt kvadratiskt mått 1500×1500 px (sRGB) för direkt uppladdning i Askås (hatshop.se):
+  -01.jpg : Studio 1 — Huvudbild låg 3/4 framsida på vit bakgrund (1500×1500 px)
+  -02.jpg : Livsstil (Hoverbild) — Kornig 35mm Kodak bärarbild MED människa/modell (1500×1500 px)
+  -03.jpg : Studio 2 — Snett ovanifrån 3/4 på vit bakgrund (1500×1500 px)
+  -04.jpg : Studio 3 — Makro / närbild på frontbrodyren (1500×1500 px)
+  -05.jpg : Studio 4 — Insida / underskärm & svettband på vit bakgrund (1500×1500 px)
+  -06.jpg : Studio 5 — Baksida mesh & snapback på vit bakgrund (1500×1500 px)
+
+2. Original\ (FULL UPPLÖSNING / ARKIV — 8 mappar × 6 bilder = 48 filer, 1:1)
+-----------------------------------------------------------------------------
+Exakt samma 8 produktmappar och filnamnsordning (-01 till -06) i full originalupplösning:
+  -01, -03, -04, -05, -06 : Studiooriginal (4000×4000 px, sRGB)
+  -02                     : Kornig 35mm Kodak bärarbild med människa i full 2K-upplösning (2048×2048 px)
+
+3. content\ (SEPARAT UNDERMAPP FÖR MÄNNISKOLÖSA MILJÖ-/STILLEBENBILDER — 8 kepsar)
+-----------------------------------------------------------------------------------
+Alla 8 Kodak-miljöbilder som inte föreställer en människa (stilleben på motorhuv, läder,
+skivspelare & POV-detalj) ligger samlade här utanför sajtens produktbildserie:
+  - content\Original\ (8 filer i full 2K-upplösning, 2048×2048 px)
+  - content\1500px\   (8 filer i 1500×1500 px, sRGB)
+
+Produktmappar (i både "1500px\" och "Original\"):
+  - 219486_Keps-Black-River-Legacy-Trucker-svart          (EAN: 7350180450830)
+  - 219487_Keps-Black-River-Legacy-Trucker-röd            (EAN: 7350180450847)
+  - 219488_Keps-Black-River-Rodeo-Trucker-grå-svart       (EAN: 7350180450854)
+  - 219489_Keps-Black-River-Ranch-Trucker-khaki-navy      (EAN: 7350180450861)
+  - 219490_Keps-Black-River-Shield-Trucker-grå            (EAN: 7350180450878)
+  - 219491_Keps-Black-River-Longhorn-Trucker-khaki-grön   (EAN: 7350180450885)
+  - 219492_Keps-Black-River-Longhorn-Trucker-khaki-vinröd (EAN: 7350180450892)
+  - 219493_Keps-Black-River-Legacy-Trucker-khaki          (EAN: 7350180450908)

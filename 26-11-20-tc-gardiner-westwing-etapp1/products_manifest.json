@@ -1,0 +1,658 @@
+[
+  {
+    "id": "01_Poppy_Svart_Monstrad_Bomullsgardin",
+    "slot": "01",
+    "sku": "curtain.poppy.black.140x300",
+    "title": "01 · Bomullsgardin Poppy (Svart) – Westwing Förstabild",
+    "clean_name": "01. Bomullsgardin Poppy (Svart) – Westwing Studio Förstabild",
+    "category": "TC Home Gardiner · Westwing Förstabild Etapp 1 (16 gardiner i 5 tygfamiljer)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "7201",
+      "tag": "@7201",
+      "sku": "curtain.poppy.black.140x300",
+      "name": "Bomullsgardin Poppy (Svart)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/bomullsgardin-poppy-svart/",
+      "role": "hero",
+      "resolution": "1059x2281",
+      "ref_file": "refs_still/7201.jpg",
+      "ref_macro_file": "refs_still/7201_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Matte charcoal-black 100% cotton curtain printed with a full botanical wildflower repeat featuring crisp white five-petal blossoms, warm terracotta-coral poppies, muted slate-blue bellflowers, scrolling sage-green acanthus foliage, and warm sand seed pods."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "01_Poppy_Svart_Monstrad_Bomullsgardin/01_SKU7201-01_Hero_Ref_7201.jpg",
+        "rel_path": "01_Poppy_Svart_Monstrad_Bomullsgardin/01_SKU7201-01_Hero_Ref_7201.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@7201 · SKU curtain.poppy.black.140x300)"
+      },
+      {
+        "filename": "01_Poppy_Svart_Monstrad_Bomullsgardin/01_Nuvarande_Sajtbild_poppy_svart_01.jpg",
+        "rel_path": "01_Poppy_Svart_Monstrad_Bomullsgardin/01_Nuvarande_Sajtbild_poppy_svart_01.jpg",
+        "kind": "2. Nuvarande förstabild på trendcarpet.se"
+      },
+      {
+        "filename": "01_Poppy_Svart_Monstrad_Bomullsgardin/01_SKU7201-01m_Hero_Macro_7201.jpg",
+        "rel_path": "01_Poppy_Svart_Monstrad_Bomullsgardin/01_SKU7201-01m_Hero_Macro_7201.jpg",
+        "kind": "3. Makroreferens (@7201_macro)"
+      }
+    ]
+  },
+  {
+    "id": "02_Poppy_Beige_Monstrad_Bomullsgardin",
+    "slot": "02",
+    "sku": "curtain.poppy.beige.140x220",
+    "title": "02 · Bomullsgardin Poppy (Beige) – Westwing Förstabild",
+    "clean_name": "02. Bomullsgardin Poppy (Beige) – Westwing Studio Förstabild",
+    "category": "TC Home Gardiner · Westwing Förstabild Etapp 1 (16 gardiner i 5 tygfamiljer)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "7202",
+      "tag": "@7202",
+      "sku": "curtain.poppy.beige.140x220",
+      "name": "Bomullsgardin Poppy (Beige)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/bomullsgardin-poppy-beige/",
+      "role": "hero",
+      "resolution": "1034x2280",
+      "ref_file": "refs_still/7202.jpg",
+      "ref_macro_file": "refs_still/7202_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Matte warm sand-linen beige 100% cotton curtain printed with the same botanical wildflower motif—crisp white blossoms, large terracotta-coral poppies with dark stamen rings, pale slate-blue bellflowers, and sage-green scrolling leaves—in a naturally shifted fabric cut."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "02_Poppy_Beige_Monstrad_Bomullsgardin/02_SKU7202-01_Hero_Ref_7202.jpg",
+        "rel_path": "02_Poppy_Beige_Monstrad_Bomullsgardin/02_SKU7202-01_Hero_Ref_7202.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@7202 · SKU curtain.poppy.beige.140x220)"
+      },
+      {
+        "filename": "02_Poppy_Beige_Monstrad_Bomullsgardin/02_Nuvarande_Sajtbild_poppy_beige_01.jpg",
+        "rel_path": "02_Poppy_Beige_Monstrad_Bomullsgardin/02_Nuvarande_Sajtbild_poppy_beige_01.jpg",
+        "kind": "2. Nuvarande förstabild på trendcarpet.se"
+      },
+      {
+        "filename": "02_Poppy_Beige_Monstrad_Bomullsgardin/02_SKU7202-01m_Hero_Macro_7202.jpg",
+        "rel_path": "02_Poppy_Beige_Monstrad_Bomullsgardin/02_SKU7202-01m_Hero_Macro_7202.jpg",
+        "kind": "3. Makroreferens (@7202_macro)"
+      }
+    ]
+  },
+  {
+    "id": "03_Lumira_Cream_Halvtransparent_Linnemix",
+    "slot": "03",
+    "sku": "PUK_AW2026/15.11-0105TPG.140x220",
+    "title": "03 · Linnemixgardin Lumira 2-Pack (Cream) – Westwing Förstabild",
+    "clean_name": "03. Linnemixgardin Lumira 2-Pack (Cream) – Westwing Studio Förstabild",
+    "category": "TC Home Gardiner · Westwing Förstabild Etapp 1 (16 gardiner i 5 tygfamiljer)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "7203",
+      "tag": "@7203",
+      "sku": "PUK_AW2026/15.11-0105TPG.140x220",
+      "name": "Linnemixgardin Lumira 2-Pack (Cream)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/gardiner-2-pack-linnemixgardin-lumira-cream/",
+      "role": "hero",
+      "resolution": "1500x1500",
+      "ref_file": "refs_still/7203.jpg",
+      "ref_macro_file": "refs_still/7203_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Soft natural off-white / warm ivory-linen semi-sheer linen-mix curtain (#E0DAC7, neutral light flax-off-white without buttery yellow cast) with fine plain-weave pores, subtle horizontal slub yarns, and denser double-folded 9 cm top header band."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "03_Lumira_Cream_Halvtransparent_Linnemix/03_SKU7203-01_Hero_Ref_7203.jpg",
+        "rel_path": "03_Lumira_Cream_Halvtransparent_Linnemix/03_SKU7203-01_Hero_Ref_7203.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@7203 · SKU PUK_AW2026/15.11-0105TPG.140x220)"
+      },
+      {
+        "filename": "03_Lumira_Cream_Halvtransparent_Linnemix/03_Nuvarande_Sajtbild_lumira_cream_01.jpg",
+        "rel_path": "03_Lumira_Cream_Halvtransparent_Linnemix/03_Nuvarande_Sajtbild_lumira_cream_01.jpg",
+        "kind": "2. Nuvarande förstabild på trendcarpet.se"
+      },
+      {
+        "filename": "03_Lumira_Cream_Halvtransparent_Linnemix/03_SKU7203-01m_Hero_Macro_7203.jpg",
+        "rel_path": "03_Lumira_Cream_Halvtransparent_Linnemix/03_SKU7203-01m_Hero_Macro_7203.jpg",
+        "kind": "3. Makroreferens (@7203_macro)"
+      }
+    ]
+  },
+  {
+    "id": "04_Lumira_Taupe_Halvtransparent_Linnemix",
+    "slot": "04",
+    "sku": "PUK_AW2026/15.17-0808TPG.140x220",
+    "title": "04 · Linnemixgardin Lumira 2-Pack (Taupe) – Westwing Förstabild",
+    "clean_name": "04. Linnemixgardin Lumira 2-Pack (Taupe) – Westwing Studio Förstabild",
+    "category": "TC Home Gardiner · Westwing Förstabild Etapp 1 (16 gardiner i 5 tygfamiljer)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "7204",
+      "tag": "@7204",
+      "sku": "PUK_AW2026/15.17-0808TPG.140x220",
+      "name": "Linnemixgardin Lumira 2-Pack (Taupe)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/gardiner-2-pack-linnemixgardin-lumira-taupe/",
+      "role": "hero",
+      "resolution": "1500x1500",
+      "ref_file": "refs_still/7204.jpg",
+      "ref_macro_file": "refs_still/7204_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Earthy warm rosy-brown taupe semi-sheer linen-mix curtain (#9B7C71) with fine plain-weave mesh, delicate horizontal slub yarns, gentle natural sheen, and soft studio light transmission below the 9 cm double-folded header."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "04_Lumira_Taupe_Halvtransparent_Linnemix/04_SKU7204-01_Hero_Ref_7204.jpg",
+        "rel_path": "04_Lumira_Taupe_Halvtransparent_Linnemix/04_SKU7204-01_Hero_Ref_7204.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@7204 · SKU PUK_AW2026/15.17-0808TPG.140x220)"
+      },
+      {
+        "filename": "04_Lumira_Taupe_Halvtransparent_Linnemix/04_Nuvarande_Sajtbild_lumira_taupe_01.jpg",
+        "rel_path": "04_Lumira_Taupe_Halvtransparent_Linnemix/04_Nuvarande_Sajtbild_lumira_taupe_01.jpg",
+        "kind": "2. Nuvarande förstabild på trendcarpet.se"
+      },
+      {
+        "filename": "04_Lumira_Taupe_Halvtransparent_Linnemix/04_SKU7204-01m_Hero_Macro_7204.jpg",
+        "rel_path": "04_Lumira_Taupe_Halvtransparent_Linnemix/04_SKU7204-01m_Hero_Macro_7204.jpg",
+        "kind": "3. Makroreferens (@7204_macro)"
+      }
+    ]
+  },
+  {
+    "id": "05_Lumira_Morkbrun_Halvtransparent_Linnemix",
+    "slot": "05",
+    "sku": "PUK_AW2026/15.18-1124TPG.140x220",
+    "title": "05 · Linnemixgardin Lumira 2-Pack (Mörkbrun) – Westwing Förstabild",
+    "clean_name": "05. Linnemixgardin Lumira 2-Pack (Mörkbrun) – Westwing Studio Förstabild",
+    "category": "TC Home Gardiner · Westwing Förstabild Etapp 1 (16 gardiner i 5 tygfamiljer)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "7205",
+      "tag": "@7205",
+      "sku": "PUK_AW2026/15.18-1124TPG.140x220",
+      "name": "Linnemixgardin Lumira 2-Pack (Mörkbrun)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/gardiner-2-pack-linnemixgardin-lumira-morkbrun/",
+      "role": "hero",
+      "resolution": "1500x1500",
+      "ref_file": "refs_still/7205.jpg",
+      "ref_macro_file": "refs_still/7205_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Deep roasted coffee / espresso brown semi-sheer linen-mix curtain (#6E503E) with fine open plain-weave texture, subtle horizontal slub threads, denser 9 cm top header fold, and soft translucent glow across the wave pleats."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "05_Lumira_Morkbrun_Halvtransparent_Linnemix/05_SKU7205-01_Hero_Ref_7205.jpg",
+        "rel_path": "05_Lumira_Morkbrun_Halvtransparent_Linnemix/05_SKU7205-01_Hero_Ref_7205.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@7205 · SKU PUK_AW2026/15.18-1124TPG.140x220)"
+      },
+      {
+        "filename": "05_Lumira_Morkbrun_Halvtransparent_Linnemix/05_Nuvarande_Sajtbild_lumira_morkbrun_01.jpg",
+        "rel_path": "05_Lumira_Morkbrun_Halvtransparent_Linnemix/05_Nuvarande_Sajtbild_lumira_morkbrun_01.jpg",
+        "kind": "2. Nuvarande förstabild på trendcarpet.se"
+      },
+      {
+        "filename": "05_Lumira_Morkbrun_Halvtransparent_Linnemix/05_SKU7205-01m_Hero_Macro_7205.jpg",
+        "rel_path": "05_Lumira_Morkbrun_Halvtransparent_Linnemix/05_SKU7205-01m_Hero_Macro_7205.jpg",
+        "kind": "3. Makroreferens (@7205_macro)"
+      }
+    ]
+  },
+  {
+    "id": "06_Lumira_Vinrod_Halvtransparent_Linnemix",
+    "slot": "06",
+    "sku": "PUK_AW2026/15.19-1652TPG.140x220",
+    "title": "06 · Linnemixgardin Lumira 2-Pack (Vinröd) – Westwing Förstabild",
+    "clean_name": "06. Linnemixgardin Lumira 2-Pack (Vinröd) – Westwing Studio Förstabild",
+    "category": "TC Home Gardiner · Westwing Förstabild Etapp 1 (16 gardiner i 5 tygfamiljer)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "7206",
+      "tag": "@7206",
+      "sku": "PUK_AW2026/15.19-1652TPG.140x220",
+      "name": "Linnemixgardin Lumira 2-Pack (Vinröd)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/gardiner-2-pack-linnemixgardin-lumira-vinrod/",
+      "role": "hero",
+      "resolution": "1500x1500",
+      "ref_file": "refs_still/7206.jpg",
+      "ref_macro_file": "refs_still/7206_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Deep burgundy / claret wine-red semi-sheer linen-mix curtain (#7C3D40) with fine plain-weave slub texture, richer double-layered 9 cm header band above the stitch line, and airy translucent drape below."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "06_Lumira_Vinrod_Halvtransparent_Linnemix/06_SKU7206-01_Hero_Ref_7206.jpg",
+        "rel_path": "06_Lumira_Vinrod_Halvtransparent_Linnemix/06_SKU7206-01_Hero_Ref_7206.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@7206 · SKU PUK_AW2026/15.19-1652TPG.140x220)"
+      },
+      {
+        "filename": "06_Lumira_Vinrod_Halvtransparent_Linnemix/06_Nuvarande_Sajtbild_lumira_vinrod_01.jpg",
+        "rel_path": "06_Lumira_Vinrod_Halvtransparent_Linnemix/06_Nuvarande_Sajtbild_lumira_vinrod_01.jpg",
+        "kind": "2. Nuvarande förstabild på trendcarpet.se"
+      },
+      {
+        "filename": "06_Lumira_Vinrod_Halvtransparent_Linnemix/06_SKU7206-01m_Hero_Macro_7206.jpg",
+        "rel_path": "06_Lumira_Vinrod_Halvtransparent_Linnemix/06_SKU7206-01m_Hero_Macro_7206.jpg",
+        "kind": "3. Makroreferens (@7206_macro)"
+      }
+    ]
+  },
+  {
+    "id": "07_Noemi_Vit_Halvtransparent_Linnegardin",
+    "slot": "07",
+    "sku": "PUK_AW2026/17.11-4201TPG.140x220",
+    "title": "07 · Linnegardin Noemi 2-Pack (Vit) – Westwing Förstabild",
+    "clean_name": "07. Linnegardin Noemi 2-Pack (Vit) – Westwing Studio Förstabild",
+    "category": "TC Home Gardiner · Westwing Förstabild Etapp 1 (16 gardiner i 5 tygfamiljer)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "7207",
+      "tag": "@7207",
+      "sku": "PUK_AW2026/17.11-4201TPG.140x220",
+      "name": "Linnegardin Noemi 2-Pack (Vit)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/gardiner-2-pack-linnegardin-noemi-vit/",
+      "role": "hero",
+      "resolution": "1500x1500",
+      "ref_file": "refs_still/7207.jpg",
+      "ref_macro_file": "refs_still/7207_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Crisp natural optic-white semi-sheer woven linen curtain (#E2DFD5 against #F7F6F3 wall) with airy organic plain-weave linen yarn texture, denser 9 cm top multiband fold, and clean neutral daylight translucency."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "07_Noemi_Vit_Halvtransparent_Linnegardin/07_SKU7207-01_Hero_Ref_7207.jpg",
+        "rel_path": "07_Noemi_Vit_Halvtransparent_Linnegardin/07_SKU7207-01_Hero_Ref_7207.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@7207 · SKU PUK_AW2026/17.11-4201TPG.140x220)"
+      },
+      {
+        "filename": "07_Noemi_Vit_Halvtransparent_Linnegardin/07_Nuvarande_Sajtbild_noemi_vit_01.jpg",
+        "rel_path": "07_Noemi_Vit_Halvtransparent_Linnegardin/07_Nuvarande_Sajtbild_noemi_vit_01.jpg",
+        "kind": "2. Nuvarande förstabild på trendcarpet.se"
+      },
+      {
+        "filename": "07_Noemi_Vit_Halvtransparent_Linnegardin/07_SKU7207-01m_Hero_Macro_7207.jpg",
+        "rel_path": "07_Noemi_Vit_Halvtransparent_Linnegardin/07_SKU7207-01m_Hero_Macro_7207.jpg",
+        "kind": "3. Makroreferens (@7207_macro)"
+      }
+    ]
+  },
+  {
+    "id": "08_Noemi_Beige_Halvtransparent_Linnegardin",
+    "slot": "08",
+    "sku": "PUK_AW2026/17.14-1108TPG.140x220",
+    "title": "08 · Linnegardin Noemi 2-Pack (Beige) – Westwing Förstabild",
+    "clean_name": "08. Linnegardin Noemi 2-Pack (Beige) – Westwing Studio Förstabild",
+    "category": "TC Home Gardiner · Westwing Förstabild Etapp 1 (16 gardiner i 5 tygfamiljer)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "7208",
+      "tag": "@7208",
+      "sku": "PUK_AW2026/17.14-1108TPG.140x220",
+      "name": "Linnegardin Noemi 2-Pack (Beige)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/gardiner-2-pack-linnegardin-noemi-beige/",
+      "role": "hero",
+      "resolution": "1500x1500",
+      "ref_file": "refs_still/7208.jpg",
+      "ref_macro_file": "refs_still/7208_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Light oat-sand beige semi-sheer woven linen curtain (#D7CEB8) with organic uneven linen yarn slubs, airy plain-weave translucency, and a subtly denser 9 cm folded header band."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "08_Noemi_Beige_Halvtransparent_Linnegardin/08_SKU7208-01_Hero_Ref_7208.jpg",
+        "rel_path": "08_Noemi_Beige_Halvtransparent_Linnegardin/08_SKU7208-01_Hero_Ref_7208.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@7208 · SKU PUK_AW2026/17.14-1108TPG.140x220)"
+      },
+      {
+        "filename": "08_Noemi_Beige_Halvtransparent_Linnegardin/08_Nuvarande_Sajtbild_noemi_beige_01.jpg",
+        "rel_path": "08_Noemi_Beige_Halvtransparent_Linnegardin/08_Nuvarande_Sajtbild_noemi_beige_01.jpg",
+        "kind": "2. Nuvarande förstabild på trendcarpet.se"
+      },
+      {
+        "filename": "08_Noemi_Beige_Halvtransparent_Linnegardin/08_SKU7208-01m_Hero_Macro_7208.jpg",
+        "rel_path": "08_Noemi_Beige_Halvtransparent_Linnegardin/08_SKU7208-01m_Hero_Macro_7208.jpg",
+        "kind": "3. Makroreferens (@7208_macro)"
+      }
+    ]
+  },
+  {
+    "id": "09_Noemi_Taupe_Halvtransparent_Linnegardin",
+    "slot": "09",
+    "sku": "PUK_AW2026/17.17-0808TPG.140x220",
+    "title": "09 · Linnegardin Noemi 2-Pack (Taupe) – Westwing Förstabild",
+    "clean_name": "09. Linnegardin Noemi 2-Pack (Taupe) – Westwing Studio Förstabild",
+    "category": "TC Home Gardiner · Westwing Förstabild Etapp 1 (16 gardiner i 5 tygfamiljer)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "7209",
+      "tag": "@7209",
+      "sku": "PUK_AW2026/17.17-0808TPG.140x220",
+      "name": "Linnegardin Noemi 2-Pack (Taupe)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/gardiner-2-pack-linnegardin-noemi-taupe/",
+      "role": "hero",
+      "resolution": "1500x1500",
+      "ref_file": "refs_still/7209.jpg",
+      "ref_macro_file": "refs_still/7209_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Warm grey-brown mushroom taupe semi-sheer woven linen curtain (#917B6E) with pronounced natural linen thread texture, denser 9 cm double-folded top band, and soft translucent light filtering."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "09_Noemi_Taupe_Halvtransparent_Linnegardin/09_SKU7209-01_Hero_Ref_7209.jpg",
+        "rel_path": "09_Noemi_Taupe_Halvtransparent_Linnegardin/09_SKU7209-01_Hero_Ref_7209.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@7209 · SKU PUK_AW2026/17.17-0808TPG.140x220)"
+      },
+      {
+        "filename": "09_Noemi_Taupe_Halvtransparent_Linnegardin/09_Nuvarande_Sajtbild_noemi_taupe_01.jpg",
+        "rel_path": "09_Noemi_Taupe_Halvtransparent_Linnegardin/09_Nuvarande_Sajtbild_noemi_taupe_01.jpg",
+        "kind": "2. Nuvarande förstabild på trendcarpet.se"
+      },
+      {
+        "filename": "09_Noemi_Taupe_Halvtransparent_Linnegardin/09_SKU7209-01m_Hero_Macro_7209.jpg",
+        "rel_path": "09_Noemi_Taupe_Halvtransparent_Linnegardin/09_SKU7209-01m_Hero_Macro_7209.jpg",
+        "kind": "3. Makroreferens (@7209_macro)"
+      }
+    ]
+  },
+  {
+    "id": "10_Noemi_Rod_Halvtransparent_Linnegardin",
+    "slot": "10",
+    "sku": "PUK_AW2026/17.19-1557TPG.140x220",
+    "title": "10 · Linnegardin Noemi 2-Pack (Röd) – Westwing Förstabild",
+    "clean_name": "10. Linnegardin Noemi 2-Pack (Röd) – Westwing Studio Förstabild",
+    "category": "TC Home Gardiner · Westwing Förstabild Etapp 1 (16 gardiner i 5 tygfamiljer)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "7210",
+      "tag": "@7210",
+      "sku": "PUK_AW2026/17.19-1557TPG.140x220",
+      "name": "Linnegardin Noemi 2-Pack (Röd)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/gardiner-2-pack-linnegardin-noemi-rod/",
+      "role": "hero",
+      "resolution": "1500x1500",
+      "ref_file": "refs_still/7210.jpg",
+      "ref_macro_file": "refs_still/7210_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Vibrant crimson-berry / warm brick-red semi-sheer woven linen curtain (#C4535B) with lively organic linen slub weave, richer double-folded 9 cm top header, and luminous semi-translucent folds."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "10_Noemi_Rod_Halvtransparent_Linnegardin/10_SKU7210-01_Hero_Ref_7210.jpg",
+        "rel_path": "10_Noemi_Rod_Halvtransparent_Linnegardin/10_SKU7210-01_Hero_Ref_7210.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@7210 · SKU PUK_AW2026/17.19-1557TPG.140x220)"
+      },
+      {
+        "filename": "10_Noemi_Rod_Halvtransparent_Linnegardin/10_Nuvarande_Sajtbild_noemi_rod_01.jpg",
+        "rel_path": "10_Noemi_Rod_Halvtransparent_Linnegardin/10_Nuvarande_Sajtbild_noemi_rod_01.jpg",
+        "kind": "2. Nuvarande förstabild på trendcarpet.se"
+      },
+      {
+        "filename": "10_Noemi_Rod_Halvtransparent_Linnegardin/10_SKU7210-01m_Hero_Macro_7210.jpg",
+        "rel_path": "10_Noemi_Rod_Halvtransparent_Linnegardin/10_SKU7210-01m_Hero_Macro_7210.jpg",
+        "kind": "3. Makroreferens (@7210_macro)"
+      }
+    ]
+  },
+  {
+    "id": "11_Selena_Beige_Matt_Bomullsgardin",
+    "slot": "11",
+    "sku": "PUK_AW2026/19.14-1108TPG.140x220",
+    "title": "11 · Bomullsgardin Selena 2-Pack (Beige) – Westwing Förstabild",
+    "clean_name": "11. Bomullsgardin Selena 2-Pack (Beige) – Westwing Studio Förstabild",
+    "category": "TC Home Gardiner · Westwing Förstabild Etapp 1 (16 gardiner i 5 tygfamiljer)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "7211",
+      "tag": "@7211",
+      "sku": "PUK_AW2026/19.14-1108TPG.140x220",
+      "name": "Bomullsgardin Selena 2-Pack (Beige)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/gardiner-2-pack-bomullsgardin-selena-beige/",
+      "role": "hero",
+      "resolution": "1500x1500",
+      "ref_file": "refs_still/7211.jpg",
+      "ref_macro_file": "refs_still/7211_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Soft warm sand-beige matte cotton curtain (#D8CFBA) with an even, tactile plain-weave cotton surface, softly light-filtering semi-opaque body, and calm rounded vertical wave pleats."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "11_Selena_Beige_Matt_Bomullsgardin/11_SKU7211-01_Hero_Ref_7211.jpg",
+        "rel_path": "11_Selena_Beige_Matt_Bomullsgardin/11_SKU7211-01_Hero_Ref_7211.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@7211 · SKU PUK_AW2026/19.14-1108TPG.140x220)"
+      },
+      {
+        "filename": "11_Selena_Beige_Matt_Bomullsgardin/11_Nuvarande_Sajtbild_selena_beige_01.jpg",
+        "rel_path": "11_Selena_Beige_Matt_Bomullsgardin/11_Nuvarande_Sajtbild_selena_beige_01.jpg",
+        "kind": "2. Nuvarande förstabild på trendcarpet.se"
+      },
+      {
+        "filename": "11_Selena_Beige_Matt_Bomullsgardin/11_SKU7211-01m_Hero_Macro_7211.jpg",
+        "rel_path": "11_Selena_Beige_Matt_Bomullsgardin/11_SKU7211-01m_Hero_Macro_7211.jpg",
+        "kind": "3. Makroreferens (@7211_macro)"
+      }
+    ]
+  },
+  {
+    "id": "12_Selena_Terrakotta_Matt_Bomullsgardin",
+    "slot": "12",
+    "sku": "PUK_AW2026/19.16-1526TPG.140x220",
+    "title": "12 · Bomullsgardin Selena 2-Pack (Terrakotta) – Westwing Förstabild",
+    "clean_name": "12. Bomullsgardin Selena 2-Pack (Terrakotta) – Westwing Studio Förstabild",
+    "category": "TC Home Gardiner · Westwing Förstabild Etapp 1 (16 gardiner i 5 tygfamiljer)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "7212",
+      "tag": "@7212",
+      "sku": "PUK_AW2026/19.16-1526TPG.140x220",
+      "name": "Bomullsgardin Selena 2-Pack (Terrakotta)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/gardiner-2-pack-bomullsgardin-selena-terrakotta/",
+      "role": "hero",
+      "resolution": "1800x1800",
+      "ref_file": "refs_still/7212.jpg",
+      "ref_macro_file": "refs_still/7212_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Warm muted terracotta-rose / dusty coral-terracotta matte cotton curtain (#C47E78) with natural plain-weave cotton texture, soft matte finish, and gently sculpted vertical wave folds."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "12_Selena_Terrakotta_Matt_Bomullsgardin/12_SKU7212-01_Hero_Ref_7212.jpg",
+        "rel_path": "12_Selena_Terrakotta_Matt_Bomullsgardin/12_SKU7212-01_Hero_Ref_7212.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@7212 · SKU PUK_AW2026/19.16-1526TPG.140x220)"
+      },
+      {
+        "filename": "12_Selena_Terrakotta_Matt_Bomullsgardin/12_Nuvarande_Sajtbild_selena_terrakotta_01.jpg",
+        "rel_path": "12_Selena_Terrakotta_Matt_Bomullsgardin/12_Nuvarande_Sajtbild_selena_terrakotta_01.jpg",
+        "kind": "2. Nuvarande förstabild på trendcarpet.se"
+      },
+      {
+        "filename": "12_Selena_Terrakotta_Matt_Bomullsgardin/12_SKU7212-01m_Hero_Macro_7212.jpg",
+        "rel_path": "12_Selena_Terrakotta_Matt_Bomullsgardin/12_SKU7212-01m_Hero_Macro_7212.jpg",
+        "kind": "3. Makroreferens (@7212_macro)"
+      }
+    ]
+  },
+  {
+    "id": "13_Selena_Vinrod_Matt_Bomullsgardin",
+    "slot": "13",
+    "sku": "PUK_AW2026/19.19-1652TPG.140x220",
+    "title": "13 · Bomullsgardin Selena 2-Pack (Vinröd) – Westwing Förstabild",
+    "clean_name": "13. Bomullsgardin Selena 2-Pack (Vinröd) – Westwing Studio Förstabild",
+    "category": "TC Home Gardiner · Westwing Förstabild Etapp 1 (16 gardiner i 5 tygfamiljer)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "7213",
+      "tag": "@7213",
+      "sku": "PUK_AW2026/19.19-1652TPG.140x220",
+      "name": "Bomullsgardin Selena 2-Pack (Vinröd)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/gardiner-2-pack-bomullsgardin-selena-vinrod/",
+      "role": "hero",
+      "resolution": "1500x1500",
+      "ref_file": "refs_still/7213.jpg",
+      "ref_macro_file": "refs_still/7213_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Rich saturated burgundy-berry / wine-red matte cotton curtain (#B65F68) with uniform tactile cotton weave, matte light-filtering weight, and smooth vertical wave pleats."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "13_Selena_Vinrod_Matt_Bomullsgardin/13_SKU7213-01_Hero_Ref_7213.jpg",
+        "rel_path": "13_Selena_Vinrod_Matt_Bomullsgardin/13_SKU7213-01_Hero_Ref_7213.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@7213 · SKU PUK_AW2026/19.19-1652TPG.140x220)"
+      },
+      {
+        "filename": "13_Selena_Vinrod_Matt_Bomullsgardin/13_Nuvarande_Sajtbild_selena_vinrod_01.jpg",
+        "rel_path": "13_Selena_Vinrod_Matt_Bomullsgardin/13_Nuvarande_Sajtbild_selena_vinrod_01.jpg",
+        "kind": "2. Nuvarande förstabild på trendcarpet.se"
+      },
+      {
+        "filename": "13_Selena_Vinrod_Matt_Bomullsgardin/13_SKU7213-01m_Hero_Macro_7213.jpg",
+        "rel_path": "13_Selena_Vinrod_Matt_Bomullsgardin/13_SKU7213-01m_Hero_Macro_7213.jpg",
+        "kind": "3. Makroreferens (@7213_macro)"
+      }
+    ]
+  },
+  {
+    "id": "14_Andrada_Vit_Linne_Look",
+    "slot": "14",
+    "sku": "08-A9-26.andrada.curtain.white.140x220",
+    "title": "14 · Linne-look Gardin Andrada (Vit) – Westwing Förstabild",
+    "clean_name": "14. Linne-look Gardin Andrada (Vit) – Westwing Studio Förstabild",
+    "category": "TC Home Gardiner · Westwing Förstabild Etapp 1 (16 gardiner i 5 tygfamiljer)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "7214",
+      "tag": "@7214",
+      "sku": "08-A9-26.andrada.curtain.white.140x220",
+      "name": "Linne-look Gardin Andrada (Vit)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/gardiner-linne-look-gardin-andrada-vit/",
+      "role": "hero",
+      "resolution": "1500x1500",
+      "ref_file": "refs_still/7214.jpg",
+      "ref_macro_file": "refs_still/7214_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Crisp natural white structured linen-look curtain (#EDEee8 against warm #F7F6F3 studio wall) with distinct basketweave cross-slub yarn texture and soft semi-opaque drape."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "14_Andrada_Vit_Linne_Look/14_SKU7214-01_Hero_Ref_7214.jpg",
+        "rel_path": "14_Andrada_Vit_Linne_Look/14_SKU7214-01_Hero_Ref_7214.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@7214 · SKU 08-A9-26.andrada.curtain.white.140x220)"
+      },
+      {
+        "filename": "14_Andrada_Vit_Linne_Look/14_Nuvarande_Sajtbild_andrada_vit_01.jpg",
+        "rel_path": "14_Andrada_Vit_Linne_Look/14_Nuvarande_Sajtbild_andrada_vit_01.jpg",
+        "kind": "2. Nuvarande förstabild på trendcarpet.se"
+      },
+      {
+        "filename": "14_Andrada_Vit_Linne_Look/14_SKU7214-01m_Hero_Macro_7214.jpg",
+        "rel_path": "14_Andrada_Vit_Linne_Look/14_SKU7214-01m_Hero_Macro_7214.jpg",
+        "kind": "3. Makroreferens (@7214_macro)"
+      }
+    ]
+  },
+  {
+    "id": "15_Andrada_Gra_Linne_Look",
+    "slot": "15",
+    "sku": "08-A9-12.andrada.curtain.grey.140x220",
+    "title": "15 · Linne-look Gardin Andrada (Grå) – Westwing Förstabild",
+    "clean_name": "15. Linne-look Gardin Andrada (Grå) – Westwing Studio Förstabild",
+    "category": "TC Home Gardiner · Westwing Förstabild Etapp 1 (16 gardiner i 5 tygfamiljer)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "7215",
+      "tag": "@7215",
+      "sku": "08-A9-12.andrada.curtain.grey.140x220",
+      "name": "Linne-look Gardin Andrada (Grå)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/gardiner-linne-look-gardin-andrada-gra/",
+      "role": "hero",
+      "resolution": "1500x1500",
+      "ref_file": "refs_still/7215.jpg",
+      "ref_macro_file": "refs_still/7215_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Cool balanced medium-light neutral grey melange structured linen-look curtain (#BEBDBA) with crisp visible basketweave cross-slub yarn texture and soft semi-opaque drape."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "15_Andrada_Gra_Linne_Look/15_SKU7215-01_Hero_Ref_7215.jpg",
+        "rel_path": "15_Andrada_Gra_Linne_Look/15_SKU7215-01_Hero_Ref_7215.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@7215 · SKU 08-A9-12.andrada.curtain.grey.140x220)"
+      },
+      {
+        "filename": "15_Andrada_Gra_Linne_Look/15_Nuvarande_Sajtbild_andrada_gra_01.jpg",
+        "rel_path": "15_Andrada_Gra_Linne_Look/15_Nuvarande_Sajtbild_andrada_gra_01.jpg",
+        "kind": "2. Nuvarande förstabild på trendcarpet.se"
+      },
+      {
+        "filename": "15_Andrada_Gra_Linne_Look/15_SKU7215-01m_Hero_Macro_7215.jpg",
+        "rel_path": "15_Andrada_Gra_Linne_Look/15_SKU7215-01m_Hero_Macro_7215.jpg",
+        "kind": "3. Makroreferens (@7215_macro)"
+      }
+    ]
+  },
+  {
+    "id": "16_Amaris_Beige_Morklaggningsgardin",
+    "slot": "16",
+    "sku": "NAMI_8811-14.col00003",
+    "title": "16 · Mörkläggningsgardin Amaris (Beige) – Westwing Förstabild",
+    "clean_name": "16. Mörkläggningsgardin Amaris (Beige) – Westwing Studio Förstabild",
+    "category": "TC Home Gardiner · Westwing Förstabild Etapp 1 (16 gardiner i 5 tygfamiljer)",
+    "company": "trendcarpet",
+    "hero_product": {
+      "id": "7216",
+      "tag": "@7216",
+      "sku": "NAMI_8811-14.col00003",
+      "name": "Mörkläggningsgardin Amaris (Beige)",
+      "handle": "",
+      "url": "https://www.trendcarpet.se/tc-home/gardiner/gardiner-morklaggningsgardin-amaris-beige/",
+      "role": "hero",
+      "resolution": "1488x1488",
+      "ref_file": "refs_still/7216.jpg",
+      "ref_macro_file": "refs_still/7216_macro.jpg",
+      "extra_tags": [],
+      "visual_spec": "Heavy opaque greige-oat / cool stone-beige melange blackout curtain (#B2ACAA) with a dense finely mottled woven textile surface and weighty, deeply sculpted vertical wave folds."
+    },
+    "companion_products": [],
+    "images": [
+      {
+        "filename": "16_Amaris_Beige_Morklaggningsgardin/16_SKU7216-01_Hero_Ref_7216.jpg",
+        "rel_path": "16_Amaris_Beige_Morklaggningsgardin/16_SKU7216-01_Hero_Ref_7216.jpg",
+        "kind": "2. Stjärn-produkt Studioreferens (@7216 · SKU NAMI_8811-14.col00003)"
+      },
+      {
+        "filename": "16_Amaris_Beige_Morklaggningsgardin/16_Nuvarande_Sajtbild_amaris_beige_01.jpg",
+        "rel_path": "16_Amaris_Beige_Morklaggningsgardin/16_Nuvarande_Sajtbild_amaris_beige_01.jpg",
+        "kind": "2. Nuvarande förstabild på trendcarpet.se"
+      },
+      {
+        "filename": "16_Amaris_Beige_Morklaggningsgardin/16_SKU7216-01m_Hero_Macro_7216.jpg",
+        "rel_path": "16_Amaris_Beige_Morklaggningsgardin/16_SKU7216-01m_Hero_Macro_7216.jpg",
+        "kind": "3. Makroreferens (@7216_macro)"
+      }
+    ]
+  }
+]

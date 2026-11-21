@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "wave": "vag_2",
+  "stage": "DELIVERY_GATE_RAZZIA_2",
+  "batch_id": "26-11-20-tc-video-5star-aistudio-batch2",
+  "company": "trendcarpet",
+  "org": "cama",
+  "engine_used": "aistudio+hyperframes+aistudio+hyperframes",
+  "issued_at_utc": "2026-11-21T02:19:50Z",
+  "judge_verdict": "GODKÄND",
+  "judge_sources": [
+    "dom_produkt_runda2.json+dom_stil_runda2.json",
+    "delivery_receipt.json"
+  ],
+  "razzia2_verdict": "GODKÄND",
+  "verdict": "GODKÄND",
+  "razzia2_sources": [
+    "razzia2_final.json",
+    "VIDEO_FINAL_RAZZIA2_RECEIPT.json",
+    "delivery_receipt.json"
+  ],
+  "reviewer_agent": "antagonist",
+  "independent_antagonist": true,
+  "has_video": true,
+  "mse_verified": true,
+  "max_raw_mse": 0.0,
+  "signed_file_count": 18,
+  "file_sha256": {
+    "final_videos/aranga_ka5531_clean_100x.mp4": "e53d32bd2d39a7687a53ad8510d41da8d7cf2a9079e298fd019349e2fa4afcb0",
+    "aranga_ka5531_clean_100x.mp4": "e53d32bd2d39a7687a53ad8510d41da8d7cf2a9079e298fd019349e2fa4afcb0",
+    "final_videos/aranga_ka5531_ugc_ad_9x16.mp4": "dded86c762c889f86131e382c9fabd64fabcea8a8db7c18e7f56d70943b3d2be",
+    "aranga_ka5531_ugc_ad_9x16.mp4": "dded86c762c889f86131e382c9fabd64fabcea8a8db7c18e7f56d70943b3d2be",
+    "final_videos/fergana_216554_clean_100x.mp4": "de74ec1eaeace66afdf66e49b311eb44ef6bca2dd2f611dc299438e6acd00930",
+    "fergana_216554_clean_100x.mp4": "de74ec1eaeace66afdf66e49b311eb44ef6bca2dd2f611dc299438e6acd00930",
+    "final_videos/fergana_216554_ugc_ad_9x16.mp4": "dcc84a21c66f2eb16213a64bff25d7054bddc6062317d6957f73a1a333a13a08",
+    "fergana_216554_ugc_ad_9x16.mp4": "dcc84a21c66f2eb16213a64bff25d7054bddc6062317d6957f73a1a333a13a08",
+    "final_videos/akaba_216550_clean_100x.mp4": "5431c3e87ab6f16470ef66089fd03d742b384d45040fa8fcfd01888747df3353",
+    "akaba_216550_clean_100x.mp4": "5431c3e87ab6f16470ef66089fd03d742b384d45040fa8fcfd01888747df3353",
+    "final_videos/akaba_216550_ugc_ad_9x16.mp4": "170acce3531fe9a8f513704bd274f951491a8a7096fb44bc3bce567b07880522",
+    "akaba_216550_ugc_ad_9x16.mp4": "170acce3531fe9a8f513704bd274f951491a8a7096fb44bc3bce567b07880522",
+    "01_aranga_ka5531/aranga_ka5531_clean_100x.mp4": "e53d32bd2d39a7687a53ad8510d41da8d7cf2a9079e298fd019349e2fa4afcb0",
+    "01_aranga_ka5531/aranga_ka5531_ugc_ad_9x16.mp4": "dded86c762c889f86131e382c9fabd64fabcea8a8db7c18e7f56d70943b3d2be",
+    "02_fergana_216554/fergana_216554_clean_100x.mp4": "de74ec1eaeace66afdf66e49b311eb44ef6bca2dd2f611dc299438e6acd00930",
+    "02_fergana_216554/fergana_216554_ugc_ad_9x16.mp4": "dcc84a21c66f2eb16213a64bff25d7054bddc6062317d6957f73a1a333a13a08",
+    "03_akaba_216550/akaba_216550_clean_100x.mp4": "5431c3e87ab6f16470ef66089fd03d742b384d45040fa8fcfd01888747df3353",
+    "03_akaba_216550/akaba_216550_ugc_ad_9x16.mp4": "170acce3531fe9a8f513704bd274f951491a8a7096fb44bc3bce567b07880522"
+  }
+}
